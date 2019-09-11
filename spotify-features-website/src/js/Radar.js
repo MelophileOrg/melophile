@@ -1,7 +1,4 @@
-var SimplexNoise = require('simplex-noise');
-
 let p5;
-let delegate;
 
 let num = 500, frms = 180;
 let theta;

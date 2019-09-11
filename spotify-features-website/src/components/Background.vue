@@ -6,8 +6,11 @@
 
 <script>
 if (process.browser) {
-  var radar = require('@/js/Radar.js')
+  var radar = require('@/js/Shift.js')
 }
+
+
+// import particlesJS from 'particles.js';
 
 export default {
   data() {
@@ -18,13 +21,14 @@ export default {
   mounted() {
     const P5 = require('p5');
     new P5(radar.main);
-    // NOTE: p5.jsからのコールバックを受け取る
-    radar.setDelegate(this.callbackOnP5);
+    // particlesJS.load('particles-js', '../assets/particles.json', function() {
+    // console.log('callback - particles.js config loaded');
+    // });
   },
   methods: {
-    callbackOnP5: function(timeStr) {
-      this.message = timeStr;
-    }
+  },
+  created() {
+    
   }
 }
 </script>
