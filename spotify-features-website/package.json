@@ -9,9 +9,8 @@
   },
   "dependencies": {
     "core-js": "^2.6.5",
-    "p5": "^0.9.0",
     "particles.js": "^2.0.0",
-    "simplex-noise": "^2.4.0",
+    "typed.js": "^2.0.10",
     "vue": "^2.6.10",
     "vue-p5": "^0.7.1",
     "vue-router": "^3.0.3",
