@@ -5,6 +5,10 @@
 </template>
 
 <style>
+html {
+  position: relative;
+  overflow: hidden;
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -14,20 +18,14 @@
   display: block;
   width: 100vw;
   min-height: 100vh;
-  position: fixed;
-  left: 0;
-  right: 0;
-}
-#nav {
-  padding: 30px;
 }
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
+#main {
+  display: block;
+  width: calc(100vw - 230px);
+  min-height: 100vh;
+  overflow: auto;
+  /*padding: 0px 32px;*/
+  background-image: radial-gradient(circle at 0px 0px, rgb(63,73,76), rgb(6,6,6));
 }
 </style>

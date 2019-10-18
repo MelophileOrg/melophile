@@ -1,11 +1,11 @@
 <template>
-  <div class="home">
-    <NavBar path="home" />
+  <div class="apppreview">
+    <NavBar :path="app.path" />
     <div id="main">
-      <Thank/>
-      <h1>Available Apps</h1>
-
-      <h1>Under Development</h1>
+        <div id="title-div">
+            <div id="app-photo"/>
+            <h1>{{app.title}}</h1>
+        </div>
     </div>
   </div>
 </template>
@@ -13,29 +13,28 @@
 <script>
 // @ is an alias to /src
 import NavBar from '@/components/NavBar.vue'
-import Thank from '@/components/Thank.vue'
 
 export default {
-  name: 'home',
+  name: 'apppreview',
   components: {
     NavBar,
-    Thank
   },
   computed: {
+    app() {
+        return this.$store.state.apps[this.$store.state.index];
+    },
     token() {
       return this.$state.store.access_token;
     }
   },
   created() {
-    if (!token) {
-      this.$router.push('token');
-    }
+
   }
 }
 </script>
 
 <style scoped>
-.home {
+.apppreview {
   display: flex;
   width: 100vw;
   min-height: 100vh;
@@ -44,13 +43,30 @@ export default {
   left: 0;
 }
 
+#main {
+    padding-top: 28px;
+}
+
+#title-div {
+    display: block;
+    width: 285px;
+    margin-left: 32px;
+}
+
+#app-photo {
+    display: block;
+    width: 285px;
+    height: 285px;
+    margin: 0 auto;
+    background: white;
+}
+
 h1 {
   font-size: 36px;
   line-height: 44px;
   letter-spacing: -.005em;
   cursor: default;
   color: white;
-  padding-left: 32px;
   text-align: left;
 }
 </style>
