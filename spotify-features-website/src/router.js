@@ -16,8 +16,6 @@ import MC_Chart from './views/MyCharts/MC_Chart'
 import LA_Home from './views/LibraryAnalysis/LA_Home'
 import LA_Search from './views/LibraryAnalysis/LA_Search'
 
-
-
 Vue.use(Router)
 
 export default new Router({
@@ -26,6 +24,11 @@ export default new Router({
   routes: [
     {
       path: '/',
+      name: 'home',
+      component: Home
+    },
+    {
+      path: '/token/:access_token',
       name: 'home',
       component: Home
     },
