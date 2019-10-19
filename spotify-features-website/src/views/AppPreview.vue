@@ -3,8 +3,9 @@
     <NavBar :path="app.path" />
     <div id="main">
         <div id="title-div">
-            <div id="app-photo"/>
+            <AppImage :index="this.$store.state.index" :width="285"/>
             <h1>{{app.title}}</h1>
+            <button @click="launch"/>
         </div>
     </div>
   </div>
@@ -13,19 +14,30 @@
 <script>
 // @ is an alias to /src
 import NavBar from '@/components/NavBar.vue'
+import AppImage from '@/components/AppImage.vue'
 
 export default {
   name: 'apppreview',
   components: {
     NavBar,
+    AppImage
+  },
+  methods: {
+    getImgUrl(pic) {
+      var images = require.context('../assets/icons', false, /\.svg$/)
+      return images('./' + pic + ".svg");
+    },
+    launch() {
+      this.$router.push("/" + this.app.path);
+    }
   },
   computed: {
     app() {
         return this.$store.state.apps[this.$store.state.index];
     },
     token() {
-      return this.$state.store.access_token;
-    }
+      return this.$store.state.access_token;
+    },
   },
   created() {
 

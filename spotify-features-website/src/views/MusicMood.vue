@@ -18,13 +18,11 @@ export default {
   },
   computed: {
     token() {
-      return this.$state.store.access_token;
-    }
+      return this.$store.state.access_token;
+    },
   },
   created() {
-    if (!token) {
-      this.$router.push('token');
-    }
+
   }
 }
 </script>

@@ -23,8 +23,7 @@ export default {
     padding: 30px 0px;
     padding-bottom: 35px;
     margin-top: 00px;
-    text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.219);
-    margin-bottom: 50px;
+    margin-top: 80px;
 }
 #big-title {
   display: flex;

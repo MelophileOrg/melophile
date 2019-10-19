@@ -2,7 +2,7 @@
   <div class="login">
     <NavBar path="home" />
     <div id="main">
-      <BigTitle/>
+      <BigTitle :top="true"/>
       <h1 id="title">Grant Access for More Features</h1>
       <button id="authorize">Authorize</button>
       <button id="learnmore">Learn More</button>
@@ -27,7 +27,12 @@ export default {
       }
   },
   created() {
-
+    console.log("Checking");
+    if (this.$route.currentRoute.name == 'redirect')
+    {
+      console.log("YO TIME TO GO");
+      this.$store.dispatch('parseAccessToken');
+    }
   }
 }
 </script>

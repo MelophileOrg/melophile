@@ -1,5 +1,6 @@
 <template>
     <div class="NavBar">
+        <div id="fixed">
         <div id="logo-div">
             <img id="logo" src="../assets/icons/spotify.svg">
             <h1 id="logo-title">Spotify Features</h1>
@@ -9,15 +10,16 @@
             <div class="active-bar"/>
         </div>
 
-        <div v-for="app in publicApps" :key="app.title" :class="{active: path == app.path}" @click="route(app.path)" class="nav-button">
-            <img :src="'./icons/' + app.img + '.svg'"/><h1>{{app.title}}</h1>
+        <div v-for="(app, index) in publicApps" :key="app.title" :class="{active: path == app.path}" @click="route(app.path, index)" class="nav-button">
+            <img :src="getImgUrl(app.img)"/><h1>{{app.title}}</h1>
             <div class="active-bar"/>
         </div>
 
         <h3>Your Library</h3>
-        <div v-for="app in privateApps" :key="app.title" :class="{active: path == app.path}" @click="route(app.path)" class="nav-button">
-            <img :src="'assets/icons/' + app.img + '.svg'"/><h1>{{app.title}}</h1>
+        <div v-for="(app, index) in privateApps" :key="app.title" :class="{active: path == app.path}" @click="route(app.path, index + publicApps.length)" class="nav-button">
+            <img :src="getImgUrl(app.img)"/><h1>{{app.title}}</h1>
             <div class="active-bar"/>
+        </div>
         </div>
     </div>
 </template>
@@ -30,6 +32,8 @@ export default {
     },
     methods: {
         route(path, index) {
+            if (path == this.path)
+                return;
             if (path != "")
             {
                 this.$store.dispatch("changeIndex", {index: index});
@@ -37,6 +41,10 @@ export default {
             }
             else 
                 this.$router.push("/");
+        },
+        getImgUrl(pic) {
+            var images = require.context('../assets/icons', false, /\.svg$/)
+            return images('./' + pic + ".svg");
         }
     },
     computed: {
@@ -65,8 +73,18 @@ export default {
     overflow-y: auto;
     width: 230px;
     height: 100vh;
+}
+
+#fixed {
+    display: block;
+    padding-top: 24px;
+    width: 230px;
+    height: 100vh;
     background-color: rgb(18, 18, 18);
     color: rgb(255, 255, 255);
+    position: fixed;
+    left: 0;
+    top: 0;
 }
 
 .nav-button {

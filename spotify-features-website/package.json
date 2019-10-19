@@ -10,6 +10,7 @@
   "dependencies": {
     "core-js": "^2.6.5",
     "particles.js": "^2.0.0",
+    "spotify-web-api-js": "^1.2.0",
     "typed.js": "^2.0.10",
     "vue": "^2.6.10",
     "vue-p5": "^0.7.1",

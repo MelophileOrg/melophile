@@ -2,10 +2,12 @@
   <div class="home">
     <NavBar path="home" />
     <div id="main">
+      <BigTitle id="title" align="left"/>
+      <h1 v-if="available.length">Available Apps</h1>
+      <AppsCarousel v-if="available.length" :apps="available"/>
+      <h1 v-if="development.length">Under Development</h1>
+      <AppsCarousel v-if="development.length" :apps="development"/>
       <Thank/>
-      <h1>Available Apps</h1>
-
-      <h1>Under Development</h1>
     </div>
   </div>
 </template>
@@ -14,27 +16,50 @@
 // @ is an alias to /src
 import NavBar from '@/components/NavBar.vue'
 import Thank from '@/components/Thank.vue'
+import AppsCarousel from '@/components/AppsCarousel.vue'
+import BigTitle from '@/components/BigTitle.vue'
 
 export default {
   name: 'home',
   components: {
     NavBar,
-    Thank
+    Thank,
+    AppsCarousel,
+    BigTitle
+  },
+  methods: {
+    showPath() {
+      console.log(this.$route.name);
+    }
   },
   computed: {
     token() {
-      return this.$state.store.access_token;
+      return this.$store.state.access_token;
+    },
+    apps() {
+      return this.$store.state.apps;
+    },
+    available() {
+      return this.apps.filter(function(app) {
+        return app.state;
+      });
+    },
+    development() {
+      return this.apps.filter(function(app) {
+        return !app.state;
+      });
     }
   },
-  created() {
-    if (!token) {
-      this.$router.push('token');
-    }
+  created: function() {
+    setInterval(this.showPath,1000);
   }
 }
 </script>
 
 <style scoped>
+#title {
+    margin-left: 64px;
+}
 .home {
   display: flex;
   width: 100vw;
@@ -46,11 +71,20 @@ export default {
 
 h1 {
   font-size: 36px;
-  line-height: 44px;
+  line-height: 93px;
   letter-spacing: -.005em;
   cursor: default;
-  color: white;
+  color: rgba(223, 223, 223, 0.342);
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.123);
   padding-left: 32px;
+
   text-align: left;
+  margin: 0 auto;
+  margin-top: 20px;
+  width: calc(100% - (64px * 2));
+}
+
+#main {
+  overflow-y: scroll;
 }
 </style>

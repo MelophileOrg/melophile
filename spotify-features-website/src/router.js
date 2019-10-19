@@ -3,6 +3,7 @@ import Router from 'vue-router'
 
 import Home from './views/Home.vue'
 import Login from './views/Login.vue'
+import Redirect from './views/Redirect.vue'
 import About from './views/About.vue'
 import AppPreview from './views/AppPreview.vue'
 
@@ -28,9 +29,9 @@ export default new Router({
       component: Login,
     },
     {
-      path: '/token/:access_token',
-      name: 'token',
-      component: Login,
+      path: '/redirect',
+      name: 'redirect',
+      component: Redirect,
     },
     {
       path: '/about',

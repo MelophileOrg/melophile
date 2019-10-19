@@ -2,7 +2,7 @@
   <div class="songanalysis">
     <NavBar path="songanalysis" />
     <div id="main">
-
+      <SearchBar/>
     </div>
   </div>
 </template>
@@ -10,20 +10,22 @@
 <script>
 // @ is an alias to /src
 import NavBar from '@/components/NavBar.vue'
+import SearchBar from '@/components/SearchBar.vue'
 
 export default {
   name: 'songanalysis',
   components: {
     NavBar,
+    SearchBar
   },
   computed: {
     token() {
-      return this.$state.store.access_token;
-    }
+      return this.$store.state.access_token;
+    },
   },
   created() {
-    if (!token) {
-      this.$router.push('token');
+    if (!this.$store.state.inicialized) {
+      this.$store.dispatch('getAccessToken');
     }
   }
 }

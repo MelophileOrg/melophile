@@ -1,106 +1,13 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
 
-var SpotifyWebApi = require('spotify-web-api-js');
-
-Vue.use(Vuex)
-
-export default new Vuex.Store({
-  state: {
-    spotifyApi: new SpotifyWebApi(),
-    inicialized: false,
-    apps: [
-      {
-        title: "Song Analysis",
-        path: "songanalysis",
-        auth: false,
-        description: [
-          "View all available information Spotify offers on a given song.",
-        ],
-        img: "search",
-        color: {red: 255, green: 165, blue: 30},
-        state: true,
-      },
-      {
-        title: "My Charts",
-        path: "mycharts",
-        auth: true,
-        description: [
-          "View your personalized top charts and artists.",
-        ],
-        img: "chart",
-        color: {red: 238, green: 126, blue: 137},
-        state: false,
-      },
-      {
-        title: "Library Analysis",
-        path: "libraryanalysis",
-        auth: true,
-        description: [
-          "Discover the averages and extremes within your library.",
-        ],
-        img: "library",
-        color: {red: 84, green: 224, blue: 210},
-        state: false,
-      },
-      {
-        title: "My Music Mood",
-        path: "mymusicmood",
-        auth: true,
-        description: [
-          "What does your music say about you?",
-        ],
-        img: "musicmood",
-        color: {red: 180, green: 100, blue: 100},
-        state: false,
-      }
-    ],
-    index: 0,
-  },
-  mutations: {
-    setIndex(state, index) {
-      state.index = index;
-    }
-  },
-  actions: {
-    parseAccessToken(context)
-    {
-        let token = window.location.hash.substring(1).split('&')
-        .reduce(function (initial, item) {
-          if (item) {
-            var parts = item.split('=');
-            initial[parts[0]] = decodeURIComponent(parts[1]);
-          }
-          return initial;
-        }, {});
-        console.log(token);
-
-    },
-    getAccessToken(context)
-    {
-      const authEndpoint = 'https://accounts.spotify.com/authorize';
-      const clientId = '42903eeb2bf943c4bd4903370f7a93f5';
-      const redirectUri = 'http://spotifyfeatures.andrewdanielyoung.com/redirect/';
-      const scopes = [
-        'user-read-recently-played',
-        'user-top-read',
-        'user-library-read',
-        'user-read-email',
-      ];
-      if (!this.state.access_token) {
-        window.location = `${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join('%20')}&response_type=token&show_dialog=true`;
-      }
-    },
-    changeIndex(context, payload) {
-      context.commit('setIndex', payload.index);
-    },
+//import SpotifyWebApi from './spotify-web-api'
 
 
+module.exports = {
     inicializeSpotifyApi(spotifyApi, access_token) {
-      spotifyApi.setAccessToken(access_token);
-      inicialized = true;
+        spotifyApi.setAccessToken(access_token);
+        inicialized = true;
     },
-  
+    
     // clientID 42903eeb2bf943c4bd4903370f7a93f5
     
     
@@ -224,7 +131,7 @@ export default new Vuex.Store({
     },
     
     // Array IDs
-    async searchSpotify(spotifyApi, payload) {
+    async searchSpotify(payload) {
         try {
             console.log('%c Searching.', 'color: blue;');
             let response = await spotifyApi.search(payload.query, ['track'], {limit: 25});
@@ -235,5 +142,7 @@ export default new Vuex.Store({
         }
     },
     
-  }
-})
+
+}
+
+

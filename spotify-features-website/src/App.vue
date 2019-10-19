@@ -5,9 +5,13 @@
 </template>
 
 <style>
+@import url('https://fonts.googleapis.com/css?family=Bitter&display=swap');
+
+
 html {
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  background-image: radial-gradient(circle at 230px 0px, rgb(63,73,76), rgb(8, 46, 5));
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -17,15 +21,31 @@ html {
   color: #2c3e50;
   display: block;
   width: 100vw;
-  min-height: 100vh;
+  overflow-x: hidden;
+  
 }
 
 #main {
   display: block;
-  width: calc(100vw - 230px);
-  min-height: 100vh;
-  overflow: auto;
-  /*padding: 0px 32px;*/
-  background-image: radial-gradient(circle at 0px 0px, rgb(63,73,76), rgb(6,6,6));
+  width: calc(100vw - 225px);
+  overflow-x: hidden;
+}
+
+html::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(124, 102, 102, 0.3);
+    background-color: rgb(6,6,6)
+}
+
+html::-webkit-scrollbar
+{
+    width: 18px;
+    background-color: rgb(6,6,6)
+}
+
+html::-webkit-scrollbar-thumb
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: rgba(255, 255, 255, 0.164);
 }
 </style>

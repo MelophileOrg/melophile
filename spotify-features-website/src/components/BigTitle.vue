@@ -1,6 +1,6 @@
 <template>
     <div class="BigTitle">
-        <div id="big-title">
+        <div :class="{topMargin: top, left: align == 'left', right: align == 'right'}" id="big-title">
             <img src="../assets/icons/spotify.svg"/>
             <h1>Spotify Features</h1>
         </div>
@@ -10,6 +10,10 @@
 <script>
 export default {
   name: 'BigTitle',
+  props: {
+    align: String,
+    top: Boolean,
+  }
 }
 </script>
 
@@ -19,8 +23,22 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 15vh;
+  margin-top: 32px;
+
 }
+
+.topMargin {
+  margin-top: 15vh !important;
+}
+
+.left {
+  justify-content: left !important;
+}
+
+.right {
+  justify-content: right !important;
+}
+
 img {
   display: block;
   width: 70px;
@@ -31,5 +49,6 @@ img {
   color: white;
   font-size: 70px;
   margin: 0px;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.123);
 }
 </style>
