@@ -30,6 +30,7 @@
         <div id="track-image" :style="{backgroundImage: 'url(\'' + data.album.images[0].url + '\')'}"/>
         <h1>{{data.name}}</h1>
         <p>{{data}}</p>
+        <div id="p5Canvas"/>
       </div>
     </div>
   </div>
@@ -39,6 +40,11 @@
 // @ is an alias to /src
 import NavBar from '@/components/NavBar.vue'
 import SearchBar from '@/components/SearchBar.vue'
+
+if (process.browser) {
+  var analysis = require('@/js/Analysis.js')
+}
+
 
 export default {
   name: 'songanalysis',
@@ -95,12 +101,21 @@ export default {
       this.data = null;
       this.data = await this.$store.dispatch('getTrack', this.trackId);
       this.data.audioFeatures = await this.$store.dispatch('getAudioFeaturesForTrack', this.trackId);
+    },
+    callbackOnP5: function(timeStr) {
+      this.message = timeStr;
     }
   },
   computed: {
     inicialized() {
       return this.$store.state.inicialized;
     },
+  },
+  mounted() {
+    const P5 = require('p5')
+    new P5(analysis.main)
+    // NOTE: p5.jsからのコールバックを受け取る
+    analysis.setDelegate(this.callbackOnP5);
   },
   created() {
     if (!this.inicialized)
