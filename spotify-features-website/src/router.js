@@ -5,7 +5,6 @@ import Home from './views/Home.vue'
 import Login from './views/Login.vue'
 import Redirect from './views/Redirect.vue'
 import About from './views/About.vue'
-import AppPreview from './views/AppPreview.vue'
 
 import SongAnalysis from './views/SongAnalysis'
 import MusicMood from './views/MusicMood'
@@ -39,16 +38,15 @@ export default new Router({
       component: About
     },
     {
-      path: '/app/:app/preview',
-      name: 'apppreview',
-      component: AppPreview
-    },
-    {
       path: '/songanalysis',
       name: 'songanalysis',
       component: SongAnalysis
     },
-
+    {
+      path: '/songanalysis/:trackId',
+      name: 'songanalysisSENT',
+      component: SongAnalysis
+    },
     {
       path: '/mymusicmood',
       name: 'mymusicmood',

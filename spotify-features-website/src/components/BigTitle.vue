@@ -58,7 +58,7 @@ p {
   font-size: .15em;
   right: 0px;
   bottom: -15px;
-  color: rgba(255, 255, 255, 0.267);
+  color: rgba(255, 255, 255, 0.123);
   font-weight: lighter;
 }
 </style>

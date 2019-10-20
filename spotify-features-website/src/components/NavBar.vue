@@ -37,7 +37,7 @@ export default {
             if (path != "")
             {
                 this.$store.dispatch("changeIndex", {index: index});
-                this.$router.push("/app/" + path + "/preview");
+                this.$router.push("/" + path);
             }
             else 
                 this.$router.push("/");

@@ -1,14 +1,12 @@
 <template>
     <div class="AppCarousel">
         <div v-for="(app, index) in apps" :key="'carousel-'+app.title+'-'+index " class="app">
-            <AppImage :width="215" :index="index" />
             <h1>{{app.title}}</h1>
         </div>
     </div>
 </template>
 
 <script>
-import AppImage from '@/components/AppImage.vue'
 
 export default {
     name: 'AppCarousel',
@@ -16,7 +14,6 @@ export default {
         apps: Array,
     },
     components: {
-        AppImage
     }
 }
 </script>

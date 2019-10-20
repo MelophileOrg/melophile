@@ -66,27 +66,30 @@ export default new Vuex.Store({
       state.inicialized = inicialized;
     },
     setToken(state, token) {
+      console.log(token);
       state.accessToken = token;
     },
   },
   actions: {
     parseAccessToken(context)
     {
-        let token = window.location.hash.substring(1).split('&')
-        .reduce(function (initial, item) {
-          if (item) {
-            var parts = item.split('=');
-            initial[parts[0]] = decodeURIComponent(parts[1]);
-          }
-          return initial;
-        }, {});
-        context.commit('setToken', token);
+      console.log(window.location.hash);
+      let token = window.location.hash.substring(1).split('&')
+      .reduce(function (initial, item) {
+        if (item) {
+          var parts = item.split('=');
+          initial[parts[0]] = decodeURIComponent(parts[1]);
+        }
+        return initial;
+      }, {});
+      console.log(token.access_token);
+      context.commit('setToken', token.access_token);
     },
     getAccessToken(context)
     {
       const authEndpoint = 'https://accounts.spotify.com/authorize';
       const clientId = '42903eeb2bf943c4bd4903370f7a93f5';
-      const redirectUri = 'http://spotifyfeatures.andrewdanielyoung.com/redirect/';
+      const redirectUri = 'http://localhost:8080/redirect/';//'http://spotifyfeatures.andrewdanielyoung.com/redirect/';
       const scopes = [
         'user-read-recently-played',
         'user-top-read',
@@ -100,43 +103,33 @@ export default new Vuex.Store({
     changeIndex(context, payload) {
       context.commit('setIndex', payload.index);
     },
-
-
     inicializeSpotifyApi(context) {
+      console.log('%c Inicializing Authorization.', 'color: purple;');
       this.state.spotifyApi.setAccessToken(this.state.accessToken);
       context.commit('setInicialized', true);
     },
-  
-    // clientID 42903eeb2bf943c4bd4903370f7a93f5
-    
-    
     // {limit: Number 1-50, time_range: "long_term" Several years, "medium_term" 6 Months, "short_term" 4 Weeks, offset: Index of first entry to return}
-    async getTopArtists(spotifyApi, payload) {
+    async getTopArtists(context, payload) {
         try {
-            console.log('%c Retrieving Top Played Tracks.', 'color: blue;');
-            let response = await this.state.spotifyApi.getMyTopTracks({limit: payload.limit, time_range: payload.time_range});
-            console.table(response.items);
-            return response;
+            console.log('%c Retrieving Top Played Artists.', 'color: blue;');
+            let response = await this.state.spotifyApi.getMyTopArtists({limit: payload.limit, time_range: payload.time_range});
+            return response.items;
         } catch (error) {
             console.log(error);
         }  
     },
-    
     // {limit: Number 1-50, time_range: "long_term" Several years, "medium_term" 6 Months, "short_term" 4 Weeks, offset: Index of first entry to return}
-    async getTopTracks(spotifyApi, payload) {
+    async getTopTracks(context, payload) {
         try {
             console.log('%c Retrieving Top Played Tracks.', 'color: blue;');
             let response = await this.state.spotifyApi.getMyTopTracks({limit: payload.limit, time_range: payload.time_range});
-            console.table(response.items);
-            return response;
+            return response.items;
         } catch (error) {
             console.log(error);
         }  
     },
-    
-    // {limit: Number 1-50, after: Unix timestamp Milliseconds, before: Unix timestamp Milliseconds}
-
-    async getRecentlyPlayed(spotifyApi, payload) {
+    // {limit: Number 1-50, after: Unix timestamp Milliseconds, before: Unix timestamp Milliseconds
+    async getRecentlyPlayed(context, payload) {
         try {
             console.log('%c Retrieving Recently Played Tracks.', 'color: blue;');
             let response = await this.state.spotifyApi.getMyRecentlyPlayedTracks({limit: payload.limit});
@@ -145,10 +138,9 @@ export default new Vuex.Store({
         } catch (error) {
             console.log(error);
         }
-    },
-    
+    },  
     // {trackId: String}
-    async getTrack(spotifyApi, payload) {
+    async getTrack(context, payload) {
         try {
             console.log('%c Requesting Track.', 'color: blue;');
             let response = await this.state.spotifyApi.getTrack(payload.trackId);
@@ -157,10 +149,9 @@ export default new Vuex.Store({
         } catch (error) {
             console.log(error);
         }
-    },
-    
+    }, 
     // {artistId: String}
-    async getArtist(spotifyApi, payload) {
+    async getArtist(context, payload) {
         try {
             console.log('%c Requesting Artist.', 'color: blue;');
             let response = await this.state.spotifyApi.getArtist(payload.artistId);
@@ -169,21 +160,36 @@ export default new Vuex.Store({
         } catch (error) {
             console.log(error);
         }
-    },
-    
+    },  
     // Array IDs
-    async getAudioFeaturesForTracks(spotifyApi, track_ids) {
+    async getAudioFeaturesForTracks(context, track_ids) {
         try {
             console.log('%c Requesting Song Data.', 'color: blue;');
             let response = await this.state.spotifyApi.getAudioFeaturesForTracks(track_ids);
-            console.table(response.audio_features);
-            return response;
+            return response.audio_features;
         } catch (error) {
             console.log(error);
         }
     },
-    
-    async getAudioAnalysis(spotifyApi, track_id) {
+    async getAudioFeaturesForTrack(context, track_id) {
+      try {
+          console.log('%c Requesting Song Analysis.', 'color: blue;');
+          let response = await this.state.spotifyApi.getAudioFeaturesForTracks([track_id]);
+          return response.audio_features[0];
+      } catch (error) {
+          console.log(error);
+      }
+    },
+    async getTrack(context, track_id) {
+      try {
+          console.log('%c Requesting Song Data.', 'color: blue;');
+          let response = await this.state.spotifyApi.getTrack(track_id);
+          return response;
+      } catch (error) {
+          console.log(error);
+      }
+    },
+    async getAudioAnalysis(context, track_id) {
         try {
             console.log('%c Requesting Audio Analysis.', 'color: blue;');
             let response = await this.state.spotifyApi.getAudioAnalysisForTrack(track_id);
@@ -193,9 +199,8 @@ export default new Vuex.Store({
             console.log(error);
         }
     },
-    
     // {seed_tracks: [track_id], target_dancebility: NUM, limit: 6, max_* min_*}
-    async getRecomendations(spotifyApi, payload) {
+    async getRecomendations(context, payload) {
         try {
             console.log('%c Requesting Recommendations.', 'color: blue;');
             let response = await this.state.spotifyApi.getRecommendations(payload);
@@ -207,7 +212,7 @@ export default new Vuex.Store({
     },
     
     // {limit: 1-50, offset: first index}
-    async getMaxSavedTracks(spotifyApi, payload) {
+    async getMaxSavedTracks(context, payload) {
         try {
             console.log('%c Requesting Library Data.', 'color: blue;');
             let response = await this.state.spotifyApi.getMySavedTracks(payload);
@@ -231,12 +236,11 @@ export default new Vuex.Store({
     },
     
     // Array IDs
-    async searchSpotify(spotifyApi, payload) {
+    async searchSpotify(context, payload) {
         try {
             console.log('%c Searching.', 'color: blue;');
             let response = await this.state.spotifyApi.search(payload.query, ['track'], {limit: 25});
-            console.table(response.audio_features);
-            return response;
+            return response.tracks.items;
         } catch (error) {
             console.log(error);
         }
