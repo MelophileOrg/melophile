@@ -11,7 +11,7 @@
 html {
   position: relative;
   overflow-x: hidden;
-  background-image: radial-gradient(circle at 230px 0px, rgb(63,73,76), rgb(8, 46, 5));
+  background-image: radial-gradient(circle at 230px 0px, rgb(29, 29, 29),rgb(0, 0, 0));
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;

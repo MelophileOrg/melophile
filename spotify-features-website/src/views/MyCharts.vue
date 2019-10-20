@@ -17,12 +17,18 @@ export default {
     NavBar,
   },
   computed: {
-    token() {
-      return this.$store.state.access_token;
+    inicialized() {
+      return this.$store.state.inicialized;
     },
   },
   created() {
-
+    if (this.inicialized)
+    {
+      console.log(this.$store.dispatch('getRecentlyPlayed',{limit: 20}));
+    }
+    else {
+      this.$router.push("/login");
+    }
   }
 }
 </script>

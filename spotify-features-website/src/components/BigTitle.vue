@@ -2,7 +2,8 @@
     <div class="BigTitle">
         <div :class="{topMargin: top, left: align == 'left', right: align == 'right'}" id="big-title">
             <img src="../assets/icons/spotify.svg"/>
-            <h1>Spotify Features</h1>
+            <h1>Spotify Features<p>This website is not affiliated with Spotify</p></h1>
+            
         </div>
     </div>
 </template>
@@ -50,5 +51,14 @@ img {
   font-size: 70px;
   margin: 0px;
   text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.123);
+  position: relative;
+}
+p {
+  position: absolute;
+  font-size: .15em;
+  right: 0px;
+  bottom: -15px;
+  color: rgba(255, 255, 255, 0.267);
+  font-weight: lighter;
 }
 </style>

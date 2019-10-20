@@ -8,6 +8,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     spotifyApi: new SpotifyWebApi(),
+    accessToken: "",
     inicialized: false,
     apps: [
       {
@@ -60,7 +61,13 @@ export default new Vuex.Store({
   mutations: {
     setIndex(state, index) {
       state.index = index;
-    }
+    },
+    setInicialized(state, inicialized) {
+      state.inicialized = inicialized;
+    },
+    setToken(state, token) {
+      state.accessToken = token;
+    },
   },
   actions: {
     parseAccessToken(context)
@@ -73,8 +80,7 @@ export default new Vuex.Store({
           }
           return initial;
         }, {});
-        console.log(token);
-
+        context.commit('setToken', token);
     },
     getAccessToken(context)
     {
@@ -96,9 +102,9 @@ export default new Vuex.Store({
     },
 
 
-    inicializeSpotifyApi(spotifyApi, access_token) {
-      spotifyApi.setAccessToken(access_token);
-      inicialized = true;
+    inicializeSpotifyApi(context) {
+      this.state.spotifyApi.setAccessToken(this.state.accessToken);
+      context.commit('setInicialized', true);
     },
   
     // clientID 42903eeb2bf943c4bd4903370f7a93f5
@@ -108,7 +114,7 @@ export default new Vuex.Store({
     async getTopArtists(spotifyApi, payload) {
         try {
             console.log('%c Retrieving Top Played Tracks.', 'color: blue;');
-            let response = await spotifyApi.getMyTopTracks({limit: payload.limit, time_range: payload.time_range});
+            let response = await this.state.spotifyApi.getMyTopTracks({limit: payload.limit, time_range: payload.time_range});
             console.table(response.items);
             return response;
         } catch (error) {
@@ -120,7 +126,7 @@ export default new Vuex.Store({
     async getTopTracks(spotifyApi, payload) {
         try {
             console.log('%c Retrieving Top Played Tracks.', 'color: blue;');
-            let response = await spotifyApi.getMyTopTracks({limit: payload.limit, time_range: payload.time_range});
+            let response = await this.state.spotifyApi.getMyTopTracks({limit: payload.limit, time_range: payload.time_range});
             console.table(response.items);
             return response;
         } catch (error) {
@@ -129,10 +135,11 @@ export default new Vuex.Store({
     },
     
     // {limit: Number 1-50, after: Unix timestamp Milliseconds, before: Unix timestamp Milliseconds}
+
     async getRecentlyPlayed(spotifyApi, payload) {
         try {
             console.log('%c Retrieving Recently Played Tracks.', 'color: blue;');
-            let response = await spotifyApi.getMyRecentlyPlayedTracks({limit: payload.limit, after: payload.range});
+            let response = await this.state.spotifyApi.getMyRecentlyPlayedTracks({limit: payload.limit});
             console.table(response.items);
             return response;
         } catch (error) {
@@ -144,7 +151,7 @@ export default new Vuex.Store({
     async getTrack(spotifyApi, payload) {
         try {
             console.log('%c Requesting Track.', 'color: blue;');
-            let response = await spotifyApi.getTrack(payload.trackId);
+            let response = await this.state.spotifyApi.getTrack(payload.trackId);
             console.table(response);
             return response;
         } catch (error) {
@@ -156,7 +163,7 @@ export default new Vuex.Store({
     async getArtist(spotifyApi, payload) {
         try {
             console.log('%c Requesting Artist.', 'color: blue;');
-            let response = await spotifyApi.getArtist(payload.artistId);
+            let response = await this.state.spotifyApi.getArtist(payload.artistId);
             console.table(response);
             return response;
         } catch (error) {
@@ -168,7 +175,7 @@ export default new Vuex.Store({
     async getAudioFeaturesForTracks(spotifyApi, track_ids) {
         try {
             console.log('%c Requesting Song Data.', 'color: blue;');
-            let response = await spotifyApi.getAudioFeaturesForTracks(track_ids);
+            let response = await this.state.spotifyApi.getAudioFeaturesForTracks(track_ids);
             console.table(response.audio_features);
             return response;
         } catch (error) {
@@ -179,7 +186,7 @@ export default new Vuex.Store({
     async getAudioAnalysis(spotifyApi, track_id) {
         try {
             console.log('%c Requesting Audio Analysis.', 'color: blue;');
-            let response = await spotifyApi.getAudioAnalysisForTrack(track_id);
+            let response = await this.state.spotifyApi.getAudioAnalysisForTrack(track_id);
             console.table(response);
             return response;
         } catch (error) {
@@ -191,7 +198,7 @@ export default new Vuex.Store({
     async getRecomendations(spotifyApi, payload) {
         try {
             console.log('%c Requesting Recommendations.', 'color: blue;');
-            let response = await spotifyApi.getRecommendations(payload);
+            let response = await this.state.spotifyApi.getRecommendations(payload);
             console.table(response);
             return response;
         } catch (error) {
@@ -203,7 +210,7 @@ export default new Vuex.Store({
     async getMaxSavedTracks(spotifyApi, payload) {
         try {
             console.log('%c Requesting Library Data.', 'color: blue;');
-            let response = await spotifyApi.getMySavedTracks(payload);
+            let response = await this.state.spotifyApi.getMySavedTracks(payload);
             console.table(response.items);
             return response;
         } catch (error) {
@@ -215,7 +222,7 @@ export default new Vuex.Store({
     async getUser() {
         try {
         console.log('%c Requesting Library Data.', 'color: blue;');
-        let response = await spotifyApi.getMe();
+        let response = await this.state.spotifyApi.getMe();
         console.table(response);
         return response;
         } catch (error) {
@@ -227,7 +234,7 @@ export default new Vuex.Store({
     async searchSpotify(spotifyApi, payload) {
         try {
             console.log('%c Searching.', 'color: blue;');
-            let response = await spotifyApi.search(payload.query, ['track'], {limit: 25});
+            let response = await this.state.spotifyApi.search(payload.query, ['track'], {limit: 25});
             console.table(response.audio_features);
             return response;
         } catch (error) {

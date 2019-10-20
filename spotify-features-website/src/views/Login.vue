@@ -22,17 +22,10 @@ export default {
     BigTitle
   },
   computed: {
-      token() {
-          return this.$store.state.access_token;
-      }
+
   },
   created() {
-    console.log("Checking");
-    if (this.$route.currentRoute.name == 'redirect')
-    {
-      console.log("YO TIME TO GO");
-      this.$store.dispatch('parseAccessToken');
-    }
+    this.$store.dispatch('getAccessToken');
   }
 }
 </script>

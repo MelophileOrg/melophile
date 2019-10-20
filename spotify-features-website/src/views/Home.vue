@@ -3,10 +3,7 @@
     <NavBar path="home" />
     <div id="main">
       <BigTitle id="title" align="left"/>
-      <h1 v-if="available.length">Available Apps</h1>
-      <AppsCarousel v-if="available.length" :apps="available"/>
-      <h1 v-if="development.length">Under Development</h1>
-      <AppsCarousel v-if="development.length" :apps="development"/>
+
       <Thank/>
     </div>
   </div>
@@ -28,9 +25,6 @@ export default {
     BigTitle
   },
   methods: {
-    showPath() {
-      console.log(this.$route.name);
-    }
   },
   computed: {
     token() {

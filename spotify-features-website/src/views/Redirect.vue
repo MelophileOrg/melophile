@@ -9,8 +9,10 @@
 
 export default {
   name: 'redirect',
-  created() {
-      this.$store.dispatch('parseAccessToken');
+  async created() {
+      await this.$store.dispatch('parseAccessToken');
+      await this.$store.dispatch('inicializeSpotifyApi');
+      this.$router.push("/");
   }
 }
 </script>
