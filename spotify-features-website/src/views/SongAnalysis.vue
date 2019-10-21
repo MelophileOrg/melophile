@@ -3,6 +3,7 @@
     <NavBar path="songanalysis" />
     <div id="main">
       <SearchBar v-on:changed="search" />
+      <AppTitle v-if="load" title="Song Analysis" image="search" font="PatuaOne" :drop="true"/>
       <div class="loading" v-if="!trackSelected && list.length == 0 && waiting && !empty">
         <div v-for="bar in 4" :key="'loadingbar'+bar" class="bar" :style="{'--delay': + (bar - 1)}"/>
       </div>
@@ -37,14 +38,15 @@
 import NavBar from '@/components/NavBar.vue'
 import SearchBar from '@/components/SearchBar.vue'
 import TrackAnalysis from '@/components/TrackAnalysis.vue'
-
+import AppTitle from '@/components/AppTitle.vue'
 
 export default {
   name: 'songanalysis',
   components: {
     NavBar,
     SearchBar,
-    TrackAnalysis
+    TrackAnalysis,
+    AppTitle
   },
   data() {
     return {

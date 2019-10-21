@@ -3,7 +3,7 @@
         <div id="fixed">
         <div id="logo-div">
             <img id="logo" src="../assets/icons/logo.svg">
-            <h1 id="logo-title">Spotify Features</h1>
+            <h1 id="logo-title">My Music Taste</h1>
         </div>
         <div :class="{active: path == 'home'}" @click="route('')" class="nav-button">
             <img src="../assets/icons/home.svg"/><h1>Home</h1>

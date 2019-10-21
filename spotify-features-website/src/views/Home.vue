@@ -13,7 +13,6 @@
 // @ is an alias to /src
 import NavBar from '@/components/NavBar.vue'
 import Thank from '@/components/Thank.vue'
-import AppsCarousel from '@/components/AppsCarousel.vue'
 import BigTitle from '@/components/BigTitle.vue'
 
 export default {
@@ -21,7 +20,6 @@ export default {
   components: {
     NavBar,
     Thank,
-    AppsCarousel,
     BigTitle
   },
   methods: {

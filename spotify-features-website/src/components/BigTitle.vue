@@ -2,8 +2,7 @@
     <div class="BigTitle">
         <div :class="{topMargin: top, left: align == 'left', right: align == 'right'}" id="big-title">
             <img src="../assets/icons/logo.svg"/>
-            <h1>Spotify Features<p>This website is not affiliated with Spotify</p></h1>
-            
+            <h1>My Music Taste</h1>
         </div>
     </div>
 </template>
@@ -45,7 +44,15 @@ img {
   width: 70px;
   height: 70px;
   margin-right: 20px;
+  animation: float 2s ease-in-out infinite;
 }
+
+@keyframes float {
+  50% {
+    transform: translateY(3px);
+  }
+}
+
 #big-title h1 {
   color: white;
   font-size: 70px;

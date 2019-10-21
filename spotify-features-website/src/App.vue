@@ -54,6 +54,7 @@ body {
   display: block;
   width: calc(100vw - 225px);
   overflow-x: hidden;
+  position: relative;
 }
 
 html::-webkit-scrollbar-track

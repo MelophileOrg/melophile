@@ -2,10 +2,7 @@
   <div class="mycharts">
     <NavBar path="mycharts" />
     <div id="main">
-      <div v-if="load" id="title-div">
-        <div id="title-image"/>
-        <h1 id="title">My Charts</h1>
-      </div>
+      <AppTitle v-if="load" title="My Charts" image="chart" font="Monoton"/>
       <div :class="{load: load}" id="options">
         <h1>my top</h1>
         <Select @pending="pending('type')" @selection="typeSelected" :load="load" :options="types"/>
@@ -68,12 +65,14 @@
 // @ is an alias to /src
 import NavBar from '@/components/NavBar.vue'
 import Select from '@/components/Select.vue'
+import AppTitle from '@/components/AppTitle.vue'
 
 export default {
   name: 'mycharts',
   components: {
     NavBar,
     Select,
+    AppTitle
   },
   data() {
     return {
@@ -278,6 +277,7 @@ tr {
   font-weight: lighter;
   margin: 0;
   font-family: 'Bitter', serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 .row h1 {
@@ -306,56 +306,7 @@ tr {
   background-position: center center;
 }
 
-#title-div {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 64px;
-  animation: slide-up .3s ease 0s;
-}
 
-#title-image {
-  background-image: url("../assets/icons/chart.svg");
-  display: block;
-  width: 60px;
-  height: 60px;
-  background-size: 100% 100%;
-  margin-right: 30px;
-}
-
-@import url('https://fonts.googleapis.com/css?family=Monoton&display=swap');
-
-
-#title {
-  font-family: 'Monoton', cursive;
-  font-weight: lighter;
-  color: white;
-  font-size: 60px;
-  margin: 0;
-}
-
-@media screen and (min-width: 1000px) {
-  #title-div {
-    margin-top: 15vh;
-  }
-  #title-image {
-    height: 100px !important;
-    width: 100px !important;
-  }
-  #title {
-    font-size: 100px !important;
-  } 
-}
-
-@media screen and (min-width: 890px) {
-  #title-image {
-    height: 80px;
-    width: 80px;
-  }
-  #title {
-    font-size: 80px;
-  } 
-}
 
 
 </style>
