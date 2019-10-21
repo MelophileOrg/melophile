@@ -212,11 +212,10 @@ export default new Vuex.Store({
     },
     
     // {limit: 1-50, offset: first index}
-    async getMaxSavedTracks(context, payload) {
+    async getSavedTracks(context, payload) {
         try {
             console.log('%c Requesting Library Data.', 'color: blue;');
-            let response = await this.state.spotifyApi.getMySavedTracks(payload);
-            console.table(response.items);
+            let response = await this.state.spotifyApi.getMySavedTracks({limit: payload.limit, offset: payload.offset});
             return response;
         } catch (error) {
             console.log(error);

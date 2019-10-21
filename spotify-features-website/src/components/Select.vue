@@ -38,7 +38,6 @@ export default {
         toggle() {
             if (this.show)
             {
-                console.log("SZETINGGSS)");
                 this.index = -1;
                 this.close();
             }
@@ -54,9 +53,13 @@ export default {
     computed: {
         selected() {
             if (this.show)
+            {
                 return "______";
+            }
             if (this.index == -1)
+            {
                 return "______";
+            }
             else
                 return this.options[this.index].text;
         }
