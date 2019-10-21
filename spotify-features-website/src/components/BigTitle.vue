@@ -1,7 +1,7 @@
 <template>
     <div class="BigTitle">
         <div :class="{topMargin: top, left: align == 'left', right: align == 'right'}" id="big-title">
-            <img src="../assets/icons/spotify.svg"/>
+            <img src="../assets/icons/logo.svg"/>
             <h1>Spotify Features<p>This website is not affiliated with Spotify</p></h1>
             
         </div>

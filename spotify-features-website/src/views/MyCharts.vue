@@ -169,9 +169,6 @@ a.row {
   display: flex;
   width: 100vw;
   min-height: 100vh;
-  position: absolute;
-  top: 0;
-  left: 0;
 }
 
 .table {
@@ -305,7 +302,6 @@ tr {
   display: block;
   width: 60px;
   height: 60px;
-  border-radius: 5px;
   background-size: auto 100%;
   background-position: center center;
 }

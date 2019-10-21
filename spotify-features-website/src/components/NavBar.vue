@@ -2,7 +2,7 @@
     <div class="NavBar">
         <div id="fixed">
         <div id="logo-div">
-            <img id="logo" src="../assets/icons/spotify.svg">
+            <img id="logo" src="../assets/icons/logo.svg">
             <h1 id="logo-title">Spotify Features</h1>
         </div>
         <div :class="{active: path == 'home'}" @click="route('')" class="nav-button">
@@ -149,8 +149,9 @@ img {
 }
 
 #logo {
-    height: 30px;
-    width: 30px;
+    height: 32px;
+    width: 32px;
+    margin-right: 8px;
 }
 
 #logo-div {
@@ -162,7 +163,7 @@ img {
 }
 
 #logo-title {
-    font-size: 17px;
+    font-size: 18px;
 }
 
 </style>

@@ -1,17 +1,33 @@
 <template>
   <div id="app">
+    <div id="background"/>
     <router-view/>
+    
   </div>
 </template>
 
 <style>
 @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 
+#background {
+  position: fixed;
+  left: 0px;
+  right: 0px;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  z-index: -100;
+  background-image: radial-gradient(circle at 0px 0px, rgb(37, 37, 37),rgb(0, 0, 0));
+  background-size: 100% 100%;
+}
 
 html {
   position: relative;
   overflow-x: hidden;
-  background-image: radial-gradient(circle at 230px 0px, rgb(29, 29, 29),rgb(0, 0, 0));
+}
+
+body {
+  margin: 0;
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -21,6 +37,7 @@ html {
   color: #2c3e50;
   display: block;
   width: 100vw;
+  min-height: 100vh;
   overflow-x: hidden;
 }
 

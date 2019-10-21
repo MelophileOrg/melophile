@@ -32,8 +32,5 @@ export default {
   display: flex;
   width: 100vw;
   min-height: 100vh;
-  position: absolute;
-  top: 0;
-  left: 0;
 }
 </style>

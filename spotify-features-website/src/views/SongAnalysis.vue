@@ -26,12 +26,8 @@
           </tr>
         </table>
       </div>
-      <div id="analysis" v-if="trackSelected && data != null">
-        <div id="track-image" :style="{backgroundImage: 'url(\'' + data.album.images[0].url + '\')'}"/>
-        <h1>{{data.name}}</h1>
-        <p>{{data}}</p>
-        <div id="p5Canvas"/>
-      </div>
+      <TrackAnalysis :trackData="trackData" v-if="trackSelected && trackData != null" />
+      
     </div>
   </div>
 </template>
@@ -40,23 +36,21 @@
 // @ is an alias to /src
 import NavBar from '@/components/NavBar.vue'
 import SearchBar from '@/components/SearchBar.vue'
-
-if (process.browser) {
-  var analysis = require('@/js/Analysis.js')
-}
+import TrackAnalysis from '@/components/TrackAnalysis.vue'
 
 
 export default {
   name: 'songanalysis',
   components: {
     NavBar,
-    SearchBar
+    SearchBar,
+    TrackAnalysis
   },
   data() {
     return {
       trackSelected: false,
       list: [],
-      data: null,
+      trackData: null,
       promise: null,
       load: true,
       waiting: false,
@@ -64,7 +58,6 @@ export default {
       setId: 0,
 
       trackId: "",
-      data: null,
     }
   },
   methods: {
@@ -98,9 +91,9 @@ export default {
       this.load = false;
       this.trackSelected = true;
       this.trackId = id;
-      this.data = null;
-      this.data = await this.$store.dispatch('getTrack', this.trackId);
-      this.data.audioFeatures = await this.$store.dispatch('getAudioFeaturesForTrack', this.trackId);
+      this.trackData = null;
+      this.trackData = await this.$store.dispatch('getTrack', this.trackId);
+      this.trackData.audioFeatures = await this.$store.dispatch('getAudioFeaturesForTrack', this.trackId);
     },
     callbackOnP5: function(timeStr) {
       this.message = timeStr;
@@ -111,12 +104,6 @@ export default {
       return this.$store.state.inicialized;
     },
   },
-  mounted() {
-    const P5 = require('p5')
-    new P5(analysis.main)
-    // NOTE: p5.jsからのコールバックを受け取る
-    analysis.setDelegate(this.callbackOnP5);
-  },
   created() {
     if (!this.inicialized)
       this.$router.push("/login");
@@ -125,26 +112,6 @@ export default {
 </script>
 
 <style scoped>
-#track-image {
-  display: block;
-  width: 200px;
-  height: 200px;
-  background-size: 100% 100%;
-  border-radius: 5px;
-}
-
-#analysis {
-  position: relative;
-  display: block;
-  width: calc(100% - 64px);
-  margin: 32px;
-  animation: slide-up .5s ease;
-}
-
-#analysis h1 {
-  color: white;
-  text-align: left;
-}
 .loading {
   margin-top: 100px;
 }
@@ -160,9 +127,6 @@ export default {
   display: flex;
   width: 100vw;
   min-height: 100vh;
-  position: absolute;
-  top: 0;
-  left: 0;
 }
 
 table {
