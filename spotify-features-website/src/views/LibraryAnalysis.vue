@@ -242,7 +242,7 @@
             </div>
             <div class="graph-labels">
               <p>*Snore*</p>
-              <p>Absolute Banger</p>
+              <p>Absolute Bangers</p>
               <p class="instructions">Go to the Extremes Tab for the Highest and Lowest Tracks</p>
             </div>
           </div>
@@ -302,6 +302,11 @@ export default {
   },
   data() {
     return {
+      
+      libraryData: {
+        tracks: [],
+        audio_features: null,
+      },
       sorts: [
         {value: 'valence', text: "Happy"},
         {value: 'energy', text: "Energetic"},
@@ -553,9 +558,13 @@ export default {
         this.audioFeaturesDone = true;
         await this.checkArtists();
         this.checkGenres();
+        this.libraryData.audio_features = this.audio_features;
+        this.libraryData.audio_features.bangers = this.bangers;
+        this.$store.dispatch('changeLibraryData', this.libraryData);
       }
     },
     analyseData(tracks) {
+      this.libraryData.tracks = this.libraryData.tracks.concat(tracks);
       let keys = Object.keys(this.audio_features); 
       for (let i = 0; i < tracks.length; i++)
       {

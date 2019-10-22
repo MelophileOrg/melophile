@@ -99,6 +99,7 @@ export default {
       this.trackData = await this.$store.dispatch('getTrack', this.trackId);
       this.trackData.audioFeatures = await this.$store.dispatch('getAudioFeaturesForTrack', this.trackId);
       this.trackPrepared = true;
+      
     },
     callbackOnP5: function(timeStr) {
       this.message = timeStr;

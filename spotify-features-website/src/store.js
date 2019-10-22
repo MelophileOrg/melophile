@@ -69,6 +69,7 @@ export default new Vuex.Store({
       }
     ],
     index: 0,
+    libraryData: [],
   },
   mutations: {
     setIndex(state, index) {
@@ -80,8 +81,15 @@ export default new Vuex.Store({
     setToken(state, token) {
       state.accessToken = token;
     },
+    setLibraryData(state, data) {
+      state.libraryData = data;
+    }
   },
   actions: {
+    changeLibraryData(context, payload) {
+      context.commit('setLibraryData', payload);
+      console.log(this.state.libraryData);
+    },
     parseAccessToken(context)
     {
       let token = window.location.hash.substring(1).split('&')
@@ -206,12 +214,10 @@ export default new Vuex.Store({
           console.log(error);
       }
     },
-
-    async getAudioAnalysis(context, track_id) {
+    async getAudioAnalysisForTrack(context, track_id) {
         try {
             console.log('%c Requesting Audio Analysis.', 'color: blue;');
             let response = await this.state.spotifyApi.getAudioAnalysisForTrack(track_id);
-            console.table(response);
             return response;
         } catch (error) {
             console.log(error);
