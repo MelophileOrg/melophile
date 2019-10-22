@@ -55,7 +55,7 @@
             </div>
           </div>
 
-          <div id="characteristics" class="window" :style="{'--delay': 3}">
+          <div id="characteristics" class="window" :style="{'--delay': 2}">
             <h3>Characteristics</h3>
             <div class="row stat">
               <h4 class="bar-title">Happiness</h4>
@@ -80,7 +80,7 @@
             </div>
           </div>
 
-          <div id="genre-details" class="window" :style="{'--delay': + 2}">
+          <div id="genre-details" class="window" :style="{'--delay': + 3}">
             <h3 v-if="!genresDone">Genres</h3>
             <div class="loading" v-if="!genresDone">
               <div v-for="bar in 4" :key="'loadingbar'+bar" class="bar" :style="{'--delay': + (bar - 1)}"/>
@@ -160,65 +160,90 @@
           </div>
 
           <div id="happiness-graph" class="window" :style="{'--delay': 5}">
-            <h3># Songs vs. Happiness</h3>
+            <h3>Happiness Distribution</h3>
             <div class="graph" :style="{'--max': + findMax(audio_features.valence.plot), '--red': + barColors[0].red, '--green': + barColors[0].green, '--blue': + barColors[0].blue}">
-              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[0] < 100}" :style="{'--height': + audio_features.valence.plot[0]}"><p>{{audio_features.valence.plot[0]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[1] < 100}" :style="{'--height': + audio_features.valence.plot[1]}"><p>{{audio_features.valence.plot[1]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[2] < 100}" :style="{'--height': + audio_features.valence.plot[2]}"><p>{{audio_features.valence.plot[2]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[3] < 100}" :style="{'--height': + audio_features.valence.plot[3]}"><p>{{audio_features.valence.plot[3]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[4] < 100}" :style="{'--height': + audio_features.valence.plot[4]}"><p>{{audio_features.valence.plot[4]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[5] < 100}" :style="{'--height': + audio_features.valence.plot[5]}"><p>{{audio_features.valence.plot[5]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[6] < 100}" :style="{'--height': + audio_features.valence.plot[6]}"><p>{{audio_features.valence.plot[6]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[7] < 100}" :style="{'--height': + audio_features.valence.plot[7]}"><p>{{audio_features.valence.plot[7]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[8] < 100}" :style="{'--height': + audio_features.valence.plot[8]}"><p>{{audio_features.valence.plot[8]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[9] < 100}" :style="{'--height': + audio_features.valence.plot[9]}"><p>{{audio_features.valence.plot[9]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[0] < findMax(audio_features.valence.plot) / 10}" :style="{'--height': + audio_features.valence.plot[0]}"><p>{{audio_features.valence.plot[0]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[1] < findMax(audio_features.valence.plot) / 10}" :style="{'--height': + audio_features.valence.plot[1]}"><p>{{audio_features.valence.plot[1]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[2] < findMax(audio_features.valence.plot) / 10}" :style="{'--height': + audio_features.valence.plot[2]}"><p>{{audio_features.valence.plot[2]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[3] < findMax(audio_features.valence.plot) / 10}" :style="{'--height': + audio_features.valence.plot[3]}"><p>{{audio_features.valence.plot[3]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[4] < findMax(audio_features.valence.plot) / 10}" :style="{'--height': + audio_features.valence.plot[4]}"><p>{{audio_features.valence.plot[4]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[5] < findMax(audio_features.valence.plot) / 10}" :style="{'--height': + audio_features.valence.plot[5]}"><p>{{audio_features.valence.plot[5]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[6] < findMax(audio_features.valence.plot) / 10}" :style="{'--height': + audio_features.valence.plot[6]}"><p>{{audio_features.valence.plot[6]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[7] < findMax(audio_features.valence.plot) / 10}" :style="{'--height': + audio_features.valence.plot[7]}"><p>{{audio_features.valence.plot[7]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[8] < findMax(audio_features.valence.plot) / 10}" :style="{'--height': + audio_features.valence.plot[8]}"><p>{{audio_features.valence.plot[8]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[9] < findMax(audio_features.valence.plot) / 10}" :style="{'--height': + audio_features.valence.plot[9]}"><p>{{audio_features.valence.plot[9]}}</p></div>
               <p class="yAxis">Number of Songs</p>
             </div>
             <div class="graph-labels">
               <p>Sad</p>
               <p>Happy</p>
+              <p class="instructions">Go to the Extremes Tab for the Highest and Lowest Tracks</p>
             </div>
           </div>
 
           <div id="happiness-graph" class="window" :style="{'--delay': 7}">
-            <h3># Songs vs. Energy</h3>
+            <h3>Energy Distribution</h3>
             <div class="graph" :style="{'--max': + findMax(audio_features.energy.plot), '--red': + barColors[1].red, '--green': + barColors[1].green, '--blue': + barColors[1].blue}">
-              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[0] < 100}" :style="{'--height': + audio_features.energy.plot[0]}"><p>{{audio_features.energy.plot[0]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[1] < 100}" :style="{'--height': + audio_features.energy.plot[1]}"><p>{{audio_features.energy.plot[1]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[2] < 100}" :style="{'--height': + audio_features.energy.plot[2]}"><p>{{audio_features.energy.plot[2]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[3] < 100}" :style="{'--height': + audio_features.energy.plot[3]}"><p>{{audio_features.energy.plot[3]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[4] < 100}" :style="{'--height': + audio_features.energy.plot[4]}"><p>{{audio_features.energy.plot[4]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[5] < 100}" :style="{'--height': + audio_features.energy.plot[5]}"><p>{{audio_features.energy.plot[5]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[6] < 100}" :style="{'--height': + audio_features.energy.plot[6]}"><p>{{audio_features.energy.plot[6]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[7] < 100}" :style="{'--height': + audio_features.energy.plot[7]}"><p>{{audio_features.energy.plot[7]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[8] < 100}" :style="{'--height': + audio_features.energy.plot[8]}"><p>{{audio_features.energy.plot[8]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[9] < 100}" :style="{'--height': + audio_features.energy.plot[9]}"><p>{{audio_features.energy.plot[9]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[0] < findMax(audio_features.energy.plot) / 10}" :style="{'--height': + audio_features.energy.plot[0]}"><p>{{audio_features.energy.plot[0]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[1] < findMax(audio_features.energy.plot) / 10}" :style="{'--height': + audio_features.energy.plot[1]}"><p>{{audio_features.energy.plot[1]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[2] < findMax(audio_features.energy.plot) / 10}" :style="{'--height': + audio_features.energy.plot[2]}"><p>{{audio_features.energy.plot[2]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[3] < findMax(audio_features.energy.plot) / 10}" :style="{'--height': + audio_features.energy.plot[3]}"><p>{{audio_features.energy.plot[3]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[4] < findMax(audio_features.energy.plot) / 10}" :style="{'--height': + audio_features.energy.plot[4]}"><p>{{audio_features.energy.plot[4]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[5] < findMax(audio_features.energy.plot) / 10}" :style="{'--height': + audio_features.energy.plot[5]}"><p>{{audio_features.energy.plot[5]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[6] < findMax(audio_features.energy.plot) / 10}" :style="{'--height': + audio_features.energy.plot[6]}"><p>{{audio_features.energy.plot[6]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[7] < findMax(audio_features.energy.plot) / 10}" :style="{'--height': + audio_features.energy.plot[7]}"><p>{{audio_features.energy.plot[7]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[8] < findMax(audio_features.energy.plot) / 10}" :style="{'--height': + audio_features.energy.plot[8]}"><p>{{audio_features.energy.plot[8]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[9] < findMax(audio_features.energy.plot) / 10}" :style="{'--height': + audio_features.energy.plot[9]}"><p>{{audio_features.energy.plot[9]}}</p></div>
               <p class="yAxis">Number of Songs</p>
             </div>
             <div class="graph-labels">
               <p>Peaceful</p>
               <p>Hyper</p>
+              <p class="instructions">Go to the Extremes Tab for the Highest and Lowest Tracks</p>
             </div>
           </div>
 
           <div id="happiness-graph" class="window" :style="{'--delay': 5}">
-            <h3># Songs vs. Danceability</h3>
+            <h3>Danceability Distribution</h3>
             <div class="graph" :style="{'--max': + findMax(audio_features.danceability.plot), '--red': + barColors[2].red, '--green': + barColors[2].green, '--blue': + barColors[2].blue}">
-              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[0] < 100}" :style="{'--height': + audio_features.danceability.plot[0]}"><p>{{audio_features.danceability.plot[0]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[1] < 100}" :style="{'--height': + audio_features.danceability.plot[1]}"><p>{{audio_features.danceability.plot[1]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[2] < 100}" :style="{'--height': + audio_features.danceability.plot[2]}"><p>{{audio_features.danceability.plot[2]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[3] < 100}" :style="{'--height': + audio_features.danceability.plot[3]}"><p>{{audio_features.danceability.plot[3]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[4] < 100}" :style="{'--height': + audio_features.danceability.plot[4]}"><p>{{audio_features.danceability.plot[4]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[5] < 100}" :style="{'--height': + audio_features.danceability.plot[5]}"><p>{{audio_features.danceability.plot[5]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[6] < 100}" :style="{'--height': + audio_features.danceability.plot[6]}"><p>{{audio_features.danceability.plot[6]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[7] < 100}" :style="{'--height': + audio_features.danceability.plot[7]}"><p>{{audio_features.danceability.plot[7]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[8] < 100}" :style="{'--height': + audio_features.danceability.plot[8]}"><p>{{audio_features.danceability.plot[8]}}</p></div>
-              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[9] < 100}" :style="{'--height': + audio_features.danceability.plot[9]}"><p>{{audio_features.danceability.plot[9]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[0] < findMax(audio_features.danceability.plot) / 10}" :style="{'--height': + audio_features.danceability.plot[0]}"><p>{{audio_features.danceability.plot[0]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[1] < findMax(audio_features.danceability.plot) / 10}" :style="{'--height': + audio_features.danceability.plot[1]}"><p>{{audio_features.danceability.plot[1]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[2] < findMax(audio_features.danceability.plot) / 10}" :style="{'--height': + audio_features.danceability.plot[2]}"><p>{{audio_features.danceability.plot[2]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[3] < findMax(audio_features.danceability.plot) / 10}" :style="{'--height': + audio_features.danceability.plot[3]}"><p>{{audio_features.danceability.plot[3]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[4] < findMax(audio_features.danceability.plot) / 10}" :style="{'--height': + audio_features.danceability.plot[4]}"><p>{{audio_features.danceability.plot[4]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[5] < findMax(audio_features.danceability.plot) / 10}" :style="{'--height': + audio_features.danceability.plot[5]}"><p>{{audio_features.danceability.plot[5]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[6] < findMax(audio_features.danceability.plot) / 10}" :style="{'--height': + audio_features.danceability.plot[6]}"><p>{{audio_features.danceability.plot[6]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[7] < findMax(audio_features.danceability.plot) / 10}" :style="{'--height': + audio_features.danceability.plot[7]}"><p>{{audio_features.danceability.plot[7]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[8] < findMax(audio_features.danceability.plot) / 10}" :style="{'--height': + audio_features.danceability.plot[8]}"><p>{{audio_features.danceability.plot[8]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[9] < findMax(audio_features.danceability.plot) / 10}" :style="{'--height': + audio_features.danceability.plot[9]}"><p>{{audio_features.danceability.plot[9]}}</p></div>
               <p class="yAxis">Number of Songs</p>
             </div>
             <div class="graph-labels">
               <p>Couch Potato</p>
               <p>Let's Dance!</p>
+              <p class="instructions">Go to the Extremes Tab for the Highest and Lowest Tracks</p>
+            </div>
+          </div>
+
+          <div id="banger-graph" class="window" :style="{'--delay': 6}">
+            <h3>Should You DJ a Party</h3>
+            <div class="graph" :style="{'--max': + findMax(bangers.plot), '--red': + barColors[3].red, '--green': + barColors[2].green, '--blue': + barColors[2].blue}">
+              <div class="graph-bar" :class="{toolow: bangers.plot[0] < findMax(bangers.plot) / 10}" :style="{'--height': + bangers.plot[0]}"><p>{{bangers.plot[0]}}</p></div>
+              <div class="graph-bar" :class="{toolow: bangers.plot[1] < findMax(bangers.plot) / 10}" :style="{'--height': + bangers.plot[1]}"><p>{{bangers.plot[1]}}</p></div>
+              <div class="graph-bar" :class="{toolow: bangers.plot[2] < findMax(bangers.plot) / 10}" :style="{'--height': + bangers.plot[2]}"><p>{{bangers.plot[2]}}</p></div>
+              <div class="graph-bar" :class="{toolow: bangers.plot[3] < findMax(bangers.plot) / 10}" :style="{'--height': + bangers.plot[3]}"><p>{{bangers.plot[3]}}</p></div>
+              <div class="graph-bar" :class="{toolow: bangers.plot[4] < findMax(bangers.plot) / 10}" :style="{'--height': + bangers.plot[4]}"><p>{{bangers.plot[4]}}</p></div>
+              <div class="graph-bar" :class="{toolow: bangers.plot[5] < findMax(bangers.plot) / 10}" :style="{'--height': + bangers.plot[5]}"><p>{{bangers.plot[5]}}</p></div>
+              <div class="graph-bar" :class="{toolow: bangers.plot[6] < findMax(bangers.plot) / 10}" :style="{'--height': + bangers.plot[6]}"><p>{{bangers.plot[6]}}</p></div>
+              <div class="graph-bar" :class="{toolow: bangers.plot[7] < findMax(bangers.plot) / 10}" :style="{'--height': + bangers.plot[7]}"><p>{{bangers.plot[7]}}</p></div>
+              <div class="graph-bar" :class="{toolow: bangers.plot[8] < findMax(bangers.plot) / 10}" :style="{'--height': + bangers.plot[8]}"><p>{{bangers.plot[8]}}</p></div>
+              <div class="graph-bar" :class="{toolow: bangers.plot[9] < findMax(bangers.plot) / 10}" :style="{'--height': + bangers.plot[9]}"><p>{{bangers.plot[9]}}</p></div>
+              <p class="yAxis">Number of Songs</p>
+            </div>
+            <div class="graph-labels">
+              <p>*Snore*</p>
+              <p>Absolute Banger</p>
+              <p class="instructions">Go to the Extremes Tab for the Highest and Lowest Tracks</p>
             </div>
           </div>
 
@@ -282,6 +307,7 @@ export default {
         {value: 'energy', text: "Energetic"},
         {value: 'danceability', text: "Dancable"},
         {value: 'tempo', text: "High Tempos"},
+        {value: 'bangers', text: "Bangers"},
         {value: 'acousticness', text: "Accoustic"},
         {value: 'instrumentalness', text: "Instrumental"},
         {value: 'liveness', text: "Live"},
@@ -360,8 +386,14 @@ export default {
           value: 0,
           maxchart: [],
           minchart: [],
-          plot: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          plot: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,],
         },
+      },
+      bangers: {
+        value: 0,
+        plot: [0,0,0,0,0,0,0,0,0,0],
+        maxchart: [],
+        minchart: [],
       },
       barColors: [
         {red: 242, green: 142, blue: 43},
@@ -396,6 +428,9 @@ export default {
     }
   },
   methods: {
+    banger(loudness, tempo, energy, danceability) {
+      return (tempo + (energy * 100) + (danceability*100)) / 375;
+    },
     findMax(array) {
       let max = 0;
       for (var i = 0; i < array.length; i++)
@@ -426,13 +461,26 @@ export default {
       let chart = [];
       if (this.catagoryVal != "" && this.filterVal != -1)
       {
-        if (this.filterVal == 0)
+        if (this.catagoryVal == "bangers")
         {
-          chart = this.audio_features[this.catagoryVal].minchart;
+          if (this.filterVal == 0)
+          {
+            chart = this.bangers.minchart;
+          }
+          else {
+            chart = this.bangers.maxchart;
+          }
         }
         else {
-          chart = this.audio_features[this.catagoryVal].maxchart;
+          if (this.filterVal == 0)
+          {
+            chart = this.audio_features[this.catagoryVal].minchart;
+          }
+          else {
+            chart = this.audio_features[this.catagoryVal].maxchart;
+          }
         }
+
       }
       if (chart.length > 0)
       {
@@ -511,6 +559,12 @@ export default {
       let keys = Object.keys(this.audio_features); 
       for (let i = 0; i < tracks.length; i++)
       {
+        this.bangers.value += this.banger(tracks[i].loudness, tracks[i].tempo, tracks[i].energy, tracks[i].danceability);
+        let bangersPos = (Math.floor(this.banger(tracks[i].loudness, tracks[i].tempo, tracks[i].energy, tracks[i].danceability) * 10));
+        if (bangersPos < this.bangers.plot.length)
+          this.bangers.plot[bangersPos] += 1;
+        else
+            this.bangers.plot[this.bangers.plot.length - 1] += 1;
 
         for (let j = 0; j < keys.length; j++)
         {
@@ -520,6 +574,7 @@ export default {
             continue;
           }
           this.audio_features[keys[j]].value += tracks[i][keys[j]];
+          
           if (this.audio_features[keys[j]].plot[0] != -1)
             this.audio_features[keys[j]].plot[(Math.floor(tracks[i][keys[j]] * 10))] += 1;
 
@@ -566,6 +621,55 @@ export default {
             this.audio_features[keys[j]].maxchart.push({id: tracks[i].id, value: tracks[i][keys[j]]});
           }
         }
+
+        let bangindex = this.banger(tracks[i].loudness, tracks[i].tempo, tracks[i].energy, tracks[i].danceability);
+        for (let k = 0; k < this.bangers.minchart.length; k++)
+        {
+          if (this.bangers.minchart[k].value > bangindex)
+          {
+            this.bangers.minchart.splice(k, 0, {id: tracks[i].id, value: bangindex});
+            if (this.bangers.minchart.length > 20)
+            {
+              this.bangers.minchart.splice(20, 1);
+            }
+            break;
+          }
+          if (k == this.bangers.minchart.length - 1 && this.bangers.minchart.length < 20)
+          {
+            this.bangers.minchart.push({id: tracks[i].id, value: bangindex});
+            break;
+          }
+        }
+        if (this.bangers.minchart.length == 0)
+        {
+          this.bangers.minchart.push({id: tracks[i].id, value: bangindex});
+        }
+        for (let k = 0; k < this.bangers.maxchart.length; k++)
+        {
+          if (this.bangers.maxchart[k].value < bangindex)
+          {
+            this.bangers.maxchart.splice(k, 0, {id: tracks[i].id, value: bangindex});
+            if (this.bangers.maxchart.length > 20)
+            {
+              this.bangers.maxchart.splice(20, 1);
+            }
+            break;
+          }
+          if (k == this.bangers.maxchart.length - 1 && this.bangers.maxchart.length < 20)
+          {
+            this.bangers.maxchart.push({id: tracks[i].id, value: bangindex});
+            break;
+          }
+        }
+        if (this.bangers.maxchart.length == 0)
+        {
+          this.bangers.maxchart.push({id: tracks[i].id, value: bangindex});
+        }
+
+
+
+
+
         this.progress += 1;
       }
     },
@@ -705,9 +809,19 @@ export default {
 
 .graph-labels {
   display: flex;
+  position: relative;
   justify-content: space-between;
   align-items: flex-end;
   width: 400px;
+}
+
+.instructions {
+  display: block;
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  bottom: -23px;
+  color: rgba(255, 255, 255, 0.082) !important;
 }
 
 .graph-labels p {

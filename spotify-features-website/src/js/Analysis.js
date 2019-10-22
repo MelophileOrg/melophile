@@ -10,6 +10,7 @@ let background = 25;
 
 let displayed = true;
 
+
 let points = [];
 let keys = ['acousticness','danceability','energy','instrumentalness','liveness','speechiness','valence'];
 let colors = ['rgb(255,165,0)','rgb(211,85,149)','rgb(174,209,67)','rgb(235,96,146)','rgb	(234,150,94)','rgb(94,108,234)','rgb	(248,245,152)','rgb	(255,51,51)','rgb	(214,173,243)'];

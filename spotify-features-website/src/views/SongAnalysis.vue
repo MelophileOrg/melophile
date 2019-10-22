@@ -3,7 +3,6 @@
     <NavBar path="songanalysis" />
     <div id="main">
       <SearchBar v-on:changed="search" />
-      <AppTitle v-if="load" title="Song Analysis" image="search" font="PatuaOne" :drop="true"/>
       <div class="loading" v-if="!trackSelected && list.length == 0 && waiting && !empty">
         <div v-for="bar in 4" :key="'loadingbar'+bar" class="bar" :style="{'--delay': + (bar - 1)}"/>
       </div>
@@ -27,7 +26,7 @@
           </tr>
         </table>
       </div>
-      <TrackAnalysis :trackData="trackData" v-if="trackSelected && trackData != null" />
+      <TrackAnalysis :trackData="trackData" v-if="trackSelected && trackPrepared" />
       
     </div>
   </div>
@@ -58,6 +57,7 @@ export default {
       waiting: false,
       empty: true,
       setId: 0,
+      trackPrepared: false,
 
       trackId: "",
     }
@@ -67,12 +67,14 @@ export default {
       if (query == "")
       {
         this.empty = true;
+        this.trackPrepared = false;
         this.trackSelected = false;
         this.waiting = false;
         this.list = [];
         return;
       }
       this.list = [];
+      this.trackPrepared = false;
       this.trackSelected = false;
       this.empty = false;
       this.load = false;
@@ -96,6 +98,7 @@ export default {
       this.trackData = null;
       this.trackData = await this.$store.dispatch('getTrack', this.trackId);
       this.trackData.audioFeatures = await this.$store.dispatch('getAudioFeaturesForTrack', this.trackId);
+      this.trackPrepared = true;
     },
     callbackOnP5: function(timeStr) {
       this.message = timeStr;
