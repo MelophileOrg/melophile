@@ -24,7 +24,6 @@ export default {
   justify-content: center;
   align-items: center;
   margin-top: 32px;
-
 }
 
 .topMargin {
@@ -44,14 +43,8 @@ img {
   width: 70px;
   height: 70px;
   margin-right: 20px;
-  animation: float 2s ease-in-out infinite;
 }
 
-@keyframes float {
-  50% {
-    transform: translateY(3px);
-  }
-}
 
 #big-title h1 {
   color: white;

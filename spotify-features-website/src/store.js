@@ -7,7 +7,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    testing: false,
+    testing: true,
     spotifyApi: new SpotifyWebApi(),
     accessToken: "",
     inicialized: false,
@@ -55,6 +55,17 @@ export default new Vuex.Store({
         img: "musicmood",
         color: {red: 180, green: 100, blue: 100},
         state: false,
+      },
+      {
+        title: "Boring-Radar",
+        path: "boring",
+        auth: true,
+        description: [
+          "Is your music taste BORING?",
+        ],
+        img: "boring",
+        color: {red: 180, green: 100, blue: 100},
+        state: false,
       }
     ],
     index: 0,
@@ -87,7 +98,7 @@ export default new Vuex.Store({
     {
       const authEndpoint = 'https://accounts.spotify.com/authorize';
       const clientId = '42903eeb2bf943c4bd4903370f7a93f5';
-      const redirectUri = 'http://spotifyfeatures.andrewdanielyoung.com/redirect/';
+      let redirectUri = 'http://spotifyfeatures.andrewdanielyoung.com/redirect/';
       if (this.state.testing)
         redirectUri = 'http://localhost:8080/redirect/';
       const scopes = [

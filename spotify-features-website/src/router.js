@@ -10,6 +10,7 @@ import SongAnalysis from './views/SongAnalysis'
 import MusicMood from './views/MusicMood'
 import MyCharts from './views/MyCharts'
 import LibraryAnalysis from './views/LibraryAnalysis'
+import Boring from './views/Boring'
 
 Vue.use(Router)
 
@@ -61,6 +62,11 @@ export default new Router({
       path: '/libraryanalysis',
       name: 'libraryanalysis',
       component: LibraryAnalysis
+    },
+    {
+      path: '/boring',
+      name: 'boring',
+      component: Boring
     },
   ]
 })
