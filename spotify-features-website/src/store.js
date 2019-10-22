@@ -7,6 +7,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    testing: false,
     spotifyApi: new SpotifyWebApi(),
     accessToken: "",
     inicialized: false,
@@ -66,14 +67,12 @@ export default new Vuex.Store({
       state.inicialized = inicialized;
     },
     setToken(state, token) {
-      console.log(token);
       state.accessToken = token;
     },
   },
   actions: {
     parseAccessToken(context)
     {
-      console.log(window.location.hash);
       let token = window.location.hash.substring(1).split('&')
       .reduce(function (initial, item) {
         if (item) {
@@ -82,14 +81,15 @@ export default new Vuex.Store({
         }
         return initial;
       }, {});
-      console.log(token.access_token);
       context.commit('setToken', token.access_token);
     },
     getAccessToken(context)
     {
       const authEndpoint = 'https://accounts.spotify.com/authorize';
       const clientId = '42903eeb2bf943c4bd4903370f7a93f5';
-      const redirectUri = 'http://localhost:8080/redirect/';//'http://spotifyfeatures.andrewdanielyoung.com/redirect/';
+      const redirectUri = 'http://spotifyfeatures.andrewdanielyoung.com/redirect/';
+      if (this.state.testing)
+        redirectUri = 'http://localhost:8080/redirect/';
       const scopes = [
         'user-read-recently-played',
         'user-top-read',
@@ -133,34 +133,49 @@ export default new Vuex.Store({
         try {
             console.log('%c Retrieving Recently Played Tracks.', 'color: blue;');
             let response = await this.state.spotifyApi.getMyRecentlyPlayedTracks({limit: payload.limit});
-            console.table(response.items);
             return response;
         } catch (error) {
             console.log(error);
         }
     },  
-    // {trackId: String}
-    async getTrack(context, payload) {
-        try {
-            console.log('%c Requesting Track.', 'color: blue;');
-            let response = await this.state.spotifyApi.getTrack(payload.trackId);
-            console.table(response);
-            return response;
-        } catch (error) {
-            console.log(error);
-        }
-    }, 
+    async getTrack(context, track_id) {
+      try {
+          console.log('%c Requesting Song Data.', 'color: blue;');
+          let response = await this.state.spotifyApi.getTrack(track_id);
+          return response;
+      } catch (error) {
+          console.log(error);
+      }
+    },
+    async getTracks(context, track_ids) {
+      try {
+          console.log('%c Requesting Songs Data.', 'color: blue;');
+          let response = await this.state.spotifyApi.getTracks(track_ids);
+          return response;
+      } catch (error) {
+          console.log(error);
+      }
+    },
     // {artistId: String}
-    async getArtist(context, payload) {
+    async getArtist(context, id) {
         try {
             console.log('%c Requesting Artist.', 'color: blue;');
-            let response = await this.state.spotifyApi.getArtist(payload.artistId);
-            console.table(response);
+            let response = await this.state.spotifyApi.getArtist(id);
             return response;
         } catch (error) {
             console.log(error);
         }
     },  
+    // []
+    async getArtists(context, ids) {
+      try {
+          console.log('%c Requesting Artists.', 'color: blue;');
+          let response = await this.state.spotifyApi.getArtists(ids);
+          return response;
+      } catch (error) {
+          console.log(error);
+      }
+    }, 
     // Array IDs
     async getAudioFeaturesForTracks(context, track_ids) {
         try {
@@ -180,15 +195,7 @@ export default new Vuex.Store({
           console.log(error);
       }
     },
-    async getTrack(context, track_id) {
-      try {
-          console.log('%c Requesting Song Data.', 'color: blue;');
-          let response = await this.state.spotifyApi.getTrack(track_id);
-          return response;
-      } catch (error) {
-          console.log(error);
-      }
-    },
+
     async getAudioAnalysis(context, track_id) {
         try {
             console.log('%c Requesting Audio Analysis.', 'color: blue;');

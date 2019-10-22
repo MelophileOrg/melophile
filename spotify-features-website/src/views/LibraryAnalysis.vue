@@ -17,81 +17,244 @@
             <h2 @click="changeTab(1)" :class="{active: tab == 1}">Extremes</h2>
           </div>
         </div>
+
         <div id="audio-features" v-if="tab == 0">
-          <div id="characteristics" class="window" :style="{'--delay': 0}">
+          <div v-if="tab == 0" id="library-details" class="window" :style="{'--delay': + 0}">
+            <h3>Your Library</h3>
+            <div class="row">
+              <h4 class="light"><h4>{{total}}</h4>Saved Songs</h4>
+            </div>
+            <div class="row">
+              <h4 class="light"><h4>{{Object.keys(artists).length}}</h4>Artists</h4>
+            </div>
+            <div v-if="genresDone" class="row">
+              <h4 class="light"><h4>{{Object.keys(genres).length}}</h4>Genres</h4>
+            </div>
+          </div>
+
+          <div id="artist-details" class="window" :style="{'--delay': + 1}">
+            <h3 v-if="!artistsDone">Artists</h3>
+            <div class="loading" v-if="!artistsDone">
+              <div v-for="bar in 4" :key="'loadingbar'+bar" class="bar" :style="{'--delay': + (bar - 1)}"/>
+            </div>
+            <h3 v-if="artistsDone" class="nomargin">Most Saved From:</h3>
+            <div v-if="artistsDone" class="row favorite-div">
+              <img :src="favoriteArtists[0].image"/>
+              <div>
+                <h4 class="favorite">{{favoriteArtists[0].name}}</h4>
+                <h5>{{favoriteArtists[0].num}} Songs</h5>
+              </div>
+            </div>
+            <div v-if="artistsDone">
+              <div class="row center">
+                <div class="artist" v-for="i in (favoriteArtists.length - 1)" :key="favoriteArtists[i].id" >
+                  <h4>{{favoriteArtists[i].name}}</h4>
+                  <h5>{{favoriteArtists[i].num}} Songs</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="characteristics" class="window" :style="{'--delay': 3}">
             <h3>Characteristics</h3>
             <div class="row stat">
-              <h4>Happiness</h4>
-              <div class="bar">
-                <div class="fill" :style="{'--percent': + audio_features.valence.value}"/>
+              <h4 class="bar-title">Happiness</h4>
+              <div class="stat-bar">
+                <div class="fill" :style="{'--percent': + audio_features.valence.value, '--red': + barColors[0].red, '--green': + barColors[0].green, '--blue': + barColors[0].blue}"/>
               </div>
               <h4 class="value">{{percent(audio_features.valence.value)}}</h4>
             </div>
             <div class="row stat">
-              <h4>Energy</h4>
-              <div class="bar">
-                <div class="fill" :style="{'--percent': + audio_features.energy.value}"/>
+              <h4 class="bar-title">Energy</h4>
+              <div class="stat-bar">
+                <div class="fill" :style="{'--percent': + audio_features.energy.value, '--red': + barColors[1].red, '--green': + barColors[1].green, '--blue': + barColors[1].blue}"/>
               </div>
               <h4 class="value">{{percent(audio_features.energy.value)}}</h4>
             </div>
             <div class="row stat">
-              <h4>Danceability</h4>
-              <div class="bar">
-                <div class="fill" :style="{'--percent': + audio_features.danceability.value}"/>
+              <h4 class="bar-title">Danceability</h4>
+              <div class="stat-bar">
+                <div class="fill" :style="{'--percent': + audio_features.danceability.value, '--red': + barColors[2].red, '--green': + barColors[2].green, '--blue': + barColors[2].blue}"/>
               </div>
               <h4 class="value">{{percent(audio_features.danceability.value)}}</h4>
             </div>
           </div>
 
-          <div id="averages" class="window" :style="{'--delay': 1}">
-            <h3>Averages</h3>
-            <div class="row stat">
-              <h4>Tempo</h4>
-              <div class="bar">
-                <div class="fill" :style="{'--percent': + tempoPercent}"/>
-              </div>
-              <h4 class="value">{{percent(tempoPercent)}}</h4>
+          <div id="genre-details" class="window" :style="{'--delay': + 2}">
+            <h3 v-if="!genresDone">Genres</h3>
+            <div class="loading" v-if="!genresDone">
+              <div v-for="bar in 4" :key="'loadingbar'+bar" class="bar" :style="{'--delay': + (bar - 1)}"/>
             </div>
-            <div class="row stat">
-              <h4>Minor/Major</h4>
-              <div class="bar">
-                <div class="fill" :style="{'--percent': + audio_features.mode.value}"/>
+            <div v-if="genresDone">
+              <h3 class="nomargin">Favorite Genres</h3>
+              <div class="row favorite-div">
+                <div>
+                  <h4 class="favorite">{{favoriteGenres[0].genre}}</h4>
+                  <h5>{{favoriteGenres[0].num}} Songs</h5>
+                </div>
               </div>
-              <h4 class="value">{{percent(audio_features.mode.value)}}</h4>
+              <div class="row center">
+                <div class="genre" v-for="i in (favoriteGenres.length - 1)" :key="favoriteGenres[i].genre" >
+                  <h4>{{favoriteGenres[i].genre}}</h4>
+                  <h5>{{favoriteGenres[i].num}} Songs</h5>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div id="chances" class="window"  :style="{'--delay': 2}">
+          <div id="averages" class="window" :style="{'--delay': 4}">
+            <h3>Averages</h3>
+            <div class="row stat">
+              <h4 class="bar-title">Tempo</h4>
+              <div class="stat-bar">
+                <div class="fill" :style="{'--percent': + tempoPercent, '--red': + barColors[3].red, '--green': + barColors[3].green, '--blue': + barColors[3].blue}"/>
+              </div>
+              <h4 class="value">{{tempoAverage}}</h4>
+            </div>
+            <div class="row stat">
+              <h4 class="bar-title">Major Key</h4>
+              <div class="stat-bar">
+                <div class="fill" :style="{'--percent': + audio_features.mode.value, '--red': + barColors[4].red, '--green': + barColors[4].green, '--blue': + barColors[4].blue}"/>
+              </div>
+              <h4 class="value">{{percent(audio_features.mode.value)}}</h4>
+            </div>
+            <div class="row stat">
+              <h4 class="bar-title">Minor Key</h4>
+              <div class="stat-bar">
+                <div class="fill" :style="{'--percent': + 1 - (audio_features.mode.value), '--red': + barColors[9].red, '--green': + barColors[9].green, '--blue': + barColors[9].blue}"/>
+              </div>
+              <h4 class="value">{{percent(1 - audio_features.mode.value)}}</h4>
+            </div>
+          </div>
+
+          <div id="chances" class="window"  :style="{'--delay': 6}">
             <h3>Chance a Song in Your Library...</h3>
             <div class="row stat">
-              <h4>is Accoustic</h4>
-              <div class="bar">
-                <div class="fill" :style="{'--percent': + audio_features.acousticness.value}"/>
+              <h4 class="bar-title">is Accoustic</h4>
+              <div class="stat-bar">
+                <div class="fill" :style="{'--percent': + audio_features.acousticness.value, '--red': + barColors[5].red, '--green': + barColors[5].green, '--blue': + barColors[5].blue}"/>
               </div>
               <h4 class="value">{{percent(audio_features.acousticness.value)}}</h4>
             </div>
             <div class="row stat">
-              <h4>is Instrumental</h4>
-              <div class="bar">
-                <div class="fill" :style="{'--percent': + audio_features.instrumentalness.value}"/>
+              <h4 class="bar-title">is Instrumental</h4>
+              <div class="stat-bar">
+                <div class="fill" :style="{'--percent': + audio_features.instrumentalness.value, '--red': + barColors[6].red, '--green': + barColors[6].green, '--blue': + barColors[6].blue}"/>
               </div>
               <h4 class="value">{{percent(audio_features.instrumentalness.value)}}</h4>
             </div>
             <div class="row stat">
-              <h4>is Live</h4>
-              <div class="bar">
-                <div class="fill" :style="{'--percent': + audio_features.liveness.value}"/>
+              <h4 class="bar-title">is Live</h4>
+              <div class="stat-bar">
+                <div class="fill" :style="{'--percent': + audio_features.liveness.value, '--red': + barColors[7].red, '--green': + barColors[7].green, '--blue': + barColors[7].blue}"/>
               </div>
               <h4 class="value">{{percent(audio_features.liveness.value)}}</h4>
             </div>
             <div class="row stat">
-              <h4>has Words</h4>
-              <div class="bar">
-                <div class="fill" :style="{'--percent': + audio_features.speechiness.value}"/>
+              <h4 class="bar-title">is Talking</h4>
+              <div class="stat-bar">
+                <div class="fill" :style="{'--percent': + audio_features.speechiness.value, '--red': + barColors[8].red, '--green': + barColors[8].green, '--blue': + barColors[8].blue}"/>
               </div>
               <h4 class="value">{{percent(audio_features.speechiness.value)}}</h4>
             </div>
           </div>
+
+          <div id="happiness-graph" class="window" :style="{'--delay': 5}">
+            <h3># Songs vs. Happiness</h3>
+            <div class="graph" :style="{'--max': + findMax(audio_features.valence.plot), '--red': + barColors[0].red, '--green': + barColors[0].green, '--blue': + barColors[0].blue}">
+              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[0] < 100}" :style="{'--height': + audio_features.valence.plot[0]}"><p>{{audio_features.valence.plot[0]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[1] < 100}" :style="{'--height': + audio_features.valence.plot[1]}"><p>{{audio_features.valence.plot[1]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[2] < 100}" :style="{'--height': + audio_features.valence.plot[2]}"><p>{{audio_features.valence.plot[2]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[3] < 100}" :style="{'--height': + audio_features.valence.plot[3]}"><p>{{audio_features.valence.plot[3]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[4] < 100}" :style="{'--height': + audio_features.valence.plot[4]}"><p>{{audio_features.valence.plot[4]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[5] < 100}" :style="{'--height': + audio_features.valence.plot[5]}"><p>{{audio_features.valence.plot[5]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[6] < 100}" :style="{'--height': + audio_features.valence.plot[6]}"><p>{{audio_features.valence.plot[6]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[7] < 100}" :style="{'--height': + audio_features.valence.plot[7]}"><p>{{audio_features.valence.plot[7]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[8] < 100}" :style="{'--height': + audio_features.valence.plot[8]}"><p>{{audio_features.valence.plot[8]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.valence.plot[9] < 100}" :style="{'--height': + audio_features.valence.plot[9]}"><p>{{audio_features.valence.plot[9]}}</p></div>
+              <p class="yAxis">Number of Songs</p>
+            </div>
+            <div class="graph-labels">
+              <p>Sad</p>
+              <p>Happy</p>
+            </div>
+          </div>
+
+          <div id="happiness-graph" class="window" :style="{'--delay': 7}">
+            <h3># Songs vs. Energy</h3>
+            <div class="graph" :style="{'--max': + findMax(audio_features.energy.plot), '--red': + barColors[1].red, '--green': + barColors[1].green, '--blue': + barColors[1].blue}">
+              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[0] < 100}" :style="{'--height': + audio_features.energy.plot[0]}"><p>{{audio_features.energy.plot[0]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[1] < 100}" :style="{'--height': + audio_features.energy.plot[1]}"><p>{{audio_features.energy.plot[1]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[2] < 100}" :style="{'--height': + audio_features.energy.plot[2]}"><p>{{audio_features.energy.plot[2]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[3] < 100}" :style="{'--height': + audio_features.energy.plot[3]}"><p>{{audio_features.energy.plot[3]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[4] < 100}" :style="{'--height': + audio_features.energy.plot[4]}"><p>{{audio_features.energy.plot[4]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[5] < 100}" :style="{'--height': + audio_features.energy.plot[5]}"><p>{{audio_features.energy.plot[5]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[6] < 100}" :style="{'--height': + audio_features.energy.plot[6]}"><p>{{audio_features.energy.plot[6]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[7] < 100}" :style="{'--height': + audio_features.energy.plot[7]}"><p>{{audio_features.energy.plot[7]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[8] < 100}" :style="{'--height': + audio_features.energy.plot[8]}"><p>{{audio_features.energy.plot[8]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.energy.plot[9] < 100}" :style="{'--height': + audio_features.energy.plot[9]}"><p>{{audio_features.energy.plot[9]}}</p></div>
+              <p class="yAxis">Number of Songs</p>
+            </div>
+            <div class="graph-labels">
+              <p>Peaceful</p>
+              <p>Hyper</p>
+            </div>
+          </div>
+
+          <div id="happiness-graph" class="window" :style="{'--delay': 5}">
+            <h3># Songs vs. Danceability</h3>
+            <div class="graph" :style="{'--max': + findMax(audio_features.danceability.plot), '--red': + barColors[2].red, '--green': + barColors[2].green, '--blue': + barColors[2].blue}">
+              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[0] < 100}" :style="{'--height': + audio_features.danceability.plot[0]}"><p>{{audio_features.danceability.plot[0]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[1] < 100}" :style="{'--height': + audio_features.danceability.plot[1]}"><p>{{audio_features.danceability.plot[1]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[2] < 100}" :style="{'--height': + audio_features.danceability.plot[2]}"><p>{{audio_features.danceability.plot[2]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[3] < 100}" :style="{'--height': + audio_features.danceability.plot[3]}"><p>{{audio_features.danceability.plot[3]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[4] < 100}" :style="{'--height': + audio_features.danceability.plot[4]}"><p>{{audio_features.danceability.plot[4]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[5] < 100}" :style="{'--height': + audio_features.danceability.plot[5]}"><p>{{audio_features.danceability.plot[5]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[6] < 100}" :style="{'--height': + audio_features.danceability.plot[6]}"><p>{{audio_features.danceability.plot[6]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[7] < 100}" :style="{'--height': + audio_features.danceability.plot[7]}"><p>{{audio_features.danceability.plot[7]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[8] < 100}" :style="{'--height': + audio_features.danceability.plot[8]}"><p>{{audio_features.danceability.plot[8]}}</p></div>
+              <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[9] < 100}" :style="{'--height': + audio_features.danceability.plot[9]}"><p>{{audio_features.danceability.plot[9]}}</p></div>
+              <p class="yAxis">Number of Songs</p>
+            </div>
+            <div class="graph-labels">
+              <p>Couch Potato</p>
+              <p>Let's Dance!</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div id="extremes" v-if="tab == 1">
+          <div id="extremes-menu">
+            <h6>List the </h6>
+            <Select class="marginleft" @pending="pending('filter')" @selection="filter" :load="true" :options="filters"/>
+            <Select class="marginleft" @pending="pending('catagory')" @selection="catagory" :load="true" :options="sorts"/>
+          </div>
+          <table class="table" id="tracks" v-if="list.length != 0">
+            <tr class="track" v-for="(track, index) in list" :key="track.id" :style="{'--delay': + index}">
+              <a class="row">
+              <td>
+                <h2>{{index + 1}}</h2>
+              </td>
+              <td>
+                <div class="image" :style="{backgroundImage: 'url(\'' + track.album.images[0].url + '\')'}"/>
+              </td>
+              <td>
+                <h1>{{track.name}}</h1>
+                <div class="track-artists">
+                  <div class="track-artist-div" v-for="index in 4" :key="track.name + '-' + (index - 1)">
+                    <a  class="track-artist" v-if="(index - 1) < track.artists.length">{{track.artists[(index - 1)].name}}<h4 class="comma" v-if="(index - 1) < track.artists.length - 1">, </h4></a>
+                  </div>  
+                </div>
+              </td>
+              </a>
+            </tr>
+          </table>
+          <table class="table" v-if="list.length == 0">
+            <tr class="loadingspace" v-for="num in 10" :key="'loading-spaces'+num" :style="{'--delay': + num}">
+              <a class="row fake"/>
+            </tr>
+          </table>
 
         </div>
       </div>
@@ -103,64 +266,93 @@
 // @ is an alias to /src
 import NavBar from '@/components/NavBar.vue'
 import AppTitle from '@/components/AppTitle.vue'
+import Select from '@/components/Select.vue'
 
 export default {
   name: 'libraryanalysis',
   components: {
     NavBar,
     AppTitle,
+    Select,
   },
   data() {
     return {
-      genre: {},
+      sorts: [
+        {value: 'valence', text: "Happy"},
+        {value: 'energy', text: "Energetic"},
+        {value: 'danceability', text: "Dancable"},
+        {value: 'tempo', text: "High Tempos"},
+        {value: 'acousticness', text: "Accoustic"},
+        {value: 'instrumentalness', text: "Instrumental"},
+        {value: 'liveness', text: "Live"},
+        {value: 'speechiness', text: "Talking"},
+      ],
+      filters: [
+        {value: 1, text: "Most"},
+        {value: 0, text: "Least"}
+      ],
+      genres: {},
+      favoriteGenres: [],
+
+      artists: {},
+      favoriteArtists: [],
+
       audio_features: {
         acousticness: 
         {
           value: 0,
           maxchart: [],
           minchart: [],
+          plot: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         },
         danceability: 
         {
           value: 0,
           maxchart: [],
           minchart: [],
+          plot: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         },
         energy: 
         {
           value: 0,
           maxchart: [],
           minchart: [],
+          plot: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         },
         instrumentalness: 
         {
           value: 0,
           maxchart: [],
           minchart: [],
+          plot: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         },
         liveness: 
         {
           value: 0,
           maxchart: [],
           minchart: [],
+          plot: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         },
         mode: 
         {
           value: 0,
           maxchart: [],
           minchart: [],
+          plot: [-1],
         },
         speechiness: 
         {
           value: 0,
           maxchart: [],
           minchart: [],
+          plot: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         },
         tempo: 
         {
           value: 0,
           maxchart: [],
           minchart: [],
+          plot: [-1],
         },
         total: 0,
         valence: 
@@ -168,19 +360,95 @@ export default {
           value: 0,
           maxchart: [],
           minchart: [],
+          plot: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         },
       },
+      barColors: [
+        {red: 242, green: 142, blue: 43},
+        {red: 89, green: 161, blue: 79},
+        {red: 78, green: 121, blue: 167},
+        {red: 225, green: 87, blue: 89},
+        {red: 74, green: 189, blue: 180},
+        {red: 237, green: 201, blue: 72},
+        {red: 255, green: 157, blue: 167},
+        {red: 176, green: 122, blue: 161},
+        {red: 156, green: 117, blue: 95},
+        {red: 180, green: 189, blue: 74},
+      ],
       total: 0,
       progress: 0,
+
       done: false,
+      audioFeaturesDone: false,
+      artistsDone: false,
+      genresDone: false,
+
       message: "Pluggin in headphones.",
+
       tab: 0,
       list: [],
+
       animateIndex: 0,
       interval: null,
+
+      catagoryVal: "",
+      filterVal: -1,
     }
   },
   methods: {
+    findMax(array) {
+      let max = 0;
+      for (var i = 0; i < array.length; i++)
+      {
+        if (array[i] > max)
+        {
+          max = array[i];
+        }
+      }
+      return max;
+    },
+    pending(type) {
+      if (type == 'filter')
+        this.filterVal = -1;
+      else 
+        this.catagoryVal = "";
+      this.list = [];
+    },
+    catagory(val) {
+      this.catagoryVal = val;
+      this.checkList();
+    },
+    filter(val) {
+      this.filterVal = val;
+      this.checkList();
+    },
+    async checkList() {
+      let chart = [];
+      if (this.catagoryVal != "" && this.filterVal != -1)
+      {
+        if (this.filterVal == 0)
+        {
+          chart = this.audio_features[this.catagoryVal].minchart;
+        }
+        else {
+          chart = this.audio_features[this.catagoryVal].maxchart;
+        }
+      }
+      if (chart.length > 0)
+      {
+        let ids=[];
+        for (let i = 0; i < chart.length; i++)
+        {
+          ids.push(chart[i].id);
+        }
+        let response = await this.$store.dispatch('getTracks', ids);
+        for (let i = 0; i < response.tracks.length; i++)
+        {
+          response.tracks[i][this.catagoryVal] = chart[i].value;
+        }
+        this.list = response.tracks;
+      }
+    },
     percent(value) {
       return Math.round(value * 100) + "%";
     },
@@ -190,7 +458,7 @@ export default {
     startRetrievalProcess() {
       this.retriveData(0, 50, true);
     },
-    async retriveData(offset, limit, first) {
+    async retriveData(offset, limit) {
       if (this.$router.currentRoute.name != "libraryanalysis")
       {
         return;
@@ -198,19 +466,26 @@ export default {
       let response = await this.$store.dispatch('getSavedTracks',{limit: limit, offset: offset});
       // get genre
       this.total = response.total;
-      this.progress = offset;
       if (this.progress / this.total > .8)
-        this.message = "Let me sort this out.";
+        
+        this.message = "♪┏(・o･)┛♪┗ ( ･o･) ┓♪";
       else if (this.progress / this.total > .6)
         this.message = "Sick beats dude.";
       else if (this.progress / this.total > .4)
         this.message = "Jamming out to your tunes.";
       else if (this.progress / this.total > .2)
-        this.message = "Looking through your libary.";
+        this.message = "Beep Bop. Analyzing Data.";
       let ids = [];
       for (var i = 0; i < response.items.length; i++)
       {
         ids.push(response.items[i].track.id);
+        if (!(response.items[i].track.artists[0].name in this.artists))
+        {
+          this.artists[response.items[i].track.artists[0].name] = {num: 1, id: response.items[i].track.artists[0].id};
+        }
+        else {
+          this.artists[response.items[i].track.artists[0].name].num += 1;
+        }
       }
       let tracks = await this.$store.dispatch('getAudioFeaturesForTracks',ids);
       this.analyseData(tracks);
@@ -227,14 +502,17 @@ export default {
           this.audio_features[keys[i]].value /= this.audio_features.total;
         }
         this.done = true;
-        console.log(this.audio_features);
+        this.audioFeaturesDone = true;
+        await this.checkArtists();
+        this.checkGenres();
       }
     },
     analyseData(tracks) {
       let keys = Object.keys(this.audio_features); 
-      for (var i = 0; i < tracks.length; i++)
+      for (let i = 0; i < tracks.length; i++)
       {
-        for (var j = 0; j < keys.length; j++)
+
+        for (let j = 0; j < keys.length; j++)
         {
           if (keys[j] == "total")
           {
@@ -242,7 +520,10 @@ export default {
             continue;
           }
           this.audio_features[keys[j]].value += tracks[i][keys[j]];
-          for (var k = 0; k < this.audio_features[keys[j]].minchart.length; k++)
+          if (this.audio_features[keys[j]].plot[0] != -1)
+            this.audio_features[keys[j]].plot[(Math.floor(tracks[i][keys[j]] * 10))] += 1;
+
+          for (let k = 0; k < this.audio_features[keys[j]].minchart.length; k++)
           {
             if (this.audio_features[keys[j]].minchart[k].value > tracks[i][keys[j]])
             {
@@ -263,7 +544,7 @@ export default {
           {
             this.audio_features[keys[j]].minchart.push({id: tracks[i].id, value: tracks[i][keys[j]]});
           }
-          for (var k = 0; k < this.audio_features[keys[j]].maxchart.length; k++)
+          for (let k = 0; k < this.audio_features[keys[j]].maxchart.length; k++)
           {
             if (this.audio_features[keys[j]].maxchart[k].value < tracks[i][keys[j]])
             {
@@ -284,9 +565,89 @@ export default {
           {
             this.audio_features[keys[j]].maxchart.push({id: tracks[i].id, value: tracks[i][keys[j]]});
           }
-
+        }
+        this.progress += 1;
+      }
+    },
+    async checkArtists() {
+      let max = 4;
+      
+      for (var artist in this.artists) {
+        let added = false;
+        for (var i = 0; i < this.favoriteArtists.length; i++)
+        {
+          if (this.favoriteArtists[i].num < this.artists[artist].num)
+          {
+            this.favoriteArtists.splice(i, 0, {name: artist, num: this.artists[artist].num, id: this.artists[artist].id});
+            added = true;
+            break;
+          }
+          if (this.favoriteArtists.length > max)
+          {
+            this.favoriteArtists.splice(this.favoriteArtists.length - 1, 1);
+          }
+        }
+        if (this.favoriteArtists.length < max && !added) {
+          this.favoriteArtists.push({name: artist, num: this.artists[artist].num, id: this.artists[artist].id});
         }
       }
+      let favoriteArtist = await this.$store.dispatch('getArtist', this.favoriteArtists[0].id);
+      this.favoriteArtists[0].image = favoriteArtist.images[0].url;
+      this.artistsDone = true;
+    },
+    async checkGenres() {
+      let max = 4;
+      let querymax = 50;
+      let artistsIds = [];
+      for (var artist in this.artists) {
+        if (querymax == 0)
+        {
+          let artistsData = await this.$store.dispatch('getArtists', artistsIds);
+          for (var i = 0; i < artistsData.artists.length; i++)
+          {
+            for (var j = 0; j < artistsData.artists[i].genres.length; j++)
+            {
+
+              if (!(artistsData.artists[i].genres[j] in this.genres))
+              {
+                this.genres[artistsData.artists[i].genres[j]] = {num: this.artists[artist].num, genre: artistsData.artists[i].genres[j]};
+              }
+              else {
+                this.genres[artistsData.artists[i].genres[j]].num += this.artists[artist].num;
+              }
+            }
+          }
+          querymax = 50;
+          artistsIds = [];
+        }
+        if (artist in this.artists)
+        {
+          artistsIds.push(this.artists[artist].id);
+          querymax -= 1;
+        }
+      }
+
+      for (var genre in this.genres) {
+        let added = false;
+        for (var i = 0; i < this.favoriteGenres.length; i++)
+        {
+          if (this.favoriteGenres[i].num < this.genres[genre].num)
+          {
+            this.favoriteGenres.splice(i, 0, {genre: genre, num: this.genres[genre].num});
+            added = true;
+            break;
+          }
+          if (this.favoriteGenres.length > max)
+          {
+            this.favoriteGenres.splice(this.favoriteGenres.length - 1, 1);
+          }
+        }
+        if (this.favoriteGenres.length < max && !added) {
+          this.favoriteGenres.push({genre: genre, num: this.genres[genre].num});
+        }
+      }
+      this.genresDone = true;
+
     },
     animate() {
       if (this.animateIndex >= 1)
@@ -312,6 +673,9 @@ export default {
         return (this.audio_features.tempo.value - min) / diff;
       }
       return 0;
+    },
+    tempoAverage() {
+      return Math.round(this.audio_features.tempo.value);
     }
   },
   created() {
@@ -323,6 +687,213 @@ export default {
 </script>
 
 <style scoped>
+.graph {
+  --max: 0;
+  --red: 0;
+  --green: 0;
+  --blue: 0;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: flex-end;
+  position: relative;
+  width: 400px;
+  height: 200px;
+  background: rgba(226, 226, 226, 0.041);
+  border-radius: 5px;
+  padding-top: 10px;
+}
+
+.graph-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 400px;
+}
+
+.graph-labels p {
+  margin: 5px 0;
+  margin-top: 15px;
+  font-size: .8em;
+ 
+  color: rgba(250, 246, 246, 0.404);
+  transform: translateY(-5px);
+}
+
+.yAxis {
+  position: absolute;
+  transform: rotate(-90deg);
+  color: rgba(250, 246, 246, 0.404);
+  font-size: .8em;
+  left: -58px;
+  top: 80px;
+
+}
+
+p {
+  display: inline-block;
+  
+}
+
+.graph-bar.toolow p {
+  transform: translateY(-25px);
+}
+
+.graph-bar {
+  --height: 0;
+  display: block;
+  width: calc(10% - 2px - 10px);
+  margin: 0px 5px;
+  height: calc((var(--height) / var(--max)) * 100% - 5px);
+  padding-top: 5px;
+  background: rgba(var(--red), var(--green), var(--blue), .9);
+  border: 1px solid rgba(255, 255, 255, 0.151);
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  animation: bar-graph-slide .5s ease-out .7s, peekaboo .7s;
+}
+
+.graph-bar p{
+  color: rgba(255, 255, 255, 0.692);
+  font-weight: bolder;
+  margin: 0;
+  font-size: .8em;
+}
+
+@keyframes bar-graph-slide {
+  from {
+    height: calc((var(--height) / var(--max)) * 0% - 5px);
+    color: rgba(255, 255, 255, 0);
+  }
+}
+
+a.row {
+  text-decoration: none;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  padding: 20px 15px;
+  background: rgba(255, 255, 255, 0.103);
+  height: 60px;
+  margin: 0px 32px;
+  border-radius: 0px;
+  text-decoration: none;
+  font-family: 'Roboto', sans-serif;
+}
+
+
+a.row h1 {
+  color: white;
+  margin: 0 10px;
+  font-weight: lighter;
+  font-size: 28px;
+  text-align: left;
+  animation: none;
+}
+
+
+a.row h2 {
+  color: rgb(250, 250, 250);
+  margin: 0 10px 0px 0px;
+  font-weight: bolder;
+  font-size: 20px;
+  width: 20px;
+  animation: none;
+}
+
+.image {
+  display: block;
+  width: 60px;
+  height: 60px;
+  background-size: auto 100%;
+  background-position: center center;
+}
+
+.table {
+  width: 100%;
+  margin: 0 auto;
+  max-width: 1000px;
+  margin-bottom: 100px;
+  margin-top: 40px;
+}
+
+tr {
+  --delay: 0;
+  overflow: hidden;
+  position: relative;
+  animation: slide-up .5s ease calc(var(--delay) * .1s), peekaboo calc(var(--delay) * .1s) linear;
+  border: 1px solid rgba(255, 255, 255, 0.116);
+}
+
+.comma {
+  color: rgba(255, 255, 255, 0.514) !important;
+  font-weight: lighter;
+  text-transform: capitalize;
+  font-size: 12px;
+  margin: 0;
+  margin-right: 7px;
+}
+
+.track-artists .track-artist {
+  display: flex;
+  flex-wrap: wrap;
+  color: rgba(255, 255, 255, 0.514) !important;
+  font-weight: lighter;
+  text-transform: capitalize;
+  font-size: 15px;
+  margin: 0;
+}
+
+.track-artists {
+  display: flex;
+  margin-left: 13px;
+}
+
+.loadingspace {
+  --delay: 0;
+  margin-left: 13px;
+  animation: slide-up .5s ease calc(var(--delay) * .1s), peekaboo calc(var(--delay) * .1s) linear, throb-row 2s ease-in-out calc(var(--delay) * .23s + var(--delay) * .1s + .5s) infinite;
+}
+
+@keyframes throb-row {
+  0%{
+    opacity: 1;
+  }
+  50%{
+    opacity: .3;
+  }
+  100%{
+    opacity: 1;
+  }
+}
+
+.load#extremes-menu {
+  margin-top: 40px;
+  transition: all .3s ease;
+}
+
+.marginleft {
+  margin-left: 15px;
+}
+
+#extremes-menu {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin: 5px auto;
+  animation: slide-up .3s ease .3s, peekaboo .3s linear;
+}
+
+#extremes-menu h6 {
+  color: rgba(252, 252, 252, 0.301);
+  text-shadow: 1px 1px 10px rgba(255, 255, 255, 0.075);
+  font-size: 40px;
+  font-weight: lighter;
+  margin: 0;
+  font-family: 'Bitter', serif;
+  font-family: 'Roboto', sans-serif;
+}
+
 
 #audio-features {
   display: flex;
@@ -333,21 +904,23 @@ export default {
   padding-top: 0px;
 }
 #menu {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   padding: 10px 32px;
 }
 
 #tabs {
   display: flex;
   justify-content: center;
+  width: 100%;
+}
+
+.loading {
+  margin-top: 30px;
 }
 
 .window {
   --delay: 0;
   animation: slide-up .5s ease calc(var(--delay) * .1s), peekaboo calc(var(--delay) * .1s);
-  display: block;
+  display: inline-block;
   width: 75%;
   margin: 20px 20px;
   padding: 20px;
@@ -360,6 +933,7 @@ export default {
 
 h1 {
   color: white;
+  text-align: left;
   animation: slide-up .3s ease 0s, peekaboo 0s linear;
 }
 
@@ -375,6 +949,11 @@ h2 {
   display: flex;
   align-items: center;
 }
+
+.bar-row {
+  justify-content: space-between;
+}
+
 h2:hover {
   color: rgba(255, 255, 255, 0.87);
 }
@@ -395,7 +974,7 @@ h2.active {
 
 button {
   padding: 10px 50px;
-  margin-top: 10px;
+  margin-top: 30px;
   background: rgba(255, 255, 255, 0.137);
   border-radius: 5px;
   color: rgb(255, 255, 255);
@@ -414,6 +993,7 @@ button {
 
 h3 {
   margin: 5px;
+  margin-top: 10px;
   color: white;
   animation: throb 2s ease 0s infinite;
 }
@@ -439,7 +1019,7 @@ h3 {
   border-radius: 5px;
   background: rgba(250, 250, 250, 0.173);
   margin: 0 auto;
-  margin-top: 10px;
+  margin-top: 30px;
 }
 
 #progress-fill {
@@ -451,14 +1031,26 @@ h3 {
   height: 100%;
 }
 
+img {
+  display: block;
+  width: 70px;
+  height: 70px;
+  margin-right: 20px;
+}
+
 h4 {
   color: white;
-  margin: 5px 10px;
-  width: 115px;
+  display: flex;
+  align-items: center;
+  margin: 0;
   text-align: left;
 }
 
-.bar {
+.bar-title {
+  width: 115px;
+}
+
+.stat-bar {
     display: block;
     border-radius: 5px;
     overflow: hidden;
@@ -467,12 +1059,15 @@ h4 {
     background-color: rgba(255, 255, 255, 0.247);
 }
 
-.bar .fill {
+.stat-bar .fill {
     --percent: 0;
+    --red: 255;
+    --green: 255;
+    --blue: 255;
     display: block;
     width: calc(var(--percent) * 100%);
     height: 10px;
-    background: white;
+    background: rgb(var(--red), var(--green), var(--blue));
     animation: slow-fill 1s ease;
 }
 
@@ -486,15 +1081,92 @@ h4 {
   text-align: left;
   animation: none;
   font-size: 1.6em;
-  margin-bottom: 10px;
+  margin: 0;
+  margin-bottom: 20px;
 }
 
 .stat {
-  margin-bottom: 5px;
+  margin-bottom: 15px;
+  justify-content: space-between;
 }
 
 .value {
   width: 40px;
   text-align: right;
+}
+
+.nomargin {
+  margin-bottom: 0 !important;
+}
+
+.favorite {
+  font-size: 1.8em;
+  text-transform: capitalize;
+}
+
+.favorite-div
+{
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 10px 10px;
+  background: rgba(255, 255, 255, 0.062);
+}
+
+.favorite-div h5 {
+  font-size: 1em;
+  margin-top: 5px;
+}
+
+
+
+h5 {
+  color: rgba(255, 255, 255, 0.514);
+  margin: 0;
+  text-align: left;
+  font-size: .8em;
+}
+
+.light {
+  color: rgba(255, 255, 255, 0.514) !important;
+  font-size: 1.4em;
+  margin-bottom: 2px;
+}
+.light h4 {
+  margin-right: 5px;
+  font-size: 1.6em;
+}
+.center {
+  justify-content: space-around;
+}
+
+.artist {
+  margin-top: 10px;
+  display: block;
+  width: 110px;
+  padding: 0px 10px;
+}
+
+.artist h4 {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.genre {
+  margin-top: 10px;
+  display: block;
+  width: 110px;
+  padding: 0px 10px;
+}
+
+.genre h4 {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+  text-transform: capitalize;
 }
 </style>

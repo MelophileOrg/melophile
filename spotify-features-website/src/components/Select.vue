@@ -8,6 +8,12 @@
 </template>
 
 <script>
+/*
+types: [
+        {value: "", text: "Tracks"},
+        {value: "artists", text: "Artists"},
+      ],
+*/
 export default {
     name: 'Select',
     props: {
@@ -72,7 +78,6 @@ export default {
 .Select {
     position: relative;
     display: inline-block;
-    margin: 0 15px;
 }
 
 .Select h1 {

@@ -275,7 +275,7 @@ tr {
   text-shadow: 1px 1px 10px rgba(255, 255, 255, 0.075);
   font-size: 40px;
   font-weight: lighter;
-  margin: 0;
+  margin: 0px 15px;
   font-family: 'Bitter', serif;
   font-family: 'Roboto', sans-serif;
 }
