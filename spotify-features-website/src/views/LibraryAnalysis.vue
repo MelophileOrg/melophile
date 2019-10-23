@@ -166,7 +166,7 @@
               <p class="yAxis">Number of Songs</p>
             </div>
             <div class="graph-labels">
-              <p>{{findDate(dates[dates.length - 1])}}</p>
+              <p>{{findDate(dates.length - 1)}}</p>
               <p>{{findDate(0)}}</p>
             </div>
           </div>
@@ -318,6 +318,8 @@ export default {
       libraryData: {
         tracks: [],
         audio_features: null,
+        artists: {},
+        genres: {},
       },
       sorts: [
         {value: 'valence', text: "Happy"},
@@ -460,16 +462,14 @@ export default {
       return returnMonth + "/" + returnYear;
     },
     banger(loudness, tempo, energy, danceability) {
-      return (tempo + (energy * 100) + (danceability*100)) / 375;
+      return (tempo - 96 + (energy * 100) + (danceability*50)) / 210;
     },
     findMax(array) {
       let max = 0;
       for (var i = 0; i < array.length; i++)
       {
         if (array[i] > max)
-        {
           max = array[i];
-        }
       }
       return max;
     },
@@ -495,23 +495,16 @@ export default {
         if (this.catagoryVal == "bangers")
         {
           if (this.filterVal == 0)
-          {
             chart = this.bangers.minchart;
-          }
-          else {
+          else 
             chart = this.bangers.maxchart;
-          }
         }
         else {
           if (this.filterVal == 0)
-          {
             chart = this.audio_features[this.catagoryVal].minchart;
-          }
-          else {
+          else 
             chart = this.audio_features[this.catagoryVal].maxchart;
-          }
         }
-
       }
       if (chart.length > 0)
       {
@@ -541,16 +534,11 @@ export default {
       let now = new Date();
       let nt = now.getTime();
       let month = 2626560000;
-
       if (this.$router.currentRoute.name != "libraryanalysis")
-      {
         return;
-      }
       let response = await this.$store.dispatch('getSavedTracks',{limit: limit, offset: offset});
-      // get genre
       this.total = response.total;
       if (this.progress / this.total > .8)
-        
         this.message = "♪┏(・o･)┛♪┗ ( ･o･) ┓♪";
       else if (this.progress / this.total > .6)
         this.message = "Sick beats dude.";
@@ -563,14 +551,12 @@ export default {
       {
         ids.push(response.items[i].track.id);
         if (!(response.items[i].track.artists[0].name in this.artists))
-        {
           this.artists[response.items[i].track.artists[0].name] = {num: 1, id: response.items[i].track.artists[0].id};
-        }
-        else {
+        else 
           this.artists[response.items[i].track.artists[0].name].num += 1;
-        }
         let date = new Date(response.items[i].added_at);
         let t = date.getTime();
+        response.items[i].track.date_added = t;
         let diff = Math.floor((nt - t) / month);
         if (this.dates.length - 1 < diff)
         {
@@ -586,9 +572,7 @@ export default {
       let tracks = await this.$store.dispatch('getAudioFeaturesForTracks',ids);
       this.analyseData(tracks);
       if (response.items.length == 50)
-      {
         this.retriveData(offset + limit, limit, false);
-      }
       else {
         let keys = Object.keys(this.audio_features);
         for (var i = 0; i < keys.length; i++)
@@ -604,10 +588,11 @@ export default {
         this.libraryData.audio_features = this.audio_features;
         this.libraryData.audio_features.bangers = this.bangers;
         this.$store.dispatch('changeLibraryData', this.libraryData);
-        console.log(this.dates);
       }
     },
     analyseData(tracks) {
+      if (this.$router.currentRoute.name != "libraryanalysis")
+        return;
       this.libraryData.tracks = this.libraryData.tracks.concat(tracks);
       let keys = Object.keys(this.audio_features); 
       for (let i = 0; i < tracks.length; i++)
@@ -618,7 +603,6 @@ export default {
           this.bangers.plot[bangersPos] += 1;
         else
             this.bangers.plot[this.bangers.plot.length - 1] += 1;
-
         for (let j = 0; j < keys.length; j++)
         {
           if (keys[j] == "total")
@@ -627,19 +611,15 @@ export default {
             continue;
           }
           this.audio_features[keys[j]].value += tracks[i][keys[j]];
-          
           if (this.audio_features[keys[j]].plot[0] != -1)
             this.audio_features[keys[j]].plot[(Math.floor(tracks[i][keys[j]] * 10))] += 1;
-
           for (let k = 0; k < this.audio_features[keys[j]].minchart.length; k++)
           {
             if (this.audio_features[keys[j]].minchart[k].value > tracks[i][keys[j]])
             {
               this.audio_features[keys[j]].minchart.splice(k, 0, {id: tracks[i].id, value: tracks[i][keys[j]]});
               if (this.audio_features[keys[j]].minchart.length > 20)
-              {
                 this.audio_features[keys[j]].minchart.splice(20, 1);
-              }
               break;
             }
             if (k == this.audio_features[keys[j]].minchart.length - 1 && this.audio_features[keys[j]].minchart.length < 20)
@@ -649,18 +629,14 @@ export default {
             }
           }
           if (this.audio_features[keys[j]].minchart.length == 0)
-          {
             this.audio_features[keys[j]].minchart.push({id: tracks[i].id, value: tracks[i][keys[j]]});
-          }
           for (let k = 0; k < this.audio_features[keys[j]].maxchart.length; k++)
           {
             if (this.audio_features[keys[j]].maxchart[k].value < tracks[i][keys[j]])
             {
               this.audio_features[keys[j]].maxchart.splice(k, 0, {id: tracks[i].id, value: tracks[i][keys[j]]});
               if (this.audio_features[keys[j]].maxchart.length > 20)
-              {
                 this.audio_features[keys[j]].maxchart.splice(20, 1);
-              }
               break;
             }
             if (k == this.audio_features[keys[j]].maxchart.length - 1 && this.audio_features[keys[j]].maxchart.length < 20)
@@ -670,11 +646,8 @@ export default {
             }
           }
           if (this.audio_features[keys[j]].maxchart.length == 0)
-          {
             this.audio_features[keys[j]].maxchart.push({id: tracks[i].id, value: tracks[i][keys[j]]});
-          }
         }
-
         let bangindex = this.banger(tracks[i].loudness, tracks[i].tempo, tracks[i].energy, tracks[i].danceability);
         for (let k = 0; k < this.bangers.minchart.length; k++)
         {
@@ -682,9 +655,7 @@ export default {
           {
             this.bangers.minchart.splice(k, 0, {id: tracks[i].id, value: bangindex});
             if (this.bangers.minchart.length > 20)
-            {
               this.bangers.minchart.splice(20, 1);
-            }
             break;
           }
           if (k == this.bangers.minchart.length - 1 && this.bangers.minchart.length < 20)
@@ -694,18 +665,14 @@ export default {
           }
         }
         if (this.bangers.minchart.length == 0)
-        {
           this.bangers.minchart.push({id: tracks[i].id, value: bangindex});
-        }
         for (let k = 0; k < this.bangers.maxchart.length; k++)
         {
           if (this.bangers.maxchart[k].value < bangindex)
           {
             this.bangers.maxchart.splice(k, 0, {id: tracks[i].id, value: bangindex});
             if (this.bangers.maxchart.length > 20)
-            {
               this.bangers.maxchart.splice(20, 1);
-            }
             break;
           }
           if (k == this.bangers.maxchart.length - 1 && this.bangers.maxchart.length < 20)
@@ -715,20 +682,12 @@ export default {
           }
         }
         if (this.bangers.maxchart.length == 0)
-        {
           this.bangers.maxchart.push({id: tracks[i].id, value: bangindex});
-        }
-
-
-
-
-
         this.progress += 1;
       }
     },
     async checkArtists() {
       let max = 4;
-      
       for (var artist in this.artists) {
         let added = false;
         for (var i = 0; i < this.favoriteArtists.length; i++)
@@ -740,17 +699,15 @@ export default {
             break;
           }
           if (this.favoriteArtists.length > max)
-          {
             this.favoriteArtists.splice(this.favoriteArtists.length - 1, 1);
-          }
         }
-        if (this.favoriteArtists.length < max && !added) {
+        if (this.favoriteArtists.length < max && !added) 
           this.favoriteArtists.push({name: artist, num: this.artists[artist].num, id: this.artists[artist].id});
-        }
       }
       let favoriteArtist = await this.$store.dispatch('getArtist', this.favoriteArtists[0].id);
       this.favoriteArtists[0].image = favoriteArtist.images[0].url;
       this.artistsDone = true;
+      this.libraryData.artists = this.artists;
     },
     async checkGenres() {
       let max = 4;
@@ -764,14 +721,10 @@ export default {
           {
             for (var j = 0; j < artistsData.artists[i].genres.length; j++)
             {
-
               if (!(artistsData.artists[i].genres[j] in this.genres))
-              {
                 this.genres[artistsData.artists[i].genres[j]] = {num: this.artists[artist].num, genre: artistsData.artists[i].genres[j]};
-              }
-              else {
+              else 
                 this.genres[artistsData.artists[i].genres[j]].num += this.artists[artist].num;
-              }
             }
           }
           querymax = 50;
@@ -795,16 +748,13 @@ export default {
             break;
           }
           if (this.favoriteGenres.length > max)
-          {
             this.favoriteGenres.splice(this.favoriteGenres.length - 1, 1);
-          }
         }
-        if (this.favoriteGenres.length < max && !added) {
+        if (this.favoriteGenres.length < max && !added)
           this.favoriteGenres.push({genre: genre, num: this.genres[genre].num});
-        }
       }
       this.genresDone = true;
-
+      this.libraryData.genres = this.genres;
     },
     animate() {
       if (this.animateIndex >= 1)
@@ -812,9 +762,8 @@ export default {
         this.animateIndex = 1;
         clearInterval(this.interval);
       }
-      else {
+      else
         this.animateIndex += .1;
-      }
     }
   },
   computed: {

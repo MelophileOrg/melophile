@@ -69,7 +69,7 @@ export default new Vuex.Store({
       }
     ],
     index: 0,
-    libraryData: [],
+    libraryData: null,
   },
   mutations: {
     setIndex(state, index) {
@@ -105,7 +105,7 @@ export default new Vuex.Store({
     {
       const authEndpoint = 'https://accounts.spotify.com/authorize';
       const clientId = '42903eeb2bf943c4bd4903370f7a93f5';
-      let redirectUri = 'http://spotifyfeatures.andrewdanielyoung.com/redirect/';
+      let redirectUri = 'http://mymusic.andrewdanielyoung.com/redirect/';
       if (this.state.testing)
         redirectUri = 'http://localhost:8080/redirect/';
       const scopes = [

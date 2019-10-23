@@ -22,6 +22,7 @@
                     <div class="col fit">
                         <h1>{{artist.name}}</h1>
                         <h2>{{artist.followers.total}} Followers</h2>
+                        <h2 v-if="libraryData != null">{{findArtistSongsSaved(artist.name)}} Songs Saved</h2>
                         <h2>{{artist.genres[0]}}</h2>
                     </div>
                 </div>
@@ -59,7 +60,7 @@
                 </div>
             </div>
 
-            <div id="stats" class="window" :style="{'--delay': 2}">
+            <div id="stats" class="window" :style="{'--delay': 3}">
                 <h3>Song Statistics</h3>
                 <div class="row stat">
                     <h4 class="bar-title">Tempo:</h4>
@@ -91,7 +92,7 @@
                 <h3 id="banger-conclusion">{{bangerConclusion}}</h3>
             </div>
 
-            <div id="banger" class="window"  :style="{'--delay': 0}">
+            <div id="banger" class="window"  :style="{'--delay': 5}">
                 <div class="loading" v-if="!audioAnalysisReady">
                     <div v-for="bar in 4" :key="'loadingbar'+bar" class="bar" :style="{'--delay': + (bar - 1)}"/>
                 </div>
@@ -104,8 +105,34 @@
                 <p v-if="audioAnalysisReady" class="graph-key">Height: Volume - Color: Pitch</p>
             </div>
 
-            
-        
+            <div v-if="libraryData != null" id="comparisons" class="window" :style="{'--delay': 6}">
+                <h3>Compaired to Your Saved (Percentile)</h3>
+                <div v-if="percentileDataReady" class="row stat">
+                    <h4 class="bar-title">Happier Than</h4>
+                    <div class="stat-bar">
+                        <div class="fill" :style="{'--percent': + percentileData.valence, '--red': + barColors[0].red + 20, '--green': + barColors[0].green + 20, '--blue': + barColors[0].blue + 20}"/>
+                        <div class="fill excess" :style="{'--percent': + 1 - percentileData.valence, '--red': + barColors[0].red - 20, '--green': + barColors[0].green - 20, '--blue': + barColors[0].blue - 20}"/>
+                    </div>
+                    <h4 class="value">{{percent(percentileData.valence)}}</h4>
+                </div>
+                <div v-if="percentileDataReady" class="row stat">
+                    <h4 class="bar-title">Energy</h4>
+                    <div class="stat-bar">
+                        <div class="fill" :style="{'--percent': + percentileData.energy, '--red': + barColors[1].red + 20, '--green': + barColors[1].green + 20, '--blue': + barColors[1].blue + 20}"/>
+                        <div class="fill excess" :style="{'--percent': + 1 - percentileData.energy, '--red': + barColors[1].red - 20, '--green': + barColors[1].green - 20, '--blue': + barColors[1].blue - 20}"/>
+                    </div>
+                    <h4 class="value">{{percent(percentileData.energy)}}</h4>
+                </div>
+                 <div v-if="percentileDataReady" class="row stat">
+                    <h4 class="bar-title">Danceable</h4>
+                    <div class="stat-bar">
+                        <div class="fill" :style="{'--percent': + percentileData.danceability, '--red': + barColors[2].red + 20, '--green': + barColors[2].green + 20, '--blue': + barColors[2].blue + 20}"/>
+                        <div class="fill excess" :style="{'--percent': + 1 - percentileData.danceability, '--red': + barColors[2].red - 20, '--green': + barColors[2].green - 20, '--blue': + barColors[2].blue - 20}"/>
+                    </div>
+                    <h4 class="value">{{percent(percentileData.danceability)}}</h4>
+                </div>
+            </div>
+            <h1 id="instructions" :style="{'--delay': 7}" v-if="libraryData == null">Run Library Analysis for Personalized Data</h1>
       </div>
     </div>
 </template>
@@ -136,9 +163,21 @@ export default {
             artistDone: false,
             audioAnalysisReady: false,
             audioAnalysisSegments: 80,
+            percentileData: {
+                valence: 0,
+                danceability: 0,
+                energy: 0,
+            },
+            percentileDataReady: false,
         }
     },
     methods: {
+        findArtistSongsSaved(artist) {
+            if ("artists" in this.libraryData)
+                if (artist in this.libraryData.artists)
+                    return this.libraryData.artists[artist].num;
+            return "0";
+        },
         time(seconds) {
             let zero = "";
             if (seconds % 60 < 10)
@@ -227,27 +266,61 @@ export default {
                 g: Math.round(g * 255),
                 b: Math.round(b * 255)
             };
-        }
+        },
+        calculatePercentiles() {
+            let keys = Object.keys(this.percentileData);
+            for (var i = 0; i < keys.length; i++)
+            {
+                let less = 0;
+                for (var j = 0; j < this.libraryData.tracks.length; j++)
+                {
+                    if (this.libraryData.tracks[j][keys[i]] < this.trackData.audioFeatures[keys[i]])
+                        less += 1;
+                }
+                this.percentileData[keys[i]] = less / this.libraryData.tracks.length;
+            }
+            this.percentileDataReady = true;
+        },
     },
     computed: {
         banger() {
-            return (this.trackData.audioFeatures.tempo + (this.trackData.audioFeatures.energy*100) + (this.trackData.audioFeatures.danceability*100)) / 375;
+            return (this.trackData.audioFeatures.tempo - 96 + (this.trackData.audioFeatures.energy*100) + (this.trackData.audioFeatures.danceability * 50)) / 210;
         },
         bangerConclusion() {
             let results = ["Banger? More like Bummer", "Nah Bruh", "Not Banger.", "Cool, but not Banger", "Like Sorta Banger?", "Got A Semi-Banger", "Almost Banger", "What a Banger!", "Absolute Banger Bro", "Banger of all Bangers"];
-            return results[Math.floor(this.banger * 10)];
+            if (Math.floor(this.banger * 10) < results.length)
+                return results[Math.floor(this.banger * 10)];
+            return "Banger of all Bangers";
+        },
+        libraryData() {
+            return this.$store.state.libraryData;
         }
     },
     async created() {
         this.getArtistDetails();
         this.trackData.audioAnalysis = await this.$store.dispatch('getAudioAnalysisForTrack', this.trackData.id);
         this.cleanAudioAnalysis();
+        this.calculatePercentiles();
     }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+#instructions {
+    --delay: 0;
+    animation: slide-up .5s ease calc(var(--delay) * .1s), peekaboo calc(var(--delay) * .1s);
+    display: block;
+    width: 400px;
+    height: 80px;
+    padding-top: 68px;
+    text-overflow: clip;
+    line-height: 40px;
+    color: rgba(255, 255, 255, 0.219);
+    text-align: center;
+    overflow: hidden;
+    white-space:normal;
+}
 .loading {
   margin-top: 30px;
 }
@@ -430,7 +503,7 @@ p {
 }
 
 .stat-bar {
-    display: block;
+    display: flex;
     border-radius: 5px;
     overflow: hidden;
     width: 200px;
@@ -448,6 +521,19 @@ p {
     height: 10px;
     background: rgb(var(--red), var(--green), var(--blue));
     animation: slow-fill 1s ease;
+}
+
+.stat-bar .fill.excess {
+    border-left: 2px solid rgb(37, 37, 37);
+    background: rgba(var(--red), var(--green), var(--blue), .5);
+    width: calc((var(--percent) * 100%) - 2px);
+    animation: border-throb 1s ease-in-out infinite;
+}
+
+@keyframes border-throb {
+    50% {
+        border-left: 2px solid rgb(255, 255, 255);
+    }
 }
 
 
