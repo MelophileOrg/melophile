@@ -88,7 +88,6 @@ export default new Vuex.Store({
   actions: {
     changeLibraryData(context, payload) {
       context.commit('setLibraryData', payload);
-      console.log(this.state.libraryData);
     },
     parseAccessToken(context)
     {

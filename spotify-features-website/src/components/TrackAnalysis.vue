@@ -27,27 +27,7 @@
                 </div>
             </div>
 
-            <div id="stats" class="window" :style="{'--delay': 2}">
-                <h3>Song Statistics</h3>
-                <div class="row stat">
-                    <h4 class="bar-title">Tempo:</h4>
-                    <h4 class="value">{{trackData.audioFeatures.tempo}} BPM</h4>
-                </div>
-                <div class="row stat">
-                    <h4 class="bar-title">Key:</h4>
-                    <h4 class="value">{{keyTell(trackData.audioFeatures.key)}}</h4>
-                </div>
-                <div class="row stat">
-                    <h4 class="bar-title">Mode:</h4>
-                    <h4 class="value">{{mode(trackData.audioFeatures.mode)}}</h4>
-                </div>
-                <div class="row stat">
-                    <h4 class="bar-title">Duration:</h4>
-                    <h4 class="value">{{Math.round(trackData.audioFeatures.duration_ms / 6000) / 10}} min</h4>
-                </div>
-            </div>
-
-            <div id="characteristics" class="window" :style="{'--delay': 3}">
+            <div id="characteristics" class="window" :style="{'--delay': 2}">
                 <h3>Song Characteristics</h3>
                 <div class="row stat">
                     <h4 class="bar-title">Happiness</h4>
@@ -76,6 +56,26 @@
                         <div class="fill" :style="{'--percent': + (trackData.popularity / 100), '--red': + barColors[4].red, '--green': + barColors[4].green, '--blue': + barColors[4].blue}"/>
                     </div>
                     <h4 class="value">{{trackData.popularity}}%</h4>
+                </div>
+            </div>
+
+            <div id="stats" class="window" :style="{'--delay': 2}">
+                <h3>Song Statistics</h3>
+                <div class="row stat">
+                    <h4 class="bar-title">Tempo:</h4>
+                    <h4 class="value">{{trackData.audioFeatures.tempo}} BPM</h4>
+                </div>
+                <div class="row stat">
+                    <h4 class="bar-title">Key:</h4>
+                    <h4 class="value">{{keyTell(trackData.audioFeatures.key)}}</h4>
+                </div>
+                <div class="row stat">
+                    <h4 class="bar-title">Mode:</h4>
+                    <h4 class="value">{{mode(trackData.audioFeatures.mode)}}</h4>
+                </div>
+                <div class="row stat">
+                    <h4 class="bar-title">Duration:</h4>
+                    <h4 class="value">{{Math.round(trackData.audioFeatures.duration_ms / 6000) / 10}} min</h4>
                 </div>
             </div>
 
@@ -263,14 +263,15 @@ export default {
 #banger-conclusion {
     margin: 0 auto;
     text-align: center;
-    color: rgb(225, 87, 89);
+    color: rgb(252, 140, 142);
     font-size: 3em;
 }
 #track-image {
     display: block;
     width: 100px;
     height: 100px;
-    background-size: 100% 100%;
+    background-size: 100% auto;
+    background-position: center center;
     margin-right: 20px;
 }
 
@@ -354,12 +355,17 @@ h2 {
     color: rgba(255, 255, 255, 0.568);
     text-align: left;
     margin: 0;
+    margin-top: 10px;
+    max-width: calc(100% - 5px);
     text-transform: capitalize;
+        text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 #artists {
     display: flex;
-    width: calc(100% - 45px);
+    max-width: calc(100% - 5px);
     overflow: hidden;
 }
 
@@ -369,7 +375,7 @@ h2 {
     text-align: left;
     margin: 0px 0px;
     margin-right: 5px;
-    
+    margin-top: 10px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;

@@ -127,7 +127,7 @@
             </div>
           </div>
 
-          <div id="chances" class="window"  :style="{'--delay': 6}">
+          <div id="chances" class="window"  :style="{'--delay': 5}">
             <h3>Chance a Song in Your Library...</h3>
             <div class="row stat">
               <h4 class="bar-title">is Accoustic</h4>
@@ -159,7 +159,19 @@
             </div>
           </div>
 
-          <div id="happiness-graph" class="window" :style="{'--delay': 5}">
+          <div id="time-graph" class="window" :style="{'--delay': 6}">
+            <h3>When You Added Songs</h3>
+            <div class="graph" :style="{'--max': + findMax(dates), '--red': + barColors[4].red, '--green': + barColors[4].green, '--blue': + barColors[4].blue}">
+              <div class="graph-bar time" v-for="(date, index) in dates.slice().reverse()" :key="'date' + index" :class="{toolow: date < findMax(dates) / 10}" :style="{'--num': dates.length,'--height': + date}"><p>{{date}}</p><p class="hover-graph">{{findDate(dates.length - index)}}</p></div>
+              <p class="yAxis">Number of Songs</p>
+            </div>
+            <div class="graph-labels">
+              <p>{{findDate(dates[dates.length - 1])}}</p>
+              <p>{{findDate(0)}}</p>
+            </div>
+          </div>
+
+          <div id="happiness-graph" class="window" :style="{'--delay': 7}">
             <h3>Happiness Distribution</h3>
             <div class="graph" :style="{'--max': + findMax(audio_features.valence.plot), '--red': + barColors[0].red, '--green': + barColors[0].green, '--blue': + barColors[0].blue}">
               <div class="graph-bar" :class="{toolow: audio_features.valence.plot[0] < findMax(audio_features.valence.plot) / 10}" :style="{'--height': + audio_features.valence.plot[0]}"><p>{{audio_features.valence.plot[0]}}</p></div>
@@ -181,7 +193,7 @@
             </div>
           </div>
 
-          <div id="happiness-graph" class="window" :style="{'--delay': 7}">
+          <div id="happiness-graph" class="window" :style="{'--delay': 8}">
             <h3>Energy Distribution</h3>
             <div class="graph" :style="{'--max': + findMax(audio_features.energy.plot), '--red': + barColors[1].red, '--green': + barColors[1].green, '--blue': + barColors[1].blue}">
               <div class="graph-bar" :class="{toolow: audio_features.energy.plot[0] < findMax(audio_features.energy.plot) / 10}" :style="{'--height': + audio_features.energy.plot[0]}"><p>{{audio_features.energy.plot[0]}}</p></div>
@@ -203,7 +215,7 @@
             </div>
           </div>
 
-          <div id="happiness-graph" class="window" :style="{'--delay': 5}">
+          <div id="happiness-graph" class="window" :style="{'--delay': 9}">
             <h3>Danceability Distribution</h3>
             <div class="graph" :style="{'--max': + findMax(audio_features.danceability.plot), '--red': + barColors[2].red, '--green': + barColors[2].green, '--blue': + barColors[2].blue}">
               <div class="graph-bar" :class="{toolow: audio_features.danceability.plot[0] < findMax(audio_features.danceability.plot) / 10}" :style="{'--height': + audio_features.danceability.plot[0]}"><p>{{audio_features.danceability.plot[0]}}</p></div>
@@ -225,7 +237,7 @@
             </div>
           </div>
 
-          <div id="banger-graph" class="window" :style="{'--delay': 6}">
+          <div id="banger-graph" class="window" :style="{'--delay': 10}">
             <h3>Should You DJ a Party</h3>
             <div class="graph" :style="{'--max': + findMax(bangers.plot), '--red': + barColors[3].red, '--green': + barColors[2].green, '--blue': + barColors[2].blue}">
               <div class="graph-bar" :class="{toolow: bangers.plot[0] < findMax(bangers.plot) / 10}" :style="{'--height': + bangers.plot[0]}"><p>{{bangers.plot[0]}}</p></div>
@@ -430,9 +442,23 @@ export default {
 
       catagoryVal: "",
       filterVal: -1,
+
+      dates: [0,0,0,0],
     }
   },
   methods: {
+    findDate(months) {
+      let month = 2626560000;
+      let n = new Date();
+      let t = n.getTime();
+      t -= (month * months);
+      let then = new Date(t);
+      let returnMonth = then.getMonth();
+      if (returnMonth == 0)
+        returnMonth = 12;
+      let returnYear = then.getFullYear() % 100;
+      return returnMonth + "/" + returnYear;
+    },
     banger(loudness, tempo, energy, danceability) {
       return (tempo + (energy * 100) + (danceability*100)) / 375;
     },
@@ -512,6 +538,10 @@ export default {
       this.retriveData(0, 50, true);
     },
     async retriveData(offset, limit) {
+      let now = new Date();
+      let nt = now.getTime();
+      let month = 2626560000;
+
       if (this.$router.currentRoute.name != "libraryanalysis")
       {
         return;
@@ -539,6 +569,19 @@ export default {
         else {
           this.artists[response.items[i].track.artists[0].name].num += 1;
         }
+        let date = new Date(response.items[i].added_at);
+        let t = date.getTime();
+        let diff = Math.floor((nt - t) / month);
+        if (this.dates.length - 1 < diff)
+        {
+          for (var j = 0; j < (diff - (this.dates.length - 1)); j++)
+          {
+            this.dates.push(0);
+          }
+          this.dates.push(0);
+          this.dates.push(0);
+        }
+        this.dates[diff] += 1;
       }
       let tracks = await this.$store.dispatch('getAudioFeaturesForTracks',ids);
       this.analyseData(tracks);
@@ -561,6 +604,7 @@ export default {
         this.libraryData.audio_features = this.audio_features;
         this.libraryData.audio_features.bangers = this.bangers;
         this.$store.dispatch('changeLibraryData', this.libraryData);
+        console.log(this.dates);
       }
     },
     analyseData(tracks) {
@@ -800,6 +844,38 @@ export default {
 </script>
 
 <style scoped>
+.graph-bar.time {
+  --num: 0;
+  width: calc((100% / var(--num)) - 4px) !important;
+  margin: 0px 0px;
+  position: relative;
+}
+
+.graph-bar.time p {
+  display: none;
+  
+  
+}
+
+.graph-bar.time:hover p {
+  position: absolute;
+  text-align: center;
+  display: block;
+  top: -50px;
+  width: 50px;
+  margin: 0;
+  padding: 3px;
+  height: 14px;
+  z-index: 100;
+  color: white;
+  background: rgba(0, 0, 0, 0.842);
+  transform: translateY(-0px) translateX(-25px);
+}
+
+.graph-bar.time:hover p.hover-graph {
+  transform: translateY(20px) translateX(-25px);
+}
+
 .graph {
   --max: 0;
   --red: 0;
@@ -872,7 +948,7 @@ p {
   border: 1px solid rgba(255, 255, 255, 0.151);
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
-  animation: bar-graph-slide .5s ease-out .7s, peekaboo .7s;
+  animation: bar-graph-slide .5s ease-out .8s, peekaboo .8s;
 }
 
 .graph-bar p{

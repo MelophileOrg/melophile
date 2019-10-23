@@ -3,9 +3,8 @@
     <NavBar path=""/>
     <div id="main">
       <BigTitle :top="true"/>
-      <h1 id="title">Grant Access for More Features</h1>
+      <h1 id="title">Login with Spotify to Start!</h1>
       <button @click="authorize" id="authorize">Authorize</button>
-      <button id="learnmore">Learn More</button>
     </div>
   </div>
 </template>
@@ -56,8 +55,12 @@ export default {
   letter-spacing: -.005em;
   color: rgba(215, 215, 215, 0.767);
   margin: 0;
-  margin-top: 10px;
+  margin-top: 15px;
   font-weight: lighter;
+}
+
+#main {
+  padding-top: 5vw;
 }
 
 button {
@@ -68,11 +71,17 @@ button {
   font-weight: bolder;
 }
 
+button#authorize:hover {
+  background: radial-gradient(rgb(252, 252, 252), rgb(236, 236, 236));
+  color: rgb(18, 207, 84);
+}
+
 button#authorize {
   font-size: 20px;
   padding: 15px 35px;
   margin-top: 25px;
   color: rgb(255, 255, 255);
+  transition: all .1s ease;
   background: radial-gradient(rgb(30, 215, 95), rgb(18, 207, 84));
 }
 

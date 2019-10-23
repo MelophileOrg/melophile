@@ -5,9 +5,9 @@
       <AppTitle v-if="load" title="My Charts" image="chart" font="Monoton"/>
       <div :class="{load: load}" id="options">
         <h1>my top</h1>
-        <Select @pending="pending('type')" @selection="typeSelected" :load="load" :options="types"/>
+        <Select @pending="pending('type')" @selection="typeSelected" :setTitle="overrideTyp.title" :override="overrideTyp.set" :load="load" :options="types"/>
         <h1>in the last</h1>
-        <Select @pending="pending('range')" @selection="rangeSelected" :load="load" :options="ranges"/>
+        <Select @pending="pending('range')" @selection="rangeSelected" :setTitle="overrideRan.title" :override="overrideRan.set" :load="load" :options="ranges"/>
       </div>
       <div class="loading" v-if="show && artists.length == 0 && tracks.length == 0">
         <div v-for="bar in 4" :key="'loadingbar'+bar" class="bar" :style="{'--delay': + (bar - 1)}"/>
@@ -76,6 +76,14 @@ export default {
   },
   data() {
     return {
+      overrideTyp: {
+        set: false,
+        title: "",
+      },
+      overrideRan: {
+        set: false,
+        title: "",
+      },
       types: [
         {value: "tracks", text: "Tracks"},
         {value: "artists", text: "Artists"},
@@ -115,10 +123,16 @@ export default {
       if (this.type != null && this.range != null)
       {
         this.load = false;
+        this.overrideRan.title = this.range;
+        this.overrideTyp.title = this.type;
+        this.overrideRan.set = true;
+        this.overrideTyp.set = true;
         if (this.type == "tracks")
           this.retrieveTracks();
         else
           this.retrieveArtists();
+        this.overrideRan.set = false;
+        this.overrideTyp.set = false;
       }
     },
     async retrieveTracks() {
@@ -257,7 +271,6 @@ tr {
 
 .load#options {
   margin-top: 40px;
-  transition: all .3s ease;
 }
 
 #options {

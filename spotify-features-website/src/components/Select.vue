@@ -19,6 +19,8 @@ export default {
     props: {
         options: Array,
         load: Boolean,
+        setTitle: String,
+        override: Boolean,
     },
     data() {
         return {
@@ -54,6 +56,7 @@ export default {
             this.index = num;
             this.show = false;
             this.$emit('selection', this.options[this.index].value);
+            console.log(this.index);
         }
     },
     computed: {
@@ -68,6 +71,19 @@ export default {
             }
             else
                 return this.options[this.index].text;
+        }
+    },
+    created() {
+        if (!this.load) {
+            let title = this.setTitle;
+            for (var i = 0; i < this.options.length; i++)
+            {
+                if (this.options[i].value == title)
+                {
+                    this.index = i;
+                    break;
+                }
+            }
         }
     }
 }
