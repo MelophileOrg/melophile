@@ -319,7 +319,9 @@ export default {
         tracks: [],
         audio_features: null,
         artists: {},
+        favoriteArtists: [],
         genres: {},
+        favoriteGenres: [],
       },
       sorts: [
         {value: 'valence', text: "Happy"},
