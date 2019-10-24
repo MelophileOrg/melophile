@@ -1,5 +1,5 @@
 <template>
-  <div class="songanalysis">
+  <div class="songanalysis maindiv">
     <NavBar path="songanalysis" />
     <div id="main">
       <SearchBar v-on:changed="search" />
@@ -126,13 +126,6 @@ export default {
   color: rgba(255, 255, 255, 0.171);
   margin-top: 100px;
   font-weight: lighter;
-}
-
-
-.songanalysis {
-  display: flex;
-  width: 100vw;
-  min-height: 100vh;
 }
 
 table {

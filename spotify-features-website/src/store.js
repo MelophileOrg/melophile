@@ -17,7 +17,8 @@ export default new Vuex.Store({
         path: "songanalysis",
         auth: false,
         description: [
-          "View all available information Spotify offers on a given song.",
+          "View in-depth information about a track including it's happiness, energy and danceability!",
+          "After running Library Analysis, Song Analisis will provide additional information based on your Library's statistics.",
         ],
         img: "search",
         color: {red: 255, green: 165, blue: 30},
@@ -28,22 +29,25 @@ export default new Vuex.Store({
         path: "mycharts",
         auth: true,
         description: [
-          "View your personalized top charts and artists.",
+          "View your personalized top tracks and artists.",
+          "View either with a time range of your choice! View your top tracks of all time, or your favorite artists over the last few weeks."
         ],
         img: "chart",
         color: {red: 238, green: 126, blue: 137},
-        state: false,
+        state: true,
       },
       {
         title: "Library Analysis",
         path: "libraryanalysis",
         auth: true,
         description: [
+          "How happy is your library? Who is your top saved artist? What are you slowest songs?",
           "Discover the averages and extremes within your library.",
+          "Library Analysis gathers all data relavant to your library and process' out some cool statistics!"
         ],
         img: "library",
         color: {red: 84, green: 224, blue: 210},
-        state: false,
+        state: true,
       },
       {
         title: "My Music Mood",
@@ -51,6 +55,7 @@ export default new Vuex.Store({
         auth: true,
         description: [
           "What does your music say about you?",
+          "Based on either your most recently played, or recent top tracks, My Music Mood will attempt to analyse tracks you've been into lately and determine your mood!",
         ],
         img: "musicmood",
         color: {red: 180, green: 100, blue: 100},
@@ -62,6 +67,20 @@ export default new Vuex.Store({
         auth: true,
         description: [
           "Is your music taste BORING?",
+          "The Boring-Radar will either confirm or rebute your greatest fears by analysing data from Library Analysis to determine the standard deviation of your library through multiple variables.",
+        ],
+        img: "boring",
+        color: {red: 180, green: 100, blue: 100},
+        state: false,
+      },
+      {
+        title: "Power Recommends",
+        path: "boring",
+        auth: true,
+        description: [
+          "I like this song, but I want one like it but happier. DONE.",
+          "Taylor your recommends to fit your exact wishes, and find songs more accuratly attuned to what you're looking for.",
+          "Get recommends based on a track, but specify what statistics you'd like your new songs to maintain, or change.",
         ],
         img: "boring",
         color: {red: 180, green: 100, blue: 100},
@@ -70,7 +89,12 @@ export default new Vuex.Store({
     ],
     index: 0,
     libraryData: {
-      complete: [false, false, false],
+      complete: {
+        done: false,
+        audioFeaturesDone: false, 
+        artistsDone: false,
+        genresDone: false,
+      },
       tracks: [],
       artists: {},
       favoriteArtists: [],
@@ -154,7 +178,8 @@ export default new Vuex.Store({
       num: 0,
       message: "Pluggin in headphones.",
       total: 0,
-    }
+    },
+    tempBanger: 0,
   },
   mutations: {
     setIndex(state, index) {
@@ -169,8 +194,8 @@ export default new Vuex.Store({
     setLibraryData(state, data) {
       state.libraryData = data;
     },
-    setProgress(state, num) {
-      state.progress.num = num;
+    setProgress(state) {
+      state.progress.num += 1;
     },
     setMessage(state, message) {
       state.progress.message = message;
@@ -186,6 +211,81 @@ export default new Vuex.Store({
     },
     plotBanger(state, index) {
       state.libraryData.bangers.plot[index] += 1;
+    },
+    spliceBanger(state, payload) {
+      if (payload.replace != null)
+        state.libraryData.bangers[payload.type].splice(payload.index, payload.num, payload.replace);
+      else 
+        state.libraryData.bangers[payload.type].splice(payload.index, payload.num);
+    },
+    pushBanger(state, payload) {
+      state.libraryData.bangers[payload.type].push(payload.value);
+    },
+    addAudioFeaturesTotal(state) {
+      state.libraryData.audio_features.total += 1;
+    },
+    addAudioFeature(state, payload) {
+      state.libraryData.audio_features[payload.key].value += payload.value;
+    },
+    plotAudioFeature(state, payload) {
+      state.libraryData.audio_features[payload.key].plot[payload.index] += 1;
+    },
+    spliceAudioFeatures(state, payload) {
+      if (payload.replace != null)
+        state.libraryData.audio_features[payload.key][payload.type].splice(payload.index, payload.num, payload.replace);
+      else 
+        state.libraryData.audio_features[payload.key][payload.type].splice(payload.index, payload.num);
+    },
+    pushAudioFeatures(state, payload) {
+      state.libraryData.audio_features[payload.key][payload.type].push(payload.value);
+    },
+    spliceFavoriteArtists(state, payload) {
+      if (payload.replace != null)
+        state.libraryData.favoriteArtists.splice(payload.index, payload.num, payload.replace);
+      else
+        state.libraryData.favoriteArtists.splice(payload.index, payload.num);
+    }, 
+    pushFavoriteArtists(state, artist) {
+      state.libraryData.favoriteArtists.push(artist);
+    },
+    pushFavoriteGenres(state, genre) {
+      state.libraryData.favoriteGenres.push(genre);
+    },
+    spliceFavoriteGenres(state, payload) {
+      if (payload.replace != null)
+        state.libraryData.favoriteGenres.splice(payload.index, payload.num, payload.replace);
+      else
+        state.libraryData.favoriteGenres.splice(payload.index, payload.num);
+    }, 
+    setFavoriteArtistImage(state, image) {
+      state.libraryData.favoriteArtists[0].image = image;
+    },
+    setComplete(state, payload) {
+      state.libraryData.complete[payload.index] = payload.value;
+    },
+    addGenre(state, payload) {
+      state.libraryData.genres[payload.genre] = payload.value;
+    },
+    addArtist(state, payload) {
+      state.libraryData.artists[payload.name] = payload.value;
+    },
+    addToArtist(state, artist) {
+      state.libraryData.artists[artist].num += 1;
+    },
+    addToGenre(state, payload) {
+      state.libraryData.genres[payload.genre].num += payload.num;
+    },
+    pushDate(state) {
+      state.libraryData.dates.push(0);
+    },
+    addToDate(state, date) {
+      state.libraryData.dates[date] += 1;
+    },
+    averageAudioFeature(state, key){
+      state.libraryData.audio_features[key].value /= state.libraryData.audio_features.total;
+    },
+    setTempBanger(state, level) {
+      state.tempBanger = level;
     }
   },
   actions: {
@@ -221,13 +321,14 @@ export default new Vuex.Store({
         window.location = `${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join('%20')}&response_type=token&show_dialog=true`;
       }
     },
-    async runLibraryAnalysis(context, payload) {
+    runLibraryAnalysis(context) {
+      this.dispatch("retriveData", {offset: 0, limit: 50});
+    },
+    async retriveData(context, payload) {
       let now = new Date();
       let nt = now.getTime();
       let month = 2626560000;
-      if (this.$router.currentRoute.name != "libraryanalysis")
-        return;
-      let response = await dispatch('getSavedTracks',{limit: payload.limit, offset: payload.offset});
+      let response = await this.dispatch('getSavedTracks',{limit: payload.limit, offset: payload.offset});
       context.commit('setTotal', response.total);
       if (this.state.progress.num / this.state.progress.total > .8)
         context.commit('setMessage', "♪┏(・o･)┛♪┗ ( ･o･) ┓♪");
@@ -242,9 +343,10 @@ export default new Vuex.Store({
       {
         ids.push(response.items[i].track.id);
         if (!(response.items[i].track.artists[0].name in this.state.libraryData.artists))
-          this.state.libraryData.artists[response.items[i].track.artists[0].name] = {num: 1, id: response.items[i].track.artists[0].id};
+          context.commit('addArtist', {name: response.items[i].track.artists[0].name, value: {num: 1, id: response.items[i].track.artists[0].id}});
         else 
-          this.state.libraryData.artists[response.items[i].track.artists[0].name].num += 1;
+          context.commit('addToArtist', response.items[i].track.artists[0].name);
+          
         let date = new Date(response.items[i].added_at);
         let t = date.getTime();
         response.items[i].track.date_added = t;
@@ -253,44 +355,46 @@ export default new Vuex.Store({
         {
           for (var j = 0; j < (diff - (this.state.libraryData.dates.length - 1)); j++)
           {
-            this.state.libraryData.dates.push(0);
+            context.commit('pushDate');
           }
-          this.state.libraryData.dates.push(0);
-          this.state.libraryData.dates.push(0);
+          context.commit('pushDate');
+          context.commit('pushDate');
         }
-        this.state.libraryData.dates[diff] += 1;
+        context.commit('addToDate', diff);
       }
-      let tracks = await dispatch('getAudioFeaturesForTracks', ids);
+      let tracks = await this.dispatch('getAudioFeaturesForTracks', ids);
       this.dispatch('analyseData', tracks);
       if (response.items.length == 50)
-        this.dispatch.retriveData({offset: offset + limit, limit: limit});
+        this.dispatch('retriveData', {offset: payload.offset + payload.limit, limit: payload.limit});
       else {
-        let keys = Object.keys(this.audio_features);
+        let keys = Object.keys(this.state.libraryData.audio_features);
         for (var i = 0; i < keys.length; i++)
         {
           if (keys[i] == "total")
             continue;
-          this.state.libraryData.audio_features[keys[i]].value /= this.state.libraryData.audio_features.total;
+          context.commit('averageAudioFeature', keys[i]);
         }
-        this.state.libraryData.complete[0] = true;
-        this.state.libraryData.complete[1] = true;
+        context.commit('setComplete', {index: "done", value: true});
+        context.commit('setComplete', {index: "audioFeaturesDone", value: true});
+        console.log('%c Processing Track Audio Features Complete.', 'color: purple;');
         await this.dispatch('checkArtists');
-        this.dispatch('checkGenres');
+        console.log('%c Processing Artists Complete.', 'color: purple;');
+        await this.dispatch('checkGenres');
+        console.log('%c Processing Genres Complete.', 'color: purple;');
       }
     },
     banger(context, payload) {
-      return (payload.tempo - 96 + (payload.energy * 100) + (payload.danceability*50)) / 210;
+      let bangerLevel = ((payload.tempo - 96 + (payload.energy * 100) + (payload.danceability*50)) / 210);
+      context.commit('setTempBanger', bangerLevel);
     },
-
-    analyseData(context, tracks) {
-      if (this.$router.currentRoute.name != "libraryanalysis")
-        return;
+    async analyseData(context, tracks) {
       context.commit('addTracks', tracks);
       let keys = Object.keys(this.state.libraryData.audio_features);
       for (let i = 0; i < tracks.length; i++)
       {
-        context.commit('addBangerValue', this.dispatch('banger', {loudness: tracks[i].loudness, energy: tracks[i].energy, danceability: tracks[i].danceability}));
-        let bangersPos = (Math.floor(this.dispatch('banger', {loudness: tracks[i].loudness, energy: tracks[i].energy, danceability: tracks[i].danceability}) * 10));
+        await this.dispatch('banger', {tempo: tracks[i].tempo, energy: tracks[i].energy, danceability: tracks[i].danceability});
+        context.commit('addBangerValue', this.state.tempBanger);
+        let bangersPos = (Math.floor(this.state.tempBanger * 10));
         if (bangersPos < this.state.libraryData.bangers.plot.length)
           context.commit('plotBanger', bangersPos);
         else
@@ -299,161 +403,154 @@ export default new Vuex.Store({
         {
           if (keys[j] == "total")
           {
-            // STOPPED HERE.
-            this.audio_features.total += 1;
+            context.commit('addAudioFeaturesTotal');
             continue;
           }
-          this.audio_features[keys[j]].value += tracks[i][keys[j]];
-          if (this.audio_features[keys[j]].plot[0] != -1)
-            this.audio_features[keys[j]].plot[(Math.floor(tracks[i][keys[j]] * 10))] += 1;
-          for (let k = 0; k < this.audio_features[keys[j]].minchart.length; k++)
+          context.commit('addAudioFeature', {key: keys[j], value: tracks[i][keys[j]]})
+          if (this.state.libraryData.audio_features[keys[j]].plot[0] != -1)
+            context.commit('plotAudioFeature', {key: keys[j], index: (Math.floor(tracks[i][keys[j]] * 10))})
+          for (let k = 0; k < this.state.libraryData.audio_features[keys[j]].minchart.length; k++)
           {
-            if (this.audio_features[keys[j]].minchart[k].value > tracks[i][keys[j]])
+            if (this.state.libraryData.audio_features[keys[j]].minchart[k].value > tracks[i][keys[j]])
             {
-              this.audio_features[keys[j]].minchart.splice(k, 0, {id: tracks[i].id, value: tracks[i][keys[j]]});
-              if (this.audio_features[keys[j]].minchart.length > 20)
-                this.audio_features[keys[j]].minchart.splice(20, 1);
+              context.commit('spliceAudioFeatures', {key: keys[j], type: "minchart", index: k, num: 0, replace: {id: tracks[i].id, value: tracks[i][keys[j]]}});
+              if (this.state.libraryData.audio_features[keys[j]].minchart.length > 20)
+                context.commit('spliceAudioFeatures', {key: keys[j], type: "minchart", index: 20, num: 1, replace: null});
               break;
             }
-            if (k == this.audio_features[keys[j]].minchart.length - 1 && this.audio_features[keys[j]].minchart.length < 20)
+            if (k == this.state.libraryData.audio_features[keys[j]].minchart.length - 1 && this.state.libraryData.audio_features[keys[j]].minchart.length < 20)
             {
-              this.audio_features[keys[j]].minchart.push({id: tracks[i].id, value: tracks[i][keys[j]]});
+              context.commit('pushAudioFeatures', {key: keys[j], type: "minchart", value: {id: tracks[i].id, value: tracks[i][keys[j]]}});
               break;
             }
           }
-          if (this.audio_features[keys[j]].minchart.length == 0)
-            this.audio_features[keys[j]].minchart.push({id: tracks[i].id, value: tracks[i][keys[j]]});
-          for (let k = 0; k < this.audio_features[keys[j]].maxchart.length; k++)
+          if (this.state.libraryData.audio_features[keys[j]].minchart.length == 0)
+            context.commit('pushAudioFeatures', {key: keys[j], type: "minchart", value: {id: tracks[i].id, value: tracks[i][keys[j]]}});
+          for (let k = 0; k < this.state.libraryData.audio_features[keys[j]].maxchart.length; k++)
           {
-            if (this.audio_features[keys[j]].maxchart[k].value < tracks[i][keys[j]])
+            if (this.state.libraryData.audio_features[keys[j]].maxchart[k].value < tracks[i][keys[j]])
             {
-              this.audio_features[keys[j]].maxchart.splice(k, 0, {id: tracks[i].id, value: tracks[i][keys[j]]});
-              if (this.audio_features[keys[j]].maxchart.length > 20)
-                this.audio_features[keys[j]].maxchart.splice(20, 1);
+              context.commit('spliceAudioFeatures', {key: keys[j], type: "maxchart", index: k, num: 0, replace: {id: tracks[i].id, value: tracks[i][keys[j]]}});
+              if (this.state.libraryData.audio_features[keys[j]].maxchart.length > 20)
+                context.commit('spliceAudioFeatures', {key: keys[j], type: "maxchart", index: 20, num: 1, replace: null});
               break;
             }
-            if (k == this.audio_features[keys[j]].maxchart.length - 1 && this.audio_features[keys[j]].maxchart.length < 20)
+            if (k == this.state.libraryData.audio_features[keys[j]].maxchart.length - 1 && this.state.libraryData.audio_features[keys[j]].maxchart.length < 20)
             {
-              this.audio_features[keys[j]].maxchart.push({id: tracks[i].id, value: tracks[i][keys[j]]});
+              context.commit('pushAudioFeatures', {key: keys[j], type: "maxchart", value: {id: tracks[i].id, value: tracks[i][keys[j]]}});
               break;
             }
           }
-          if (this.audio_features[keys[j]].maxchart.length == 0)
-            this.audio_features[keys[j]].maxchart.push({id: tracks[i].id, value: tracks[i][keys[j]]});
+          if (this.state.libraryData.audio_features[keys[j]].maxchart.length == 0)
+            context.commit('pushAudioFeatures', {key: keys[j], type: "maxchart", value: {id: tracks[i].id, value: tracks[i][keys[j]]}});
         }
-        let bangindex = this.banger(tracks[i].loudness, tracks[i].tempo, tracks[i].energy, tracks[i].danceability);
-        for (let k = 0; k < this.bangers.minchart.length; k++)
+        await this.dispatch('banger', {tempo: tracks[i].tempo, energy: tracks[i].energy, danceability: tracks[i].danceability});
+        let bangindex = this.state.tempBanger;
+        for (let k = 0; k < this.state.libraryData.bangers.minchart.length; k++)
         {
-          if (this.bangers.minchart[k].value > bangindex)
+          if (this.state.libraryData.bangers.minchart[k].value > bangindex)
           {
-            this.bangers.minchart.splice(k, 0, {id: tracks[i].id, value: bangindex});
-            if (this.bangers.minchart.length > 20)
-              this.bangers.minchart.splice(20, 1);
+            context.commit('spliceBanger', {type: "minchart", index: k, num: 0, replace: {id: tracks[i].id, value: bangindex}});
+            if (this.state.libraryData.bangers.minchart.length > 20)
+              context.commit('spliceBanger', {type: "minchart", index: 20, num: 1, replace: null});
             break;
           }
-          if (k == this.bangers.minchart.length - 1 && this.bangers.minchart.length < 20)
+          if (k == this.state.libraryData.bangers.minchart.length - 1 && this.state.libraryData.bangers.minchart.length < 20)
           {
-            this.bangers.minchart.push({id: tracks[i].id, value: bangindex});
+            context.commit('pushBanger', {type: "minchart", value: {id: tracks[i].id, value: bangindex}});
             break;
           }
         }
-        if (this.bangers.minchart.length == 0)
-          this.bangers.minchart.push({id: tracks[i].id, value: bangindex});
-        for (let k = 0; k < this.bangers.maxchart.length; k++)
+        if (this.state.libraryData.bangers.minchart.length == 0)
+          context.commit('pushBanger', {type: "minchart", value: {id: tracks[i].id, value: bangindex}});
+        for (let k = 0; k < this.state.libraryData.bangers.maxchart.length; k++)
         {
-          if (this.bangers.maxchart[k].value < bangindex)
+          if (this.state.libraryData.bangers.maxchart[k].value < bangindex)
           {
-            this.bangers.maxchart.splice(k, 0, {id: tracks[i].id, value: bangindex});
-            if (this.bangers.maxchart.length > 20)
-              this.bangers.maxchart.splice(20, 1);
+            context.commit('spliceBanger', {type: "maxchart", index: k, num: 0, replace: {id: tracks[i].id, value: bangindex}});
+            if (this.state.libraryData.bangers.maxchart.length > 20)
+              context.commit('spliceBanger', {type: "maxchart", index: 20, num: 1, replace: null});
             break;
           }
-          if (k == this.bangers.maxchart.length - 1 && this.bangers.maxchart.length < 20)
+          if (k == this.state.libraryData.bangers.maxchart.length - 1 && this.state.libraryData.bangers.maxchart.length < 20)
           {
-            this.bangers.maxchart.push({id: tracks[i].id, value: bangindex});
+            context.commit('pushBanger', {type: "maxchart", value: {id: tracks[i].id, value: bangindex}});
             break;
           }
         }
-        if (this.bangers.maxchart.length == 0)
-          this.bangers.maxchart.push({id: tracks[i].id, value: bangindex});
-        this.progress += 1;
+        if (this.state.libraryData.bangers.maxchart.length == 0)
+          context.commit('pushBanger', {type: "maxchart", value: {id: tracks[i].id, value: bangindex}});
+        context.commit('setProgress');
       }
     },
-    async checkArtists() {
+    async checkArtists(context) {
       let max = 4;
-      for (var artist in this.artists) {
+      for (var artist in this.state.libraryData.artists) {
         let added = false;
-        for (var i = 0; i < this.favoriteArtists.length; i++)
+        for (var i = 0; i < this.state.libraryData.favoriteArtists.length; i++)
         {
-          if (this.favoriteArtists[i].num < this.artists[artist].num)
+          if (this.state.libraryData.favoriteArtists[i].num < this.state.libraryData.artists[artist].num)
           {
-            this.favoriteArtists.splice(i, 0, {name: artist, num: this.artists[artist].num, id: this.artists[artist].id});
+            context.commit('spliceFavoriteArtists', {index: i, num: 0, replace: {name: artist, num: this.state.libraryData.artists[artist].num, id: this.state.libraryData.artists[artist].id}});
             added = true;
             break;
           }
-          if (this.favoriteArtists.length > max)
-            this.favoriteArtists.splice(this.favoriteArtists.length - 1, 1);
+          if (this.state.libraryData.favoriteArtists.length > max)
+            context.commit('spliceFavoriteArtists', {index: this.state.libraryData.favoriteArtists.length - 1, num: 1, replace: null});
         }
-        if (this.favoriteArtists.length < max && !added) 
-          this.favoriteArtists.push({name: artist, num: this.artists[artist].num, id: this.artists[artist].id});
+        if (this.state.libraryData.favoriteArtists.length < max && !added) 
+          context.commit('pushFavoriteArtists', {name: artist, num: this.state.libraryData.artists[artist].num, id: this.state.libraryData.artists[artist].id});
       }
-      let favoriteArtist = await this.$store.dispatch('getArtist', this.favoriteArtists[0].id);
-      this.favoriteArtists[0].image = favoriteArtist.images[0].url;
-      this.artistsDone = true;
-      this.libraryData.artists = this.artists;
+      let favoriteArtist = await this.dispatch('getArtist', this.state.libraryData.favoriteArtists[0].id);
+      context.commit('setFavoriteArtistImage', favoriteArtist.images[0].url);
+      
+      context.commit('setComplete', {index: "artistsDone", value: true});
     },
-    async checkGenres() {
+    async checkGenres(context) {
       let max = 4;
       let querymax = 50;
       let artistsIds = [];
-      for (var artist in this.artists) {
+      for (var artist in this.state.libraryData.artists) {
         if (querymax == 0)
         {
-          let artistsData = await this.$store.dispatch('getArtists', artistsIds);
+          let artistsData = await this.dispatch('getArtists', artistsIds);
           for (var i = 0; i < artistsData.artists.length; i++)
           {
             for (var j = 0; j < artistsData.artists[i].genres.length; j++)
             {
-              if (!(artistsData.artists[i].genres[j] in this.genres))
-                this.genres[artistsData.artists[i].genres[j]] = {num: this.artists[artist].num, genre: artistsData.artists[i].genres[j]};
+              if (!(artistsData.artists[i].genres[j] in this.state.libraryData.genres))
+                context.commit('addGenre', {genre: artistsData.artists[i].genres[j], value: {num: this.state.libraryData.artists[artist].num, genre: artistsData.artists[i].genres[j]}})
               else 
-                this.genres[artistsData.artists[i].genres[j]].num += this.artists[artist].num;
+                context.commit('addToGenre', {genre: artistsData.artists[i].genres[j], num: this.state.libraryData.artists[artist].num})
             }
           }
           querymax = 50;
           artistsIds = [];
         }
-        if (artist in this.artists)
-        {
-          artistsIds.push(this.artists[artist].id);
+        if (artist in this.state.libraryData.artists)
+        { 
+          artistsIds.push(this.state.libraryData.artists[artist].id);
           querymax -= 1;
         }
       }
 
-      for (var genre in this.genres) {
+      for (var genre in this.state.libraryData.genres) {
         let added = false;
-        for (var i = 0; i < this.favoriteGenres.length; i++)
+        for (var i = 0; i < this.state.libraryData.favoriteGenres.length; i++)
         {
-          if (this.favoriteGenres[i].num < this.genres[genre].num)
+          if (this.state.libraryData.favoriteGenres[i].num < this.state.libraryData.genres[genre].num)
           {
-            this.favoriteGenres.splice(i, 0, {genre: genre, num: this.genres[genre].num});
+            context.commit('spliceFavoriteGenres', {index: i, num: 0, replace: {genre: genre, num: this.state.libraryData.genres[genre].num}});
             added = true;
             break;
           }
-          if (this.favoriteGenres.length > max)
-            this.favoriteGenres.splice(this.favoriteGenres.length - 1, 1);
+          if (this.state.libraryData.favoriteGenres.length > max)
+            context.commit('spliceFavoriteGenres', {index: this.state.libraryData.favoriteGenres.length - 1, num: 1, replace: null});
         }
-        if (this.favoriteGenres.length < max && !added)
-          this.favoriteGenres.push({genre: genre, num: this.genres[genre].num});
+        if (this.state.libraryData.favoriteGenres.length < max && !added)
+          context.commit('pushFavoriteGenres', {genre: genre, num: this.state.libraryData.genres[genre].num})
       }
-      this.genresDone = true;
-      this.libraryData.genres = this.genres;
-    },
-
-
-
-    start(context, payload) {
-      this.dispatch('runLibraryAnalysis');
+      context.commit('setComplete', {index: "genresDone", value: true});
     },
     changeIndex(context, payload) {
       context.commit('setIndex', payload.index);
@@ -574,7 +671,7 @@ export default new Vuex.Store({
     // {limit: 1-50, offset: first index}
     async getSavedTracks(context, payload) {
         try {
-            console.log('%c Requesting Library Data.', 'color: blue;');
+            console.log('%c Requesting Library Data. ' + payload.offset + '-' + (payload.offset + payload.limit), 'color: blue;');
             let response = await this.state.spotifyApi.getMySavedTracks({limit: payload.limit, offset: payload.offset});
             return response;
         } catch (error) {

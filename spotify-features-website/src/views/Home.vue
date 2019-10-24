@@ -1,9 +1,10 @@
 <template>
-  <div class="home">
+  <div class="home maindiv">
     <NavBar path="home" />
     <div id="main">
       <BigTitle id="title" align="left"/>
-
+      <HomeCarousel title="Available Apps" :apps="available"/>
+      <HomeCarousel title="Under Development" :apps="development"/>
       <Thank/>
     </div>
   </div>
@@ -14,13 +15,15 @@
 import NavBar from '@/components/NavBar.vue'
 import Thank from '@/components/Thank.vue'
 import BigTitle from '@/components/BigTitle.vue'
+import HomeCarousel from '@/components/HomeCarousel.vue'
 
 export default {
   name: 'home',
   components: {
     NavBar,
     Thank,
-    BigTitle
+    BigTitle,
+    HomeCarousel
   },
   methods: {
   },
@@ -49,31 +52,19 @@ export default {
 </script>
 
 <style scoped>
+
 #title {
-    margin-left: 64px;
+  margin: 60px 64px;
+  margin-bottom: 50px;
 }
-.home {
-  display: flex;
-  width: 100vw;
-  min-height: 100vh;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
+
 
 h1 {
-  font-size: 36px;
-  line-height: 93px;
-  letter-spacing: -.005em;
-  cursor: default;
-  color: rgba(223, 223, 223, 0.342);
-  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.123);
-  padding-left: 32px;
-
+  font-size: 2.5em;
+  margin: 30px 32px;
+  margin-top: 50px;
+  color: white;
   text-align: left;
-  margin: 0 auto;
-  margin-top: 20px;
-  width: calc(100% - (64px * 2));
 }
 
 #main {

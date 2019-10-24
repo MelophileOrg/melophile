@@ -105,7 +105,7 @@
                 <p v-if="audioAnalysisReady" class="graph-key">Height: Volume - Color: Pitch</p>
             </div>
 
-            <div v-if="libraryData != null" id="comparisons" class="window" :style="{'--delay': 6}">
+            <div v-if="audioFeaturesDone" id="comparisons" class="window" :style="{'--delay': 6}">
                 <h3>Compaired to Your Saved (Percentile)</h3>
                 <div v-if="percentileDataReady" class="row stat">
                     <h4 class="bar-title">Happier Than</h4>
@@ -132,7 +132,7 @@
                     <h4 class="value">{{percent(percentileData.danceability)}}</h4>
                 </div>
             </div>
-            <h1 id="instructions" :style="{'--delay': 7}" v-if="libraryData == null">Run Library Analysis for Personalized Data</h1>
+            <h1 id="instructions" @click="libraryAnalysis" :style="{'--delay': 7}" v-if="!audioFeaturesDone">Run Library Analysis for Personalized Data</h1>
       </div>
     </div>
 </template>
@@ -172,6 +172,9 @@ export default {
         }
     },
     methods: {
+        libraryAnalysis() {
+            this.$router.push('/libraryanalysis');
+        },
         findArtistSongsSaved(artist) {
             if ("artists" in this.libraryData)
                 if (artist in this.libraryData.artists)
@@ -292,6 +295,9 @@ export default {
                 return results[Math.floor(this.banger * 10)];
             return "Banger of all Bangers";
         },
+        audioFeaturesDone() {
+            return this.$store.state.libraryData.complete.audioFeaturesDone;
+        },
         libraryData() {
             return this.$store.state.libraryData;
         }
@@ -309,6 +315,7 @@ export default {
 <style scoped>
 #instructions {
     --delay: 0;
+    cursor: pointer;
     animation: slide-up .5s ease calc(var(--delay) * .1s), peekaboo calc(var(--delay) * .1s);
     display: block;
     width: 400px;

@@ -1,5 +1,5 @@
 <template>
-  <div class="boring">
+  <div class="boring maindiv">
     <NavBar path="boring" />
     <div id="main">
         <AppTitle v-if="!start" title="Boring-Radar" image="boring" font="Acme"/>
@@ -76,7 +76,8 @@ export default {
 #title {
     margin-left: 64px;
 }
-.boring {
+
+.main-div {
   display: flex;
   width: 100vw;
   min-height: 100vh;

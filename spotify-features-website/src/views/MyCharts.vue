@@ -1,5 +1,5 @@
 <template>
-  <div class="mycharts">
+  <div class="mycharts maindiv">
     <NavBar path="mycharts" />
     <div id="main">
       <AppTitle v-if="load" title="My Charts" image="chart" font="Monoton"/>
@@ -178,11 +178,7 @@ a.row {
 
 @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 
-.mycharts {
-  display: flex;
-  width: 100vw;
-  min-height: 100vh;
-}
+
 
 .table {
   width: 100%;

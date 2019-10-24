@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="about maindiv">
     <NavBar path="h" />
     <div id="main">
       

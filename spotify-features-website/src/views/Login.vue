@@ -1,6 +1,6 @@
 <template>
-  <div class="login">
-    <NavBar path=""/>
+  <div class="login maindiv">
+    <NavBar path="login"/>
     <div id="main">
       <BigTitle :top="true"/>
       <h1 id="title">Login with Spotify to Start!</h1>
@@ -40,14 +40,7 @@ export default {
 </script>
 
 <style scoped>
-.login {
-  display: flex;
-  width: 100vw;
-  min-height: 100vh;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
+
 
 #title {
   font-size: 36px;

@@ -50,7 +50,7 @@ export default {
   margin-right: 30px;
 }
 
-@import url('https://fonts.googleapis.com/css?family=Acme|Monoton|Patua+One&display=swap');
+
 
 .Monoton {
     font-family: 'Monoton', cursive;
@@ -67,7 +67,7 @@ export default {
 
 
 #title {
-  
+  margin-top: 0vh;
   font-weight: lighter;
   color: white;
   font-size: 60px;

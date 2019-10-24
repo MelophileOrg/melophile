@@ -7,6 +7,7 @@
 </template>
 
 <style>
+@import url('https://fonts.googleapis.com/css?family=Acme|Monoton|Patua+One&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 
 #background {
@@ -52,10 +53,31 @@ body {
 
 #main {
   display: block;
-  width: calc(100vw - 225px);
+  width: calc(100vw);
+  min-height: 100vh;
   overflow-x: hidden;
+  margin-top: 0px;
   position: relative;
+  z-index: 1;
 }
+
+@media screen and (min-width: 720px) {
+  #main {
+    width: calc(100vw - 245px);
+  }
+  .maindiv {
+  display: block;
+  }
+
+}
+
+.maindiv {
+  display: flex;
+  width: calc(100vw);
+  min-height: 100vh;
+  flex-wrap: wrap;
+}
+
 
 html::-webkit-scrollbar-track
 {

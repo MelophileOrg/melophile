@@ -1,5 +1,5 @@
 <template>
-  <div class="musicmood">
+  <div class="musicmood maindiv">
     <NavBar path="mymusicmood" />
     <div id="main">
 
@@ -28,9 +28,5 @@ export default {
 </script>
 
 <style scoped>
-.mymusicmood {
-  display: flex;
-  width: 100vw;
-  min-height: 100vh;
-}
+
 </style>

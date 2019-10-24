@@ -1,5 +1,5 @@
 <template>
-  <div class="libraryanalysis">
+  <div class="libraryanalysis maindiv">
     <NavBar path="libraryanalysis" />
     <div id="main">
       <AppTitle v-if="!done" title="Library Analysis" image="library"/>
@@ -314,15 +314,6 @@ export default {
   },
   data() {
     return {
-      
-      libraryData: {
-        tracks: [],
-        audio_features: null,
-        artists: {},
-        favoriteArtists: [],
-        genres: {},
-        favoriteGenres: [],
-      },
       sorts: [
         {value: 'valence', text: "Happy"},
         {value: 'energy', text: "Energetic"},
@@ -338,84 +329,6 @@ export default {
         {value: 1, text: "Most"},
         {value: 0, text: "Least"}
       ],
-      genres: {},
-      favoriteGenres: [],
-
-      artists: {},
-      favoriteArtists: [],
-
-      audio_features: {
-        acousticness: 
-        {
-          value: 0,
-          maxchart: [],
-          minchart: [],
-          plot: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        },
-        danceability: 
-        {
-          value: 0,
-          maxchart: [],
-          minchart: [],
-          plot: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        },
-        energy: 
-        {
-          value: 0,
-          maxchart: [],
-          minchart: [],
-          plot: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        },
-        instrumentalness: 
-        {
-          value: 0,
-          maxchart: [],
-          minchart: [],
-          plot: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        },
-        liveness: 
-        {
-          value: 0,
-          maxchart: [],
-          minchart: [],
-          plot: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        },
-        mode: 
-        {
-          value: 0,
-          maxchart: [],
-          minchart: [],
-          plot: [-1],
-        },
-        speechiness: 
-        {
-          value: 0,
-          maxchart: [],
-          minchart: [],
-          plot: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        },
-        tempo: 
-        {
-          value: 0,
-          maxchart: [],
-          minchart: [],
-          plot: [-1],
-        },
-        total: 0,
-        valence: 
-        {
-          value: 0,
-          maxchart: [],
-          minchart: [],
-          plot: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,],
-        },
-      },
-      bangers: {
-        value: 0,
-        plot: [0,0,0,0,0,0,0,0,0,0],
-        maxchart: [],
-        minchart: [],
-      },
       barColors: [
         {red: 242, green: 142, blue: 43},
         {red: 89, green: 161, blue: 79},
@@ -428,16 +341,6 @@ export default {
         {red: 156, green: 117, blue: 95},
         {red: 180, green: 189, blue: 74},
       ],
-      total: 0,
-      progress: 0,
-
-      done: false,
-      audioFeaturesDone: false,
-      artistsDone: false,
-      genresDone: false,
-
-      message: "Pluggin in headphones.",
-
       tab: 0,
       list: [],
 
@@ -446,11 +349,10 @@ export default {
 
       catagoryVal: "",
       filterVal: -1,
-
-      dates: [0,0,0,0],
     }
   },
   methods: {
+
     findDate(months) {
       let month = 2626560000;
       let n = new Date();
@@ -462,9 +364,6 @@ export default {
         returnMonth = 12;
       let returnYear = then.getFullYear() % 100;
       return returnMonth + "/" + returnYear;
-    },
-    banger(loudness, tempo, energy, danceability) {
-      return (tempo - 96 + (energy * 100) + (danceability*50)) / 210;
     },
     findMax(array) {
       let max = 0;
@@ -530,233 +429,7 @@ export default {
       this.tab = val;
     },
     startRetrievalProcess() {
-      this.retriveData(0, 50, true);
-    },
-    async retriveData(offset, limit) {
-      let now = new Date();
-      let nt = now.getTime();
-      let month = 2626560000;
-      if (this.$router.currentRoute.name != "libraryanalysis")
-        return;
-      let response = await this.$store.dispatch('getSavedTracks',{limit: limit, offset: offset});
-      this.total = response.total;
-      if (this.progress / this.total > .8)
-        this.message = "♪┏(・o･)┛♪┗ ( ･o･) ┓♪";
-      else if (this.progress / this.total > .6)
-        this.message = "Sick beats dude.";
-      else if (this.progress / this.total > .4)
-        this.message = "Jamming out to your tunes.";
-      else if (this.progress / this.total > .2)
-        this.message = "Beep Bop. Analyzing Data.";
-      let ids = [];
-      for (var i = 0; i < response.items.length; i++)
-      {
-        ids.push(response.items[i].track.id);
-        if (!(response.items[i].track.artists[0].name in this.artists))
-          this.artists[response.items[i].track.artists[0].name] = {num: 1, id: response.items[i].track.artists[0].id};
-        else 
-          this.artists[response.items[i].track.artists[0].name].num += 1;
-        let date = new Date(response.items[i].added_at);
-        let t = date.getTime();
-        response.items[i].track.date_added = t;
-        let diff = Math.floor((nt - t) / month);
-        if (this.dates.length - 1 < diff)
-        {
-          for (var j = 0; j < (diff - (this.dates.length - 1)); j++)
-          {
-            this.dates.push(0);
-          }
-          this.dates.push(0);
-          this.dates.push(0);
-        }
-        this.dates[diff] += 1;
-      }
-      let tracks = await this.$store.dispatch('getAudioFeaturesForTracks',ids);
-      this.analyseData(tracks);
-      if (response.items.length == 50)
-        this.retriveData(offset + limit, limit, false);
-      else {
-        let keys = Object.keys(this.audio_features);
-        for (var i = 0; i < keys.length; i++)
-        {
-          if (keys[i] == "total")
-            continue;
-          this.audio_features[keys[i]].value /= this.audio_features.total;
-        }
-        this.done = true;
-        this.audioFeaturesDone = true;
-        await this.checkArtists();
-        this.checkGenres();
-        this.libraryData.audio_features = this.audio_features;
-        this.libraryData.audio_features.bangers = this.bangers;
-        this.$store.dispatch('changeLibraryData', this.libraryData);
-      }
-    },
-    analyseData(tracks) {
-      if (this.$router.currentRoute.name != "libraryanalysis")
-        return;
-      this.libraryData.tracks = this.libraryData.tracks.concat(tracks);
-      let keys = Object.keys(this.audio_features); 
-      for (let i = 0; i < tracks.length; i++)
-      {
-        this.bangers.value += this.banger(tracks[i].loudness, tracks[i].tempo, tracks[i].energy, tracks[i].danceability);
-        let bangersPos = (Math.floor(this.banger(tracks[i].loudness, tracks[i].tempo, tracks[i].energy, tracks[i].danceability) * 10));
-        if (bangersPos < this.bangers.plot.length)
-          this.bangers.plot[bangersPos] += 1;
-        else
-            this.bangers.plot[this.bangers.plot.length - 1] += 1;
-        for (let j = 0; j < keys.length; j++)
-        {
-          if (keys[j] == "total")
-          {
-            this.audio_features.total += 1;
-            continue;
-          }
-          this.audio_features[keys[j]].value += tracks[i][keys[j]];
-          if (this.audio_features[keys[j]].plot[0] != -1)
-            this.audio_features[keys[j]].plot[(Math.floor(tracks[i][keys[j]] * 10))] += 1;
-          for (let k = 0; k < this.audio_features[keys[j]].minchart.length; k++)
-          {
-            if (this.audio_features[keys[j]].minchart[k].value > tracks[i][keys[j]])
-            {
-              this.audio_features[keys[j]].minchart.splice(k, 0, {id: tracks[i].id, value: tracks[i][keys[j]]});
-              if (this.audio_features[keys[j]].minchart.length > 20)
-                this.audio_features[keys[j]].minchart.splice(20, 1);
-              break;
-            }
-            if (k == this.audio_features[keys[j]].minchart.length - 1 && this.audio_features[keys[j]].minchart.length < 20)
-            {
-              this.audio_features[keys[j]].minchart.push({id: tracks[i].id, value: tracks[i][keys[j]]});
-              break;
-            }
-          }
-          if (this.audio_features[keys[j]].minchart.length == 0)
-            this.audio_features[keys[j]].minchart.push({id: tracks[i].id, value: tracks[i][keys[j]]});
-          for (let k = 0; k < this.audio_features[keys[j]].maxchart.length; k++)
-          {
-            if (this.audio_features[keys[j]].maxchart[k].value < tracks[i][keys[j]])
-            {
-              this.audio_features[keys[j]].maxchart.splice(k, 0, {id: tracks[i].id, value: tracks[i][keys[j]]});
-              if (this.audio_features[keys[j]].maxchart.length > 20)
-                this.audio_features[keys[j]].maxchart.splice(20, 1);
-              break;
-            }
-            if (k == this.audio_features[keys[j]].maxchart.length - 1 && this.audio_features[keys[j]].maxchart.length < 20)
-            {
-              this.audio_features[keys[j]].maxchart.push({id: tracks[i].id, value: tracks[i][keys[j]]});
-              break;
-            }
-          }
-          if (this.audio_features[keys[j]].maxchart.length == 0)
-            this.audio_features[keys[j]].maxchart.push({id: tracks[i].id, value: tracks[i][keys[j]]});
-        }
-        let bangindex = this.banger(tracks[i].loudness, tracks[i].tempo, tracks[i].energy, tracks[i].danceability);
-        for (let k = 0; k < this.bangers.minchart.length; k++)
-        {
-          if (this.bangers.minchart[k].value > bangindex)
-          {
-            this.bangers.minchart.splice(k, 0, {id: tracks[i].id, value: bangindex});
-            if (this.bangers.minchart.length > 20)
-              this.bangers.minchart.splice(20, 1);
-            break;
-          }
-          if (k == this.bangers.minchart.length - 1 && this.bangers.minchart.length < 20)
-          {
-            this.bangers.minchart.push({id: tracks[i].id, value: bangindex});
-            break;
-          }
-        }
-        if (this.bangers.minchart.length == 0)
-          this.bangers.minchart.push({id: tracks[i].id, value: bangindex});
-        for (let k = 0; k < this.bangers.maxchart.length; k++)
-        {
-          if (this.bangers.maxchart[k].value < bangindex)
-          {
-            this.bangers.maxchart.splice(k, 0, {id: tracks[i].id, value: bangindex});
-            if (this.bangers.maxchart.length > 20)
-              this.bangers.maxchart.splice(20, 1);
-            break;
-          }
-          if (k == this.bangers.maxchart.length - 1 && this.bangers.maxchart.length < 20)
-          {
-            this.bangers.maxchart.push({id: tracks[i].id, value: bangindex});
-            break;
-          }
-        }
-        if (this.bangers.maxchart.length == 0)
-          this.bangers.maxchart.push({id: tracks[i].id, value: bangindex});
-        this.progress += 1;
-      }
-    },
-    async checkArtists() {
-      let max = 4;
-      for (var artist in this.artists) {
-        let added = false;
-        for (var i = 0; i < this.favoriteArtists.length; i++)
-        {
-          if (this.favoriteArtists[i].num < this.artists[artist].num)
-          {
-            this.favoriteArtists.splice(i, 0, {name: artist, num: this.artists[artist].num, id: this.artists[artist].id});
-            added = true;
-            break;
-          }
-          if (this.favoriteArtists.length > max)
-            this.favoriteArtists.splice(this.favoriteArtists.length - 1, 1);
-        }
-        if (this.favoriteArtists.length < max && !added) 
-          this.favoriteArtists.push({name: artist, num: this.artists[artist].num, id: this.artists[artist].id});
-      }
-      let favoriteArtist = await this.$store.dispatch('getArtist', this.favoriteArtists[0].id);
-      this.favoriteArtists[0].image = favoriteArtist.images[0].url;
-      this.artistsDone = true;
-      this.libraryData.artists = this.artists;
-    },
-    async checkGenres() {
-      let max = 4;
-      let querymax = 50;
-      let artistsIds = [];
-      for (var artist in this.artists) {
-        if (querymax == 0)
-        {
-          let artistsData = await this.$store.dispatch('getArtists', artistsIds);
-          for (var i = 0; i < artistsData.artists.length; i++)
-          {
-            for (var j = 0; j < artistsData.artists[i].genres.length; j++)
-            {
-              if (!(artistsData.artists[i].genres[j] in this.genres))
-                this.genres[artistsData.artists[i].genres[j]] = {num: this.artists[artist].num, genre: artistsData.artists[i].genres[j]};
-              else 
-                this.genres[artistsData.artists[i].genres[j]].num += this.artists[artist].num;
-            }
-          }
-          querymax = 50;
-          artistsIds = [];
-        }
-        if (artist in this.artists)
-        {
-          artistsIds.push(this.artists[artist].id);
-          querymax -= 1;
-        }
-      }
-
-      for (var genre in this.genres) {
-        let added = false;
-        for (var i = 0; i < this.favoriteGenres.length; i++)
-        {
-          if (this.favoriteGenres[i].num < this.genres[genre].num)
-          {
-            this.favoriteGenres.splice(i, 0, {genre: genre, num: this.genres[genre].num});
-            added = true;
-            break;
-          }
-          if (this.favoriteGenres.length > max)
-            this.favoriteGenres.splice(this.favoriteGenres.length - 1, 1);
-        }
-        if (this.favoriteGenres.length < max && !added)
-          this.favoriteGenres.push({genre: genre, num: this.genres[genre].num});
-      }
-      this.genresDone = true;
-      this.libraryData.genres = this.genres;
+      this.$store.dispatch('runLibraryAnalysis');
     },
     animate() {
       if (this.animateIndex >= 1)
@@ -766,7 +439,7 @@ export default {
       }
       else
         this.animateIndex += .1;
-    }
+    },
   },
   computed: {
     inicialized() {
@@ -784,9 +457,54 @@ export default {
     },
     tempoAverage() {
       return Math.round(this.audio_features.tempo.value);
-    }
+    },
+    progress() {
+      return this.$store.state.progress.num;
+    },
+    total() {
+      return this.$store.state.progress.total;
+    },
+    message() {
+      return this.$store.state.progress.message;
+    },
+    done() {
+      return this.$store.state.libraryData.complete.done;
+    },
+    audioFeaturesDone() {
+      return this.$store.state.libraryData.complete.audioFeaturesDone;
+    },
+    artistsDone() {
+      return this.$store.state.libraryData.complete.artistsDone;
+    },
+    genresDone() {
+      return this.$store.state.libraryData.complete.genresDone;
+    },
+    artists() {
+      return this.$store.state.libraryData.artists;
+    },
+    genres() {
+      return this.$store.state.libraryData.genres;
+    },
+    audio_features() {
+      return this.$store.state.libraryData.audio_features;
+    },
+    bangers() {
+      return this.$store.state.libraryData.bangers;
+    },
+    dates() {
+      return this.$store.state.libraryData.dates;
+    },
+    favoriteArtists() {
+      return this.$store.state.libraryData.favoriteArtists;
+    },
+    favoriteGenres() {
+      return this.$store.state.libraryData.favoriteGenres;
+    },
+    tracks() {
+      return this.$store.state.libraryData.tracks;
+    },
   },
-  created() {
+  async created() {
     if (!this.inicialized)
       this.$router.push("/login");
     this.interval = setInterval(this.animate, 100);
@@ -1113,14 +831,7 @@ h2.active {
 }
 
 
-.libraryanalysis {
-  display: flex;
-  width: 100vw;
-  min-height: 100vh;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
+
 
 button {
   padding: 10px 50px;
