@@ -261,7 +261,7 @@
 
           <div class="window" id="form" :style="{'--delay': 11}">
             <h3 v-if="!saved">Share Your Library</h3>
-            <p  v-if="!saved">Privacy</p><button  v-if="!saved" :class="{active: privacyVal}" id="privacy" @click="privacy(true)">Link Only</button><button v-if="!saved" :class="{active: !privacyVal}" id="privacy" @click="privacy(true)">Public</button>
+            <p  v-if="!saved">Privacy</p><button  v-if="!saved" :class="{active: privacyVal}" id="privacy" @click="privacy(true)">Link Only</button><button v-if="!saved" :class="{active: !privacyVal}" id="privacy" @click="privacy(false)">Public</button>
             <input id="urname" v-if="!saved" v-model="displayName" type="text" placeholder="Display Name"/>
             <button v-if="!saved" id="save" @click="save">Save</button>
             <h2 v-if="saved" id="id-title">Your Link</h2>
