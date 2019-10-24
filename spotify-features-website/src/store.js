@@ -8,7 +8,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    testing: false,
+    testing: true,
     spotifyApi: new SpotifyWebApi(),
     accessToken: "",
     user: null,
@@ -314,6 +314,7 @@ export default new Vuex.Store({
       try {
         let response = await axios.get("/api/profile/" + payload.id);
         context.commit('setUserData', response.data);
+        console.log(response);
       } catch (error) {
         console.log(error);
       }
@@ -814,3 +815,5 @@ export default new Vuex.Store({
     
   }
 })
+
+

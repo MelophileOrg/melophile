@@ -77,6 +77,15 @@ export default {
 #title {
   margin: 60px 64px;
   margin-bottom: 70px;
+  display: none;
+}
+
+@media screen and (min-width: 720px) {
+  #title {
+  margin: 60px 64px;
+  margin-bottom: 70px;
+  display: block;
+  }
 }
 
 img {
@@ -86,10 +95,16 @@ img {
 }
 
 h1 {
-  font-size: 3.8em;
+  font-size: 2.5em;
   color: white;
   text-align: left;
   margin: 0;
+}
+
+@media screen and (min-width: 720px) {
+  h1 {
+  font-size: 3.8em !important;
+  }
 }
 
 .app-showcase {

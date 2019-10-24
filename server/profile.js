@@ -52,6 +52,7 @@ router.post("/:id", async (req, res) => {
                     "created": new Date(),
                 }
             });
+            console.log(profile);
             console.log("Profile Updated");
             return res.send(profile);
         }
@@ -72,6 +73,7 @@ router.post("/:id", async (req, res) => {
                 bangers: req.body.bangers,
                 created: new Date(),
             });
+            console.log(profile);
             await profile.save();
             console.log("Profile Created");
             return res.send(profile);
@@ -100,6 +102,7 @@ router.get("/:id", async (req, res) => {
       let profile = await Profile.findOne({
         id: req.params.id
       });  
+      console.log(profile);
       console.log("Profile Retrieved");
       return res.send(profile);
     } catch (error) {

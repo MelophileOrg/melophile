@@ -991,7 +991,8 @@ h4 {
     display: block;
     border-radius: 5px;
     overflow: hidden;
-    width: 200px;
+    max-width: 200px;
+    width: calc(100% - 155px);
     max-height: 10px;
     background-color: rgba(255, 255, 255, 0.247);
 }
@@ -1083,8 +1084,11 @@ h5 {
 .artist {
   margin-top: 10px;
   display: block;
-  width: 110px;
+  width: calc(33% - 20px);
   padding: 0px 10px;
+  overflow: hidden;
+  position: relative;
+  transform: all .3s ease;
 }
 
 .artist h4 {
@@ -1093,7 +1097,11 @@ h5 {
   white-space: nowrap;
   text-overflow: ellipsis;
   width: 100%;
+  transition: all .3s ease;
+  cursor: default;
 }
+
+
 
 .genre {
   margin-top: 10px;

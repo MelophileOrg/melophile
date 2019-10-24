@@ -33,6 +33,8 @@ export default {
   justify-content: center;
   align-items: center;
   animation: slide-up .3s ease 0s;
+  margin-top: 5vh;
+  
 }
 
 @keyframes slide-up {
@@ -44,8 +46,8 @@ export default {
 
 #title-image {
   display: block;
-  width: 60px;
-  height: 60px;
+  width: 40px;
+  height: 40px;
   background-size: 100% 100%;
   margin-right: 30px;
 }
@@ -70,7 +72,8 @@ export default {
   margin-top: 0vh;
   font-weight: lighter;
   color: white;
-  font-size: 60px;
+  max-width: calc(100% - 90px);
+  font-size: 40px;
   margin: 0;
 }
 
@@ -98,5 +101,8 @@ export default {
   #title {
     font-size: 80px;
   } 
+  #title-div {
+    margin-top: 8vh;
+  }
 }
 </style>

@@ -263,6 +263,7 @@
             <h3 v-if="!saved">Share Your Library</h3>
             <p  v-if="!saved">Privacy</p><button  v-if="!saved" :class="{active: privacyVal}" id="privacy" @click="privacy(true)">Link Only</button><button v-if="!saved" :class="{active: !privacyVal}" id="privacy" @click="privacy(false)">Public</button>
             <input id="urname" v-if="!saved" v-model="displayName" type="text" placeholder="Display Name"/>
+            <p id="moreinfo" @click="route('about')">More Info</p>
             <button v-if="!saved" id="save" @click="save">Save</button>
             <h2 v-if="saved" id="id-title">Your Link</h2>
             <a id="link" v-if="saved" :href="'http://mymusic.andrewdanielyoung.com/view/' + userid">{{'http://mymusic.andrewdanielyoung.com/view/' + userid}}</a>
@@ -285,7 +286,7 @@
               <td>
                 <div class="image" :style="{backgroundImage: 'url(\'' + track.album.images[0].url + '\')'}"/>
               </td>
-              <td>
+              <td class="title">
                 <h1>{{track.name}}</h1>
                 <div class="track-artists">
                   <div class="track-artist-div" v-for="index in 4" :key="track.name + '-' + (index - 1)">
@@ -458,6 +459,9 @@ export default {
       else
         this.animateIndex += .1;
     },
+    route(path) {
+      this.$router.push("/" + path);
+    },
   },
   computed: {
     inicialized() {
@@ -601,6 +605,7 @@ export default {
   font-size: 1.1em;
   display: inline-block;
   transition: all .3s ease;
+  margin-bottom: 3px;
 }
 
 #form #save:hover {
@@ -618,7 +623,7 @@ export default {
 #form #save {
   display: block;
   margin: 0 auto;
-  margin-top: 30px;
+  margin-top: 15px;
   background: green;
   transition: all .3s ease;
 }
@@ -638,6 +643,16 @@ export default {
   transform: translateY(-0px) translateX(-25px);
 }
 
+
+
+#moreinfo {
+  font-size: 1em !important;
+  color:rgba(250, 246, 246, 0.404);
+  margin: 0 0;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
 .graph-bar.time:hover p.hover-graph {
   transform: translateY(20px) translateX(-25px);
 }
@@ -651,7 +666,8 @@ export default {
   justify-content: space-evenly;
   align-items: flex-end;
   position: relative;
-  width: 400px;
+  max-width: 400px;
+  width: 100%;
   height: 200px;
   background: rgba(226, 226, 226, 0.041);
   border-radius: 5px;
@@ -681,8 +697,11 @@ export default {
   font-size: .8em;
  
   color: rgba(250, 246, 246, 0.404);
+  
   transform: translateY(-5px);
 }
+
+
 
 .yAxis {
   position: absolute;
@@ -721,7 +740,15 @@ p {
   color: rgba(255, 255, 255, 0.692);
   font-weight: bolder;
   margin: 0;
-  font-size: .8em;
+  font-size: .5em;
+  transform: translateX(-1px);
+}
+
+@media screen and (min-width: 535px) {
+  .graph-bar p {
+    transform: translateX(-0px);
+    font-size: .8em;
+  }
 }
 
 @keyframes bar-graph-slide {
@@ -737,12 +764,39 @@ a.row {
   justify-content: left;
   align-items: center;
   padding: 20px 15px;
+  width: calc(100%);
   background: rgba(255, 255, 255, 0.103);
   height: 60px;
-  margin: 0px 32px;
+  margin: 0px auto;
   border-radius: 0px;
+  margin-bottom: 3px;
+  max-width: 800px;
   text-decoration: none;
   font-family: 'Roboto', sans-serif;
+  border: 1px solid rgba(199, 199, 199, 0.034);
+}
+
+#extremes-menu {
+  max-width: 100vw;
+}
+
+#extremes {
+  max-width: 100vw;
+}
+
+@media screen and (min-width: 720px) {
+  #extremes-menu {
+    max-width: calc(100vw - 260px) !important;
+  }
+  #extremes {
+    max-width: calc(100vw - 260px) !important;
+  }
+}
+
+.track {
+  display: block;
+  width: calc(100%);
+  border: 0;
 }
 
 
@@ -753,6 +807,15 @@ a.row h1 {
   font-size: 28px;
   text-align: left;
   animation: none;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+td.title{
+  display: block;
+  width: calc(100% - 100px);
 }
 
 
@@ -797,6 +860,8 @@ tr {
   margin: 0;
   margin-right: 7px;
 }
+
+
 
 .track-artists .track-artist {
   display: flex;
@@ -977,7 +1042,7 @@ h3 {
   border-radius: 5px;
   background: rgba(250, 250, 250, 0.173);
   margin: 0 auto;
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
 #progress-fill {
@@ -1012,7 +1077,8 @@ h4 {
     display: block;
     border-radius: 5px;
     overflow: hidden;
-    width: 200px;
+    max-width: 200px;
+    width: calc(100% - 155px);
     max-height: 10px;
     background-color: rgba(255, 255, 255, 0.247);
 }
@@ -1095,6 +1161,7 @@ h5 {
 }
 .center {
   justify-content: space-around;
+  flex-wrap: wrap;
 }
 
 .artist {

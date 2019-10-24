@@ -20,7 +20,9 @@
                 <img :src="getImgUrl(app.img)"/><h1>{{app.title}}</h1>
                 <div class="active-bar"/>
             </div>
-            <div v-if="user != null" id="user">
+            <div id="footer">
+                <button id="about" @click="route('about')">About</button>
+                <a id="about" href="https://github.com/andyruwruw/My-Music-Taste.git">Github</a>
             </div>
         </div>
         <div v-if="w < 720" class="fixed small">
@@ -47,6 +49,7 @@
                 </div>
             </div>
         </div>
+        
     </div>
 </template>
 
@@ -123,6 +126,31 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
+#footer {
+    position: absolute;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    bottom: 45px;
+    left: 0;
+    width: 100%;
+}
+
+#about {
+    display: block;
+    background: rgba(18, 18, 18,0);
+    color: rgba(255, 255, 255, 0.425);
+    border: 0;
+    font-weight: bolder;
+    font-size: .8em;
+    text-decoration: none;
+    transition: all .3s ease;
+}
+
+#about:hover {
+    color: rgba(255, 255, 255, 0.705);
+}
+
 #menu-mobile h3 {
     font-size: 1.4em;
 }
@@ -154,7 +182,7 @@ export default {
 
 @media screen and (min-width: 484px) {
     .small h1 {
-        font-size: 40px !important;
+        font-size: 30px !important;
         line-height: 30px !important;
         margin-top: 30px !important;
     }
@@ -165,7 +193,6 @@ export default {
         margin-top: 30px !important;
         margin-top: calc(50px / 2 - 5px) !important;
     }
-
 }
 
 .small h1 {
@@ -177,7 +204,8 @@ export default {
 }
 
 #menu-mobile h1 {
-    font-size: 30px;
+    font-size: 20px !important;
+    margin-top: 20px !important;
 }
 .small button {
     display: block;
@@ -193,7 +221,7 @@ export default {
 .fixed {
     display: flex;
     justify-content: space-between;
-    width: calc(100vw - 45px);
+    width: calc(100vw - 38px);
     height: 100px;
     z-index: 999;
     padding: 0px 20px;
@@ -281,6 +309,7 @@ img {
 
 .small #logo {
     margin-right: 16px;
+    margin-top: 10px;
 }
 
 #logo {

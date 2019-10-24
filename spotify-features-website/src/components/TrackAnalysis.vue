@@ -370,7 +370,8 @@ export default {
     --numBars: 0;
     display: flex;
     flex-wrap: nowrap;
-    width: 400px;
+    width: 100%;
+    max-width: 400px;
     height: 187px;
     justify-content: space-between;
     align-items: center;

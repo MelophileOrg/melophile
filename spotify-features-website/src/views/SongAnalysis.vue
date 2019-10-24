@@ -189,6 +189,10 @@ table {
   font-weight: lighter;
   font-size: 28px;
   text-align: left;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .search-song:hover .search-title
