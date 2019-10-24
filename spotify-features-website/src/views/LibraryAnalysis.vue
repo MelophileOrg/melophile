@@ -352,7 +352,6 @@ export default {
     }
   },
   methods: {
-
     findDate(months) {
       let month = 2626560000;
       let n = new Date();
@@ -428,8 +427,8 @@ export default {
     changeTab(val) {
       this.tab = val;
     },
-    startRetrievalProcess() {
-      this.$store.dispatch('runLibraryAnalysis');
+    async startRetrievalProcess() {
+      await this.$store.dispatch('runLibraryAnalysis');
     },
     animate() {
       if (this.animateIndex >= 1)
@@ -457,6 +456,9 @@ export default {
     },
     tempoAverage() {
       return Math.round(this.audio_features.tempo.value);
+    },
+    libraryData() {
+      return this.$store.state.libraryData;
     },
     progress() {
       return this.$store.state.progress.num;

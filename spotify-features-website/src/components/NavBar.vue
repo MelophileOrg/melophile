@@ -125,7 +125,7 @@ export default {
 
 @media screen and (min-width: 720px) {
   .NavBar {
-    width: 245px;
+    width: 260px;
     padding-top: 24px;
     height: 100vh;
     z-index: 999;
@@ -269,13 +269,13 @@ img {
 }
 
 .small #logo {
-    margin-right: 15px;
+    margin-right: 16px;
 }
 
 #logo {
     height: 32px;
     width: 32px;
-    margin-right: 8px;
+    margin-right: 13px;
 }
 
 #logo-div {

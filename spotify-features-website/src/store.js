@@ -7,7 +7,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    testing: true,
+    testing: false,
     spotifyApi: new SpotifyWebApi(),
     accessToken: "",
     inicialized: false,
@@ -21,7 +21,7 @@ export default new Vuex.Store({
           "After running Library Analysis, Song Analisis will provide additional information based on your Library's statistics.",
         ],
         img: "search",
-        color: {red: 255, green: 165, blue: 30},
+        color: {red: 238, green: 126, blue: 137},
         state: true,
       },
       {
@@ -33,7 +33,7 @@ export default new Vuex.Store({
           "View either with a time range of your choice! View your top tracks of all time, or your favorite artists over the last few weeks."
         ],
         img: "chart",
-        color: {red: 238, green: 126, blue: 137},
+        color: {red: 230, green: 224, blue: 60},
         state: true,
       },
       {
@@ -46,7 +46,7 @@ export default new Vuex.Store({
           "Library Analysis gathers all data relavant to your library and process' out some cool statistics!"
         ],
         img: "library",
-        color: {red: 84, green: 224, blue: 210},
+        color: {red: 240, green: 100, blue: 50},
         state: true,
       },
       {
@@ -58,7 +58,7 @@ export default new Vuex.Store({
           "Based on either your most recently played, or recent top tracks, My Music Mood will attempt to analyse tracks you've been into lately and determine your mood!",
         ],
         img: "musicmood",
-        color: {red: 180, green: 100, blue: 100},
+        color: {red: 255, green: 165, blue: 30},
         state: false,
       },
       {
@@ -70,20 +70,20 @@ export default new Vuex.Store({
           "The Boring-Radar will either confirm or rebute your greatest fears by analysing data from Library Analysis to determine the standard deviation of your library through multiple variables.",
         ],
         img: "boring",
-        color: {red: 180, green: 100, blue: 100},
+        color: {red: 180, green: 100, blue: 240},
         state: false,
       },
       {
         title: "Power Recommends",
-        path: "boring",
+        path: "recommends",
         auth: true,
         description: [
           "I like this song, but I want one like it but happier. DONE.",
           "Taylor your recommends to fit your exact wishes, and find songs more accuratly attuned to what you're looking for.",
           "Get recommends based on a track, but specify what statistics you'd like your new songs to maintain, or change.",
         ],
-        img: "boring",
-        color: {red: 180, green: 100, blue: 100},
+        img: "power",
+        color: {red: 180, green: 230, blue: 100},
         state: false,
       }
     ],
@@ -282,7 +282,7 @@ export default new Vuex.Store({
       state.libraryData.dates[date] += 1;
     },
     averageAudioFeature(state, key){
-      state.libraryData.audio_features[key].value /= state.libraryData.audio_features.total;
+      state.libraryData.audio_features[key].value /= state.progress.total;
     },
     setTempBanger(state, level) {
       state.tempBanger = level;
@@ -363,7 +363,7 @@ export default new Vuex.Store({
         context.commit('addToDate', diff);
       }
       let tracks = await this.dispatch('getAudioFeaturesForTracks', ids);
-      this.dispatch('analyseData', tracks);
+      await this.dispatch('analyseData', tracks);
       if (response.items.length == 50)
         this.dispatch('retriveData', {offset: payload.offset + payload.limit, limit: payload.limit});
       else {

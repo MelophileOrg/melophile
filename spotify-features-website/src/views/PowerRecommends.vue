@@ -1,6 +1,6 @@
 <template>
   <div class="musicmood maindiv">
-    <NavBar path="mymusicmood" />
+    <NavBar path="recommends" />
     <h1 id="development">Currently Unavailable</h1>
     <div id="main">
       

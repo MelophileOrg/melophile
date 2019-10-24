@@ -2,10 +2,11 @@
   <div class="boring maindiv">
     <NavBar path="boring" />
     <div id="main">
-        <AppTitle v-if="!start" title="Boring-Radar" image="boring" font="Acme"/>
-        <button>Start</button>
+        <h1 v-if="testing" id="development">Currently Unavailable</h1>
+        <AppTitle v-if="!start && !testing" title="Boring-Radar" image="boring" font="Acme"/>
+        <button v-if="!testing">Start</button>
 
-        <div id="details">
+        <div v-if="!testing" id="details">
             <h1>Is Your Music Boring?</h1>
             <p>Inspired by a fantastic article written by Juan De Dios Santos, who uses Spotify's API to try to deduce whether his friend's claims that his music is "boring" are true.</p>
             <a href="https://towardsdatascience.com/is-my-spotify-music-boring-an-analysis-involving-music-data-and-machine-learning-47550ae931de">Is my Spotify music boring? An analysis involving music, data, and machine learning</a>
@@ -64,6 +65,9 @@ export default {
     inicialized() {
       return this.$store.state.inicialized;
     },
+    testing() {
+      return !this.$store.state.testing;
+    }
   },
   created: function() {
     if (!this.inicialized)
@@ -76,14 +80,12 @@ export default {
 #title {
     margin-left: 64px;
 }
-
-.main-div {
-  display: flex;
-  width: 100vw;
-  min-height: 100vh;
-  position: absolute;
-  top: 0;
-  left: 0;
+#development{
+  color: white; 
+  font-size: 4em;
+  margin: 0 auto;
+  margin-top: 15vh;
+  text-align: center;
 }
 
 button {

@@ -63,7 +63,7 @@ body {
 
 @media screen and (min-width: 720px) {
   #main {
-    width: calc(100vw - 245px);
+    width: calc(100vw - 260px);
   }
   .maindiv {
   display: block;

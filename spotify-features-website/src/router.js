@@ -11,6 +11,7 @@ import MusicMood from './views/MusicMood'
 import MyCharts from './views/MyCharts'
 import LibraryAnalysis from './views/LibraryAnalysis'
 import Boring from './views/Boring'
+import PowerRecommends from './views/PowerRecommends'
 
 Vue.use(Router)
 
@@ -67,6 +68,11 @@ export default new Router({
       path: '/boring',
       name: 'boring',
       component: Boring
+    },
+    {
+      path: '/recommends',
+      name: 'recommends',
+      component: PowerRecommends
     },
   ]
 })
