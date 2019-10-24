@@ -25,8 +25,8 @@ export default {
       return !this.$store.state.testing;
     }
   },
-  created() {
-
+  async created() {
+    
   }
 }
 </script>

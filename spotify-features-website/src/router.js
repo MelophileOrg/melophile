@@ -12,6 +12,7 @@ import MyCharts from './views/MyCharts'
 import LibraryAnalysis from './views/LibraryAnalysis'
 import Boring from './views/Boring'
 import PowerRecommends from './views/PowerRecommends'
+import ViewLibrary from './views/ViewLibrary'
 
 Vue.use(Router)
 
@@ -74,5 +75,10 @@ export default new Router({
       name: 'recommends',
       component: PowerRecommends
     },
+    {
+      path: '/view/:id',
+      name: 'view',
+      component: ViewLibrary,
+    }
   ]
 })

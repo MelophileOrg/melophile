@@ -56,7 +56,6 @@ export default {
             this.index = num;
             this.show = false;
             this.$emit('selection', this.options[this.index].value);
-            console.log(this.index);
         }
     },
     computed: {
@@ -85,6 +84,7 @@ export default {
                 }
             }
         }
+        this.index = -1;
     }
 }
 </script>

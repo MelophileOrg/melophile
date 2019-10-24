@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import axios from 'axios';
 
 var SpotifyWebApi = require('spotify-web-api-js');
 
@@ -10,7 +11,9 @@ export default new Vuex.Store({
     testing: false,
     spotifyApi: new SpotifyWebApi(),
     accessToken: "",
+    user: null,
     inicialized: false,
+    userData: null,
     apps: [
       {
         title: "Song Analysis",
@@ -89,6 +92,8 @@ export default new Vuex.Store({
     ],
     index: 0,
     libraryData: {
+      topPlayed: [],
+      topArtists: [],
       complete: {
         done: false,
         audioFeaturesDone: false, 
@@ -180,8 +185,15 @@ export default new Vuex.Store({
       total: 0,
     },
     tempBanger: 0,
+    publicUsers: null,
   },
   mutations: {
+    setUserData(state, userData) {
+      state.userData = userData;
+    },
+    setPublicUsers(state, publicUsers) {
+      state.publicUsers = publicUsers;
+    },
     setIndex(state, index) {
       state.index = index;
     },
@@ -190,6 +202,9 @@ export default new Vuex.Store({
     },
     setToken(state, token) {
       state.accessToken = token;
+    },
+    setUser(state, user) {
+      state.user = user;
     },
     setLibraryData(state, data) {
       state.libraryData = data;
@@ -286,13 +301,93 @@ export default new Vuex.Store({
     },
     setTempBanger(state, level) {
       state.tempBanger = level;
+    },
+    setTopPlayed(state, topPlayed) {
+      state.libraryData.topPlayed = topPlayed;
+    },
+    setTopArtists(state, topArtists) {
+      state.libraryData.topArtists = topArtists;
     }
   },
   actions: {
+    async getUserData(context, payload) {
+      try {
+        let response = await axios.get("/api/profile/" + payload.id);
+        context.commit('setUserData', response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async saveLibrary(context, payload) {
+      try {
+        let library = await JSON.parse(JSON.stringify(this.state.libraryData));;
+        library.tracks = [this.state.libraryData.tracks.length],
+        library.artists = {num: (Object.keys(this.state.libraryData.artists)).length},
+        library.genres = {num: (Object.keys(this.state.libraryData.genres)).length},
+        library.name = payload.name;
+        library.privacy = payload.privacy;
+
+        let keys = Object.keys(library.audio_features);
+        keys.push("bangers");
+        let charts = ['minchart', 'maxchart'];
+
+        for (var j = 0; j < keys.length; j++)
+        {
+          if (keys[j] == "total")
+            continue;
+          for (var i = 0; i < charts.length; i++)
+          {
+            let ids = [];
+            let val = [];
+            if (keys[j] == "bangers")
+            {
+              for (var k = 0; k < library[keys[j]][charts[i]].length; k++)
+              {
+                ids.push(library[keys[j]][charts[i]][k].id);
+                val.push(this.state.libraryData.bangers[charts[i]][k].value);
+              }
+              library[keys[j]][charts[i]] = [];
+            }
+            else {
+              for (var k = 0; k < library.audio_features[keys[j]][charts[i]].length; k++)
+              {
+                ids.push(library.audio_features[keys[j]][charts[i]][k].id);
+                val.push(this.state.libraryData.audio_features[keys[j]][charts[i]][k].value);
+              }
+              library.audio_features[keys[j]][charts[i]] = [];
+            }
+            let tracks = await this.dispatch('getTracks', ids);
+            for (var k = 0; k < 10; k++)
+            {
+              let trackArtists = tracks.tracks[k].artists.map(x => x.name);
+              if (keys[j] == "bangers")
+              {
+                library[keys[j]][charts[i]].push({name: tracks.tracks[k].name, artists: trackArtists, image: tracks.tracks[k].album.images[0].url, value: val[k]});
+              }
+              else
+              {
+                library.audio_features[keys[j]][charts[i]].push({name: tracks.tracks[k].name, artists: trackArtists, image: tracks.tracks[k].album.images[0].url, value: val[k]});
+              }
+            }
+          }
+        }
+        await axios.post("/api/profile/" + this.state.user.id, library);
+      } catch(error) {
+        console.log(error);
+      }
+    },
+    async getPublicUsers(context, payload) {
+      try {
+        let response = await axios.get('/api/profile/');
+        context.commit('setPublicUsers', response.data);
+      } catch(error) {
+        console.log(error);
+      }
+    },
     changeLibraryData(context, payload) {
       context.commit('setLibraryData', payload);
     },
-    parseAccessToken(context)
+    async parseAccessToken(context)
     {
       let token = window.location.hash.substring(1).split('&')
       .reduce(function (initial, item) {
@@ -302,7 +397,7 @@ export default new Vuex.Store({
         }
         return initial;
       }, {});
-      context.commit('setToken', token.access_token);
+      await context.commit('setToken', token.access_token);
     },
     getAccessToken(context)
     {
@@ -381,6 +476,21 @@ export default new Vuex.Store({
         console.log('%c Processing Artists Complete.', 'color: purple;');
         await this.dispatch('checkGenres');
         console.log('%c Processing Genres Complete.', 'color: purple;');
+        let topPlayed = await this.dispatch('getTopTracks',{limit: 20, time_range: "long_term"});
+        let topArtists = await this.dispatch('getTopArtists',{limit: 20, time_range: "long_term"});
+        let newTopPlayed = [];
+        let newTopArtists = [];
+        for (let i = 0; i < topPlayed.length; i++)
+        {
+          let trackArtists = topPlayed[i].artists.map(x => x.name);
+          newTopPlayed.push({name: topPlayed[i].name, artists: trackArtists, image: topPlayed[i].album.images[0].url});
+        }
+        for (let i = 0; i < topArtists.length; i++)
+        {
+          newTopArtists.push({name: topArtists[i].name, image: topArtists[i].images[0].url, genres: topArtists[i].genres});
+        }
+        await context.commit('setTopPlayed', newTopPlayed);
+        await context.commit('setTopArtists', newTopArtists);
       }
     },
     banger(context, payload) {
@@ -555,10 +665,11 @@ export default new Vuex.Store({
     changeIndex(context, payload) {
       context.commit('setIndex', payload.index);
     },
-    inicializeSpotifyApi(context) {
+    async inicializeSpotifyApi(context) {
       console.log('%c Inicializing Authorization.', 'color: purple;');
       this.state.spotifyApi.setAccessToken(this.state.accessToken);
-      context.commit('setInicialized', true);
+      await context.commit('setInicialized', true);
+      this.dispatch('getUser');
     },
     // {limit: Number 1-50, time_range: "long_term" Several years, "medium_term" 6 Months, "short_term" 4 Weeks, offset: Index of first entry to return}
     async getTopArtists(context, payload) {
@@ -667,7 +778,6 @@ export default new Vuex.Store({
             console.log(error);
         }
     },
-    
     // {limit: 1-50, offset: first index}
     async getSavedTracks(context, payload) {
         try {
@@ -678,19 +788,19 @@ export default new Vuex.Store({
             console.log(error);
         }
     },
-    
     // None
-    async getUser() {
+    async getUser(context) {
         try {
-        console.log('%c Requesting Library Data.', 'color: blue;');
-        let response = await this.state.spotifyApi.getMe();
-        console.table(response);
-        return response;
+          if (this.state.inicialized)
+          {
+            console.log('%c Requesting user Data.', 'color: blue;');
+            let response = await this.state.spotifyApi.getMe();
+            await context.commit('setUser', response);
+          }
         } catch (error) {
             console.log(error);
         }
     },
-    
     // Array IDs
     async searchSpotify(context, payload) {
         try {

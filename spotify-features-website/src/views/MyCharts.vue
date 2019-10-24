@@ -138,7 +138,6 @@ export default {
     async retrieveTracks() {
       this.show = true;
       this.tracks = await this.$store.dispatch('getTopTracks',{limit: 50, time_range: this.range});
-      
     },
     async retrieveArtists() {
       this.show = true;

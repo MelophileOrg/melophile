@@ -1,9 +1,7 @@
 <template>
-  <div class="libraryanalysis maindiv">
-    <NavBar path="libraryanalysis" />
-    <div id="main">
-      <AppTitle v-if="!done" title="Library Analysis" image="library"/>
-      <button v-if="!done && progress == 0" @click="startRetrievalProcess">Start</button>
+  <div class="viewUser maindiv">
+    <NavBar path="view" />
+    <div v-if="libraryData != null" id="main">
       <div v-if="!done && progress != 0" id="progress-bar">
         <div :style="{'--total': + total, '--progress': + progress}" id="progress-fill"/>
       </div>
@@ -11,9 +9,11 @@
       <div v-if="done" id="results">
         
         <div id="menu">
-          <h1>Your Library Analysis</h1>
+          <h1>{{name}}'s Library Analysis</h1>
+          <h2 id="created">{{created}}</h2>
           <div id="tabs">
             <h2 @click="changeTab(0)" :class="{active: tab == 0}">Big Picture</h2>
+            <h2 @click="changeTab(2)" :class="{active: tab == 2}">Charts</h2>
             <h2 @click="changeTab(1)" :class="{active: tab == 1}">Extremes</h2>
           </div>
         </div>
@@ -25,10 +25,10 @@
               <h4 class="light"><h4>{{total}}</h4>Saved Songs</h4>
             </div>
             <div class="row">
-              <h4 class="light"><h4>{{Object.keys(artists).length}}</h4>Artists</h4>
+              <h4 class="light"><h4>{{artists.num}}</h4>Artists</h4>
             </div>
             <div v-if="genresDone" class="row">
-              <h4 class="light"><h4>{{Object.keys(genres).length}}</h4>Genres</h4>
+              <h4 class="light"><h4>{{genres.num}}</h4>Genres</h4>
             </div>
           </div>
 
@@ -259,37 +259,28 @@
             </div>
           </div>
 
-          <div class="window" id="form" :style="{'--delay': 11}">
-            <h3 v-if="!saved">Share Your Library</h3>
-            <p  v-if="!saved">Privacy</p><button  v-if="!saved" :class="{active: privacyVal}" id="privacy" @click="privacy(true)">Link Only</button><button v-if="!saved" :class="{active: !privacyVal}" id="privacy" @click="privacy(true)">Public</button>
-            <input id="urname" v-if="!saved" v-model="displayName" type="text" placeholder="Display Name"/>
-            <button v-if="!saved" id="save" @click="save">Save</button>
-            <h2 v-if="saved" id="id-title">Your Link</h2>
-            <a id="link" v-if="saved" :href="'http://mymusic.andrewdanielyoung.com/view/' + userid">{{'http://mymusic.andrewdanielyoung.com/view/' + userid}}</a>
-          </div>
-
         </div>
 
         <div id="extremes" v-if="tab == 1">
           <div id="extremes-menu">
-            <h6>List the </h6>
+            <h6>List {{name}}'s </h6>
             <Select class="marginleft" @pending="pending('filter')" @selection="filter" :load="true" :options="filters"/>
             <Select class="marginleft" @pending="pending('catagory')" @selection="catagory" :load="true" :options="sorts"/>
           </div>
           <table class="table" id="tracks" v-if="list.length != 0">
-            <tr class="track" v-for="(track, index) in list" :key="track.id" :style="{'--delay': + index}">
+            <tr class="track" v-for="(track, index) in list" :key="track.name + index" :style="{'--delay': + index}">
               <a class="row">
               <td>
                 <h2>{{index + 1}}</h2>
               </td>
               <td>
-                <div class="image" :style="{backgroundImage: 'url(\'' + track.album.images[0].url + '\')'}"/>
+                <div class="image" :style="{backgroundImage: 'url(\'' + track.image + '\')'}"/>
               </td>
               <td>
                 <h1>{{track.name}}</h1>
-                <div class="track-artists">
-                  <div class="track-artist-div" v-for="index in 4" :key="track.name + '-' + (index - 1)">
-                    <a  class="track-artist" v-if="(index - 1) < track.artists.length">{{track.artists[(index - 1)].name}}<h4 class="comma" v-if="(index - 1) < track.artists.length - 1">, </h4></a>
+                <div  class="track-artists">
+                  <div class="track-artist-div" v-for="(item, index) in track.artists" :key="track.name + '-' + (index - 1)">
+                    <a class="track-artist" v-if="index < 4">{{item}}<h4 class="comma" v-if="(index - 1) < track.artists.length - 1">, </h4></a>
                   </div>  
                 </div>
               </td>
@@ -303,6 +294,50 @@
           </table>
 
         </div>
+
+        <div id="extremes" v-if="tab == 2">
+          <div id="extremes-menu">
+            <h6>{{name}}'s Top</h6>
+            <Select class="marginleft" @pending="pending('charts')" @selection="chartValSet" :load="true" :options="charts"/>
+          </div>
+          <table class="table" id="tracks" v-if="list.length != 0">
+            <tr class="track" v-for="(track, index) in list" :key="track.name + index" :style="{'--delay': + index}">
+              <a class="row">
+              <td>
+                <h2>{{index + 1}}</h2>
+              </td>
+              <td>
+                <div v-if="chartVal == 'tracks'" class="image" :style="{backgroundImage: 'url(\'' + track.image + '\')'}"/>
+                <div v-if="chartVal == 'artists'" class="image" :style="{backgroundImage: 'url(\'' + track.image + '\')'}"/>
+              </td>
+              <td>
+                <h1>{{track.name}}</h1>
+
+                <div v-if="chartVal == 'artists'" class="track-artists">
+                  <div class="track-artist-div" v-for="(item, index) in track.genres" :key="track.name + '-' + (index - 1)">
+                    <a class="track-artist" v-if="index < 4">{{item}}<h4 class="comma" v-if="(index - 1) < track.genres.length - 1">, </h4></a>
+                  </div>  
+                </div>
+
+                <div v-if="chartVal == 'tracks'" class="track-artists">
+                  <div class="track-artist-div" v-for="(item, index) in track.artists" :key="track.name + '-' + (index - 1)">
+                    <a class="track-artist" v-if="index < 4">{{item}}<h4 class="comma" v-if="(index - 1) < track.artists.length - 1">, </h4></a>
+                  </div>  
+                </div>
+
+
+              </td>
+              </a>
+            </tr>
+          </table>
+          <table class="table" v-if="list.length == 0">
+            <tr class="loadingspace" v-for="num in 10" :key="'loading-spaces'+num" :style="{'--delay': + num}">
+              <a class="row fake"/>
+            </tr>
+          </table>
+
+        </div>
+
       </div>
     </div>
   </div>
@@ -315,7 +350,7 @@ import AppTitle from '@/components/AppTitle.vue'
 import Select from '@/components/Select.vue'
 
 export default {
-  name: 'libraryanalysis',
+  name: 'viewUser',
   components: {
     NavBar,
     AppTitle,
@@ -323,8 +358,6 @@ export default {
   },
   data() {
     return {
-      displayName: "",
-      privacyVal: true,
       sorts: [
         {value: 'valence', text: "Happy"},
         {value: 'energy', text: "Energetic"},
@@ -339,6 +372,10 @@ export default {
       filters: [
         {value: 1, text: "Most"},
         {value: 0, text: "Least"}
+      ],
+      charts: [
+        {value: "artists", text: "Artists"},
+        {value: "tracks", text: "Tracks"},
       ],
       barColors: [
         {red: 242, green: 142, blue: 43},
@@ -360,17 +397,10 @@ export default {
 
       catagoryVal: "",
       filterVal: -1,
-      saved: false,
+      chartVal: "",
     }
   },
   methods: {
-    privacy(bool) {
-      this.privacyVal = bool;
-    },
-    async save() {
-      await this.$store.dispatch('saveLibrary', {name: this.displayName, privacy: this.privacyVal});
-      this.saved = true;
-    },
     findDate(months) {
       let month = 2626560000;
       let n = new Date();
@@ -393,51 +423,60 @@ export default {
       return max;
     },
     pending(type) {
-      if (type == 'filter')
-        this.filterVal = -1;
-      else 
-        this.catagoryVal = "";
-      this.list = [];
+        if (this.tab == 1)
+        {
+            if (type == 'filter')
+                this.filterVal = -1;
+            else
+                this.catagoryVal = "";
+        }
+        this.list = [];
     },
     catagory(val) {
-      this.catagoryVal = val;
-      this.checkList();
+        this.catagoryVal = val;
+        this.checkList();
+    },
+    chartValSet(val) {
+        this.chartVal = val;
+        this.checkList();
     },
     filter(val) {
-      this.filterVal = val;
-      this.checkList();
+        this.filterVal = val;
+        this.checkList();
     },
     async checkList() {
       let chart = [];
-      if (this.catagoryVal != "" && this.filterVal != -1)
+      if (this.tab == 1)
       {
-        if (this.catagoryVal == "bangers")
+        if (this.catagoryVal != "" && this.filterVal != -1)
         {
-          if (this.filterVal == 0)
-            chart = this.bangers.minchart;
-          else 
-            chart = this.bangers.maxchart;
-        }
-        else {
-          if (this.filterVal == 0)
-            chart = this.audio_features[this.catagoryVal].minchart;
-          else 
-            chart = this.audio_features[this.catagoryVal].maxchart;
+            if (this.catagoryVal == "bangers")
+            {
+            if (this.filterVal == 0)
+                this.list = this.bangers.minchart;
+            else 
+                this.list = this.bangers.maxchart;
+            }
+            else {
+            if (this.filterVal == 0)
+                this.list = this.audio_features[this.catagoryVal].minchart;
+            else 
+                this.list = this.audio_features[this.catagoryVal].maxchart;
+            }
         }
       }
-      if (chart.length > 0)
+      if (this.tab == 2)
       {
-        let ids=[];
-        for (let i = 0; i < chart.length; i++)
+        if (this.chartVal != "")
         {
-          ids.push(chart[i].id);
+            if (this.chartVal == "artists")
+            {
+                this.list = this.topArtists;
+            }
+            else {
+                this.list = this.topTracks;
+            }
         }
-        let response = await this.$store.dispatch('getTracks', ids);
-        for (let i = 0; i < response.tracks.length; i++)
-        {
-          response.tracks[i][this.catagoryVal] = chart[i].value;
-        }
-        this.list = response.tracks;
       }
     },
     percent(value) {
@@ -445,6 +484,7 @@ export default {
     },
     changeTab(val) {
       this.tab = val;
+      this.list = [];
     },
     async startRetrievalProcess() {
       await this.$store.dispatch('runLibraryAnalysis');
@@ -473,64 +513,76 @@ export default {
       }
       return 0;
     },
+    done() {
+        return this.libraryData != null;
+    },
     tempoAverage() {
       return Math.round(this.audio_features.tempo.value);
     },
-    libraryData() {
-      return this.$store.state.libraryData;
-    },
-    progress() {
-      return this.$store.state.progress.num;
-    },
     total() {
-      return this.$store.state.progress.total;
+        if (this.libraryData != null)
+        return this.$store.state.userData.tracks[0];
     },
-    message() {
-      return this.$store.state.progress.message;
-    },
-    done() {
-      return this.$store.state.libraryData.complete.done;
+    libraryData() {
+      return this.$store.state.userData;
     },
     audioFeaturesDone() {
-      return this.$store.state.libraryData.complete.audioFeaturesDone;
+        return this.libraryData != null;
     },
     artistsDone() {
-      return this.$store.state.libraryData.complete.artistsDone;
+        return this.libraryData != null;
     },
     genresDone() {
-      return this.$store.state.libraryData.complete.genresDone;
+        return this.libraryData != null;
     },
     artists() {
-      return this.$store.state.libraryData.artists;
+        if (this.libraryData != null)
+      return this.$store.state.userData.artists;
     },
     genres() {
-      return this.$store.state.libraryData.genres;
+        if (this.libraryData != null)
+      return this.$store.state.userData.genres;
     },
     audio_features() {
-      return this.$store.state.libraryData.audio_features;
+        if (this.libraryData != null)
+      return this.$store.state.userData.audio_features;
     },
     bangers() {
-      return this.$store.state.libraryData.bangers;
+        if (this.libraryData != null)
+      return this.$store.state.userData.bangers;
     },
     dates() {
-      return this.$store.state.libraryData.dates;
+        if (this.libraryData != null)
+      return this.$store.state.userData.dates;
     },
     favoriteArtists() {
-      return this.$store.state.libraryData.favoriteArtists;
+        if (this.libraryData != null)
+      return this.$store.state.userData.favoriteArtists;
     },
     favoriteGenres() {
-      return this.$store.state.libraryData.favoriteGenres;
+        if (this.libraryData != null)
+      return this.$store.state.userData.favoriteGenres;
     },
     tracks() {
-      return this.$store.state.libraryData.tracks;
+        if (this.libraryData != null)
+      return this.$store.state.userData.tracks;
     },
-    userid() {
-      return this.$store.state.user.id;
-    }
+    name() {
+        return this.$store.state.userData.name;
+    },
+    created() {
+        let d = new Date(this.$store.state.userData.created);
+        return (d.getMonth() + 1) + "/" + d.getDate() + "/" + (d.getFullYear() % 100);
+    },
+    topTracks() {
+        return this.$store.state.userData.topPlayed;
+    },
+    topArtists() {
+        return this.$store.state.userData.topArtists;
+    },
   },
   async created() {
-    if (!this.inicialized)
-      this.$router.push("/login");
+    await this.$store.dispatch('getUserData', {id: this.$route.params.id});
     this.interval = setInterval(this.animate, 100);
   }
 }
@@ -546,81 +598,8 @@ export default {
 
 .graph-bar.time p {
   display: none;
-}
-
-#form input {
-  width: calc(100% - 20px);
-  border: 0;
-  padding: 10px;
-  margin-top: 25px;
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.082);
-  color: white;
-  font-size: 1.1em;
-  max-width: 280px;
-}
-
-#form a {
-  display: block;
-  width: 300px;
-  margin: 0 auto;
-  text-decoration: none;
-  color: white;
-
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-
-  -ms-word-break: break-all;
-  /* This is the dangerous one in WebKit, as it breaks things wherever */
-  word-break: break-all;
-  /* Instead use this non-standard one: */
-  word-break: break-word;
-
-  /* Adds a hyphen where the word breaks, if supported (No Blink) */
-  -ms-hyphens: auto;
-  -moz-hyphens: auto;
-  -webkit-hyphens: auto;
-  hyphens: auto;
-  font-size: 2em;
-  animation: slide-up .3s ease .2s, peekaboo .2s linear;
-}
-
-#form p {
-  display: block;
-  margin: 10 0px;
-  margin-bottom: 8px;
-  font-size: 1.5em;
-  color: white;
-  font-weight: bolder;
-}
-
-#form #privacy {
-  margin: 0px 10px;
-  padding: 10px;
-  width: 130px;
-  font-size: 1.1em;
-  display: inline-block;
-  transition: all .3s ease;
-}
-
-#form #save:hover {
-  background: rgb(13, 153, 13);
-}
-
-#form .active#privacy {
-  background-color:rgba(250, 246, 246, 0.404);
-}
-
-#form #privacy:hover {
-  background-color:rgba(250, 246, 246, 0.404);
-}
-
-#form #save {
-  display: block;
-  margin: 0 auto;
-  margin-top: 30px;
-  background: green;
-  transition: all .3s ease;
+  
+  
 }
 
 .graph-bar.time:hover p {
@@ -1075,7 +1054,11 @@ h4 {
   margin-top: 5px;
 }
 
-
+#created {
+    text-align: left;
+    margin: 0;
+    transform: translateY(-15px);
+}
 
 h5 {
   color: rgba(255, 255, 255, 0.514);

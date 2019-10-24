@@ -20,6 +20,8 @@
                 <img :src="getImgUrl(app.img)"/><h1>{{app.title}}</h1>
                 <div class="active-bar"/>
             </div>
+            <div v-if="user != null" id="user">
+            </div>
         </div>
         <div v-if="w < 720" class="fixed small">
             <div id="logo-div" class="small">
@@ -87,6 +89,9 @@ export default {
             }
             this.w = window.innerWidth;
         },
+        getUser() {
+            this.$store.dispatch('getUser');
+        }
     },
     computed: {
         apps() {
@@ -101,9 +106,15 @@ export default {
             return this.apps.filter(function(app) {
                 return app.auth;
             });
+        },
+        user() {
+            return this.$store.state.user;
+        },
+        username() {
+            return this.$store.state.user.display_name;
         }
     },
-    created() {
+    async created() {
         this.interval = setInterval(this.getWindowWidth, 100);
     }
 }
