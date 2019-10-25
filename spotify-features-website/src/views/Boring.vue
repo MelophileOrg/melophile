@@ -4,39 +4,10 @@
     <div id="main">
         <h1 v-if="testing" id="development">Currently Unavailable</h1>
         <AppTitle v-if="!start && !testing" title="Boring-Radar" image="boring" font="Acme"/>
-        <button v-if="!testing">Start</button>
+        <button v-if="!testing && done">Start</button>
+        <button v-if="!testing && !done" @click="route('libraryanalysis')">Run Library Analysis First</button>
 
-        <div v-if="!testing" id="details">
-            <h1>Is Your Music Boring?</h1>
-            <p>Inspired by a fantastic article written by Juan De Dios Santos, who uses Spotify's API to try to deduce whether his friend's claims that his music is "boring" are true.</p>
-            <a href="https://towardsdatascience.com/is-my-spotify-music-boring-an-analysis-involving-music-data-and-machine-learning-47550ae931de">Is my Spotify music boring? An analysis involving music, data, and machine learning</a>
-            <p>Santos uses the API simular to what is seen in the Library Analysis app to retrieve saved songs from both of their libraries, and request what Spotify calls "audio features" for each track. These features are listed below with Spotify's description of each.</p>
-            <dl>
-                <dt>Instrumentalness</dt>
-                <dd>Predicts whether a track contains no vocals. “Ooh” and “aah” sounds are treated as instrumental in this context. Rap or spoken word tracks are clearly “vocal”.</dd>
-                <dt>Acousticness</dt>
-                <dd>A confidence measure from 0.0 to 1.0 of whether the track is acoustic.</dd>
-                <dt>Liveness</dt>
-                <dd>Detects the presence of an audience in the recording.</dd>
-                <dt>Speechiness</dt>
-                <dd>Speechiness detects the presence of spoken words in a track. The more exclusively speech-like the recording (e.g. talk show, audio book, poetry), the closer to 1.0 the attribute value.</dd>
-                <dt>Energy</dt>
-                <dd>Energy is a measure from 0.0 to 1.0 and represents a perceptual measure of intensity and activity.</dd>
-                <dt>Danceability</dt>
-                <dd>Danceability describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity.</dd>
-                <dt>Valence</dt>
-                <dd>A measure from 0.0 to 1.0 describing the musical positiveness conveyed by a track.</dd>
-            </dl>
-            <p>Santos uses a few different methods with this information to determine the "boringness" of their respective libraries, of which two are available here.</p>
-            <h2>Music Variety</h2>
-            <p>Variety is measured in standard deviation, and can either be taken from your variety of "audio features" or genres.</p>
-            <h2>The Boring Equation</h2>
-            <p>This website offers Santos' equation for boringness:</p>
-            <p class="equation">boringness = loudness + tempo + (energy*100) + (danceability * 100)</p>
-            <p>The equation was aimed after music that would be entertaining for a high energy party, as displayed by the variables used.</p>
-            <p>I'm convinced standard deviation is a better claim to the boringness of tracks, because anything gets boring without variety.</p>
-            <p>Regardless I hope you enjoy and hope your music taste holds well against the test!</p>
-        </div>
+
 
       
     </div>
@@ -60,14 +31,23 @@ export default {
       }
   },
   methods: {
+    route(path) {
+      this.$router.push("/" + path);
+    }
   },
   computed: {
     inicialized() {
       return this.$store.state.inicialized;
     },
+    libraryData() {
+      return this.$store.state.libraryData;
+    },
     testing() {
       return !this.$store.state.testing;
-    }
+    },
+    done() {
+      return this.$store.state.libraryData.complete.done;
+    },
   },
   created: function() {
     if (!this.inicialized)

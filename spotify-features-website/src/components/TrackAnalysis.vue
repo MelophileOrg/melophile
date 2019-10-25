@@ -93,10 +93,10 @@
             </div>
 
             <div id="banger" class="window"  :style="{'--delay': 5}">
+                <h3 class="nomargin">Audio Analysis</h3>  
                 <div class="loading" v-if="!audioAnalysisReady">
                     <div v-for="bar in 4" :key="'loadingbar'+bar" class="bar" :style="{'--delay': + (bar - 1)}"/>
                 </div>
-                <h3 class="nomargin">Audio Analysis</h3>  
                 <div v-if="audioAnalysisReady" class="graph" :style="{'--numBars': + audioAnalysisSegments}">
                     <div class="graph-bar" v-for="(bar, index) in trackData.audioAnalysis.segments" :style="{'--height': + bar.loudness_max, '--red': + bar.red, '--green': + bar.green, '--blue': + bar.blue,}" :key="'audio-analysis'+index">
                         <p>{{time(bar.start)}}</p>
