@@ -1,0 +1,139 @@
+////////////////////////////////////////////////////////////////
+// INICIALIZATION //////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+// Boolean
+const setInicialized = (state, payload) => {
+    state.inicialized = payload;
+};
+// Object
+const setUserData = (state, payload) => {
+    state.user = payload;
+};
+////////////////////////////////////////////////////////////////
+// DATA OBJECTS ////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+// {id: String, value: Object}
+const pushTrack = (state, payload) => {
+    state.tracks[payload.id] = payload.value;
+};
+// {id: String, value: Object}
+const pushArtist = (state, payload) => {
+    state.artists[payload.id] = payload.value;
+};
+// {id: String, value: Object}
+const pushGenre = (state, payload) => {
+    state.genres[payload.id] = payload.value;
+};
+////////////////////////////////////////////////////////////////
+// TOP PLAYED TRACKS/ARTISTS ///////////////////////////////////
+////////////////////////////////////////////////////////////////
+// {index: Number, value: Object}   0-short_term 1-medium_term 2-long_term
+const setTopPlayedTracks = (state, payload) => {
+    state.topPlayed.tracks[payload.index] = payload.value;
+};
+// {index: Number, value: Object}   0-short_term 1-medium_term 2-long_term
+const setTopPlayedArtists = (state, payload) => {
+    state.topPlayed.artists[payload.index] = payload.value;
+};
+////////////////////////////////////////////////////////////////
+// TOP SAVED TRACKS/ARTISTS ////////////////////////////////////
+////////////////////////////////////////////////////////////////
+// Array
+const setTopSavedArtists = (state, payload) => {
+    state.topSaved.artists = payload;
+};
+// Array
+const setTopSavedGenres = (state, payload) => {
+    state.topSaved.genres = payload;
+};
+////////////////////////////////////////////////////////////////
+// AUDIO FEATURES //////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+// {key: String, chart: String, value: Array}
+const setAudioFeatureChart = (state, payload) => {
+    state.audioFeatures[payload.key][payload.chart] = payload.value;
+};
+// {key: String, value: Number}
+const addAudioFeatureValue = (state, payload) => {
+    state.audioFeatures[payload.key].value += payload.value;
+};
+// {key: String, total: Number}
+const averageAudioFeatureValue = (state, payload) => {
+    state.audioFeatures[payload.key].value /= payload.total;
+};
+////////////////////////////////////////////////////////////////
+// DATES ADDED /////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+// Number (Month)
+const addDateAddedTrack = (state, payload) => {
+    if (payload > (state.dateAdded.length - 1)) {
+        for (var i = 0; i < (payload - (state.dateAdded.length - 1)); i++) {
+            state.dateAdded.push(0);
+        }
+    }
+    state.dateAdded[payload] += 1;
+};
+// Number (Month)
+const addDateAddedArtist = (state, payload) => {
+    if (payload > (state.artistAdded.length - 1)) {
+        for (var i = 0; i < (payload - (state.artistAdded.length - 1)); i++) {
+            state.artistAdded.push(0);
+        }
+    }
+    state.artistAdded[payload] += 1;
+};
+// Number (Month)
+const addDateAddedGenre = (state, payload) => {
+    if (payload > (state.genreAdded.length - 1)) {
+        for (var i = 0; i < (payload - (state.genreAdded.length - 1)); i++) {
+            state.genreAdded.push(0);
+        }
+    }
+    state.genreAdded[payload] += 1;
+};
+// Number (Month)
+const addDateAddedAudioFeature = (state, payload) => {
+    if (payload > (state.audioFeatureAdded.length - 1)) {
+        for (var i = 0; i < (payload - (state.audioFeatureAdded.length - 1)); i++) {
+            state.audioFeatureAdded.push(0);
+        }
+    }
+    state.audioFeatureAdded[payload] += 1;
+};
+////////////////////////////////////////////////////////////////
+// SOCIAL MUTATIONS/////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+// Array
+const setPublicProfiles = (state, payload) => {
+    state.publicProfiles = payload;
+};
+// Data Object
+const setProfileData = (state, payload) => {
+    state.profileData = payload;
+};
+export default {
+    setInicialized,
+    setUserData,
+    
+    pushTrack,
+    pushArtist,
+    pushGenre,
+
+    setTopPlayedTracks,
+    setTopPlayedArtists,
+
+    setTopSavedArtists,
+    setTopSavedGenres,
+
+    setAudioFeatureChart,
+    addAudioFeatureValue,
+    averageAudioFeatureValue,
+
+    addDateAddedTrack,
+    addDateAddedArtist,
+    addDateAddedGenre,
+    addDateAddedAudioFeature,
+
+    setPublicProfiles,
+    setProfileData
+};
