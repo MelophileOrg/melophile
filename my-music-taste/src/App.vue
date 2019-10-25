@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <router-view/>
+    <div id="background"/>
   </div>
 </template>
 
@@ -28,6 +29,7 @@ body {
   width: 100vw;
   min-height: 100vh;
   overflow-x: hidden;
+  position: relative;
 }
 
 #main-flex {
@@ -35,6 +37,18 @@ body {
   flex-wrap: wrap;
   width: 100vw;
   min-height: 100vh;
+}
+
+#background {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: -10;
+  background-image: radial-gradient(circle at 0px 0px, rgb(49, 49, 49),rgb(0, 0, 0));
+  background-size: 100% 100%;
 }
 
 #main {

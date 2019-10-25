@@ -1,0 +1,19 @@
+<template>
+  <div class="apppreview">
+    
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'apppreview',
+  props: {
+    
+  }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+
+</style>

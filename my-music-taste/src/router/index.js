@@ -82,17 +82,17 @@ const routes = [
   },
   {
     path: '/song/:id',
-    name: 'home',
+    name: 'song',
     component: SongAnalysis
   },
   {
     path: '/artist/:id',
-    name: 'home',
+    name: 'artist',
     component: ArtistAnalysis
   },
   {
     path: '/genre/:genre',
-    name: 'home',
+    name: 'genre',
     component: GenreAnalysis
   },
   {
