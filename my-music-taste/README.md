@@ -1,4 +1,4 @@
-# my-music-mood
+# my-music-taste
 
 ## Project setup
 ```
