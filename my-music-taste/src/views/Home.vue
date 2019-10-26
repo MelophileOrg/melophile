@@ -2,7 +2,7 @@
   <div id="main-flex" class="home">
     <NavBar/>
     <div id="main">
-
+      <button @click="test">Test</button>
     </div>
   </div>
 </template>
@@ -15,6 +15,11 @@ export default {
   name: 'home',
   components: {
     NavBar
+  },
+  methods: {
+    test() {
+      this.$router.push('/test');
+    }
   }
 }
 </script>

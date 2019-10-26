@@ -4,14 +4,14 @@ import Vuex from 'vuex'
 //import axios from 'axios';
 var SpotifyWebApi = require('spotify-web-api-js');
 
-import actions from './actions';
-import mutations from './mutations';
+import actions from './actions.js';
+import mutations from './mutations.js';
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   state: {
-    dev: true,
+    dev: true, 
 
     spotifyApi: new SpotifyWebApi(),
     inicialized: false,
@@ -23,6 +23,14 @@ export const store = new Vuex.Store({
     tracks: {},
     artists: {},
     genres: {},
+
+    progress: {
+      total: 0,
+      processed: 0,
+      tracksLoaded: false,
+      artistsLoaded: false,
+      genresLoaded: false,
+    },
 
     topPlayed: {
       tracks: [[],[],[]],
@@ -87,3 +95,5 @@ export const store = new Vuex.Store({
   actions,
   mutations,
 });
+
+export default store

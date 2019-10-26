@@ -2,7 +2,7 @@
   <div id="main-flex" class="login">
     <NavBar/>
     <div id="main">
-
+      <button @click="login">Authorize</button>
     </div>
   </div>
 </template>
@@ -16,5 +16,10 @@ export default {
   components: {
     NavBar
   },
+  methods: {
+    login() {
+      this.$store.dispatch('inicializeGetToken');
+    }
+  }
 }
 </script>

@@ -10,19 +10,64 @@ const setUserData = (state, payload) => {
     state.user = payload;
 };
 ////////////////////////////////////////////////////////////////
+// PROGRESS ////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+// Number
+const setTotal = (state, payload) => {
+    state.progress.total= payload;
+};
+// None
+const addProcessed = (state) => {
+    state.progress.processed += 1;
+};
+const setTracksLoaded = (state) => {
+    state.progress.tracksLoaded = true;
+};
+const setArtistsLoaded = (state) => {
+    state.progress.artistsLoaded = true;
+};
+const setGenresLoaded = (state) => {
+    state.progress.genresLoaded = true;
+};
+const resetProgress = (state) => {
+    state.progress.processed = 0;
+    state.progress.tracksLoaded = true;
+    state.progress.genresLoaded = true;
+    state.progress.genresLoaded = true;
+};
+////////////////////////////////////////////////////////////////
 // DATA OBJECTS ////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
 // {id: String, value: Object}
 const pushTrack = (state, payload) => {
     state.tracks[payload.id] = payload.value;
 };
+// {id: String, properties: Object}
+const addTrackProperties = (state, payload) => {
+    let keys = Object.keys(payload.properties);
+    for (var i = 0; i < keys.length; i++) {
+        state.tracks[payload.id][keys[i]] = payload.properties[keys[i]];
+    }
+};
 // {id: String, value: Object}
 const pushArtist = (state, payload) => {
     state.artists[payload.id] = payload.value;
 };
+// {id: String, track: String}
+const addTrackToArtist = (state, payload) => {
+    state.artists[payload.id].tracks.push(payload.track);
+};
 // {id: String, value: Object}
 const pushGenre = (state, payload) => {
     state.genres[payload.id] = payload.value;
+};
+// {id: String, artist: String}
+const addArtistToGenre = (state, payload) => {
+    state.genres[payload.id].artists.push(payload.artist);
+};
+// {id: String, value: Number}
+const addGenreTrackNum = (state, payload) => {
+    state.genres[payload.id].tracknum += payload.value;
 };
 ////////////////////////////////////////////////////////////////
 // TOP PLAYED TRACKS/ARTISTS ///////////////////////////////////
@@ -57,9 +102,9 @@ const setAudioFeatureChart = (state, payload) => {
 const addAudioFeatureValue = (state, payload) => {
     state.audioFeatures[payload.key].value += payload.value;
 };
-// {key: String, total: Number}
-const averageAudioFeatureValue = (state, payload) => {
-    state.audioFeatures[payload.key].value /= payload.total;
+// Key String
+const averageAudioFeatureValue = (state, key) => {
+    state.audioFeatures[key].value /= state.progress.total;
 };
 ////////////////////////////////////////////////////////////////
 // DATES ADDED /////////////////////////////////////////////////
@@ -115,9 +160,20 @@ export default {
     setInicialized,
     setUserData,
     
+    setTotal,
+    addProcessed,
+    setTracksLoaded,
+    setArtistsLoaded,
+    setGenresLoaded,
+    resetProgress,
+
     pushTrack,
+    addTrackProperties,
     pushArtist,
+    addTrackToArtist,
     pushGenre,
+    addArtistToGenre,
+    addGenreTrackNum,
 
     setTopPlayedTracks,
     setTopPlayedArtists,

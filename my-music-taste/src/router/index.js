@@ -25,7 +25,9 @@ import Profile from '../views/Profile.vue'
 import PowerRecommends from '../views/PowerRecommends.vue'
 import Recommend from '../views/Recommend.vue'
 
-import BoringRadar from '../views/Home.vue'
+import BoringRadar from '../views/BoringRadar.vue'
+
+import Test from '../views/Test.vue'
 
 Vue.use(VueRouter)
 
@@ -120,6 +122,11 @@ const routes = [
     name: 'boringradar',
     component: BoringRadar
   },
+  {
+    path: '/test',
+    name: 'test',
+    component: Test
+  }
 ]
 
 const router = new VueRouter({

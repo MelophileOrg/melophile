@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios';
 
-var SpotifyWebApi = require('spotify-web-api-js');
+var SpotifyWebApi = require('spotify-web-api-js'); 
 
 Vue.use(Vuex)
 
