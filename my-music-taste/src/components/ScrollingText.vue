@@ -8,7 +8,11 @@
 export default {
   name: 'scrollingtext',
   props: {
-    
+    fontSize: Number,
+    fontWeight: String,
+    red: Number,
+    blue: Number,
+    green: Number,
   }
 }
 </script>

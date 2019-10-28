@@ -137,10 +137,10 @@ const findAndStoreArtists = async (context, payload) => {
         delete artistObject.external_urls;
         artistObject.followers = artistObject.followers.total;
         for (let j = 0; j < artistObject.genres.length; j++) {
-            if (!(artistObject.genres[j] in context.state.genres))
-                await context.commit('pushGenre', {id: artistObject.genres[j], value: {name: artistObject.genres[j], artists: [artistObject.id], tracknum: 0}});
+            if (!(artistObject.genres[j] in context.state.genres))   // SWITCHED tO NAME
+                await context.commit('pushGenre', {id: artistObject.genres[j], value: {name: artistObject.genres[j], artists: [artistObject.name], tracknum: 0}});
             else 
-                await context.commit('addArtistToGenre', {id: artistObject.genres[j], artist: artistObject.id});
+                await context.commit('addArtistToGenre', {id: artistObject.genres[j], artist: artistObject.name});
         }
         delete artistObject.type;
         delete artistObject.uri;
@@ -507,6 +507,157 @@ const convertGenres = async (context, payload) => {
 };
 
 ////////////////////////////////////////////////////////////////
+// ANALYSIS ////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+/*
+    album: {album_type: "album", artists: Array(1), available_markets: Array(78), external_urls: {…}, href: "https://api.spotify.com/v1/albums/5MmMomspau1V5YpXjHYJRy", …}
+    artists: [{…}]
+    available_markets: (78) ["AD", "AE", "AR", "AT", "AU", "BE", "BG", "BH", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "DZ", "EC", "EE", "EG", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IL", "IN", "IS", "IT", "JO", "KW", "LB", "LI", "LT", "LU", "LV", "MA", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "OM", "PA", "PE", "PH", "PL", "PS", "PT", "PY", "QA", "RO", "SA", "SE", "SG", "SK", "SV", "TH", "TN", "TR", "TW", "US", "UY", "VN", "ZA"]
+    disc_number: 1
+    duration_ms: 296899
+    explicit: false
+    external_ids: {isrc: "GBCFB1200106"}
+    external_urls: {spotify: "https://open.spotify.com/track/74Csq5DMaOBShLUhI6NU5A"}
+    href: "https://api.spotify.com/v1/tracks/74Csq5DMaOBShLUhI6NU5A"
+    id: "74Csq5DMaOBShLUhI6NU5A"
+    is_local: false
+    name: "Curse Me Good"
+    popularity: 50
+    preview_url: "https://p.scdn.co/mp3-preview/ea8af91eefd28faf2ab5c73b6dc5a596bf0d5b9b?cid=42903eeb2bf943c4bd4903370f7a93f5"
+    track_number: 2
+    type: "track"
+    uri: "spotify:track:74
+
+
+    acousticness: 0.0105
+    album: {external_urls: {…}, href: "https://open.spotify.com/album/5MmMomspau1V5YpXjHYJRy", id: "5MmMomspau1V5YpXjHYJRy", images: Array(3), name: "The Glorious Dead", …}
+    artists: ["0bZCak2tcRMY1dzEIuwF42"]
+    banger: 0.6849999999999999
+    danceability: 0.809
+    date: "2018-09-23T23:34:33Z"
+    duration_ms: 296900
+    energy: 0.814
+    explicit: false
+    href: "https://open.spotify.com/track/74Csq5DMaOBShLUhI6NU5A"
+    id: "74Csq5DMaOBShLUhI6NU5A"
+    instrumentalness: 0.0000248
+    is_local: false
+    key: 6
+    liveness: 0.099
+    loudness: -6.829
+    mode: 0
+    name: "Curse Me Good"
+    popularity: 50
+    preview_url: "https://p.scdn.co/mp3-preview/ea8af91eefd28faf2ab5c73b6dc5a596bf0d5b9b?cid=42903eeb2bf943c4bd4903370f7a93f5"
+    speechiness: 0.0338
+    tempo: 118
+    time_signature: 4
+    track_number: 2
+    valence: 0.804
+*/
+const songAnalysis = async (context, id) => {
+    let trackData;
+    if (id in context.state.tracks) {
+        console.log("IN LIBRARY");
+        trackData = context.state.tracks[id];
+    }   
+    else {
+        console.log("NOT SAVED");
+        trackData = await context.dispatch('getTrack', id);
+        delete trackData.album.album_type;
+        delete trackData.album.artists;
+        delete trackData.album.available_markets;
+        delete trackData.album.external_urls;
+        delete trackData.album.href;
+        delete trackData.album.uri;
+        delete trackData.available_markets;
+        delete trackData.external_ids;
+        delete trackData.is_local;
+        delete trackData.uri;
+        trackData.href = trackData.external_urls.spotify
+        delete trackData.external_urls;
+        trackData = await context.dispatch('songAnalysisFeatures', {trackData: trackData, id: id});
+    }
+    trackData.audioAnalysis = await context.dispatch('cleanAudioAnalysis', {id: id});
+    console.log(trackData);
+};
+
+const songAnalysisFeatures = async (context, payload) => {
+    let song = payload.trackData;
+    let audioFeatures = await context.dispatch('getAudioFeaturesForTrack', payload.id);
+    song.acousticness = audioFeatures.acousticness;
+    song.danceability = audioFeatures.danceability;
+    song.energy = audioFeatures.energy;
+    song.instrumentalness = audioFeatures.instrumentalness;
+    song.key = audioFeatures.key;
+    song.liveness = audioFeatures.liveness;
+    song.loudness = audioFeatures.loudness;
+    song.mode = audioFeatures.mode;
+    song.speechiness = audioFeatures.speechiness;
+    song.tempo = audioFeatures.tempo;
+    song.valence = audioFeatures.valence;
+    return song;
+};
+
+const cleanAudioAnalysis = async (context, payload) => {
+    let audioAnalysisSegments = 80;
+    let audioAnalysis = await context.dispatch('getAudioAnalysisForTrack', payload.id);
+    let newSegments = [];
+    if (audioAnalysis.segments.length < audioAnalysisSegments)
+        audioAnalysisSegments = audioAnalysis.segments.length;
+    let width = Math.round(audioAnalysis.segments.length / audioAnalysisSegments);
+    
+    for (var i = 0; i < audioAnalysisSegments; i++)
+    {
+        let itemIndex = Math.round(width * i);
+        if (itemIndex > audioAnalysis.segments.length - 1)
+        {
+            itemIndex = audioAnalysis.segments.length - 2;
+        }
+        let sum = 0;
+        for (var j = 0; j < audioAnalysis.segments[itemIndex].pitches.length; j++)
+        {
+            sum += audioAnalysis.segments[itemIndex].pitches[j];
+        }
+        let averagePitch = sum / audioAnalysis.segments[itemIndex].pitches.length; 
+        let color = context.dispatch('HSVtoRGB', {h: (((1 - averagePitch) * 229 + -50) / 360), s: 0.51, v: 0.89});
+        let loudness = (Math.round(((audioAnalysis.segments[itemIndex].loudness_max / 60) + 1) * 100) / 100);
+
+        newSegments.push({
+            start: Math.round(audioAnalysis.segments[itemIndex].start),
+            loudness_max: loudness, 
+            red: color.r,
+            green: color.g,
+            blue: color.b,
+        });
+    }
+    audioAnalysis.segments = null;
+    return newSegments
+};
+//{h, s, v}
+const HSVtoRGB = async (context, payload) => {
+    var r, g, b, i, f, p, q, t;
+    i = Math.floor(payload.h * 6);
+    f = payload.h * 6 - i;
+    p = payload.v * (1 - payload.s);
+    q = payload.v * (1 - f * payload.s);
+    t = payload.v * (1 - (1 - f) * payload.s);
+    switch (i % 6) {
+        case 0: r = payload.v, g = t, b = p; break;
+        case 1: r = q, g = payload.v, b = p; break;
+        case 2: r = p, g = payload.v, b = t; break;
+        case 3: r = p, g = q, b = payload.v; break;
+        case 4: r = t, g = p, b = payload.v; break;
+        case 5: r = payload.v, g = p, b = q; break;
+    }
+    return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255)
+    };
+};
+
+////////////////////////////////////////////////////////////////
 // SOCIAL //////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
 
@@ -643,11 +794,11 @@ const getUser = async (context) => {
     }
 };
 // Array IDs
-const getSearch = async (context, payload) => {
+const searchSpotify = async (context, payload) => {
     try {
         console.log('%c Searching.', 'color: blue;');
         let response = await context.state.spotifyApi.search(payload.query, ['track'], {limit: 25});
-        return response.tracks.items;
+        return response;
     } catch (error) {
         console.log(error);
     }
@@ -681,6 +832,11 @@ export default {
     compressArtist,
     convertGenres,
 
+    songAnalysis,
+    songAnalysisFeatures,
+    cleanAudioAnalysis,
+    HSVtoRGB,
+
     bangerCalc,
 
     getTopArtists,
@@ -696,5 +852,5 @@ export default {
     getRecomendations,
     getSavedTracks,
     getUser,
-    getSearch
+    searchSpotify
 };

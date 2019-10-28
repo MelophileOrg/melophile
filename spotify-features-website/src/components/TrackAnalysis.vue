@@ -212,40 +212,7 @@ export default {
             this.artist = await this.$store.dispatch('getArtist', this.trackData.artists[0].id);
             this.artistDone = true;
         },
-        cleanAudioAnalysis() {
-            let newSegments = [];
-            if (this.trackData.audioAnalysis.segments.length < this.audioAnalysisSegments)
-                this.audioAnalysisSegments = this.trackData.audioAnalysis.segments.length;
-            let width = Math.round(this.trackData.audioAnalysis.segments.length / this.audioAnalysisSegments);
-            
-            for (var i = 0; i < this.audioAnalysisSegments; i++)
-            {
-                let itemIndex = Math.round(width * i);
-                if (itemIndex > this.trackData.audioAnalysis.segments.length - 1)
-                {
-                    itemIndex = this.trackData.audioAnalysis.segments.length - 2;
-                }
-                let sum = 0;
-                for (var j = 0; j < this.trackData.audioAnalysis.segments[itemIndex].pitches.length; j++)
-                {
-                    sum += this.trackData.audioAnalysis.segments[itemIndex].pitches[j];
-                }
-                let averagePitch = sum / this.trackData.audioAnalysis.segments[itemIndex].pitches.length;
-                let color = this.HSVtoRGB(((1 - averagePitch) *229 + -50) / 360,.51,.89);
-                let loudness = (Math.round(((this.trackData.audioAnalysis.segments[itemIndex].loudness_max / 60) + 1) * 100) / 100);
 
-                newSegments.push({
-                    start: Math.round(this.trackData.audioAnalysis.segments[itemIndex].start),
-                    loudness_max: loudness, 
-                    red: color.r,
-                    green: color.g,
-                    blue: color.b,
-                });
-            }
-            this.trackData.audioAnalysis.segments = null;
-            this.trackData.audioAnalysis.segments = newSegments;
-            this.audioAnalysisReady = true;
-        },
         HSVtoRGB(h, s, v) {
             var r, g, b, i, f, p, q, t;
             if (arguments.length === 1) {

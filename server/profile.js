@@ -6,16 +6,7 @@ const profileSchema = new mongoose.Schema({
     privacy: Boolean,
     id: String,
     name: String,
-    topPlayed: Array,
-    topArtists: Array,
-    tracks: Array,
-    artists: Object,
-    favoriteArtists: Array,
-    genres: Object,
-    favoriteGenres: Array,
-    dates: Array,
-    audio_features: Object,
-    bangers: Object,
+    includes: Object,
     created: Date,
 });
 
@@ -38,21 +29,11 @@ router.post("/:id", async (req, res) => {
             }, {
                 $set: {
                     "privacy": req.body.privacy,
-                    "tracks": req.body.tracks,
                     "name": req.body.name,
-                    "topPlayed": req.body.topPlayed,
-                    "topArtists": req.body.topArtists,
-                    "artists": req.body.artists,
-                    "favoriteArtists": req.body.favoriteArtists,
-                    "genres": req.body.genres,
-                    "favoriteGenres": req.body.favoriteGenres,
-                    "dates": req.body.dates,
-                    "audio_features": req.body.audio_features,
-                    "bangers": req.body.bangers,
+                    "includes": req.body.includes,
                     "created": new Date(),
                 }
             });
-            console.log(profile);
             console.log("Profile Updated");
             return res.send(profile);
         }
@@ -61,26 +42,16 @@ router.post("/:id", async (req, res) => {
                 privacy: req.body.privacy,
                 id: req.params.id,
                 name: req.body.name,
-                topPlayed: req.body.topPlayed,
-                topArtists: req.body.topArtists,
-                tracks: req.body.tracks,
-                artists: req.body.artists,
-                favoriteArtists: req.body.favoriteArtists,
-                genres: req.body.genres,
-                favoriteGenres: req.body.favoriteGenres,
-                dates: req.body.dates,
-                audio_features: req.body.audio_features,
-                bangers: req.body.bangers,
+                includes: req.body.includes,
                 created: new Date(),
             });
-            console.log(profile);
             await profile.save();
             console.log("Profile Created");
             return res.send(profile);
         }
     } catch (error) {
       console.log(error);
-      return res.sendStatus(500);
+      return res.send(null);
     }
 });
 
@@ -102,7 +73,6 @@ router.get("/:id", async (req, res) => {
       let profile = await Profile.findOne({
         id: req.params.id
       });  
-      console.log(profile);
       console.log("Profile Retrieved");
       return res.send(profile);
     } catch (error) {

@@ -36,7 +36,6 @@ export default {
       },
   },
   async created() {
-    
     console.log(this.$store.state);
   }
 }

@@ -21,4 +21,13 @@ app.use(cookieParser());
 const profile = require("./profile.js");
 app.use("/api/profile", profile.routes);
 
+const tracks = require("./tracks.js");
+app.use("/api/tracks", tracks.routes);
+
+const artists = require("./artists.js");
+app.use("/api/artists", artists.routes);
+
+const collections = require("./collections.js");
+app.use("/api/collections", collections.routes);
+
 app.listen(3002, () => console.log('Server listening on port 3002!'));

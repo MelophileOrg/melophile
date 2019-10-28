@@ -6,13 +6,10 @@
         <h1>My Music Taste</h1>
       </div>
       <NavButton path="home" title="Home" image="home" :active="path == 'home'"/>
-      <NavButton path="songs" title="Song Analysis" image="search" :active="path == 'song' || path == 'songs'"/>
+      <NavButton path="search" title="Song Analysis" image="search" :active="path == 'song' || path == 'songs'"/>
       <h2>Your Library</h2>
-      <NavButton path="library" title="Library Analysis" image="library" :active="path == 'library' || path == 'save'"/>
+      <NavButton path="library" title="Library" image="library" :active="path == 'library' || path == 'save'"/>
       <NavButton path="charts" title="Charts" image="chart" :active="path == 'charts' || path == 'chart'"/>
-      <NavButton path="artists" title="Artists" image="artists" :active="path == 'artists' || path == 'artist'"/>
-      <NavButton path="genres" title="Genres" image="genres" :active="path == 'genres' || path == 'genre'"/>
-      <NavButton path="characteristics" title="Characteristics" image="characteristics" :active="path == 'characteristics'"/>
       <h2>Social</h2>
       <NavButton path="myprofile" title="My Profile" image="profile" :active="path == 'myprofile'"/>
       <NavButton path="profiles" title="Public Profiles" image="public" :active="path == 'profiles' || path == 'profile'"/>
@@ -63,10 +60,11 @@ export default {
 
 #large-navbar {
   display: none;
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
-  right: 0;
+  background-color: #121212;
+  width: 260px;
   bottom: 0;
 }
 
@@ -112,7 +110,7 @@ export default {
   justify-content: left;
   padding-left: 30px;
   margin-top: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 #title h1 {

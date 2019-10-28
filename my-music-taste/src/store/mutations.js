@@ -63,6 +63,8 @@ const pushGenre = (state, payload) => {
 };
 // {id: String, artist: String}
 const addArtistToGenre = (state, payload) => {
+    if (state.genres[payload.id].artists.includes(payload.artist)) 
+        return;
     state.genres[payload.id].artists.push(payload.artist);
 };
 // {id: String, value: Number}
