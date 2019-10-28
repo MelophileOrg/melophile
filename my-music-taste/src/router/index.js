@@ -21,6 +21,7 @@ import GenreAnalysis from '../views/GenreAnalysis.vue'
 
 import PublicProfiles from '../views/PublicProfiles.vue'
 import Profile from '../views/Profile.vue'
+import MyProfile from '../views/MyProfile.vue'
 
 import PowerRecommends from '../views/PowerRecommends.vue'
 import Recommend from '../views/Recommend.vue'
@@ -64,23 +65,28 @@ const routes = [
   },
   {
     path: '/mycharts',
-    name: 'mycharts',
+    name: 'charts',
     component: MyCharts
   },
   {
     path: '/myartists',
-    name: 'myartists',
+    name: 'artists',
     component: MyArtists
   },
   {
     path: '/mygenres',
-    name: 'mygenres',
+    name: 'genres',
     component: MyGenres
   },
   {
     path: '/mycharacteristics',
-    name: 'mycharacteristics',
+    name: 'characteristics',
     component: MyCharacteristics
+  },
+  {
+    path: '/song',
+    name: 'songs',
+    component: SongAnalysis
   },
   {
     path: '/song/:id',
@@ -101,6 +107,11 @@ const routes = [
     path: '/profiles',
     name: 'profiles',
     component: PublicProfiles
+  },
+  {
+    path: '/profile/:id',
+    name: 'myprofile',
+    component: MyProfile
   },
   {
     path: '/profiles/:id',

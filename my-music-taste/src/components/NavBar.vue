@@ -1,21 +1,42 @@
 <template>
   <div class="navbar">
+    <div id="large-navbar" class="contents">
+      <div id="title">
+        <div class="medium-logo" id="logo"/>
+        <h1>My Music Taste</h1>
+      </div>
+      <NavButton path="home" title="Home" image="home" :active="path == 'home'"/>
+      <NavButton path="songs" title="Song Analysis" image="search" :active="path == 'song' || path == 'songs'"/>
+      <h2>Your Library</h2>
+      <NavButton path="library" title="Library Analysis" image="library" :active="path == 'library' || path == 'save'"/>
+      <NavButton path="charts" title="Charts" image="chart" :active="path == 'charts' || path == 'chart'"/>
+      <NavButton path="artists" title="Artists" image="artists" :active="path == 'artists' || path == 'artist'"/>
+      <NavButton path="genres" title="Genres" image="genres" :active="path == 'genres' || path == 'genre'"/>
+      <NavButton path="characteristics" title="Characteristics" image="characteristics" :active="path == 'characteristics'"/>
+      <h2>Social</h2>
+      <NavButton path="myprofile" title="My Profile" image="profile" :active="path == 'myprofile'"/>
+      <NavButton path="profiles" title="Public Profiles" image="public" :active="path == 'profiles' || path == 'profile'"/>
+    </div>
+    <div id="small-navbar" class="contents">
 
+    </div>
   </div>
 </template>
 
 <script>
+import NavButton from '@/components/NavButton.vue'
+
 export default {
   name: 'navbar',
-  props: {
-    path: String,
+  data() {
+    return {
+      path: this.$router.currentRoute.name
+    }
+  },
+  components: {
+    NavButton
   },
   methods: {
-    route(path) {
-      if (path == this.path)
-        return;
-      this.$router.push("/" + path);
-    },
     toggleMenu() {
       this.menuShow = !this.menuShow;
     },
@@ -35,7 +56,9 @@ export default {
   width: 100vw;
   height: 70px;
   background-color: #121212;
+  color: white;
   position: relative;
+  
 }
 
 #large-navbar {
@@ -53,6 +76,23 @@ export default {
   height: 100%;
 }
 
+.contents {
+  padding: 24px 0px;
+  height: calc(100% - 48px);
+}
+
+.contents h2 {
+  font-size: 11px;
+  color: #b3b3b3;
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  margin: 10px 20px;
+  margin-top: 24px;
+  margin-left: 32px;
+  text-align: left;
+  cursor: default;
+}
+
 @media screen and (min-width: 720px) {
   .navbar {
     display: block;
@@ -64,5 +104,32 @@ export default {
   #large-navbar {
     display: block;
   }
+}
+
+#title {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  padding-left: 30px;
+  margin-top: 8px;
+  margin-bottom: 20px;
+}
+
+#title h1 {
+  font-size: 18px;
+  margin: 0;
+  margin-left: 12px;
+  letter-spacing: .015em;
+}
+
+.medium-logo {
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+
+#logo {
+  background-image: url('../assets/icons/kiwi2.svg');
+  background-size: 100% 100%;
 }
 </style>

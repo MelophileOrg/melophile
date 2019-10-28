@@ -23,7 +23,7 @@ const inicializeParseToken = (context) => {
     console.log('%c Parsing Token.', 'color: blue;');
     let token = window.location.hash.substring(1).split('&').reduce(function (initial, item) {
         if (item) {
-            var parts = item.split('=');
+            let parts = item.split('=');
             initial[parts[0]] = decodeURIComponent(parts[1]);
         }
         return initial;
@@ -36,7 +36,7 @@ const inicializeSetToken = async (context, token) => {
     await context.state.spotifyApi.setAccessToken(token);
     console.log('%c Application Authorized.', 'color: green;');
     await context.commit('setInicialized', true);
-    //context.dispatch('getUser');
+    context.dispatch('getUser');
 };
 ////////////////////////////////////////////////////////////////
 // LOAD PROGRESS ///////////////////////////////////////////////
@@ -47,6 +47,7 @@ const loadLibrary = async (context) => {
     context.commit('resetProgress');
     await context.dispatch('retrieveSavedTracks', {limit: 50, offset: 0});
     console.log('%c Library Processing Finished.', 'color: green;');
+    await context.dispatch('retrieveTopPlayed');
     await context.dispatch('calcTracksPerGenre');
     await context.dispatch('calcExtremes');
 };
@@ -61,7 +62,7 @@ const retrieveSavedTracks = async (context, payload) => {
         await context.dispatch('retrieveSavedTracks', {limit: 50, offset: payload.offset + payload.limit});
     else {
         let keys = Object.keys(context.state.audioFeatures);
-        for (var i = 0; i < keys.length; i++) {
+        for (let i = 0; i < keys.length; i++) {
             await context.commit('averageAudioFeatureValue', keys[i]);
         }
         context.commit('setTracksLoaded');
@@ -71,6 +72,9 @@ const retrieveSavedTracks = async (context, payload) => {
 const processTracks = async (context, payload) => {
     let ids = await context.dispatch('inicialScanReduceIds', payload);
     let trackAudioFeatures = await context.dispatch('getAudioFeaturesForTracks', ids);
+    for (let i = 0; i < trackAudioFeatures.length; i++) {
+        trackAudioFeatures[i].banger = await context.dispatch('bangerCalc', {tempo: trackAudioFeatures[i].tempo, energy: trackAudioFeatures[i].energy, danceability: trackAudioFeatures[i].danceability})
+    }
     await context.dispatch('distributeTrackAudioFeatures', trackAudioFeatures);
 };
 // Track Array
@@ -80,9 +84,9 @@ const inicialScanReduceIds = async (context, payload) => {
     let now = new Date();
     let nowTime = now.getTime();
     const MONTH = 2626560000;
-    for (var i = 0; i < payload.length; i++) {
+    for (let i = 0; i < payload.length; i++) {
         let trackObject = payload[i].track;
-        for (var j = 0; j < trackObject.artists.length; j++) {
+        for (let j = 0; j < trackObject.artists.length; j++) {
             if (!(trackObject.artists[j].id in context.state.artists)) {
                 if (!(trackObject.artists[j].id in artistsToFind))
                     artistsToFind.push({id: trackObject.artists[j].id, tracks: [trackObject.id]});
@@ -127,12 +131,12 @@ const findAndStoreArtists = async (context, payload) => {
         let newArtists = await context.dispatch('getArtists', sectionIds);
         artists = artists.concat(newArtists);
     }
-    for (var i = 0; i < artists.length; i++) {
+    for (let i = 0; i < artists.length; i++) {
         let artistObject = artists[i];
         artistObject.href = artistObject.external_urls.spotify;
         delete artistObject.external_urls;
         artistObject.followers = artistObject.followers.total;
-        for (var j = 0; j < artistObject.genres.length; j++) {
+        for (let j = 0; j < artistObject.genres.length; j++) {
             if (!(artistObject.genres[j] in context.state.genres))
                 await context.commit('pushGenre', {id: artistObject.genres[j], value: {name: artistObject.genres[j], artists: [artistObject.id], tracknum: 0}});
             else 
@@ -157,10 +161,12 @@ const distributeTrackAudioFeatures = async (context, payload) => {
         speechiness: 0,
         valence: 0,
         tempo: 0,
+        banger: 0,
     };
     for (let i = 0; i < payload.length; i++) {
         for (let j = 0; j < keys.length; j++) {
             values[keys[j]] += payload[i][keys[j]];
+            context.commit('plotAudioFeatureValue', {key: keys[j], value: payload[i][keys[j]]})
         }
         await context.commit('addTrackProperties', {id: payload[i].id, properties: {
             danceability: payload[i].danceability,
@@ -176,6 +182,7 @@ const distributeTrackAudioFeatures = async (context, payload) => {
             tempo: payload[i].tempo,
             duration_ms: payload[i].duration_ms,
             time_signature: payload[i].time_signature,
+            banger: payload[i].banger,
         }});
     }
     for (let i = 0; i < keys.length; i++) {
@@ -184,22 +191,21 @@ const distributeTrackAudioFeatures = async (context, payload) => {
 };
 const calcTracksPerGenre = async (context) => {
     let artistIds = Object.keys(context.state.artists);
-    for (var i = 0; i < artistIds.length; i++) {
-        for (var j = 0; j < context.state.artists[artistIds[i]].genres.length; j++) {
+    for (let i = 0; i < artistIds.length; i++) {
+        for (let j = 0; j < context.state.artists[artistIds[i]].genres.length; j++) {
             await context.commit('addGenreTrackNum', {id: context.state.artists[artistIds[i]].genres[j], value: context.state.artists[artistIds[i]].tracks.length});
         }
     }
     let genreTuples = Object.entries(context.state.genres);
-    let topGenres = genreTuples.sort((a,b) => b[1].tracknum - a[1].tracknum).slice(0,50);
+    let topGenres = genreTuples.sort((a,b) => b[1].tracknum - a[1].tracknum).slice(0,5);
     let topGenreIds = topGenres.map(genre => genre[0]);
     context.commit('setTopSavedGenres', topGenreIds);
-
     let artistTuples = Object.entries(context.state.artists);
-    let topArtists = artistTuples.sort((a,b) => b[1].tracks.length - a[1].tracks.length).slice(0,50);
+    let topArtists = artistTuples.sort((a,b) => b[1].tracks.length - a[1].tracks.length).slice(0,5);
     let topArtistIds = topArtists.map(artist => artist[0]);
     context.commit('setTopSavedArtists', topArtistIds);
-
     context.commit('setArtistsLoaded');
+    context.commit('setGenresLoaded');
 };
 const calcExtremes = async (context) => {
     let keys = Object.keys(context.state.audioFeatures);
@@ -218,13 +224,67 @@ const calcExtremes = async (context) => {
             context.commit('setAudioFeatureChart', {key: keys[i], chart: [charts[j]], value: topTracksIds});
         }
     }
-    
-    
+};
+const retrieveTopPlayed = async (context) => {
+    await context.dispatch('retrieveTopPlayedArtists');
+    await context.dispatch('retrieveTopPlayedTracks');
+};
+const retrieveTopPlayedArtists = async (context) => {
+    let ranges = ['short_term', 'medium_term', 'long_term'];
+    for (let i = 0; i < ranges.length; i++) {
+        let artists = await context.dispatch('getTopArtists', {limit: 50, time_range: ranges[i], offset: 0});
+        let ids = [];
+        for (let j = 0; j < artists.length; j++) {
+            ids.push(artists[j].id);
+            if (!(artists[j].id in context.state.artists)) {
+                let artistObject = artists[j];
+                artistObject.href = artistObject.external_urls.spotify;
+                delete artistObject.external_urls;
+                artistObject.followers = artistObject.followers.total;
+                delete artistObject.type;
+                delete artistObject.uri;
+                context.commit('pushArtist', {id: artists[j].id, value: artistObject});
+            }
+        }
+        context.commit('setTopPlayedArtists', {index: i, value: ids});
+    }
+};
+const retrieveTopPlayedTracks = async (context) => {
+    let ranges = ['short_term', 'medium_term', 'long_term'];
+    for (let i = 0; i < ranges.length; i++) {
+        let tracks = await context.dispatch('getTopTracks', {limit: 50, time_range: ranges[i], offset: 0});
+        let ids = [];
+        for (let j = 0; j < tracks.length; j++) {
+            ids.push(tracks[j].id);
+            if (!(tracks[j].id in context.state.tracks)) {
+                let trackObject = tracks[j];
+                delete trackObject.album.album_type;
+                delete trackObject.album.artists;
+                delete trackObject.album.available_markets;
+                delete trackObject.album.available_markets;
+                trackObject.album.href = trackObject.album.external_urls.spotify;
+                delete trackObject.album.type;
+                delete trackObject.album.uri;
+                delete trackObject.available_markets;
+                delete trackObject.disc_number;
+                delete trackObject.external_ids;
+                trackObject.href = trackObject.external_urls.spotify;
+                delete trackObject.external_urls;
+                delete trackObject.type;
+                delete trackObject.uri;
+                context.commit('pushTrack', {id: tracks[j].id, value: trackObject});
+            }
+        }
+        context.commit('setTopPlayedTracks', {index: i, value: ids});
+    }
 };
 ////////////////////////////////////////////////////////////////
 // AUDIO FEATURES //////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
-
+// {tempo: Number, energy: Number, danceability: Number}
+const bangerCalc = async (context, payload) => {
+    return ((payload.tempo - 96 + (payload.energy * 100) + (payload.danceability*50)) / 210);
+}
 ////////////////////////////////////////////////////////////////
 // FAVORITE ARTISTS ////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
@@ -240,11 +300,212 @@ const calcExtremes = async (context) => {
 ////////////////////////////////////////////////////////////////
 // SAVE LIBRARY ////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
-// {name: String, privacy: Boolean, include: Array}
+// {name: String, privacy: Boolean, include: Object}
+// INCLUDE ITEM               KEY                        PUBLIC REQ
+// Numerical Data: True.      numerical_data             True
+// Most Saved Artists:        most_saved_artists         
+// Audio Features: True.      audio_features             True
+// Top Saved Genres:          most_saved_genres
+// Numerical Features:        numerical_features
+// Probability Features:      probability_features
+// Date Added Timeline:       added_timeline
+// Happiness Distribution:    happiness_distribution
+// Energy Distribution:       energy_distribution
+// Danceability Distribution: danceability_distribution
+// Banger Distribution:       banger_distribution
+// Standard Deviation Genre:  genre_standard_dev
+// Top 30 Songs:              most_played_tracks          True
+// Top 30 Artists:            most_played_artists         True
+// Extremes Top 10:           extremes
 const saveLibrary = async (context, payload) => {
+    if (!payload.private && !payload.include.numerical_data && !payload.include.audio_features && !payload.include.most_played_tracks && !payload.include.most_played_artists)
+        return false;
     let data = {};
-    data.tracks = await context.dispatch('saveTracks', payload.include);
+    data.include = payload.include;
+    data.name = payload.name;
+    data.private = payload.private;
+    data.tracks = await context.dispatch('convertTracks', payload.include);
+    data.artists = await context.dispatch('convertArtists', payload.include);
+    data.genres = await context.dispatch('convertGenres', payload.include);
+    if (payload.include.numerical_data)
+        data.numerical_data = {total: context.state.progress.total, artists: (Object.keys(context.state.artists)).length, genres: (Object.keys(context.state.genres)).length};
+    if (payload.include.most_saved_artists || payload.include.most_saved_genres) {
+        data.topSaved = {};
+        if (payload.include.most_saved_artists)
+            data.topSaved.artists = context.state.topSaved.artists;
+        if (payload.include.most_saved_genres)
+            data.topSaved.genres = context.state.topSaved.genres;
+    }
+    if (payload.include.most_played_tracks || payload.include.most_played_artists) {
+        data.topPlayed = {};
+        if (payload.include.most_played_tracks) 
+            data.topPlayed.tracks = context.state.topPlayed.tracks;
+        if (payload.include.most_played_artists) 
+            data.topPlayed.artists = context.state.topPlayed.artists;
+    }
+    if (payload.include.audio_features || payload.include.numerical_features || payload.include.extremes || payload.include.probability_features) {
+        data.audioFeatures = {
+            acousticness: {},
+            danceability: {},
+            energy: {},
+            instrumentalness: {},
+            liveness: {},
+            loudness: {},
+            speechiness: {},
+            tempo: {},
+            valence: {},
+            banger: {},
+        };
+        if (payload.include.audio_features) {
+            data.audioFeatures.valence.value = context.state.audioFeatures.valence.value;
+            data.audioFeatures.energy.value = context.state.audioFeatures.energy.value;
+            data.audioFeatures.danceability.value = context.state.audioFeatures.danceability.value;
+        }
+        if (payload.include.probability_features) {
+            data.audioFeatures.acousticness.value = context.state.audioFeatures.acousticness.value;
+            data.audioFeatures.instrumentalness.value = context.state.audioFeatures.instrumentalness.value;
+            data.audioFeatures.liveness.value = context.state.audioFeatures.liveness.value;
+            data.audioFeatures.speechiness.value = context.state.audioFeatures.speechiness.value;
+        }
+        if (payload.include.extremes) {
+            let keys = Object.keys(data.audioFeatures);
+            let charts = ["minchart", "maxchart"]
+            for (let i = 0; i < keys.length; i++) {
+                for (let j = 0; j < charts.length; j++) {
+                    data.audioFeatures[keys[i]][charts[j]] = context.state.audioFeatures[keys[i]][charts[j]];
+                }
+            }
+        }
+        if (payload.include.happiness_distribution) {
+            data.audioFeatures.valence.plot = context.state.audioFeatures.valence.plot;
+        }
+        if (payload.include.energy_distribution) {
+            data.audioFeatures.energy.plot = context.state.audioFeatures.energy.plot;
+        }
+        if (payload.include.danceability_distribution) {
+            data.audioFeatures.danceability.plot = context.state.audioFeatures.danceability.plot;
+        }
+        if (payload.include.banger_distribution) {
+            data.audioFeatures.banger.plot = context.state.audioFeatures.banger.plot;
+        }
+    }
+    if (payload.include.added_timeline) 
+        data.dateAdded = context.state.dateAdded;
+    //if (payload.include.genre_standard_dev)
+    console.log(data);
+    return true;
 };
+// Include Object
+const convertTracks = async (context, payload) => {
+    let reqTracks = {};
+    let addTracks = [];
+    let repeats = 0;
+    if (payload.most_played_tracks)
+        addTracks = addTracks.concat(await context.dispatch('gatherMostPlayedTracks'));
+    if (payload.extremes) 
+        addTracks = addTracks.concat(await context.dispatch('gatherExtremes'));
+    let nonRepeatedTracks = {};
+    for (let i = 0; i < addTracks.length; i++) {
+        if (!(addTracks[i] in nonRepeatedTracks))
+            nonRepeatedTracks[addTracks[i]] = 0;
+        else {
+            nonRepeatedTracks[addTracks[i]] += 1;
+            repeats += 1;
+        }
+    }
+    console.log('%c Saved Track Space From ' + repeats + ' Repeats.', 'color: blue;');
+    let ids = Object.keys(nonRepeatedTracks);
+    for (let i = 0; i < ids.length; i++) {
+        reqTracks[ids[i]] = await context.dispatch("compressTrack", context.state.tracks[ids[i]]);
+    }
+    return reqTracks;
+};
+// Nothing
+const gatherMostPlayedTracks = async (context) => {
+    let ids = [];
+    for (let i = 0; i < context.state.topPlayed.tracks.length; i++) {
+        for (let j = 0; j < context.state.topPlayed.tracks[i].length && j < 20; j++) {
+            ids.push(context.state.topPlayed.tracks[i][j]);
+        }
+    }
+    return ids;
+}
+// Nothing
+const gatherExtremes = async (context) => {
+    let keys = Object.keys(context.state.audioFeatures);
+    let charts = ["minchart", "maxchart"];
+    let ids = [];
+    for (let i = 0; i < keys.length; i++) {
+        for (let j = 0; j < charts.length; j++) {
+            for (let k = 0; k < context.state.audioFeatures[keys[i]][charts[j]].length && k < 10; k++) {
+                ids.push(context.state.audioFeatures[keys[i]][charts[j]][k]);
+            }
+        }
+    }
+    return ids;
+}
+// Track object
+const compressTrack = async (context, payload) => {
+    return {name: payload.name, image: payload.album.images[0].url, artists: payload.artists};
+};
+// None
+const convertArtists = async (context, payload) => {
+    let reqArtists = {};
+    let addArtists = [];
+    let repeats = 0;
+    if (payload.most_played_artists)
+        addArtists = addArtists.concat(await context.dispatch('gatherMostPlayedArtists'));
+    if (payload.most_saved_artists) 
+        addArtists = addArtists.concat(await context.dispatch('gatherMostSavedArtists'));
+    let nonRepeatedArtists = {};
+    for (let i = 0; i < addArtists.length; i++) {
+        if (!(addArtists[i] in nonRepeatedArtists))
+            nonRepeatedArtists[addArtists[i]] = 0;
+        else {
+            nonRepeatedArtists[addArtists[i]] += 1;
+            repeats += 1;
+        }
+    }
+    console.log('%c Saved Artists Space From ' + repeats + ' Repeats.', 'color: blue;');
+    let ids = Object.keys(nonRepeatedArtists);
+    for (let i = 0; i < ids.length; i++) {
+        reqArtists[ids[i]] = await context.dispatch("compressArtist", context.state.artists[ids[i]]);
+    }
+    return reqArtists;
+};
+// Nothing
+const gatherMostPlayedArtists = async (context) => {
+    let ids = [];
+    for (let i = 0; i < context.state.topPlayed.artists.length; i++) {
+        for (let j = 0; j < context.state.topPlayed.artists[i].length && j < 20; j++) {
+            ids.push(context.state.topPlayed.artists[i][j]);
+        }
+    }
+    return ids;
+};
+// Nothing
+const gatherMostSavedArtists = async (context) => {
+    let ids = [];
+    for (let i = 0; i < context.state.topSaved.artists.length; i++) {
+        ids.push(context.state.topSaved.artists[i]);
+    }
+    return ids;
+};
+// Track object
+const compressArtist = async (context, payload) => {
+    return {name: payload.name, image: payload.images[0].url, genres: payload.genres};
+};
+// Include Object
+const convertGenres = async (context, payload) => {
+    let reqGenres = {};
+    if (payload.most_saved_genres) {
+        for (let i = 0; i < context.state.topSaved.genres.length; i++) {
+            reqGenres[context.state.topSaved.genres[i]] = context.state.genres[context.state.topSaved.genres[i]];
+        }
+    }
+    return reqGenres;
+};
+
 ////////////////////////////////////////////////////////////////
 // SOCIAL //////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
@@ -375,7 +636,7 @@ const getUser = async (context) => {
       {
         console.log('%c Requesting user Data.', 'color: blue;');
         let response = await context.state.spotifyApi.getMe();
-        await context.commit('setUser', response);
+        await context.commit('setUserData', response);
       }
     } catch (error) {
         console.log(error);
@@ -405,8 +666,22 @@ export default {
     distributeTrackAudioFeatures,
     calcTracksPerGenre,
     calcExtremes,
+    retrieveTopPlayed,
+    retrieveTopPlayedArtists,
+    retrieveTopPlayedTracks,
 
     saveLibrary,
+    convertTracks,
+    gatherMostPlayedTracks,
+    gatherExtremes,
+    compressTrack,
+    convertArtists,
+    gatherMostPlayedArtists,
+    gatherMostSavedArtists,
+    compressArtist,
+    convertGenres,
+
+    bangerCalc,
 
     getTopArtists,
     getTopTracks,

@@ -20,6 +20,9 @@ export default {
     test() {
       this.$router.push('/test');
     }
+  },
+  async created() {
+
   }
 }
 </script>

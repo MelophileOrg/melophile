@@ -106,6 +106,15 @@ const addAudioFeatureValue = (state, payload) => {
 const averageAudioFeatureValue = (state, key) => {
     state.audioFeatures[key].value /= state.progress.total;
 };
+// {key: String, value: Number}
+const plotAudioFeatureValue = (state, payload) => {
+    let index = Math.floor(payload.value * 10);
+    if (index < 0)
+        index = 0;
+    if (index > 9) 
+        index = 0;
+    state.audioFeatures[payload.key].plot[index] += 1;
+};
 ////////////////////////////////////////////////////////////////
 // DATES ADDED /////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
@@ -115,6 +124,7 @@ const addDateAddedTrack = (state, payload) => {
         for (var i = 0; i < (payload - (state.dateAdded.length - 1)); i++) {
             state.dateAdded.push(0);
         }
+        state.dateAdded.push(0);
     }
     state.dateAdded[payload] += 1;
 };
@@ -184,6 +194,7 @@ export default {
     setAudioFeatureChart,
     addAudioFeatureValue,
     averageAudioFeatureValue,
+    plotAudioFeatureValue,
 
     addDateAddedTrack,
     addDateAddedArtist,
