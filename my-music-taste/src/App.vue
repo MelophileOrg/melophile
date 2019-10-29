@@ -47,7 +47,7 @@ body {
   left: 0;
   top: 0;
   z-index: -10;
-  background-image: radial-gradient(circle at 0px 0px, rgb(49, 49, 49),rgb(0, 0, 0));
+  background-image: radial-gradient(circle at 0px 0px, rgb(43, 42, 42),rgb(0, 0, 0));
   background-size: 100% 100%;
 }
 
@@ -128,7 +128,7 @@ html::-webkit-scrollbar-thumb
 @keyframes slide-up {
   from {
     opacity: 0;
-    transform: translateY(-100px);
+    transform: translateY(100px);
   }
 }
 
@@ -138,6 +138,12 @@ html::-webkit-scrollbar-thumb
 
 .flex-center {
   justify-content: center;
+}
+
+.flex-wrap {
+  display: block;
+  width: 100%;
+  flex-wrap: wrap;
 }
 
 .flex-space-around {

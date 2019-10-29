@@ -715,7 +715,6 @@ export default {
 
 p {
   display: inline-block;
-  
 }
 
 .graph-bar.toolow p {

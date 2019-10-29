@@ -1,6 +1,6 @@
 <template>
     <div class="FeaturesTotal">
-        <div class="flex flex-center content">
+        <div class="flex flex-left content">
             <div class="titles">
                 <h2>My Music Taste</h2>
                 <h1>Analyze</h1>
@@ -41,17 +41,12 @@ export default {
 .FeaturesTotal {
     display: block;
     width: 100%;
-    height: 100vh;
-    max-height: 700px;
     background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.295)), linear-gradient(0.25turn, #f18686, #969ef8);
     background-size: 100% 100%;
     background-position: center center;
     color: white;
     text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.144);
-}
-
-.content {
-    padding-top: 10vh;
+    padding: 10vh;
 }
 
 .titles {
@@ -79,8 +74,8 @@ h2 {
 }
 
 img {
-    width: 10vw;
-    height: 10vw;
+    width: 25vh;
+    height: 25vh;
     margin: 8px;
     box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.137);
 }

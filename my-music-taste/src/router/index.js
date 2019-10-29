@@ -94,8 +94,7 @@ const routes = [
     path: '/songs',
     name: 'search',
     component: SearchSongs,
-  },
-  
+  }, 
 ]
 
 const router = new VueRouter({

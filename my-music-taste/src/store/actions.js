@@ -593,8 +593,7 @@ const cleanAudioAnalysis = async (context, payload) => {
             sum += audioAnalysis.segments[itemIndex].pitches[j];
         }
         let averagePitch = sum / audioAnalysis.segments[itemIndex].pitches.length; 
-        let color = context.dispatch('HSVtoRGB', {hue: (((1 - averagePitch) * 229 + -50) / 360), saturation: 0.51, value: 0.89});
-        console.log(color);
+        let color = await context.dispatch('HSVtoRGB', {hue: (((1 - averagePitch) * 229 + -50) / 360), saturation: 0.51, value: 0.89});
         let loudness = (Math.round(((audioAnalysis.segments[itemIndex].loudness_max / 60) + 1) * 100) / 100);
 
         newSegments.push({

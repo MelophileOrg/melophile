@@ -47,6 +47,7 @@ export const store = new Vuex.Store({
         maxchart: [],
         plot: [0,0,0,0,0,0,0,0,0,0],
         timeline: [],
+        color: {red: 237, green: 201, blue: 72},
       },
       danceability: {
         value: 0,
@@ -54,6 +55,7 @@ export const store = new Vuex.Store({
         maxchart: [],
         plot: [0,0,0,0,0,0,0,0,0,0],
         timeline: [],
+        color: {red: 78, green: 121, blue: 167},
       },
       energy: {
         value: 0,
@@ -61,6 +63,7 @@ export const store = new Vuex.Store({
         maxchart: [],
         plot: [0,0,0,0,0,0,0,0,0,0],
         timeline: [],
+        color: {red: 89, green: 161, blue: 79},
       },
       instrumentalness: {
         value: 0,
@@ -68,6 +71,7 @@ export const store = new Vuex.Store({
         maxchart: [],
         plot: [0,0,0,0,0,0,0,0,0,0],
         timeline: [],
+        color: {red: 255, green: 157, blue: 167},
       },
       liveness: {
         value: 0,
@@ -75,6 +79,7 @@ export const store = new Vuex.Store({
         maxchart: [],
         plot: [0,0,0,0,0,0,0,0,0,0],
         timeline: [],
+        color: {red: 176, green: 122, blue: 161},
       },
       loudness: {
         value: 0,
@@ -89,6 +94,7 @@ export const store = new Vuex.Store({
         maxchart: [],
         plot: [0,0,0,0,0,0,0,0,0,0],
         timeline: [],
+        color: {red: 156, green: 117, blue: 95},
       },
       valence: {
         value: 0,
@@ -96,6 +102,7 @@ export const store = new Vuex.Store({
         maxchart: [],
         plot: [0,0,0,0,0,0,0,0,0,0],
         timeline: [],
+        color: {red: 242, green: 142, blue: 43},
       },
       tempo: {
         value: 0,
@@ -103,6 +110,7 @@ export const store = new Vuex.Store({
         maxchart: [],
         plot: [0,0,0,0,0,0,0,0,0,0],
         timeline: [],
+        color: {red: 225, green: 87, blue: 89},
       },
       banger: {
         value: 0,
@@ -110,7 +118,13 @@ export const store = new Vuex.Store({
         maxchart: [],
         plot: [0,0,0,0,0,0,0,0,0,0],
         timeline: [],
+        color: {red: 225, green: 87, blue: 89},
       }
+    },
+    mode: {
+      value: 0,
+      major: {red: 74, green: 189, blue: 180},
+      minor: {red: 180, green: 189, blue: 74},
     },
     dateAdded: [],
     artistAdded: [],
