@@ -131,4 +131,24 @@ html::-webkit-scrollbar-thumb
     transform: translateY(-100px);
   }
 }
+
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  justify-content: center;
+}
+
+.flex-space-around {
+  justify-content: space-around;
+}
+
+.flex-space-between {
+  justify-content: space-between;
+}
+
+.flex-align-center {
+  align-items: center;
+}
 </style>

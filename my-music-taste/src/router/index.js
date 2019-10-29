@@ -1,13 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import Login from '../views/Login.vue'
-import Authorize from '../views/Authorize.vue'
+import Login from '../views/General/Login.vue'
+import Authorize from '../views/General/Authorize.vue'
 
-import Home from '../views/Home.vue'
-import About from '../views/About.vue'
+import Home from '../views/General/Home.vue'
+import About from '../views/General/About.vue'
 
 import Library from '../views/Library/Library.vue'
+import Charts from '../views/Library/Charts.vue'
 
 import SongAnalysis from '../views/Analysis/SongAnalysis.vue'
 import GenreAnalysis from '../views/Analysis/GenreAnalysis.vue'
@@ -18,7 +19,7 @@ import Profile from '../views/Social/Profile.vue'
 import PublicProfiles from '../views/Social/PublicProfiles.vue'
 import SaveLibrary from '../views/Social/SaveLibrary.vue'
 
-import SearchSongs from '../views/SearchSongs.vue'
+import SearchSongs from '../views/General/SearchSongs.vue'
 
 
 Vue.use(VueRouter)
@@ -63,6 +64,11 @@ const routes = [
     path: '/library',
     name: 'library',
     component: Library,
+  },
+  {
+    path: '/charts',
+    name: 'charts',
+    component: Charts,
   },
   {
     path: '/social/profile/:id',

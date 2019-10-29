@@ -2,23 +2,28 @@
   <div id="main-flex" class="home">
     <NavBar/>
     <div id="main">
-      <button @click="test">Test</button>
+      <Features v-if="!inicialized"/>
     </div>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import NavBar from '@/components/NavBar.vue'
+import NavBar from '@/components/General/NavBar.vue'
+import Features from '@/components/Home/Features.vue'
 
 export default {
   name: 'home',
   components: {
-    NavBar
+    NavBar,
+    Features,
   },
   methods: {
-    test() {
-      this.$router.push('/test');
+
+  },
+  computed: {
+    inicialized() {
+      return this.$store.state.inicialized;
     }
   },
   async created() {

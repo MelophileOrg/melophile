@@ -286,18 +286,6 @@ const bangerCalc = async (context, payload) => {
     return ((payload.tempo - 96 + (payload.energy * 100) + (payload.danceability*50)) / 210);
 }
 ////////////////////////////////////////////////////////////////
-// FAVORITE ARTISTS ////////////////////////////////////////////
-////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////
-// FAVORITE GENRES /////////////////////////////////////////////
-////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////
-// TOP TRACKS/ARTISTS //////////////////////////////////////////
-////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////
 // SAVE LIBRARY ////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
 // {name: String, privacy: Boolean, include: Object}
@@ -558,30 +546,16 @@ const convertGenres = async (context, payload) => {
 const songAnalysis = async (context, id) => {
     let trackData;
     if (id in context.state.tracks) {
-        console.log("IN LIBRARY");
         trackData = context.state.tracks[id];
     }   
     else {
-        console.log("NOT SAVED");
         trackData = await context.dispatch('getTrack', id);
-        delete trackData.album.album_type;
-        delete trackData.album.artists;
-        delete trackData.album.available_markets;
-        delete trackData.album.external_urls;
-        delete trackData.album.href;
-        delete trackData.album.uri;
-        delete trackData.available_markets;
-        delete trackData.external_ids;
-        delete trackData.is_local;
-        delete trackData.uri;
-        trackData.href = trackData.external_urls.spotify
-        delete trackData.external_urls;
         trackData = await context.dispatch('songAnalysisFeatures', {trackData: trackData, id: id});
     }
     trackData.audioAnalysis = await context.dispatch('cleanAudioAnalysis', {id: id});
     console.log(trackData);
 };
-
+// {id: String}
 const songAnalysisFeatures = async (context, payload) => {
     let song = payload.trackData;
     let audioFeatures = await context.dispatch('getAudioFeaturesForTrack', payload.id);
@@ -598,7 +572,6 @@ const songAnalysisFeatures = async (context, payload) => {
     song.valence = audioFeatures.valence;
     return song;
 };
-
 const cleanAudioAnalysis = async (context, payload) => {
     let audioAnalysisSegments = 80;
     let audioAnalysis = await context.dispatch('getAudioAnalysisForTrack', payload.id);
@@ -620,7 +593,8 @@ const cleanAudioAnalysis = async (context, payload) => {
             sum += audioAnalysis.segments[itemIndex].pitches[j];
         }
         let averagePitch = sum / audioAnalysis.segments[itemIndex].pitches.length; 
-        let color = context.dispatch('HSVtoRGB', {h: (((1 - averagePitch) * 229 + -50) / 360), s: 0.51, v: 0.89});
+        let color = context.dispatch('HSVtoRGB', {hue: (((1 - averagePitch) * 229 + -50) / 360), saturation: 0.51, value: 0.89});
+        console.log(color);
         let loudness = (Math.round(((audioAnalysis.segments[itemIndex].loudness_max / 60) + 1) * 100) / 100);
 
         newSegments.push({
@@ -637,18 +611,18 @@ const cleanAudioAnalysis = async (context, payload) => {
 //{h, s, v}
 const HSVtoRGB = async (context, payload) => {
     var r, g, b, i, f, p, q, t;
-    i = Math.floor(payload.h * 6);
-    f = payload.h * 6 - i;
-    p = payload.v * (1 - payload.s);
-    q = payload.v * (1 - f * payload.s);
-    t = payload.v * (1 - (1 - f) * payload.s);
+    i = Math.floor(payload.hue * 6);
+    f = payload.hue * 6 - i;
+    p = payload.value * (1 - payload.saturation);
+    q = payload.value * (1 - f * payload.saturation);
+    t = payload.value * (1 - (1 - f) * payload.saturation);
     switch (i % 6) {
-        case 0: r = payload.v, g = t, b = p; break;
-        case 1: r = q, g = payload.v, b = p; break;
-        case 2: r = p, g = payload.v, b = t; break;
-        case 3: r = p, g = q, b = payload.v; break;
-        case 4: r = t, g = p, b = payload.v; break;
-        case 5: r = payload.v, g = p, b = q; break;
+        case 0: r = payload.value, g = t, b = p; break;
+        case 1: r = q, g = payload.value, b = p; break;
+        case 2: r = p, g = payload.value, b = t; break;
+        case 3: r = p, g = q, b = payload.value; break;
+        case 4: r = t, g = p, b = payload.value; break;
+        case 5: r = payload.value, g = p, b = q; break;
     }
     return {
         r: Math.round(r * 255),

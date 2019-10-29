@@ -9,7 +9,7 @@
 
 <script>
 // @ is an alias to /src
-import NavBar from '@/components/NavBar.vue'
+import NavBar from '@/components/General/NavBar.vue'
 
 export default {
   name: 'publicprofiles',

@@ -16,9 +16,9 @@
 
 <script>
 // @ is an alias to /src
-import NavBar from '@/components/NavBar.vue'
-import SearchBar from '@/components/SearchBar.vue'
-import SearchItem from '@/components/SearchItem.vue'
+import NavBar from '@/components/General/NavBar.vue'
+import SearchBar from '@/components/Library/SearchBar.vue'
+import SearchItem from '@/components/Library/SearchItem.vue'
 
 export default {
   name: 'searchsong',

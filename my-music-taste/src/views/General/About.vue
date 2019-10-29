@@ -1,5 +1,5 @@
 <template>
-  <div id="main-flex" class="mycharts">
+  <div id="main-flex" class="about">
     <NavBar/>
     <div id="main">
 
@@ -9,10 +9,10 @@
 
 <script>
 // @ is an alias to /src
-import NavBar from '@/components/NavBar.vue'
+import NavBar from '@/components/General/NavBar.vue'
 
 export default {
-  name: 'mycharts',
+  name: 'about',
   components: {
     NavBar
   },

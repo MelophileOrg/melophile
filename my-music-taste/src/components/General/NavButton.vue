@@ -25,7 +25,7 @@ export default {
     },
     methods: {
         getImgUrl(pic) {
-            var images = require.context('../assets/icons', false, /\.svg$/)
+            var images = require.context('../../assets/icons', false, /\.svg$/)
             return images('./' + pic + ".svg");
         },
         route() {

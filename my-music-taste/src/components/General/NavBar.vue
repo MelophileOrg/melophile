@@ -12,7 +12,7 @@
       <NavButton path="charts" title="Charts" image="chart" :active="path == 'charts' || path == 'chart'"/>
       <h2>Social</h2>
       <NavButton path="myprofile" title="My Profile" image="profile" :active="path == 'myprofile'"/>
-      <NavButton path="profiles" title="Public Profiles" image="public" :active="path == 'profiles' || path == 'profile'"/>
+      <NavButton path="public" title="Public Profiles" image="public" :active="path == 'public'"/>
     </div>
     <div id="small-navbar" class="contents">
 
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import NavButton from '@/components/NavButton.vue'
+import NavButton from '@/components/General/NavButton.vue'
 
 export default {
   name: 'navbar',
@@ -38,7 +38,7 @@ export default {
       this.menuShow = !this.menuShow;
     },
     getImgUrl(pic) {
-      var images = require.context('../assets/icons', false, /\.svg$/)
+      var images = require.context('../../assets/icons', false, /\.svg$/)
       return images('./' + pic + ".svg");
     },
   }
@@ -127,7 +127,7 @@ export default {
 }
 
 #logo {
-  background-image: url('../assets/icons/kiwi2.svg');
+  background-image: url('../../assets/icons/kiwi2.svg');
   background-size: 100% 100%;
 }
 </style>
