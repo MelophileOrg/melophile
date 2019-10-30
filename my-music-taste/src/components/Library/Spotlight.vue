@@ -67,14 +67,15 @@ export default {
 .favorite {
   font-size: 1.8em;
   text-transform: capitalize;
+  margin-left: 3px;
 }
 
 .favorite-div
 {
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
   height: 75px;
-  padding: 10px 10px;
+  padding: 8px 8px;
   background: rgba(255, 255, 255, 0.062);
   overflow: hidden;
 }
@@ -82,6 +83,7 @@ export default {
 .favorite-div h5 {
   font-size: 1em;
   margin-top: 5px;
+  margin-left: 3px;
   
 }
 
@@ -109,7 +111,7 @@ export default {
 img {
   display: block;
   height: 70px;
-  margin-right: 20px;
+  margin-right: 5px;
 }
 
 @media only screen and (max-width: 375px) {

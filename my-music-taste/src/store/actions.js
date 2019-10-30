@@ -66,6 +66,7 @@ const retrieveSavedTracks = async (context, payload) => {
             await context.commit('averageAudioFeatureValue', keys[i]);
         }
         context.commit('averageMode');
+        context.commit('averageValenceOverTime');
         context.commit('setTracksLoaded');
     }
 };
@@ -73,8 +74,14 @@ const retrieveSavedTracks = async (context, payload) => {
 const processTracks = async (context, payload) => {
     let ids = await context.dispatch('inicialScanReduceIds', payload);
     let trackAudioFeatures = await context.dispatch('getAudioFeaturesForTracks', ids);
+    let now = new Date();
+    let nowTime = now.getTime();
+    const MONTH = 2626560000;
     for (let i = 0; i < trackAudioFeatures.length; i++) {
-        trackAudioFeatures[i].banger = await context.dispatch('bangerCalc', {tempo: trackAudioFeatures[i].tempo, energy: trackAudioFeatures[i].energy, danceability: trackAudioFeatures[i].danceability})
+        trackAudioFeatures[i].banger = await context.dispatch('bangerCalc', {tempo: trackAudioFeatures[i].tempo, energy: trackAudioFeatures[i].energy, danceability: trackAudioFeatures[i].danceability});
+        let addedDate = new Date(context.state.tracks[trackAudioFeatures[i].id].date);
+        let addedDateTime = addedDate.getTime();
+        await context.commit('addValenceOverTime', {month: Math.floor((nowTime - addedDateTime) / MONTH), value:  trackAudioFeatures[i].valence});
     }
     await context.dispatch('distributeTrackAudioFeatures', trackAudioFeatures);
 };
@@ -173,7 +180,7 @@ const distributeTrackAudioFeatures = async (context, payload) => {
     for (let i = 0; i < payload.length; i++) {
         for (let j = 0; j < keys.length; j++) {
             values[keys[j]] += payload[i][keys[j]];
-            context.commit('plotAudioFeatureValue', {key: keys[j], value: payload[i][keys[j]]})
+            context.commit('plotAudioFeatureValue', {key: keys[j], value: payload[i][keys[j]]});
         }
         context.commit('addMode', payload[i].mode);
         await context.commit('addTrackProperties', {id: payload[i].id, properties: {

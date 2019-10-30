@@ -156,6 +156,31 @@ const addDateAddedGenre = (state, payload) => {
     state.genreAdded[payload] += 1;
 };
 // Number (Month)
+const addValenceOverTime = (state, payload) => {
+    if (payload.month > (state.audioFeatures.valence.timeline.length - 1)) {
+        for (var i = 0; i < (payload.month - (state.audioFeatures.valence.timeline.length  - 1)); i++) {
+            state.audioFeatures.valence.timeline.push({value: 0, total: 0});
+        }
+        state.audioFeatures.valence.timeline.push({value: 0, total: 0});
+        state.audioFeatures.valence.timeline.push({value: 0, total: 0});
+    }
+    state.audioFeatures.valence.timeline[payload.month].value += payload.value;
+    state.audioFeatures.valence.timeline[payload.month].total += 1;
+};
+const averageValenceOverTime = (state) => {
+    for (let i = 0; i < state.audioFeatures.valence.timeline.length; i++) {
+        if (state.audioFeatures.valence.timeline[i].total != 0)
+            state.audioFeatures.valence.timeline[i].value /= state.audioFeatures.valence.timeline[i].total;
+        else {
+            let back = 1;
+            while (state.audioFeatures.valence.timeline[i - back].total != 0 && back != i) {
+                back += 1;
+            }
+            state.audioFeatures.valence.timeline[i].value = state.audioFeatures.valence.timeline[i - back].value;
+        }
+    }
+};
+// Number (Month)
 const addDateAddedAudioFeature = (state, payload) => {
     if (payload > (state.audioFeatureAdded.length - 1)) {
         for (var i = 0; i < (payload - (state.audioFeatureAdded.length - 1)); i++) {
@@ -211,6 +236,9 @@ export default {
     addDateAddedArtist,
     addDateAddedGenre,
     addDateAddedAudioFeature,
+
+    addValenceOverTime,
+    averageValenceOverTime,
 
     setPublicProfiles,
     setProfileData

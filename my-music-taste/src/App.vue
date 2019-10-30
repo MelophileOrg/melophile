@@ -15,9 +15,14 @@ font-family: 'Patua One', cursive;
 font-family: 'Staatliches', cursive;
 font-family: 'EB Garamond', serif;
 */
+
+html {
+  background: black;
+}
 body {
   margin: 0;
   overflow-x: hidden;
+  
 }
 
 #app {

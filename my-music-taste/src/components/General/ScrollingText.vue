@@ -32,22 +32,32 @@ export default {
   display: block;
   width: 100%;
   height: calc(var(--fontSize) * 1px);
-  overflow: hidden;
   position: relative;
-  width: 200px;
 }
 
 p {
   position: absolute;
+  left: 0;
+  top: 0;
+  text-align: left;
   color: rgb(var(--red), var(--green), var(--blue), var(--alpha));
   font-size: calc(var(--fontSize) * 1px);
   font-weight: var(--fontWeight);
-  animation: scroll 10s linear infinite;
+  text-overflow:unset;
   margin: 0;
 }
 
-p.second {
-  animation: scroll 10s linear 5s infinite;
+.scrollingtext:hover p {
+  animation: scroll 10s linear 0s infinite;
+}
+
+.scrollingtext p.second {
+  display: none;
+}
+
+.scrollingtext:hover p.second {
+  display: inline-block;
+  animation: scroll 10s linear -5s infinite;
 }
 
 @keyframes scroll {
@@ -57,11 +67,11 @@ p.second {
   }
   50% {
     opacity: 0;
-    transform: translateX(-100%);
+    transform: translateX(-110%);
   }
   50.00000001% {
     opacity: 0;
-    transform: translateX(100%);
+    transform: translateX(110%);
   }
   100% {
     opacity: 1;

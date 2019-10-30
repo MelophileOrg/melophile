@@ -1,10 +1,10 @@
 <template>
   <div class="Averages" :style="{'--delay': + delay}">
       <h3>Averages:</h3>
-      <PercentBar title="Tempo" :percent="audioFeatures.tempo.value / 208" :color="audioFeatures.tempo.color" />
+      <PercentBar title="Tempo" type="tempo" :percent="audioFeatures.tempo.value / 208" :color="audioFeatures.tempo.color" />
       <PercentBar title="Major" :percent="mode.value" :color="mode.major" />
       <PercentBar title="Minor" :percent="1 - mode.value" :color="mode.minor" />
-      <PercentBar title="Volume" :percent="(audioFeatures.loudness.value + 50) /  50" :color="audioFeatures.loudness.color" />
+      <PercentBar title="Volume" type="volume" :percent="(audioFeatures.loudness.value + 50) /  50" :color="audioFeatures.loudness.color" />
   </div>
 </template>
 

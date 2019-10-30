@@ -1,10 +1,11 @@
 <template>
-  <div class="timeline" :style="{'--graphdelay': delay}">
+<div class="timeline" :style="{'--graphdelay': delay}">
     <div>
       <h3>{{title}}</h3>
       <Loading v-if="!override"/>
-      <div v-if="override" class="graph" :style="{'--max': + findMax(bars), '--red': + color.red, '--green': + color.green, '--blue': + color.blue}">
-        <div class="graph-bar time" v-for="(bar, index) in bars" :key="title+ '-timeline' + index" :class="{toolow: bar.value < findMax(bars) / 10}" :style="{'--num': bars.length,'--height': + bar.value}"><p>{{bar.tag}}</p><p class="hover-graph">{{findDate(bars.length - index)}}</p></div>
+      <div v-if="override" class="graph" :style="{'--max': + findMax(bars)}">
+        <div class="graph-bar time" v-for="(bar, index) in bars" :key="title+ '-timeline' + index" :class="{toolow: bar.value < findMax(bars) / 10}" 
+        :style="{'--num': bars.length,'--height': + bar.value, '--red': + findColor(bar.value).r, '--green': + findColor(bar.value).g, '--blue': + findColor(bar.value).b}"><p>{{bar.tag}}</p><p class="hover-graph">{{findDate(bars.length - index)}}</p></div>
         <p class="yAxis">{{y_axis}}</p>
       </div>
       <div class="graph-labels">
@@ -28,7 +29,6 @@ export default {
     delay: Number,
     bars: Array,
     y_axis: String,
-    color: Object,
     override: Boolean,
     max: Number,
   },
@@ -57,6 +57,34 @@ export default {
           max = array[i].value;
       }
       return max;
+    },
+    findColor(val) {
+      let color = this.HSVtoRGB((((val + 70) % 100) / 100), .6, .9);
+      return color;
+    },
+    HSVtoRGB(h, s, v) {
+      var r, g, b, i, f, p, q, t;
+      if (arguments.length === 1) {
+          s = h.s, v = h.v, h = h.h;
+      }
+      i = Math.floor(h * 6);
+      f = h * 6 - i;
+      p = v * (1 - s);
+      q = v * (1 - f * s);
+      t = v * (1 - (1 - f) * s);
+      switch (i % 6) {
+          case 0: r = v, g = t, b = p; break;
+          case 1: r = q, g = v, b = p; break;
+          case 2: r = p, g = v, b = t; break;
+          case 3: r = p, g = q, b = v; break;
+          case 4: r = t, g = p, b = v; break;
+          case 5: r = v, g = p, b = q; break;
+      }
+      return {
+          r: Math.round(r * 255),
+          g: Math.round(g * 255),
+          b: Math.round(b * 255)
+      };
     },
   }
 }
@@ -100,9 +128,6 @@ export default {
 
 .graph {
   --max: 0;
-  --red: 0;
-  --green: 0;
-  --blue: 0;
   display: flex;
   justify-content: space-evenly;
   align-items: flex-end;
@@ -164,6 +189,10 @@ p {
 
 .graph-bar {
   --height: 0;
+  --num: 0;
+  --red: 0;
+  --green: 0;
+  --blue: 0;
   display: block;
   width: calc(10% - 2px - 10px);
   margin: 0px 5px;

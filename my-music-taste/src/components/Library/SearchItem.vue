@@ -1,14 +1,20 @@
 <template>
   <div class="searchitem">
     <div @click="selectTrack(data.id)" class="search-song" :style="{'--delay': index}">
+      <h1 v-if="showNum">{{index + 1}}</h1>
       <div>
         <div class="search-image" :style="{backgroundImage: 'url(\'' + data.album.images[0].url + '\')'}"/>
       </div>
-      <div>
+      <div class="info">
         <h1 class="search-title">{{data.name}}</h1>
-        <div class="artists">
+        <div v-if="type == 'track'" class="artists">
           <div v-for="artistnum in 4" :key="data.name + '-' + (artistnum - 1)">
-            <h4  class="artist" v-if="(artistnum - 1) < data.artists.length">{{data.artists[(artistnum - 1)].name}}<h4 class="space" v-if="(artistnum - 1) < data.artists.length - 1"></h4></h4>
+            <h4 class="artist" v-if="(artistnum - 1) < data.artists.length">{{artists[data.artists[(artistnum - 1)]].name}}<h4 class="space" v-if="(artistnum - 1) < data.artists.length - 1"></h4></h4>
+          </div>
+        </div>
+        <div v-if="type == 'artist'" class="artists">
+          <div v-for="artistnum in 4" :key="data.name + '-' + (artistnum - 1)">
+            <h4 class="artist" v-if="(artistnum - 1) < data.genres.length">{{data.genres[(artistnum - 1)]}}<h4 class="space" v-if="(artistnum - 1) < data.genres.length - 1"></h4></h4>
           </div>
         </div>
       </div>
@@ -19,17 +25,26 @@
 <script>
 export default {
   name: 'searchitem',
+  components: {
+  },
   props: {
     type: String,
     data: Object,
     index: Number,
+    showNum: Boolean,
   },
   methods: {
     selectTrack(id) {
       this.$router.push("/songs/" + id);
     }
   },
+  computed: {
+    artists() {
+      return this.$store.state.artists;
+    }
+  },
   created() {
+      console.log(this.data);
   }
 }
 </script>
@@ -42,12 +57,18 @@ export default {
   display: flex;
   justify-content: left;
   align-items: center;
+  position: relative;
   padding: 20px 15px;
   background: rgba(255, 255, 255, 0.103);
   height: 60px;
   margin: 3px 0px;
   font-family: 'Roboto', sans-serif;
   animation: slide-up .5s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s) linear;
+}
+
+.scroll {
+  margin-left: 10px;
+  width: calc(100% - 95px) !important;
 }
 
 @keyframes slide-up {
@@ -93,14 +114,29 @@ export default {
   font-weight: lighter;
   font-size: 28px;
   text-align: left;
-  width: 100%;
+  width: calc(100% - 20px);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.info {
+  display: block;
+  width: calc(100% - 100px);
 }
 
 .search-song:hover .search-title
 {
   text-decoration: underline;
+}
+
+h1 {
+  color: rgba(255, 255, 255, 0.288);
+  margin: 0;
+  font-size: 1.2em;
+  text-align: center;
+  width: 25px;
+  margin-right: 10px;
 }
 </style>

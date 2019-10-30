@@ -102,7 +102,7 @@ export const store = new Vuex.Store({
         minchart: [],
         maxchart: [],
         plot: [0,0,0,0,0,0,0,0,0,0],
-        timeline: [],
+        timeline: [{value: 0, total: 0}],
         color: {red: 242, green: 142, blue: 43},
       },
       tempo: {

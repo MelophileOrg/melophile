@@ -16,23 +16,25 @@
 
         <Spotlight :delay="1" :override="progress.artistsLoaded" title="Most Saved From:" :list="topSavedArtists" :image="topSavedArtists[0].image"/>
 
-        <Spotlight :delay="2" :override="progress.genresLoaded" title="Favorite Genres:" :list="topSavedGenres.slice(0, 4)" image=""/>
+        <Characteristics :delay="2"/>
 
-        <Characteristics :delay="3"/>
+        <Spotlight :delay="3" :override="progress.genresLoaded" title="Favorite Genres:" :list="topSavedGenres.slice(0, 4)" image=""/>
 
-        <Timeline :override="progress.tracksLoaded" title="When You Added Songs:" instructions="" :delay="4" :bars="cleanGraphData(dateAdded)" y_axis="Number of Songs" :color="{red: 74, green: 189, blue: 180}"/>
+        <Timeline :override="progress.tracksLoaded" title="When You Added Songs:" instructions="" :max="-1" :delay="4" :bars="cleanGraphData(dateAdded)" y_axis="Number of Songs" :color="{red: 74, green: 189, blue: 180}"/>
         
         <Graph :override="progress.tracksLoaded" title="Happiness Distribution:" instructions="Go to the Extremes Tab for the Highest and Lowest Tracks" :delay="5" :bars="cleanGraphData(audioFeatures.valence.plot)" max_tag="Happy" min_tag="Sad" y_axis="Number of Songs" :color="audioFeatures.valence.color"/>
 
         <Graph :override="progress.tracksLoaded" title="Energy Distribution:" instructions="Go to the Extremes Tab for the Highest and Lowest Tracks" :delay="6" :bars="cleanGraphData(audioFeatures.energy.plot)" max_tag="Hyper" min_tag="Peaceful" y_axis="Number of Songs" :color="audioFeatures.energy.color"/>
         
+        <TimelinePercent :override="progress.tracksLoaded" title="Happiness Over Time" instructions="" :delay="8" :bars="cleanValuedGraphData(audioFeatures.valence.timeline)" :max="100" y_axis="Percent Happiness" />
+
         <Graph :override="progress.tracksLoaded" title="Danceability Distribution:" instructions="Go to the Extremes Tab for the Highest and Lowest Tracks" :delay="7" :bars="cleanGraphData(audioFeatures.danceability.plot)" max_tag="Let's dance!" min_tag="Couch Potato" y_axis="Number of Songs" :color="audioFeatures.danceability.color"/>
 
-        <Graph :override="progress.tracksLoaded" title="Should You DJ a Party?" instructions="Go to the Extremes Tab for the Highest and Lowest Tracks" :delay="8" :bars="cleanGraphData(audioFeatures.banger.plot)" max_tag="Absolute Bangers" min_tag="*Snore*" y_axis="Number of Songs" :color="audioFeatures.banger.color"/>
+        <Graph :override="progress.tracksLoaded" title="Should You DJ a Party?" instructions="Go to the Extremes Tab for the Highest and Lowest Tracks" :delay="9" :bars="cleanGraphData(audioFeatures.banger.plot)" max_tag="Absolute Bangers" min_tag="*Snore*" y_axis="Number of Songs" :color="audioFeatures.banger.color"/>
         
-        <Averages :delay="9"/>
+        <Averages :delay="10"/>
 
-        <Chances :delay="10"/>
+        <Chances :delay="11"/>
 
       </div>
 
@@ -48,6 +50,7 @@
 import NavBar from '@/components/General/NavBar.vue'
 import Graph from '@/components/Analysis/Graph.vue'
 import Timeline from '@/components/Analysis/Timeline.vue'
+import TimelinePercent from '@/components/Analysis/TimelinePercent.vue'
 import Spotlight from '@/components/Library/Spotlight.vue'
 import YourLibrary from '@/components/Library/YourLibrary.vue'
 import Characteristics from '@/components/Library/Characteristics.vue'
@@ -66,7 +69,8 @@ export default {
     Characteristics,
     Averages,
     Chances,
-    Extremes
+    Extremes,
+    TimelinePercent
   },
   data() {
     return {
@@ -78,6 +82,13 @@ export default {
       let graphData = [];
       for (let i = 0; i < bars.length; i++) {
         graphData.push({value: bars[i], tag: bars[i]});
+      }
+      return graphData;
+    },
+    cleanValuedGraphData(bars) {
+      let graphData = [];
+      for (let i = 0; i < bars.length; i++) {
+        graphData.push({value: Math.round(bars[i].value * 100), tag: Math.round(bars[i].value * 100) + "%"});
       }
       return graphData;
     },
@@ -147,7 +158,7 @@ export default {
   created() {
     if (!this.inicialized)
       this.$router.push("/login");
-    console.log(this.$store.state.topSaved.genres);
+    console.log("THIS SHOULD BE FALSE", this.progress.tracksLoaded);
   }
 }
 </script>

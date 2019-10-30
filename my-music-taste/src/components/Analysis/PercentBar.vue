@@ -4,7 +4,7 @@
         <div class="stat-bar">
             <div class="fill" :style="{'--percent': + percent, '--red': + color.red, '--green': + color.green, '--blue': + color.blue}"/>
         </div>
-        <h4 class="value">{{percentprint(percent)}}</h4>
+        <h5 class="value">{{value(percent)}}</h5>
     </div>
 </template>
 
@@ -14,12 +14,21 @@ export default {
   props: {
     title: String,
     percent: Number,
-    color: Object
+    color: Object,
+    type: String,
   },
   methods: {
     percentprint(num) {
         return Math.round(num * 100) + "%";
     },
+    value() {
+      console.log(this.percent);
+      if (this.type == "tempo")
+        return Math.round(this.percent * 208) + "BPM";
+      if (this.type == "volume")
+        return (Math.round(((this.percent * 50) - 50) * 10) / 10) + "dB";
+      return Math.round(this.percent * 100) + "%"
+    }
   },
 }
 </script>
@@ -29,7 +38,7 @@ export default {
 .percentbar {
     display: flex;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     justify-content: space-between;
 }
 
@@ -73,7 +82,18 @@ h4 {
   text-align: left;
 }
 
+h5 {
+  color: white;
+  margin: 4px 0;
+  text-align: right;
+}
+
 .bar-title {
   width: 115px;
+}
+
+.value {
+  width: 63px;
+  font-size: 16px;
 }
 </style>
