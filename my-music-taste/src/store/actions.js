@@ -65,6 +65,7 @@ const retrieveSavedTracks = async (context, payload) => {
         for (let i = 0; i < keys.length; i++) {
             await context.commit('averageAudioFeatureValue', keys[i]);
         }
+        context.commit('averageMode');
         context.commit('setTracksLoaded');
     }
 };
@@ -80,7 +81,7 @@ const processTracks = async (context, payload) => {
 // Track Array
 const inicialScanReduceIds = async (context, payload) => {
     let ids = [];
-    let artistsToFind = [];
+    let artistsToFind = {};
     let now = new Date();
     let nowTime = now.getTime();
     const MONTH = 2626560000;
@@ -89,9 +90,11 @@ const inicialScanReduceIds = async (context, payload) => {
         for (let j = 0; j < trackObject.artists.length; j++) {
             if (!(trackObject.artists[j].id in context.state.artists)) {
                 if (!(trackObject.artists[j].id in artistsToFind))
-                    artistsToFind.push({id: trackObject.artists[j].id, tracks: [trackObject.id]});
-                else
-                    artistsToFind[trackObject.artists[j].id].tracks.push(trackObject.id);
+                    artistsToFind[trackObject.artists[j].id] = {id: trackObject.artists[j].id, tracks: [trackObject.id]};
+                else {
+                    if (!(artistsToFind[trackObject.artists[j].id].tracks.includes(trackObject.id)))
+                        artistsToFind[trackObject.artists[j].id].tracks.push(trackObject.id);
+                }
             }
             else
                 context.commit('addTrackToArtist', {id: trackObject.artists[j].id, track: trackObject.id});
@@ -124,7 +127,8 @@ const inicialScanReduceIds = async (context, payload) => {
 };
 // Array {id: String, tracks: [String]}
 const findAndStoreArtists = async (context, payload) => {
-    let ids = payload.map(artist => artist.id);
+    let ids = Object.values(payload).map(artist => artist.id);
+    let trackSets = Object.values(payload).map(artist => artist.tracks);
     let artists = [];
     while (ids.length > 0) {
         let sectionIds = ids.splice(0, 50);
@@ -137,14 +141,17 @@ const findAndStoreArtists = async (context, payload) => {
         delete artistObject.external_urls;
         artistObject.followers = artistObject.followers.total;
         for (let j = 0; j < artistObject.genres.length; j++) {
-            if (!(artistObject.genres[j] in context.state.genres))   // SWITCHED tO NAME
-                await context.commit('pushGenre', {id: artistObject.genres[j], value: {name: artistObject.genres[j], artists: [artistObject.name], tracknum: 0}});
+            if (!(artistObject.genres[j] in context.state.genres))  
+                await context.commit('pushGenre', {id: artistObject.genres[j], value: {name: artistObject.genres[j], artists: [artistObject.id], tracknum: 0}});
             else 
-                await context.commit('addArtistToGenre', {id: artistObject.genres[j], artist: artistObject.name});
+                await context.commit('addArtistToGenre', {id: artistObject.genres[j], artist: artistObject.id});
         }
         delete artistObject.type;
         delete artistObject.uri;
-        artistObject.tracks = [];
+        if (artistObject.images.length > 0)
+            artistObject.image = artistObject.images[0].url;
+        delete artistObject.images;
+        artistObject.tracks = trackSets[i];
         await context.commit('pushArtist', {id: artistObject.id, value: artistObject});
     }
 };
@@ -168,6 +175,7 @@ const distributeTrackAudioFeatures = async (context, payload) => {
             values[keys[j]] += payload[i][keys[j]];
             context.commit('plotAudioFeatureValue', {key: keys[j], value: payload[i][keys[j]]})
         }
+        context.commit('addMode', payload[i].mode);
         await context.commit('addTrackProperties', {id: payload[i].id, properties: {
             danceability: payload[i].danceability,
             energy: payload[i].energy,
@@ -197,7 +205,7 @@ const calcTracksPerGenre = async (context) => {
         }
     }
     let genreTuples = Object.entries(context.state.genres);
-    let topGenres = genreTuples.sort((a,b) => b[1].tracknum - a[1].tracknum).slice(0,5);
+    let topGenres = genreTuples.sort((a,b) => b[1].tracknum - a[1].tracknum).slice(0,20);
     let topGenreIds = topGenres.map(genre => genre[0]);
     context.commit('setTopSavedGenres', topGenreIds);
     let artistTuples = Object.entries(context.state.artists);
@@ -639,8 +647,7 @@ const HSVtoRGB = async (context, payload) => {
 ////////////////////////////////////////////////////////////////
 // {limit: Number 1-50, time_range: "long_term" Several years, "medium_term" 6 Months, "short_term" 4 Weeks, offset: Index of first entry to return}
 const getTopArtists = async (context, payload) => {
-    try {
-        console.log('%c Retrieving Top Played Artists.', 'color: blue;');
+    try { 
         let response = await context.state.spotifyApi.getMyTopArtists({limit: payload.limit, time_range: payload.time_range});
         return response.items;
     } catch (error) {
@@ -650,7 +657,6 @@ const getTopArtists = async (context, payload) => {
 // {limit: Number 1-50, time_range: "long_term" Several years, "medium_term" 6 Months, "short_term" 4 Weeks, offset: Index of first entry to return}
 const getTopTracks = async (context, payload) => {
     try {
-        console.log('%c Retrieving Top Played Tracks.', 'color: blue;');
         let response = await context.state.spotifyApi.getMyTopTracks({limit: payload.limit, time_range: payload.time_range});
         return response.items;
     } catch (error) {
@@ -660,7 +666,6 @@ const getTopTracks = async (context, payload) => {
 // {limit: Number 1-50, after: Unix timestamp Milliseconds, before: Unix timestamp Milliseconds
 const getRecentlyPlayed = async (context, payload) => {
     try {
-        console.log('%c Retrieving Recently Played Tracks.', 'color: blue;');
         let response = await context.state.spotifyApi.getMyRecentlyPlayedTracks({limit: payload.limit});
         return response;
     } catch (error) {
@@ -669,7 +674,6 @@ const getRecentlyPlayed = async (context, payload) => {
 };
 const getTrack = async (context, track_id) => {
   try {
-      console.log('%c Requesting Song Data.', 'color: blue;');
       let response = await context.state.spotifyApi.getTrack(track_id);
       return response;
   } catch (error) {
@@ -678,7 +682,6 @@ const getTrack = async (context, track_id) => {
 };
 const getTracks = async (context, track_ids) => {
   try {
-      console.log('%c Requesting Songs Data.', 'color: blue;');
       let response = await context.state.spotifyApi.getTracks(track_ids);
       return response;
   } catch (error) {
@@ -688,7 +691,6 @@ const getTracks = async (context, track_ids) => {
 // {artistId: String}
 const getArtist = async (context, id) => {
     try {
-        console.log('%c Requesting Artist.', 'color: blue;');
         let response = await context.state.spotifyApi.getArtist(id);
         return response;
     } catch (error) {
@@ -698,7 +700,6 @@ const getArtist = async (context, id) => {
 // []
 const getArtists = async (context, ids) => {
   try {
-      console.log('%c Requesting Artists.', 'color: blue;');
       let response = await context.state.spotifyApi.getArtists(ids);
       return response.artists;
   } catch (error) {
@@ -708,7 +709,6 @@ const getArtists = async (context, ids) => {
 // Array IDs
 const getAudioFeaturesForTracks = async (context, track_ids) => {
     try {
-        console.log('%c Requesting Song Data.', 'color: blue;');
         let response = await context.state.spotifyApi.getAudioFeaturesForTracks(track_ids);
         return response.audio_features;
     } catch (error) {
@@ -717,7 +717,6 @@ const getAudioFeaturesForTracks = async (context, track_ids) => {
 };
 const getAudioFeaturesForTrack = async (context, track_id) => {
   try {
-      console.log('%c Requesting Song Analysis.', 'color: blue;');
       let response = await context.state.spotifyApi.getAudioFeaturesForTracks([track_id]);
       return response.audio_features[0];
   } catch (error) {
@@ -726,7 +725,6 @@ const getAudioFeaturesForTrack = async (context, track_id) => {
 };
 const getAudioAnalysisForTrack = async (context, track_id) => {
     try {
-        console.log('%c Requesting Audio Analysis.', 'color: blue;');
         let response = await context.state.spotifyApi.getAudioAnalysisForTrack(track_id);
         return response;
     } catch (error) {
@@ -736,7 +734,6 @@ const getAudioAnalysisForTrack = async (context, track_id) => {
 // {seed_tracks: [track_id], target_dancebility: NUM, limit: 6, max_* min_*}
 const getRecomendations = async (context, payload) => {
     try {
-        console.log('%c Requesting Recommendations.', 'color: blue;');
         let response = await context.state.spotifyApi.getRecommendations(payload);
         return response;
     } catch (error) {
@@ -746,7 +743,6 @@ const getRecomendations = async (context, payload) => {
 // {limit: 1-50, offset: first index}
 const getSavedTracks = async (context, payload) => {
     try {
-        console.log('%c Requesting Library Data. ' + payload.offset + '-' + (payload.offset + payload.limit), 'color: blue;');
         let response = await context.state.spotifyApi.getMySavedTracks({limit: payload.limit, offset: payload.offset});
         return response;
     } catch (error) {
@@ -758,7 +754,6 @@ const getUser = async (context) => {
     try {
       if (context.state.inicialized)
       {
-        console.log('%c Requesting user Data.', 'color: blue;');
         let response = await context.state.spotifyApi.getMe();
         await context.commit('setUserData', response);
       }
@@ -769,7 +764,6 @@ const getUser = async (context) => {
 // Array IDs
 const searchSpotify = async (context, payload) => {
     try {
-        console.log('%c Searching.', 'color: blue;');
         let response = await context.state.spotifyApi.search(payload.query, ['track'], {limit: 25});
         return response;
     } catch (error) {

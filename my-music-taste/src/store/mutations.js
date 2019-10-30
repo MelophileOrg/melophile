@@ -55,7 +55,8 @@ const pushArtist = (state, payload) => {
 };
 // {id: String, track: String}
 const addTrackToArtist = (state, payload) => {
-    state.artists[payload.id].tracks.push(payload.track);
+    if (!(state.artists[payload.id].tracks.includes(payload.track)))
+        state.artists[payload.id].tracks.push(payload.track);
 };
 // {id: String, value: Object}
 const pushGenre = (state, payload) => {
@@ -116,6 +117,12 @@ const plotAudioFeatureValue = (state, payload) => {
     if (index > 9) 
         index = 0;
     state.audioFeatures[payload.key].plot[index] += 1;
+};
+const addMode = (state, payload) => {
+    state.mode.value += payload;
+};
+const averageMode = (state) => {
+    state.mode.value /= state.progress.total;
 };
 ////////////////////////////////////////////////////////////////
 // DATES ADDED /////////////////////////////////////////////////
@@ -197,6 +204,8 @@ export default {
     addAudioFeatureValue,
     averageAudioFeatureValue,
     plotAudioFeatureValue,
+    addMode,
+    averageMode,
 
     addDateAddedTrack,
     addDateAddedArtist,

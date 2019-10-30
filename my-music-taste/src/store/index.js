@@ -87,6 +87,7 @@ export const store = new Vuex.Store({
         maxchart: [],
         plot: [0,0,0,0,0,0,0,0,0,0],
         timeline: [],
+        color: {red: 242, green: 142, blue: 43},
       },
       speechiness: {
         value: 0,

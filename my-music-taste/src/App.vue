@@ -17,6 +17,7 @@ font-family: 'EB Garamond', serif;
 */
 body {
   margin: 0;
+  overflow-x: hidden;
 }
 
 #app {

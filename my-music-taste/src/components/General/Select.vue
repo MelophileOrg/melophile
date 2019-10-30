@@ -147,7 +147,7 @@ export default {
 .dropdown h1 {
     --delay: 0;
     margin: 5px 0px;
-    animation: slide-up .3s ease calc(var(--delay) * .1s), peekaboo calc(var(--delay) * .1s);
+    animation: slide-up .3s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s);
 }
 
 @keyframes slide-up {

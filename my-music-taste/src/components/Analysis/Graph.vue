@@ -2,7 +2,8 @@
   <div class="graphcomp" :style="{'--graphdelay': delay}">
     <div >
       <h3>{{title}}</h3>
-      <div class="graph" :style="{'--max': + findMax(bars), '--red': + color.red, '--green': + color.green, '--blue': + color.blue}">
+      <Loading v-if="!override"/>
+      <div v-if="override" class="graph" :style="{'--max': + findMax(bars), '--red': + color.red, '--green': + color.green, '--blue': + color.blue}">
         <div class="graph-bar" v-for="(bar, index) in bars" :key="title+'-bargraph-'+index" :class="{toolow: bar.value < findMax(bars) / 10}" :style="{'--height': + bar.value}"><p>{{bar.tag}}</p></div>
         <p v-if="y_axis != ''" class="yAxis">{{y_axis}}</p>
       </div>
@@ -16,8 +17,13 @@
 </template>
 
 <script>
+import Loading from '@/components/General/Loading.vue'
+
 export default {
   name: 'graphcomp',
+  components: {
+    Loading
+  },
   props: {
     title: String,
     delay: Number,
@@ -28,6 +34,7 @@ export default {
     y_axis: String,
     color: Object,
     instructions: String,
+    override: Boolean,
   },
   methods: {
     findMax(array) {
@@ -47,7 +54,7 @@ export default {
 <style scoped>
 .graphcomp {
   --graphdelay: 0;
-  animation: slide-up .5s ease calc(var(--graphdelay) * .1s), peekaboo calc(var(--graphdelay) * .1s);
+  animation: slide-up .5s ease calc(var(--graphdelay) * .1s), hide calc(var(--graphdelay) * .1s);
   display: inline-block;
   width: calc(80% - 40px);
   margin: 20px 20px;
