@@ -3,18 +3,31 @@
     <div @click="selectTrack(data.id)" class="search-song" :style="{'--delay': index}">
       <h1 v-if="showNum">{{index + 1}}</h1>
       <div>
-        <div class="search-image" :style="{backgroundImage: 'url(\'' + data.album.images[0].url + '\')'}"/>
+        <div class="search-image" v-if="type == 'track' && saved" :style="{backgroundImage: 'url(\'' + data.image + '\')'}"/>
+        <div class="search-image" v-if="type == 'track' && !saved" :style="{backgroundImage: 'url(\'' + data.album.images[0].url + '\')'}"/>
+        <div class="search-image" v-if="type == 'artist'" :style="{backgroundImage: 'url(\'' + data.image + '\')'}"/>
+        <div class="search-image genre" v-if="type == 'genre'"/>
       </div>
       <div class="info">
-        <h1 class="search-title">{{data.name}}</h1>
+        <h1 class="search-title" :class="{cap: type == 'genre'}" >{{data.name}}</h1>
+
         <div v-if="type == 'track'" class="artists">
           <div v-for="artistnum in 4" :key="data.name + '-' + (artistnum - 1)">
-            <h4 class="artist" v-if="(artistnum - 1) < data.artists.length">{{artists[data.artists[(artistnum - 1)]].name}}<h4 class="space" v-if="(artistnum - 1) < data.artists.length - 1"></h4></h4>
+            <h4 class="artist" v-if="(artistnum - 1) < data.artists.length && !saved">{{data.artists[(artistnum - 1)].name}}<h4 class="space" v-if="(artistnum - 1) < data.artists.length - 1"></h4></h4>
+            <h4 class="artist" v-if="(artistnum - 1) < data.artists.length && saved">{{artists[data.artists[(artistnum - 1)]].name}}<h4 class="space" v-if="(artistnum - 1) < data.artists.length - 1"></h4></h4>
+          </div>
+        </div>
+        <div v-if="type == 'genre'" class="artists">
+          <div>
+            <h4 class="artist">{{data.tracknum}} Songs</h4>
           </div>
         </div>
         <div v-if="type == 'artist'" class="artists">
           <div v-for="artistnum in 4" :key="data.name + '-' + (artistnum - 1)">
             <h4 class="artist" v-if="(artistnum - 1) < data.genres.length">{{data.genres[(artistnum - 1)]}}<h4 class="space" v-if="(artistnum - 1) < data.genres.length - 1"></h4></h4>
+          </div>
+          <div v-if="data.genres.length == 0">
+            <h4 class="artist" >No Genres Provided</h4>
           </div>
         </div>
       </div>
@@ -32,10 +45,16 @@ export default {
     data: Object,
     index: Number,
     showNum: Boolean,
+    saved: Boolean,
   },
   methods: {
     selectTrack(id) {
-      this.$router.push("/songs/" + id);
+      if (this.type == "track")
+        this.$router.push("/songs/" + id);
+      if (this.type == "artist")
+        this.$router.push("/artist/" + id);
+      if (this.type == "genre")
+        this.$router.push("/genre/" + this.data.name);
     }
   },
   computed: {
@@ -44,13 +63,16 @@ export default {
     }
   },
   created() {
-      console.log(this.data);
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.cap {
+  text-transform: capitalize;
+}
+
 .search-song {
   cursor: pointer;
   --delay: 0;
@@ -99,12 +121,16 @@ export default {
   margin-left: 13px;
 }
 
+.genre {
+  background-image: url('../../assets/icons/genres.svg');
+}
+
 .search-image {
   display: block;
   width: 60px;
   height: 60px;
-  border-radius: 5px;
   background-size: auto 100%;
+  margin-right: 5px;
   background-position: center center;
 }
 

@@ -5,6 +5,7 @@
         <h3 class="nomargin">{{title}}</h3>
         <div class="row favorite-div">
             <img v-if="image != ''" :src="image"/>
+            <img v-if="image == ''" src="../../assets/icons/genres.svg"/>
             <div>
             <h4 class="favorite">{{list[0].name}}</h4>
             <h5>{{list[0].value}} Songs</h5>
@@ -17,6 +18,7 @@
                 <h5>{{list[i].value}} Songs</h5>
             </div>
         </div>
+        <p @click="toCharts">View More</p>
     </div>
 
     </div>
@@ -36,6 +38,11 @@ export default {
     title: String,
     list: Array,
     image: String,
+  },
+  methods: {
+    toCharts(){
+      this.$router.push('/charts');
+    }
   }
 }
 </script>
@@ -47,7 +54,7 @@ export default {
     animation: slide-up .5s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s);
     display: inline-block;
     width: 75%;
-    margin: 20px 20px;
+    margin: 22px 22px;
     padding: 20px;
     max-width: 400px;
     border-radius: 5px;
@@ -72,10 +79,10 @@ export default {
 
 .favorite-div
 {
-  margin-top: 5px;
+  margin-top: 10px;
   margin-bottom: 5px;
   height: 75px;
-  padding: 8px 8px;
+  padding: 10px 10px;
   background: rgba(255, 255, 255, 0.062);
   overflow: hidden;
 }
@@ -144,6 +151,18 @@ h3 {
   font-size: 1.6em;
   margin: 0;
   margin-bottom: 20px;
+  color: white;
+}
+
+p {
+  color: rgba(255, 255, 255, 0.253);
+  margin: 0;
+  transform: translateY(10px);
+  cursor: pointer;
+  transition: all .3s ease;
+}
+
+p:hover {
   color: white;
 }
 </style>

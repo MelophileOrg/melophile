@@ -39,6 +39,7 @@ export default {
   align-items: center;
   max-width: 100vw;
   flex-wrap: wrap;
+  animation: slide-up .3s ease .2s, hide .2s linear;
 }
 
 .select {
@@ -47,8 +48,10 @@ export default {
 
 .text {
   font-size: 2.5em;
-  color: rgba(255, 255, 255, 0.404);
+  color: rgba(255, 255, 255, 0.247);
   margin: 0;
   margin-right: 5px;
+  text-transform: lowercase;
+  font-weight: lighter;
 }
 </style>

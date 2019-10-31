@@ -1,9 +1,9 @@
 <template>
-    <div class="Extremes">
+    <div class="TopPlayed">
         <div v-if="progress.extremesLoaded">
         <Selector :items="selector" :load="false" :override="false" @pending="pending" @selection="select"/>
         <div class="list" v-if="list.length > 0">
-            <SearchItem class="searchItem" v-for="(track, index) in list" :saved="true"  :showNum="true" :key="track.id + index" :data="track" :index="index" type="track"/>
+            <SearchItem class="searchItem" v-for="(track, index) in list"  :saved="true" :showNum="true" :key="track.id + index" :data="track" :index="index" :type="type"/>
         </div>
         <Empty class="list" v-else/>
         </div>
@@ -18,7 +18,7 @@ import Empty from '@/components/Library/Empty.vue'
 import Loading from '@/components/General/Loading.vue'
 
 export default {
-  name: 'Extremes',
+  name: 'TopPlayed',
   components: {
       Selector,
       SearchItem,
@@ -30,48 +30,47 @@ export default {
         list: [],
         type: "track",
         selector: [
-            {type: "text", text: "List My"}, 
+            {type: "text", text: "My Top Played"}, 
             {
                 type: "select", 
                 options: [
-                    {value: "maxchart", text: "Most"},
-                    {value: "minchart", text: "Least"}
+                    {value: "tracks", text: "Tracks"},
+                    {value: "artists", text: "Artists"}
                 ]
             },
+            {type: "text", text: "in the last"}, 
             {
                 type: "select", 
                 options: [
-                    {value: "valence", text: "Happy"},
-                    {value: "energy", text: "Energetic"},
-                    {value: "danceability", text: "Danceable"},
-                    {value: "tempo", text: "High Tempos"},
-                    {value: "banger", text: "Bangers"},
-                    {value: "acousticness", text: "Accoustic"},
-                    {value: "instrumentalness", text: "Instrumental"},
-                    {value: "liveness", text: "Live"},
-                    {value: "speechiness", text: "Talking"},
+                    {value: 0, text: "4 Weeks"},
+                    {value: 1, text: "6 Months"},
+                    {value: 2, text: "Few years"},
                 ]
             }
         ],
-        catagory: "",
         chart: "",
+        range: -1,
         pendingStatus: true,
-
     }
   },
     methods: {
         select(val) {
-            if (val == 'maxchart' || val == 'minchart')
+            if (val == 'tracks' || val == 'artists') {
                 this.chart = val;
+                if (val == 'tracks')
+                    this.type = "track";
+                else 
+                    this.type = "artist";
+            }
             else 
-                this.catagory = val;
+                this.range = val;
             this.checkResults();
         },
         checkResults() {
-            if (this.catagory != "" && this.chart != "") {
-                let ids = this.audioFeatures[this.catagory][this.chart];
+            if (this.chart != "" && (this.range == 0 || this.range == 1 || this.range == 2)) {
+                let ids = this.topPlayed[this.chart][this.range];
                 for (var i = 0; i < ids.length; i++) {
-                    this.list.push(this.tracks[ids[i]]);
+                    this.list.push(this.$store.state[this.chart][ids[i]]);
                 }
                 this.pendingStatus = false;
             }
@@ -82,11 +81,8 @@ export default {
         }
     },
     computed: {
-        audioFeatures() {
-            return this.$store.state.audioFeatures;
-        },
-        tracks() {
-            return this.$store.state.tracks;
+        topPlayed() {
+            return this.$store.state.topPlayed;
         },
         progress() {
             return this.$store.state.progress;
@@ -97,7 +93,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.Extremes {
+.TopPlayed {
     margin-bottom: 75px;
 }
 

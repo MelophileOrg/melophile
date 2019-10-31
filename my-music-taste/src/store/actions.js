@@ -65,8 +65,8 @@ const retrieveSavedTracks = async (context, payload) => {
         for (let i = 0; i < keys.length; i++) {
             await context.commit('averageAudioFeatureValue', keys[i]);
         }
-        context.commit('averageMode');
-        context.commit('averageValenceOverTime');
+        await context.commit('averageMode');
+        await context.commit('averageValenceOverTime');
         context.commit('setTracksLoaded');
     }
 };
@@ -125,6 +125,8 @@ const inicialScanReduceIds = async (context, payload) => {
         delete trackObject.external_urls;
         delete trackObject.type;
         delete trackObject.uri;
+        if (trackObject.album.images.length > 1)
+            trackObject.image = trackObject.album.images[0].url;
         ids.push(trackObject.id);
         context.commit('pushTrack', {id: trackObject.id, value: trackObject});
         context.commit('addProcessed');
@@ -216,7 +218,7 @@ const calcTracksPerGenre = async (context) => {
     let topGenreIds = topGenres.map(genre => genre[0]);
     context.commit('setTopSavedGenres', topGenreIds);
     let artistTuples = Object.entries(context.state.artists);
-    let topArtists = artistTuples.sort((a,b) => b[1].tracks.length - a[1].tracks.length).slice(0,5);
+    let topArtists = artistTuples.sort((a,b) => b[1].tracks.length - a[1].tracks.length).slice(0,20);
     let topArtistIds = topArtists.map(artist => artist[0]);
     context.commit('setTopSavedArtists', topArtistIds);
     context.commit('setArtistsLoaded');
@@ -239,6 +241,7 @@ const calcExtremes = async (context) => {
             context.commit('setAudioFeatureChart', {key: keys[i], chart: [charts[j]], value: topTracksIds});
         }
     }
+    context.commit('setExtremesLoaded');
 };
 const retrieveTopPlayed = async (context) => {
     await context.dispatch('retrieveTopPlayedArtists');
@@ -560,15 +563,10 @@ const convertGenres = async (context, payload) => {
 */
 const songAnalysis = async (context, id) => {
     let trackData;
-    if (id in context.state.tracks) {
-        trackData = context.state.tracks[id];
-    }   
-    else {
-        trackData = await context.dispatch('getTrack', id);
-        trackData = await context.dispatch('songAnalysisFeatures', {trackData: trackData, id: id});
-    }
+    trackData = await context.dispatch('getTrack', id);
+    trackData = await context.dispatch('songAnalysisFeatures', {trackData: trackData, id: id});
     trackData.audioAnalysis = await context.dispatch('cleanAudioAnalysis', {id: id});
-    console.log(trackData);
+    return trackData;
 };
 // {id: String}
 const songAnalysisFeatures = async (context, payload) => {

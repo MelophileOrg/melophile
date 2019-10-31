@@ -61,7 +61,6 @@ body {
   display: block;
   width: calc(100vw);
   min-height: 100vh;
-  overflow-x: hidden;
   position: relative;
   z-index: 0;
 }

@@ -9,33 +9,38 @@
           <h2 @click="changeTab(1)" :class="{active: tab == 1}">Extremes</h2>
         </div>
       </div>
+
+      <div class="progress" v-if="!progress.tracksLoaded" >
+        <div class="progress-info" >
+          <ProgressBar/>
+        </div>
+      </div>
       
       <div v-if="progress.tracksLoaded && tab == 0" class="windows">
 
         <YourLibrary :delay="0"/>
 
-        <Spotlight :delay="1" :override="progress.artistsLoaded" title="Most Saved From:" :list="topSavedArtists" :image="topSavedArtists[0].image"/>
+        <Characteristics :delay="1"/>
 
-        <Characteristics :delay="2"/>
+        <Spotlight :delay="2" :override="progress.artistsLoaded" title="Most Saved Artists:" :list="topSavedArtists" :image="topSavedArtists[0].image"/>
 
-        <Spotlight :delay="3" :override="progress.genresLoaded" title="Favorite Genres:" :list="topSavedGenres.slice(0, 4)" image=""/>
+        <Spotlight :delay="3" :override="progress.genresLoaded" title="Most Saved Genres:" :list="topSavedGenres.slice(0, 4)" image=""/>
 
-        <Timeline :override="progress.tracksLoaded" title="When You Added Songs:" instructions="" :max="-1" :delay="4" :bars="cleanGraphData(dateAdded)" y_axis="Number of Songs" :color="{red: 74, green: 189, blue: 180}"/>
+        <Averages :delay="4"/>
+
+        <Chances :delay="5"/>
+
+        <Timeline :override="progress.tracksLoaded" title="When You Added Songs:" instructions="" :max="-1" :delay="6" :bars="cleanGraphData(dateAdded)" y_axis="Number of Songs" :color="{red: 74, green: 189, blue: 180}"/>
         
-        <Graph :override="progress.tracksLoaded" title="Happiness Distribution:" instructions="Go to the Extremes Tab for the Highest and Lowest Tracks" :delay="5" :bars="cleanGraphData(audioFeatures.valence.plot)" max_tag="Happy" min_tag="Sad" y_axis="Number of Songs" :color="audioFeatures.valence.color"/>
+        <TimelinePercent :override="progress.tracksLoaded" title="Happiness Over Time:" instructions="" :delay="7" :bars="cleanValuedGraphData(audioFeatures.valence.timeline)" :max="100" y_axis="Percent Happiness" />
 
-        <Graph :override="progress.tracksLoaded" title="Energy Distribution:" instructions="Go to the Extremes Tab for the Highest and Lowest Tracks" :delay="6" :bars="cleanGraphData(audioFeatures.energy.plot)" max_tag="Hyper" min_tag="Peaceful" y_axis="Number of Songs" :color="audioFeatures.energy.color"/>
-        
-        <TimelinePercent :override="progress.tracksLoaded" title="Happiness Over Time" instructions="" :delay="8" :bars="cleanValuedGraphData(audioFeatures.valence.timeline)" :max="100" y_axis="Percent Happiness" />
+        <Graph :override="progress.tracksLoaded" title="Happiness Distribution:" instructions="Go to the Extremes Tab for the Highest and Lowest Tracks" :delay="8" :bars="cleanGraphData(audioFeatures.valence.plot)" max_tag="Happy" min_tag="Sad" y_axis="Number of Songs" :color="audioFeatures.valence.color"/>
 
-        <Graph :override="progress.tracksLoaded" title="Danceability Distribution:" instructions="Go to the Extremes Tab for the Highest and Lowest Tracks" :delay="7" :bars="cleanGraphData(audioFeatures.danceability.plot)" max_tag="Let's dance!" min_tag="Couch Potato" y_axis="Number of Songs" :color="audioFeatures.danceability.color"/>
+        <Graph :override="progress.tracksLoaded" title="Energy Distribution:" instructions="Go to the Extremes Tab for the Highest and Lowest Tracks" :delay="9" :bars="cleanGraphData(audioFeatures.energy.plot)" max_tag="Hyper" min_tag="Peaceful" y_axis="Number of Songs" :color="audioFeatures.energy.color"/>
 
-        <Graph :override="progress.tracksLoaded" title="Should You DJ a Party?" instructions="Go to the Extremes Tab for the Highest and Lowest Tracks" :delay="9" :bars="cleanGraphData(audioFeatures.banger.plot)" max_tag="Absolute Bangers" min_tag="*Snore*" y_axis="Number of Songs" :color="audioFeatures.banger.color"/>
-        
-        <Averages :delay="10"/>
+        <Graph :override="progress.tracksLoaded" title="Danceability Distribution:" instructions="Go to the Extremes Tab for the Highest and Lowest Tracks" :delay="10" :bars="cleanGraphData(audioFeatures.danceability.plot)" max_tag="Let's dance!" min_tag="Couch Potato" y_axis="Number of Songs" :color="audioFeatures.danceability.color"/>
 
-        <Chances :delay="11"/>
-
+        <Graph :override="progress.tracksLoaded" title="Should You DJ a Party?" instructions="Go to the Extremes Tab for the Highest and Lowest Tracks" :delay="11" :bars="cleanGraphData(audioFeatures.banger.plot)" max_tag="Absolute Bangers" min_tag="*Snore*" y_axis="Number of Songs" :color="audioFeatures.banger.color"/>
       </div>
 
       <div v-if="progress.tracksLoaded && tab == 1">
@@ -57,6 +62,7 @@ import Characteristics from '@/components/Library/Characteristics.vue'
 import Averages from '@/components/Library/Averages.vue'
 import Chances from '@/components/Library/Chances.vue'
 import Extremes from '@/components/Library/Extremes.vue'
+import ProgressBar from '@/components/General/ProgressBar.vue'
 
 export default {
   name: 'mylibrary',
@@ -70,7 +76,8 @@ export default {
     Averages,
     Chances,
     Extremes,
-    TimelinePercent
+    TimelinePercent,
+    ProgressBar,
   },
   data() {
     return {
@@ -132,7 +139,7 @@ export default {
       return reversed;
     },
     topSavedArtists() {
-      if (!this.progress.tracksLoaded)
+      if (!this.progress.artistsLoaded)
         return;
       let ids = this.$store.state.topSaved.artists;
       let list = [];
@@ -143,7 +150,7 @@ export default {
       return list;
     },
     topSavedGenres() {
-      if (!this.progress.tracksLoaded)
+      if (!this.progress.genresLoaded)
         return;
       let ids = this.$store.state.topSaved.genres;
       let list = [];
@@ -158,13 +165,37 @@ export default {
   created() {
     if (!this.inicialized)
       this.$router.push("/login");
-    console.log("THIS SHOULD BE FALSE", this.progress.tracksLoaded);
   }
 }
 </script>
 
 <style scoped>
+.progress {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(238, 126, 137);
+  background-image: radial-gradient(circle at center center, rgb(137, 126, 238), rgb(238, 126, 137));
+  background-size: 100% 300%;
+  background-position: center -300%;
+  animation: background-move 10s linear infinite;
+}
+
+@keyframes background-move {
+  0% {
+    background-position: center -300%;
+  }
+  100% {
+    background-position: center 0%;
+  }
+}
+
+.progress-info {
+  padding-top: 12vh;
+}
+
 #menu {
+  width: calc(100% - 64px);
   padding: 10px 32px;
 }
 
@@ -172,7 +203,7 @@ export default {
   display: flex;
   width: 100%;
   justify-content: center;
-  align-items: top;
+  align-items: center;
   flex-wrap: wrap;
   margin-bottom: 50px;
 }
@@ -209,7 +240,7 @@ h2.active {
   animation: slide-up .5s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s);
   display: inline-block;
   width: 75%;
-  margin: 20px 20px;
+  margin: 22px 22px;
   padding: 20px;
   max-width: 400px;
   border-radius: 5px;

@@ -29,11 +29,15 @@ const setArtistsLoaded = (state) => {
 const setGenresLoaded = (state) => {
     state.progress.genresLoaded = true;
 };
+const setExtremesLoaded = (state) => {
+    state.progress.extremesLoaded = true;
+};
 const resetProgress = (state) => {
     state.progress.processed = 0;
-    state.progress.tracksLoaded = true;
-    state.progress.genresLoaded = true;
-    state.progress.genresLoaded = true;
+    state.progress.tracksLoaded = false;
+    state.progress.artistsLoaded = false;
+    state.progress.genresLoaded = false;
+    state.progress.extremesLoaded = false;
 };
 ////////////////////////////////////////////////////////////////
 // DATA OBJECTS ////////////////////////////////////////////////
@@ -209,6 +213,7 @@ export default {
     setTracksLoaded,
     setArtistsLoaded,
     setGenresLoaded,
+    setExtremesLoaded,
     resetProgress,
 
     pushTrack,

@@ -22,7 +22,6 @@ export default {
         return Math.round(num * 100) + "%";
     },
     value() {
-      console.log(this.percent);
       if (this.type == "tempo")
         return Math.round(this.percent * 208) + "BPM";
       if (this.type == "volume")

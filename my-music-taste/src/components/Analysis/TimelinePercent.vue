@@ -97,7 +97,7 @@ export default {
   animation: slide-up .5s ease calc(var(--graphdelay) * .1s), hide calc(var(--graphdelay) * .1s);
   display: inline-block;
   width: 75%;
-  margin: 20px 20px;
+  margin: 25px 25px;
   padding: 20px;
   max-width: 400px;
   border-radius: 5px;
@@ -174,7 +174,7 @@ export default {
   transform: rotate(-90deg);
   color: rgba(250, 246, 246, 0.404);
   font-size: .8em;
-  left: -60px;
+  left: -62px;
   top: 80px;
 
 }

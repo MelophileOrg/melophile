@@ -3,7 +3,7 @@
     <NavBar/>
     <div id="main">
         <SearchBar @changed="search"/>
-        <SearchItem v-for="(track, index) in list" :key="track.id + index" :data="track" :index="index" type="track"/>
+        <SearchItem v-for="(track, index) in list" :key="track.id + index" :data="track" :index="index" :saved="false" type="track"/>
         <div class="loading" v-if="!trackSelected && list.length == 0 && waiting && !empty">
           <div v-for="bar in 4" :key="'loadingbar'+bar" class="bar" :style="{'--delay': + (bar - 1)}"/>
         </div>
@@ -15,7 +15,6 @@
 </template>
 
 <script>
-// @ is an alias to /src
 import NavBar from '@/components/General/NavBar.vue'
 import SearchBar from '@/components/Library/SearchBar.vue'
 import SearchItem from '@/components/Library/SearchItem.vue'
@@ -25,7 +24,7 @@ export default {
   components: {
     NavBar,
     SearchBar,
-    SearchItem
+    SearchItem,
   },
   data() {
       return {
@@ -62,9 +61,7 @@ export default {
       let id = this.setId;
       let promise = await this.$store.dispatch('searchSpotify', {query: query});
       if (id != this.setId)
-      {
         return;
-      }
       this.waiting = false;
       this.trackSelected = false;
       this.list = promise.tracks.items;

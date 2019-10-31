@@ -30,6 +30,7 @@ export const store = new Vuex.Store({
       tracksLoaded: false,
       artistsLoaded: false,
       genresLoaded: false,
+      extremesLoaded: false,
     },
 
     topPlayed: {

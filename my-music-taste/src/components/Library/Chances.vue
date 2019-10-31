@@ -34,7 +34,7 @@ export default {
     animation: slide-up .5s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s);
     display: inline-block;
     width: 75%;
-    margin: 20px 20px;
+    margin: 22px 22px;
     padding: 20px;
     max-width: 400px;
     border-radius: 5px;
