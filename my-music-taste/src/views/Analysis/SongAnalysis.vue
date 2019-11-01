@@ -6,7 +6,6 @@
       <div class="windows">
 
         <div id="song" class="window" :style="{'--delay': 0}">
-          <h3>Song Details:</h3>
           <div v-if="trackData != null" class="flex">
             <div class="col">
                 <div id="track-image" :style="{backgroundImage: 'url(\'' + trackData.album.images[0].url + '\')'}"/>
@@ -23,27 +22,87 @@
         </div>
 
         <div id="artist" class="window" :style="{'--delay': 1}">
-          <h3>Artist Details:</h3>
           <div v-if="artistDone" class="flex">
             <div class="flex">
               <div class="col">
                 <div id="track-image" :style="{backgroundImage: 'url(\'' + trackData.artist.images[0].url + '\')'}"/>
               </div>
               <div class="col fit">
-                <h1>{{trackData.artist.name}}</h1>
+                <h1 id="artist-name" @click="goToArtist">{{trackData.artist.name}}</h1>
                 <h2 >{{formatNumber(trackData.artist.followers.total)}} Followers</h2>
                 <h2 v-if="progress.artistsLoaded">{{songsSaved}}</h2>
+                <h2 v-if="!progress.artistsLoaded">Finding Saved Songs</h2>
               </div>
             </div>
           </div>
           <Loading v-else/>
         </div>
-        <div class="window" :style="{'--delay': + 0}">
-          <h3>Characteristics:</h3>
-          <PercentBar title="Happiness" :percent="trackData.valence.value" :color="audioFeatures.valence.color" />
-          <PercentBar title="Energy" :percent="trackData.energy.value" :color="audioFeatures.energy.color" />
-          <PercentBar title="Danceability" :percent="trackData.danceability.value" :color="audioFeatures.danceability.color" />
+
+        <div class="window" :style="{'--delay': + 2}">
+          <h3 v-if="audioFeaturesDone">Song Characteristics:</h3>
+          <div v-if="audioFeaturesDone">
+            <PercentBar title="Happiness" :percent="trackData.valence" :color="audioFeatures.valence.color" />
+            <PercentBar title="Energy" :percent="trackData.energy" :color="audioFeatures.energy.color" />
+            <PercentBar title="Danceability" :percent="trackData.danceability" :color="audioFeatures.danceability.color" />
+            <PercentBar title="Popularity" :percent="trackData.popularity / 100" :color="audioFeatures.instrumentalness.color" />
+          </div>
+          <Loading v-else/>
         </div>
+
+        
+        <div class="window" :style="{'--delay': + 3}">
+          <h3 v-if="audioFeaturesDone">Song Statistics:</h3>
+          <div v-if="audioFeaturesDone">
+            <div class="flex flex-space-between">
+              <h4>Tempo:</h4><h4 :style="{'--red': + audioFeatures.tempo.color.red, '--green': + audioFeatures.tempo.color.green, '--blue': + audioFeatures.tempo.color.blue,}">{{Math.round(trackData.tempo)}} BPM</h4>
+            </div>
+            <div class="flex flex-space-between">
+              <h4>Key:</h4><h4 :style="{'--red': + audioFeatures.acousticness.color.red, '--green': + audioFeatures.acousticness.color.green, '--blue': + audioFeatures.acousticness.color.blue,}">{{getKey(trackData.key)}}</h4>
+            </div>
+            <div class="flex flex-space-between">
+              <h4>Mode:</h4><h4 :style="{'--red': + audioFeatures.valence.color.red, '--green': + audioFeatures.valence.color.green, '--blue': + audioFeatures.valence.color.blue,}">{{mode(trackData.mode)}}</h4>
+            </div>
+            <div class="flex flex-space-between">
+              <h4>Duration:</h4><h4 :style="{'--red': + audioFeatures.danceability.color.red, '--green': + audioFeatures.danceability.color.green, '--blue': + audioFeatures.danceability.color.blue,}">{{time(Math.round(trackData.duration_ms / 1000))}}</h4>
+            </div>
+          </div>
+          <Loading v-else/>
+        </div>
+
+        <div id="banger" class="window"  :style="{'--delay': 4}">
+          <h3 v-if="audioAnalysisReady" class="nomargin">Audio Analysis</h3>  
+          <div v-if="audioAnalysisReady" class="graph" :style="{'--numBars': + trackData.audioAnalysis.length}">
+              <div class="graph-bar" v-for="(bar, index) in trackData.audioAnalysis" :style="{'--height': + bar.loudness_max, '--red': + bar.red, '--green': + bar.green, '--blue': + bar.blue,}" :key="'audio-analysis'+index">
+                  <p>{{time(bar.start)}}</p>
+              </div>
+          </div>
+          <div v-if="audioAnalysisReady" class="graph-key flex flex-space-between"><p>Height: Volume</p><p>Color: Pitch</p></div>
+          <Loading v-else/>
+        </div>
+
+
+        <div class="window" :style="{'--delay': + 5}">
+          <h3 v-if="percentilesReady">Compaired to Saved (Percentile):</h3>
+          <div v-if="percentilesReady">
+            <PercentileBar title="Happiness" :percent="trackData.percentiles.valence" :color="audioFeatures.valence.color" />
+            <PercentileBar title="Energy" :percent="trackData.percentiles.energy" :color="audioFeatures.energy.color" />
+            <PercentileBar title="Danceability" :percent="trackData.percentiles.danceability" :color="audioFeatures.danceability.color" />
+            <PercentileBar title="Banger-Level" :percent="trackData.percentiles.banger" :color="audioFeatures.banger.color" />
+          </div>
+          <Loading v-else/>
+        </div>
+
+        <div id="banger" class="window" :style="{'--delay': 6}">
+            <h3 v-if="audioFeaturesDone">Is This a Banger?</h3>  
+            <div v-if="audioFeaturesDone">
+              <PercentBar title="Banger-Level" :percent="trackData.banger" :color="audioFeatures.banger.color" />
+              <h3 id="banger-conclusion">{{bangerConclusion()}}</h3>
+            </div>
+            <Loading v-else/>
+        </div>
+
+        <Spotlight :delay="7" :numOff="true" :override="artistDone" title="Genres:" :list="genresComputed" image=""/>
+
       </div>
 
     </div>
@@ -56,7 +115,9 @@
 import NavBar from '@/components/General/NavBar.vue'
 import Loading from '@/components/General/Loading.vue'
 import GoBackSearch from '@/components/Library/GoBackSearch.vue'
+import Spotlight from '@/components/Library/Spotlight.vue'
 import PercentBar from '@/components/Analysis/PercentBar.vue'
+import PercentileBar from '@/components/Analysis/PercentileBar.vue'
 
 export default {
     name: 'songanalysis',
@@ -65,14 +126,65 @@ export default {
         GoBackSearch,
         Loading,
         PercentBar,
+        PercentileBar,
+        Spotlight
     },
     data() {
         return {
           trackData: null,
           artistDone: false,
+          audioFeaturesDone: false,
+          audioAnalysisReady: false,
+          percentilesReady: false,
+          interval: null,
         }
     },
     methods: {
+      async checkTracksLoaded() {
+        if (this.progress.tracksLoaded) {
+          clearInterval(this.interval);
+          this.trackData.percentiles = await this.$store.dispatch('getPercentiles', {
+            valence: this.trackData.valence, 
+            energy: this.trackData.energy, 
+            danceability: this.trackData.danceability, 
+            banger: this.trackData.banger, 
+          });
+          this.percentilesReady = true;
+        }
+      },
+      time(seconds) {
+          let zero = "";
+          if (seconds % 60 < 10)
+          {
+              zero = "0";
+          }
+          if (seconds < 60)
+          {
+              return "0:" + zero + seconds;
+          }
+          return Math.floor(seconds / 60) + ":" + zero + (seconds % 60);
+      },
+      mode(val) {
+          if (val)
+              return "Major";
+          return "Minor";
+      
+      },
+      getKey(val) {
+          let keys = ["C", "C# / Db", "D", "D# / Eb", "E", "F", "F# / Gb", "G", "G# / Ab", "A", "A# / Bb", "B"];
+          if (val == -1)
+              return "Not Found";
+          return keys[val % 12];
+      },
+      bangerConclusion() {
+        if (this.audioFeaturesDone) {
+          let results = ["Banger? More like Bummer", "Nah Bruh", "Not Banger.", "Cool, but not Banger", "Like Sorta Banger?", "Got A Semi-Banger", "Almost Banger", "What a Banger!", "Absolute Banger Bro", "Banger of all Bangers"];
+          if (Math.floor(this.trackData.banger * 10) < results.length)
+              return results[Math.floor(this.trackData.banger * 10)];
+          return "Banger of all Bangers";
+        }
+        return "";
+      },
       async getArtistDetails() {
         this.trackData.artist = await this.$store.dispatch('getArtist', this.trackData.artists[0].id);
         this.artistDone = true;
@@ -102,8 +214,16 @@ export default {
             return thousands + "," + zeros + remainder;
         return remainder;
       },
+      goToArtist() {
+        this.$router.push('/artists/' + this.trackData.artists[0].id);
+      }
     },
     computed: {
+      genresComputed() {
+        if (this.artistDone)
+          return this.trackData.artist.genres.slice(0, 4);
+        return [];
+      },
       songsSaved() {
         if (this.trackData.artists[0].id in this.$store.state.artists) {
           return this.$store.state.artists[this.trackData.artists[0].id].tracks.length + " Songs Saved";
@@ -113,10 +233,28 @@ export default {
       progress() {
         return this.$store.state.progress;
       },
+      audioFeatures() {
+        return this.$store.state.audioFeatures
+      }
     },  
     async created() {
       this.trackData = await this.$store.dispatch('songAnalysis', this.$route.params.id);
+      this.trackData.banger = await this.$store.dispatch('bangerCalc', {tempo: this.trackData.tempo, danceability: this.trackData.danceability, energy: this.trackData.energy});
+      this.audioFeaturesDone = true;
+      this.audioAnalysisReady = true;
       await this.getArtistDetails();
+      if (this.progress.tracksLoaded) {
+        this.trackData.percentiles = await this.$store.dispatch('getPercentiles', {
+          valence: this.trackData.valence, 
+          energy: this.trackData.energy, 
+          danceability: this.trackData.danceability, 
+          banger: this.trackData.banger, 
+        });
+        this.percentilesReady = true;
+      }
+      else {
+        this.interval = setInterval(this.checkTracksLoaded, 2000);
+      }
     }
 }
 
@@ -127,9 +265,17 @@ export default {
   display: flex;
   width: 100%;
   justify-content: center;
-  align-items: center;
+  align-items: top;
   flex-wrap: wrap;
   margin-bottom: 50px;
+  margin-top: 30px;
+}
+
+#banger-conclusion {
+    margin: 0 auto;
+    text-align: center;
+    color: rgb(252, 140, 142);
+    font-size: 3em;
 }
 
 .fit {
@@ -143,12 +289,13 @@ export default {
     display: inline-block;
     width: 75%;
     margin: 22px 22px;
-    padding: 20px;
+    padding: 25px;
     max-width: 400px;
     border-radius: 5px;
     margin-bottom: 20px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.247);
+    position: relative;
 }
 
 h3 {
@@ -168,7 +315,7 @@ h3 {
     display: block;
     width: 100px;
     height: 100px;
-    background-size: 100% auto;
+    background-size: auto 100%;
     background-position: center center;
     margin-right: 20px;
 }
@@ -228,11 +375,16 @@ h2 {
 }
 
 h4 {
-  color: white;
+  --red: 255;
+  --green: 255;
+  --blue: 255;
+  color: rgba(var(--red), var(--green), var(--blue), 1);
   display: flex;
   align-items: center;
   margin: 0;
   text-align: left;
+  font-size: 16px;
+  margin: 8px 0;
 }
 
 p {
@@ -263,5 +415,77 @@ p {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    
+}
+
+#characteristics {
+  margin-top: 30px;
+}
+
+.nomargin {
+    margin: 0 !important;
+}
+
+#artist-name {
+  cursor: pointer;
+}
+
+#artist-name:hover {
+  text-decoration: underline;
+}
+
+.graph {
+    --numBars: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+    max-width: 400px;
+    height: 187px;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    margin: 10px 0px;
+}
+
+.graph-bar {
+    --height: 0;
+    --red: 240;
+    --green: 193;
+    --blue: 111;
+    display: block;
+    width: calc((100% / var(--numBars)) - 1px);
+    height: calc(125px * var(--height));
+    background-color: rgba(var(--red), var(--green), var(--blue), .9);
+    border-radius: 3px;
+    position: relative;
+}
+
+.graph-bar p {
+    display: none;
+    position: absolute;
+    font-size: 1em;
+    color: white;
+    text-align: center;
+    top: calc(((125px * var(--height)) / 2) + -90px);
+    transform: translateX(-15px);
+}
+
+.graph-bar:hover p {
+    display: block;
+}
+
+
+.graph-key {
+    position: absolute;
+    width: calc(100% - 80px);
+    left: 40px;
+    bottom: 10px;
+    text-align: center;
+    font-size: .8em;
+    color:rgba(255, 255, 255, 0.267);
+}
+
+.graph-key p {
+  color: rgba(255, 255, 255, 0.329);
 }
 </style>

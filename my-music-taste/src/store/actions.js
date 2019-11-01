@@ -620,6 +620,21 @@ const cleanAudioAnalysis = async (context, payload) => {
     audioAnalysis.segments = null;
     return newSegments
 };
+const getPercentiles = async (context, payload) => {
+    let ids = Object.keys(context.state.tracks);
+    let keys = Object.keys(payload);
+    let response = {valence: 0, danceability: 0, energy: 0, banger: 0};
+    for (let i = 0; i < keys.length; i++) {
+        let lower = 0;
+        for (let j = 0; j < ids.length; j++) {
+            if (context.state.tracks[ids[j]][keys[i]] <= payload[keys[i]]) {
+                lower += 1;
+            }
+        }
+        response[keys[i]] = lower / context.state.progress.total;
+    }
+    return response;
+};
 //{h, s, v}
 const HSVtoRGB = async (context, payload) => {
     var r, g, b, i, f, p, q, t;
@@ -807,6 +822,7 @@ export default {
     songAnalysis,
     songAnalysisFeatures,
     cleanAudioAnalysis,
+    getPercentiles,
     HSVtoRGB,
 
     bangerCalc,

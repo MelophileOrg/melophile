@@ -10,6 +10,7 @@
         <div id="no-results" v-if="!trackSelected && list.length == 0 && !waiting && !load && !empty">
           <h1>No Results Found</h1>
         </div>
+        <EmptyLarge v-if="empty"/>
     </div>
   </div>
 </template>
@@ -18,6 +19,7 @@
 import NavBar from '@/components/General/NavBar.vue'
 import SearchBar from '@/components/Library/SearchBar.vue'
 import SearchItem from '@/components/Library/SearchItem.vue'
+import EmptyLarge from '@/components/Library/EmptyLarge.vue'
 
 export default {
   name: 'searchsong',
@@ -25,6 +27,7 @@ export default {
     NavBar,
     SearchBar,
     SearchItem,
+    EmptyLarge
   },
   data() {
       return {

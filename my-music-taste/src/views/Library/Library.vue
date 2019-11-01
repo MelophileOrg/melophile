@@ -43,7 +43,7 @@
         <Graph :override="progress.tracksLoaded" title="Should You DJ a Party?" instructions="Go to the Extremes Tab for the Highest and Lowest Tracks" :delay="11" :bars="cleanGraphData(audioFeatures.banger.plot)" max_tag="Absolute Bangers" min_tag="*Snore*" y_axis="Number of Songs" :color="audioFeatures.banger.color"/>
       </div>
 
-      <div v-if="progress.tracksLoaded && tab == 1">
+      <div class="extremes" v-if="progress.tracksLoaded && tab == 1">
         <Extremes/>
       </div>
     </div>
@@ -203,7 +203,7 @@ export default {
   display: flex;
   width: 100%;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   flex-wrap: wrap;
   margin-bottom: 50px;
 }
@@ -281,6 +281,10 @@ h5 {
   color: rgba(255, 255, 255, 0.514) !important;
   font-size: 1.4em;
   margin-bottom: 2px;
+}
+
+.extremes {
+  margin-top: 20px;
 }
 
 .num {

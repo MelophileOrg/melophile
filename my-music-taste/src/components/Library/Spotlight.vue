@@ -1,24 +1,26 @@
 <template>
-  <div class="spotlight" :style="{'--delay': + 1}">
+  <div class="spotlight" :style="{'--delay': + delay}">
     <Loading v-if="!override"/>
-    <div v-if="override" id="spotlight-data">
+    <div v-if="override && list.length > 0" id="spotlight-data">
         <h3 class="nomargin">{{title}}</h3>
         <div class="row favorite-div">
             <img v-if="image != ''" :src="image"/>
             <img v-if="image == ''" src="../../assets/icons/genres.svg"/>
             <div>
-            <h4 class="favorite">{{list[0].name}}</h4>
-            <h5>{{list[0].value}} Songs</h5>
+            <h4 v-if="numOff" @click="routeTo(list[0])" class="favorite">{{list[0]}}</h4>
+            <h4 v-if="!numOff" @click="routeTo(list[0])" class="favorite">{{list[0].name}}</h4>
+            <h5 v-if="!numOff">{{list[0].value}} Songs</h5>
             </div>
         </div>
         <div>
-            <div class="row center">
+            <div class="flex max">
             <div class="artist" v-for="i in (list.length - 1)" :key="list[i].id" >
-                <h4>{{list[i].name}}</h4>
-                <h5>{{list[i].value}} Songs</h5>
+              <h4 v-if="numOff" @click="routeTo(list[i])">{{list[i]}}</h4>
+                <h4 v-if="!numOff" @click="routeTo(list[i])">{{list[i].name}}</h4>
+                <h5 v-if="!numOff">{{list[i].value}} Songs</h5>
             </div>
         </div>
-        <p @click="toCharts">View More</p>
+        <p v-if="!numOff" @click="toCharts">View More</p>
     </div>
 
     </div>
@@ -37,13 +39,26 @@ export default {
     override: Boolean,
     title: String,
     list: Array,
+    delay: Number,
     image: String,
+    numOff: Boolean
   },
   methods: {
     toCharts(){
       this.$router.push('/charts');
+    },
+    routeTo(value) {
+      if (this.numOff) {
+        this.$router.push('/genres/' + value);
+      }
+      else if (this.image == "") {
+        this.$router.push('/genres/' + value.name);
+      }
+      else {
+        this.$router.push('/artists/' + value.id);
+      }
     }
-  }
+  },
 }
 </script>
 
@@ -61,6 +76,10 @@ export default {
     margin-bottom: 20px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.247);
+}
+.max {
+  width: 100%;
+  overflow: hidden;
 }
 .row {
   display: flex;
@@ -100,9 +119,9 @@ export default {
 }
 
 .artist {
+  margin: 0 auto;
   margin-top: 10px;
   display: block;
-  width: 110px;
   padding: 0px 10px;
 }
 
@@ -143,6 +162,11 @@ h4 {
     color: #fff;
     margin: 0;
     text-align: left;
+    cursor: pointer;
+}
+
+h4:hover {
+  text-decoration: underline;
 }
 
 h3 {
@@ -155,7 +179,7 @@ h3 {
 }
 
 p {
-  color: rgba(255, 255, 255, 0.253);
+  color: rgba(255, 255, 255, 0.171);
   margin: 0;
   transform: translateY(10px);
   cursor: pointer;
