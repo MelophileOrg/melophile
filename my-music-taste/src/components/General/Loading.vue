@@ -1,6 +1,6 @@
 <template>
   <div class="loading">
-    <div class="loading">
+    <div class="loadingdiv">
         <div v-for="bar in 4" :key="'loadingbar'+bar" class="bar" :style="{'--delay': + (bar - 1)}"/>
     </div>
   </div>
@@ -17,6 +17,12 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .loading {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+}
+.loadingdiv {
   --height: 27;
   display: flex;
   justify-content: center;

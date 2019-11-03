@@ -62,12 +62,37 @@ body {
   width: calc(100vw);
   min-height: 100vh;
   position: relative;
-  z-index: 0;
 }
 
-@media screen and (min-width: 720px) {
+@media screen and (min-width: 721px) {
   #main {
     width: calc(100vw - 260px);
+    min-height: calc(100vh - 71px);
+  }
+
+  #main-flex {
+    min-height: calc(100vh - 71px);
+  }
+}
+
+@media screen and (max-width: 720px) {
+  .windows {
+    margin-top: 15px;
+  }
+  #main {
+    min-height: calc(100vh - 71px);
+    z-index: 0;
+  }
+
+  #main-flex {
+    min-height: calc(100vh - 71px);
+    z-index: 0;
+  }
+
+  .window-title {
+    font-size: 1.3em !important;
+    margin-bottom: 12px !important;
+
   }
 }
 
@@ -161,5 +186,38 @@ html::-webkit-scrollbar-thumb
 
 .flex-align-center {
   align-items: center;
+}
+
+.window {
+  --delay: 0;
+  animation: slide-up .5s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s);
+  display: inline-block;
+  width: 75%;
+  margin: 22px 22px;
+  padding: 20px;
+  max-width: 400px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.247);
+}
+
+.window-title {
+  text-align: left;
+  animation: none;
+  font-size: 1.6em;
+  margin: 0;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.windows {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: top;
+  flex-wrap: wrap;
+  margin-bottom: 50px;
+  margin-top: 30px;
 }
 </style>

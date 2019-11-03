@@ -1,17 +1,17 @@
 <template>
   <div class="graphcomp" :style="{'--graphdelay': delay}">
+    <p @click="more" v-if="instructions != ''" class="instructions">{{instructions}}</p>
     <div >
-      <h3>{{title}}</h3>
+      <h3 class="window-title">{{title}}</h3>
       <Loading v-if="!override"/>
       <div v-if="override" class="graph" :style="{'--max': + findMax(bars), '--red': + color.red, '--green': + color.green, '--blue': + color.blue}">
-        <div class="graph-bar" v-for="(bar, index) in bars" :key="title+'-bargraph-'+index" :class="{toolow: bar.value < findMax(bars) / 10}" :style="{'--height': + bar.value}"><p>{{bar.tag}}</p></div>
+        <div class="graph-bar" v-for="(bar, index) in bars" :key="title+'-bargraph-'+index" :class="{toolow: bar.value < findMax(bars) / 8}" :style="{'--height': + bar.value}"><p :class="{thousands: bar.value > 999}">{{bar.tag}}</p></div>
         <p v-if="y_axis != ''" class="yAxis">{{y_axis}}</p>
       </div>
       <div class="graph-labels">
         <p>{{min_tag}}</p>
         <p>{{max_tag}}</p>
       </div>
-      <p v-if="instructions != ''" class="instructions">{{instructions}}</p>
     </div>
   </div>
 </template>
@@ -46,6 +46,9 @@ export default {
       }
       return max;
     },
+    more() {
+      this.$emit("more");
+    }
   }
 }
 </script>
@@ -59,12 +62,13 @@ export default {
   width: calc(80% - 40px);
   margin: 22px 22px;
   padding: 20px;
-  padding-bottom: 5px;
+  padding-bottom: 20px;
   max-width: 400px;
   border-radius: 5px;
   margin-bottom: 20px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.247);
+  position: relative;
 }
 .graph {
   --max: 0;
@@ -83,6 +87,37 @@ export default {
   padding-top: 10px;
 }
 
+@media screen and (max-width: 720px) {
+  .graph {
+    height: 150px;
+  }
+
+  .graph-bar p {
+    transform: translateX(0px);
+    font-size: .65em !important;
+  }
+
+  .instructions {
+    font-size: 10px !important;
+  }
+
+  .yAxis {
+    transform: rotate(-90deg) translateX(22px) translateY(-2px) !important;
+  }
+
+  .thousands {
+    transform: translateX(-3px) translateY(-0px) !important;
+  }
+}
+
+@media screen and (min-width: 720px) {
+  .thousands {
+    transform: translateX(-1.5px) translateY(0px) !important;
+  }
+}
+
+
+
 .graph-labels {
   display: flex;
   position: relative;
@@ -91,31 +126,29 @@ export default {
   width: 100%;
 }
 
-h3 {
-  text-align: left;
-  animation: none;
-  font-size: 1.6em;
-  margin: 0;
-  margin-bottom: 20px;
-  color: white;
-}
-
 .instructions {
   display: block;
   width: 100%;
   text-align: center;
   margin: 0;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.219) !important;
+  font-size: 1em !important;
+  color: rgba(255, 255, 255, 0.11) !important;
+  position: absolute;
+  bottom: 10px;
+  left: 0px;
+  cursor: pointer;
+  transition: all .3s ease;
+}
+
+.instructions:hover {
+  color: white !important;
 }
 
 .graph-labels p {
   margin: 5px 0;
   margin-top: 15px;
   font-size: .8em;
- 
   color: rgba(250, 246, 246, 0.404);
-  
   transform: translateY(-5px);
 }
 
@@ -128,7 +161,6 @@ h3 {
   font-size: .8em;
   left: -58px;
   top: 80px;
-
 }
 
 p {

@@ -13,7 +13,7 @@
             <div  class="col fit">
                 <h1>{{trackData.name}}</h1>
                 <div id="artists">
-                    <h3 v-for="artist in trackData.artists" :key="artist.name">{{artist.name}}</h3>
+                    <h3>{{trackData.artists[0].name}}</h3>
                 </div>
                 <h2>{{trackData.album.name}}</h2>
             </div>
@@ -39,7 +39,7 @@
         </div>
 
         <div class="window" :style="{'--delay': + 2}">
-          <h3 v-if="audioFeaturesDone">Song Characteristics:</h3>
+          <h3  class="window-title" v-if="audioFeaturesDone">Song Characteristics:</h3>
           <div v-if="audioFeaturesDone">
             <PercentBar title="Happiness" :percent="trackData.valence" :color="audioFeatures.valence.color" />
             <PercentBar title="Energy" :percent="trackData.energy" :color="audioFeatures.energy.color" />
@@ -51,26 +51,40 @@
 
         
         <div class="window" :style="{'--delay': + 3}">
-          <h3 v-if="audioFeaturesDone">Song Statistics:</h3>
+          <h3  class="window-title" v-if="audioFeaturesDone">Song Statistics:</h3>
           <div v-if="audioFeaturesDone">
+
             <div class="flex flex-space-between">
-              <h4>Tempo:</h4><h4 :style="{'--red': + audioFeatures.tempo.color.red, '--green': + audioFeatures.tempo.color.green, '--blue': + audioFeatures.tempo.color.blue,}">{{Math.round(trackData.tempo)}} BPM</h4>
+              <h4>Key</h4>
+              <div class="flex flex-space-around" id="keys" :style="{'--red': + 242, '--green': + 142, '--blue': + 43}">
+                <h4 class="key" v-for="(key, index) in keys" :key="'keys' + key" :style="{'--index': + index}" :class="{activeKey: key == getKey(trackData.key)}">{{key}}</h4>
+              </div>
             </div>
+
             <div class="flex flex-space-between">
-              <h4>Key:</h4><h4 :style="{'--red': + audioFeatures.acousticness.color.red, '--green': + audioFeatures.acousticness.color.green, '--blue': + audioFeatures.acousticness.color.blue,}">{{getKey(trackData.key)}}</h4>
+              <h4>Mode</h4>
+              <div id="modes" class="flex">
+                  <h4 class="mode" :class="{activemode: mode(trackData.mode) == 'Major'}">Major</h4>
+                  <h4 class="mode" :class="{activemode: mode(trackData.mode) == 'Minor'}">Minor</h4>
+              </div>
             </div>
+
             <div class="flex flex-space-between">
-              <h4>Mode:</h4><h4 :style="{'--red': + audioFeatures.valence.color.red, '--green': + audioFeatures.valence.color.green, '--blue': + audioFeatures.valence.color.blue,}">{{mode(trackData.mode)}}</h4>
+              <h4>Tempo</h4>
+              <h4>{{getTempo()}}</h4>
             </div>
+
+
             <div class="flex flex-space-between">
-              <h4>Duration:</h4><h4 :style="{'--red': + audioFeatures.danceability.color.red, '--green': + audioFeatures.danceability.color.green, '--blue': + audioFeatures.danceability.color.blue,}">{{time(Math.round(trackData.duration_ms / 1000))}}</h4>
+              <h4>Duration</h4>
+              <h4>{{time(Math.round(trackData.duration_ms / 1000))}}</h4>
             </div>
           </div>
           <Loading v-else/>
         </div>
 
         <div id="banger" class="window"  :style="{'--delay': 4}">
-          <h3 v-if="audioAnalysisReady" class="nomargin">Audio Analysis</h3>  
+          <h3 v-if="audioAnalysisReady" class="nomargin window-title">Audio Analysis</h3>  
           <div v-if="audioAnalysisReady" class="graph" :style="{'--numBars': + trackData.audioAnalysis.length}">
               <div class="graph-bar" v-for="(bar, index) in trackData.audioAnalysis" :style="{'--height': + bar.loudness_max, '--red': + bar.red, '--green': + bar.green, '--blue': + bar.blue,}" :key="'audio-analysis'+index">
                   <p>{{time(bar.start)}}</p>
@@ -82,7 +96,7 @@
 
 
         <div class="window" :style="{'--delay': + 5}">
-          <h3 v-if="percentilesReady">Compaired to Saved (Percentile):</h3>
+          <h3  class="window-title" v-if="percentilesReady">Compaired to Saved (Percentile):</h3>
           <div v-if="percentilesReady">
             <PercentileBar title="Happiness" :percent="trackData.percentiles.valence" :color="audioFeatures.valence.color" />
             <PercentileBar title="Energy" :percent="trackData.percentiles.energy" :color="audioFeatures.energy.color" />
@@ -92,8 +106,10 @@
           <Loading v-else/>
         </div>
 
-        <div id="banger" class="window" :style="{'--delay': 6}">
-            <h3 v-if="audioFeaturesDone">Is This a Banger?</h3>  
+        <Spotlight :delay="6" :numOff="true" :override="artistDone" title="Genres:" :list="genresComputed" image=""/>
+
+        <div id="banger" class="window" :style="{'--delay': 7}">
+            <h3 class="window-title" v-if="audioFeaturesDone">Is This a Banger?</h3>  
             <div v-if="audioFeaturesDone">
               <PercentBar title="Banger-Level" :percent="trackData.banger" :color="audioFeatures.banger.color" />
               <h3 id="banger-conclusion">{{bangerConclusion()}}</h3>
@@ -101,7 +117,7 @@
             <Loading v-else/>
         </div>
 
-        <Spotlight :delay="7" :numOff="true" :override="artistDone" title="Genres:" :list="genresComputed" image=""/>
+       
 
       </div>
 
@@ -137,6 +153,7 @@ export default {
           audioAnalysisReady: false,
           percentilesReady: false,
           interval: null,
+          keys: ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"],
         }
     },
     methods: {
@@ -151,6 +168,9 @@ export default {
           });
           this.percentilesReady = true;
         }
+      },
+      getTempo() {
+        return Math.round(this.trackData.tempo) + " BPM";
       },
       time(seconds) {
           let zero = "";
@@ -171,10 +191,9 @@ export default {
       
       },
       getKey(val) {
-          let keys = ["C", "C# / Db", "D", "D# / Eb", "E", "F", "F# / Gb", "G", "G# / Ab", "A", "A# / Bb", "B"];
           if (val == -1)
               return "Not Found";
-          return keys[val % 12];
+          return this.keys[val % 12];
       },
       bangerConclusion() {
         if (this.audioFeaturesDone) {
@@ -238,6 +257,10 @@ export default {
       }
     },  
     async created() {
+      window.scroll({
+        top: 0,
+        behavior: 'auto'
+      });
       this.trackData = await this.$store.dispatch('songAnalysis', this.$route.params.id);
       this.trackData.banger = await this.$store.dispatch('bangerCalc', {tempo: this.trackData.tempo, danceability: this.trackData.danceability, energy: this.trackData.energy});
       this.audioFeaturesDone = true;
@@ -271,6 +294,69 @@ export default {
   margin-top: 30px;
 }
 
+
+.mode {
+  display: inline-block;
+  color: rgba(255, 255, 255, 0.13);
+  margin-left: 8px;
+}
+
+#modes {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.activemode {
+  color: white;
+}
+
+@media screen and (max-width: 720px) {
+
+  .key {
+    font-size: .8em !important;
+  }
+  .windows {
+    margin-top: 15px;
+  }
+
+  #track-image {
+    width: 70px !important;
+    height: 70px !important;
+    margin-right: 20px;
+  }
+
+  h1 {
+    font-size: 1.2em !important;
+    
+  }
+
+  h2 {
+      font-size: .8em !important;
+      margin: 2px !important;
+  }
+
+  h4 {
+    font-size: .9em !important;
+  }
+
+  .col.fit #artists h3 {
+    margin: 0 !important;
+    margin-top: 0px !important;
+  }
+
+  .window {
+      margin: 18px 18px !important;
+  }
+
+  #banger-conclusion {
+    font-size: 2em !important;
+  }
+
+  .graph {
+    height: 150px !important;
+  }
+}
+
 #banger-conclusion {
     margin: 0 auto;
     text-align: center;
@@ -298,12 +384,7 @@ export default {
     position: relative;
 }
 
-h3 {
-  margin: 5px;
-  margin-top: 10px;
-  color: white;
-  animation: throb 2s ease 0s infinite;
-}
+
 
 .row {
   display: flex;
@@ -363,16 +444,48 @@ h2 {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    margin-top: 10px;
 }
 
-.window h3 {
-  text-align: left;
-  animation: none;
-  font-size: 1.6em;
-  margin: 0;
-  color: white;
-  margin-bottom: 15px;
+#keys {
+  --red: 0;
+  --green: 0;
+  --blue: 0;
+  display: flex;
+
+  width: calc(100% - 102px);
 }
+
+.key {
+  --index: 0;
+  color:rgba(255, 255, 255, 0.205);
+  font-size: 1em;
+  font-weight: lighter;
+  animation: bump 2s ease-in-out calc(var(--index) * .2s) infinite;
+}
+
+@keyframes bump {
+  0% {
+    opacity: .8;
+  }
+  50% {
+    opacity: .8;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: .8;
+  }
+}
+
+.key.activeKey {
+  color: rgb(255, 255, 255);
+  font-size: 1em !important;
+  font-weight: bolder;
+  animation: none;
+}
+
 
 h4 {
   --red: 255;
@@ -405,18 +518,7 @@ p {
     overflow: hidden;
 }
 
-#artists h3 {
-    font-size: 1em;
-    color: rgba(255, 255, 255, 0.927);
-    text-align: left;
-    margin: 0px 0px;
-    margin-right: 5px;
-    margin-top: 10px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    
-}
+
 
 #characteristics {
   margin-top: 30px;
@@ -432,6 +534,11 @@ p {
 
 #artist-name:hover {
   text-decoration: underline;
+}
+
+.col.fit #artists h3 {
+  margin: 0;
+  margin-top: 8px;
 }
 
 .graph {

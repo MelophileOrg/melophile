@@ -1,6 +1,6 @@
 <template>
   <div class="Averages" :style="{'--delay': + delay}">
-      <h3>Averages:</h3>
+      <h3 class="window-title">Averages:</h3>
       <PercentBar title="Tempo" type="tempo" :percent="audioFeatures.tempo.value / 208" :color="audioFeatures.tempo.color" />
       <PercentBar title="Major" :percent="mode.value" :color="mode.major" />
       <PercentBar title="Minor" :percent="1 - mode.value" :color="mode.minor" />
@@ -44,15 +44,6 @@ export default {
     margin-bottom: 20px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.247);
-}
-
-h3 {
-  text-align: left;
-  animation: none;
-  font-size: 1.6em;
-  margin: 0;
-  margin-bottom: 20px;
-  color: white;
 }
 
 </style>

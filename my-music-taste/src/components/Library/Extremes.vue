@@ -3,7 +3,7 @@
         <div v-if="progress.extremesLoaded">
         <Selector :items="selector" :load="false" :override="false" @pending="pending" @selection="select"/>
         <div class="list" v-if="list.length > 0">
-            <SearchItem class="searchItem" v-for="(track, index) in list" :saved="true"  :showNum="true" :key="track.id + index" :data="track" :index="index" type="track"/>
+            <SearchItem :topsaved="false" class="searchItem" v-for="(track, index) in list" :saved="true"  :showNum="true" :key="track.id + index" :data="track" :index="index" type="track"/>
         </div>
         <Empty class="list" v-else/>
         </div>
@@ -105,9 +105,18 @@ export default {
     margin-top: 35px;
 }
 
+@media only screen and (max-width: 720px) {
+    .list {
+        margin-top: 15px;
+    }
+
+    .Extremes {
+        margin-bottom: 0px;
+    }
+}
+
 .searchItem {
     max-width: 900px;
-    
     margin: 0 auto;
 }
 </style>

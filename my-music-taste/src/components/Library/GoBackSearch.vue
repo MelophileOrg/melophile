@@ -32,4 +32,13 @@ export default {
     text-align: left;
 }
 
+@media only screen and (max-width: 720px) {
+  .button {
+    padding-top: 15px;
+    font-size: 20px;
+    height: 35px;
+    width: 100vw !important;
+  }
+}
+
 </style>

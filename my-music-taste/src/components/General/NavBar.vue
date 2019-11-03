@@ -6,7 +6,7 @@
         <h1>My Music Taste</h1>
       </div>
       <NavButton path="home" title="Home" image="home" :active="path == 'home'"/>
-      <NavButton path="search" title="Song Analysis" image="search" :active="path == 'song' || path == 'songs'"/>
+      <NavButton path="search" title="Song Analysis" image="search" :active="path == 'song' || path == 'songs' || path == 'genre'|| path == 'artist'|| path == 'search'"/>
       <h2>Your Library</h2>
       <NavButton path="library" title="Library" image="library" :active="path == 'library' || path == 'save'"/>
       <NavButton path="charts" title="Charts" image="chart" :active="path == 'charts' || path == 'chart'"/>
@@ -14,8 +14,23 @@
       <NavButton path="myprofile" title="My Profile" image="profile" :active="path == 'myprofile'"/>
       <NavButton path="public" title="Public Profiles" image="public" :active="path == 'public'"/>
     </div>
-    <div id="small-navbar" class="contents">
-
+    <div id="small-navbar-space"/>
+    <div id="small-navbar" :class="{fixedsmall: menuShow}">
+      <div id="small-title">
+        <div class="small-logo" id="logo"/>
+        <h1>My Music Taste</h1>
+      </div>
+      <button id="open-menu" @click="toggleMenu"/>
+    </div>
+    <div v-if="menuShow" id="pop-up-menu">
+      <NavButton @routed="routed" path="home" title="Home" image="home" :active="path == 'home'"/>
+      <NavButton @routed="routed" path="search" title="Song Analysis" image="search" :active="path == 'song' || path == 'songs' || path == 'search' || path == 'genre'|| path == 'artist'"/>
+      <h2>Your Library</h2>
+      <NavButton @routed="routed" path="library" title="Library" image="library" :active="path == 'library' || path == 'save'"/>
+      <NavButton @routed="routed" path="charts" title="Charts" image="chart" :active="path == 'charts' || path == 'chart'"/>
+      <h2>Social</h2>
+      <NavButton @routed="routed" path="myprofile" title="My Profile" image="profile" :active="path == 'myprofile'"/>
+      <NavButton @routed="routed" path="public" title="Public Profiles" image="public" :active="path == 'public'"/>
     </div>
   </div>
 </template>
@@ -27,13 +42,17 @@ export default {
   name: 'navbar',
   data() {
     return {
-      path: this.$router.currentRoute.name
+      path: this.$router.currentRoute.name,
+      menuShow: false,
     }
   },
   components: {
     NavButton
   },
   methods: {
+    routed() {
+      this.menuShow = false;
+    },
     toggleMenu() {
       this.menuShow = !this.menuShow;
     },
@@ -47,6 +66,24 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+#pop-up-menu {
+  width: 100vw;
+  height: calc(100vh - 70px);
+  position: fixed;
+  left: 0px;
+  top: 70px;
+  background-color: #121212;
+  z-index: 10;
+  display: block;
+  animation: slide-right .4s ease;
+}
+
+@keyframes slide-right {
+  from {
+    transform: translateX(-100vw);
+  }
+}
+
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -55,6 +92,7 @@ export default {
   background-color: #121212;
   color: white;
   position: relative;
+  z-index: 10;
   
 }
 
@@ -69,9 +107,36 @@ export default {
 }
 
 #small-navbar {
-  display: block;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: calc(100vw - 40px);
+  padding: 0 20px;
+}
+
+#small-navbar-space {
+  display: none;
+}
+
+.fixedsmall {
+  position: fixed;
+  left: 0px;
+  top: 0px;
   width: 100%;
-  height: 100%;
+  height: 70px;
+  z-index: 100;
+  background-color: #121212;
+}
+
+#small-title {
+  display: flex;
+  align-items: center;
+}
+
+#small-title h1 {
+  margin: 0;
+  font-size: 23px;
+  margin-left: 12px;
 }
 
 .contents {
@@ -80,13 +145,25 @@ export default {
 }
 
 .contents h2 {
-  font-size: 11px;
+  font-size: 10px;
   color: #b3b3b3;
   text-transform: uppercase;
   letter-spacing: .16em;
   margin: 10px 20px;
   margin-top: 24px;
   margin-left: 32px;
+  text-align: left;
+  cursor: default;
+}
+
+h2 {
+  font-size: 13px;
+  color: #c4c4c4;
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  margin: 10px 20px;
+  margin-top: 30px;
+  margin-left: 18px;
   text-align: left;
   cursor: default;
 }
@@ -99,9 +176,28 @@ export default {
     background-color: #121212;
   }
 
+  .fixedsmall {
+    position: relative;
+    left: 0px;
+    top: 0px;
+  }
+
   #large-navbar {
     display: block;
   }
+
+  #small-navbar {
+    display: none;
+  }
+
+  #pop-up-menu {
+    display: none;
+  }
+
+  .contents h2 {
+    font-size: 11px;
+  }
+
 }
 
 #title {
@@ -124,6 +220,24 @@ export default {
   display: block;
   width: 32px;
   height: 32px;
+}
+
+.small-logo {
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+
+#open-menu {
+  display: block;
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0);
+  background-image: url('../../assets/icons/menu.svg');
+  background-size: 100% 100%;
+  background-position: center center;
+  
+  border: 0;
 }
 
 #logo {

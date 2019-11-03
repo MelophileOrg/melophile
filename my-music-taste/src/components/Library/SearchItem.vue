@@ -13,8 +13,8 @@
 
         <div v-if="type == 'track'" class="artists">
           <div v-for="artistnum in 4" :key="data.name + '-' + (artistnum - 1)">
-            <h4 class="artist" v-if="(artistnum - 1) < data.artists.length && !saved">{{data.artists[(artistnum - 1)].name}}<h4 class="space" v-if="(artistnum - 1) < data.artists.length - 1"></h4></h4>
-            <h4 class="artist" v-if="(artistnum - 1) < data.artists.length && saved">{{artists[data.artists[(artistnum - 1)]].name}}<h4 class="space" v-if="(artistnum - 1) < data.artists.length - 1"></h4></h4>
+            <h4 class="artist" v-if="(artistnum - 1) < data.artists.length && !saved">{{data.artists[(artistnum - 1)].name}}{{comma((artistnum - 1), data.artists.length - 1)}}</h4>
+            <h4 class="artist" v-if="(artistnum - 1) < data.artists.length && saved">{{artists[data.artists[(artistnum - 1)]].name}}{{comma((artistnum), data.artists.length - 1)}}</h4>
           </div>
         </div>
         <div v-if="type == 'genre'" class="artists">
@@ -22,9 +22,14 @@
             <h4 class="artist">{{data.tracknum}} Songs</h4>
           </div>
         </div>
-        <div v-if="type == 'artist'" class="artists">
+        <div v-if="type == 'artist' && topsaved == true" class="artists">
+          <div>
+            <h4 class="artist">{{data.tracks.length}} Songs</h4>
+          </div>
+        </div>
+        <div v-if="type == 'artist' && topsaved != true" class="artists">
           <div v-for="artistnum in 4" :key="data.name + '-' + (artistnum - 1)">
-            <h4 class="artist" v-if="(artistnum - 1) < data.genres.length">{{data.genres[(artistnum - 1)]}}<h4 class="space" v-if="(artistnum - 1) < data.genres.length - 1"></h4></h4>
+            <h4 class="artist" v-if="(artistnum - 1) < data.genres.length">{{data.genres[(artistnum - 1)]}}{{comma((artistnum), data.genres.length - 1)}}</h4>
           </div>
           <div v-if="data.genres.length == 0">
             <h4 class="artist" >No Genres Provided</h4>
@@ -46,15 +51,28 @@ export default {
     index: Number,
     showNum: Boolean,
     saved: Boolean,
+    topsaved: Boolean,
   },
   methods: {
     selectTrack(id) {
       if (this.type == "track")
         this.$router.push("/songs/" + id);
       if (this.type == "artist")
-        this.$router.push("/artist/" + id);
+        this.$router.push("/artists/" + id);
       if (this.type == "genre")
-        this.$router.push("/genre/" + this.data.name);
+        this.$router.push("/genres/" + this.data.name);
+    },
+    comma(num, total) {
+      if (num == 3) {
+        return ",";
+      }
+      if (num == 4) {
+        return "";
+      }
+      if (num < total) {
+        return ",";
+      }
+      return "";
     }
   },
   computed: {
@@ -106,19 +124,24 @@ export default {
 }
 
 .artists .artist {
-  display: flex;
-  flex-wrap: wrap;
+  display: block;
   color: rgba(255, 255, 255, 0.514) !important;
   font-weight: lighter;
   text-transform: capitalize;
   font-size: 15px;
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-right: 10px;
+
 }
 
 .artists {
   display: flex;
+  align-items: center;
   margin: 0;
-  margin-left: 13px;
+  margin-left: 11px;
+  max-width: 100%;
 }
 
 .genre {
@@ -150,6 +173,8 @@ export default {
 .info {
   display: block;
   width: calc(100% - 100px);
+  position: relative;
+  overflow: hidden;
 }
 
 .search-song:hover .search-title
@@ -164,5 +189,26 @@ h1 {
   text-align: center;
   width: 25px;
   margin-right: 10px;
+}
+
+@media only screen and (max-width: 720px) {
+  h1 {
+    font-size: 1em;
+    margin: 0;
+  }
+
+  .search-title {
+    font-size: 20px;
+  }
+
+  .search-image {
+    width: 50px;
+    margin-left: 10px;
+    height: 50px;
+  }
+
+  .search-song {
+    padding: 15px 5px;
+  }
 }
 </style>

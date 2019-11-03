@@ -1,6 +1,6 @@
 <template>
   <div class="Characteristics" :style="{'--delay': + delay}">
-      <h3>Characteristics:</h3>
+      <h3 class="window-title">Characteristics:</h3>
       <PercentBar title="Happiness" :percent="audioFeatures.valence.value" :color="audioFeatures.valence.color" />
       <PercentBar title="Energy" :percent="audioFeatures.energy.value" :color="audioFeatures.energy.color" />
       <PercentBar title="Danceability" :percent="audioFeatures.danceability.value" :color="audioFeatures.danceability.color" />
@@ -42,13 +42,5 @@ export default {
     border: 1px solid rgba(255, 255, 255, 0.247);
 }
 
-h3 {
-  text-align: left;
-  animation: none;
-  font-size: 1.6em;
-  margin: 0;
-  margin-bottom: 20px;
-  color: white;
-}
 
 </style>

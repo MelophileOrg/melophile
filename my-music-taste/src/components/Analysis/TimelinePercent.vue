@@ -1,7 +1,7 @@
 <template>
 <div class="timeline" :style="{'--graphdelay': delay}">
     <div>
-      <h3>{{title}}</h3>
+      <h3 class="window-title">{{title}}</h3>
       <Loading v-if="!override"/>
       <div v-if="override" class="graph" :style="{'--max': + findMax(bars)}">
         <div class="graph-bar time" v-for="(bar, index) in bars" :key="title+ '-timeline' + index" :class="{toolow: bar.value < findMax(bars) / 10}" 
@@ -157,6 +157,28 @@ export default {
   color: rgba(255, 255, 255, 0.082) !important;
 }
 
+@media screen and (max-width: 720px) {
+  .graph {
+    height: 150px;
+  }
+
+  .yAxis {
+   top: 60px !important;
+  }
+
+  .graph-labels {
+    width: 100%;
+  }
+
+  .graph-bar.time:hover p {
+    font-size: .8em;
+  }
+
+  .graph-bar.time {
+    width: calc((100% / var(--num))) !important;
+  }
+}
+
 .graph-labels p {
   margin: 5px 0;
   margin-top: 15px;
@@ -253,12 +275,4 @@ p {
   display: none;
 }
 
-h3 {
-  text-align: left;
-  animation: none;
-  font-size: 1.6em;
-  margin: 0;
-  margin-bottom: 20px;
-  color: white;
-}
 </style>

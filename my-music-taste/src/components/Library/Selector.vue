@@ -37,7 +37,8 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  max-width: 100vw;
+  max-width: 90vw;
+  margin: 0 auto;
   flex-wrap: wrap;
   animation: slide-up .3s ease .2s, hide .2s linear;
 }
@@ -53,5 +54,14 @@ export default {
   margin-right: 5px;
   text-transform: lowercase;
   font-weight: lighter;
+}
+
+@media only screen and (max-width: 500px) {
+  .selector {
+    display: flex;
+  }
+  .text {
+    display: none;
+  }
 }
 </style>

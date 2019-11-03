@@ -3,7 +3,7 @@
         <div v-if="progress.extremesLoaded">
         <Selector :items="selector" :load="false" :override="false" @pending="pending" @selection="select"/>
         <div class="list" v-if="list.length > 0">
-            <SearchItem class="searchItem" v-for="(track, index) in list" :saved="true" :showNum="true" :key="track.id + index" :data="track" :index="index" :type="type"/>
+            <SearchItem :topsaved="true" class="searchItem" v-for="(track, index) in list" :saved="true" :showNum="true" :key="track.id + index" :data="track" :index="index" :type="type"/>
         </div>
         <Empty class="list" v-else/>
         </div>
@@ -60,7 +60,6 @@ export default {
                     this.list.push(this.$store.state[this.chart][ids[i]]);
                 }
                 this.pendingStatus = false;
-                console.log(this.list);
             }
         },
         pending() {
@@ -87,6 +86,12 @@ export default {
 
 .list {
     margin-top: 35px;
+}
+
+@media only screen and (max-width: 500px) {
+    .list {
+        margin-top: 10px;
+    }
 }
 
 .searchItem {

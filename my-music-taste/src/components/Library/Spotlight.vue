@@ -2,7 +2,7 @@
   <div class="spotlight" :style="{'--delay': + delay}">
     <Loading v-if="!override"/>
     <div v-if="override && list.length > 0" id="spotlight-data">
-        <h3 class="nomargin">{{title}}</h3>
+        <h3  class="window-title nomargin">{{title}}</h3>
         <div class="row favorite-div">
             <img v-if="image != ''" :src="image"/>
             <img v-if="image == ''" src="../../assets/icons/genres.svg"/>
@@ -76,6 +76,7 @@ export default {
     margin-bottom: 20px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.247);
+    position: relative;
 }
 .max {
   width: 100%;
@@ -87,7 +88,7 @@ export default {
 }
 
 .nomargin {
-  margin-bottom: 0 !important;
+  margin-bottom: 15px !important;
 }
 
 .favorite {
@@ -99,7 +100,7 @@ export default {
 .favorite-div
 {
   margin-top: 10px;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   height: 75px;
   padding: 10px 10px;
   background: rgba(255, 255, 255, 0.062);
@@ -140,10 +141,28 @@ img {
   margin-right: 5px;
 }
 
-@media only screen and (max-width: 375px) {
-  img {
-    display: none;
+
+@media screen and (max-width: 720px) {
+  .favorite {
+    font-size: 1.4em;
   }
+
+  .favorite-div
+  {
+    padding: 5px 10px;
+  }
+
+  img {
+    display: block;
+    height: 60px;
+    max-width: 87px;
+    margin-right: 5px;
+  }
+
+  .artist h4 {
+    font-size: .9em;
+  }
+
 }
 
 h5 {
@@ -169,21 +188,18 @@ h4:hover {
   text-decoration: underline;
 }
 
-h3 {
-  text-align: left;
-  animation: none;
-  font-size: 1.6em;
-  margin: 0;
-  margin-bottom: 20px;
-  color: white;
-}
 
 p {
-  color: rgba(255, 255, 255, 0.171);
+  color: rgba(255, 255, 255, 0.11);
   margin: 0;
-  transform: translateY(10px);
+  font-size: 1em;
+  text-align: right;
   cursor: pointer;
   transition: all .3s ease;
+  width: 100px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
 }
 
 p:hover {

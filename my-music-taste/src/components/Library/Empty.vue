@@ -26,8 +26,20 @@ export default {
   animation: slide-up .5s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s) linear, throb-row 2s ease-in-out calc(var(--delay) * .23s + var(--delay) * .1s + .5s) infinite;
 }
 
+@media only screen and (max-width: 720px) {
+    .loadingspace {
+      margin-left: 0px;
+    }
+    .empty {
+      margin-bottom: 0px;
+    }
+    .row {
+      height: 25px !important;
+    }
+}
+
 .row {
---delay: 0;
+  --delay: 0;
   overflow: hidden;
   position: relative;
   animation: slide-up .5s ease calc(var(--delay) * .1s), peekaboo calc(var(--delay) * .1s) linear;

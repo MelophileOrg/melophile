@@ -1,6 +1,6 @@
 <template>
     <div class="Select">
-        <h1 :class="{throb: show || hover, load: load, throbempty: (load && index == -1)}" @mouseover="hovering" @mouseout="leave" @click="toggle">{{selected}}</h1>
+        <h1 :class="{throb: show || hover || selected == '______', load: load, throbempty: (load && index == -1), empty: selected == '______'}" @mouseover="hovering" @mouseout="leave" @click="toggle"><h1 class="label" v-if="selected == '______' && !show">Select</h1>{{selected}}</h1>
         <div v-if="show" class="dropdown">
             <h1 @click="select(index)" v-for="(option, index) in options" :style="{'--delay': + index}" :key="option.value">{{option.text}}</h1>
         </div>
@@ -31,6 +31,8 @@ export default {
     },
     methods: {
         hovering() {
+            if (window.innerWidth < 720)
+                return;
             this.hover = true;
         },
         leave() {
@@ -96,13 +98,59 @@ export default {
     display: inline-block;
 }
 
+.test {
+    color: red !important;
+}
+
 .Select h1 {
     font-size: 40px;
     font-weight: bolder;
     color: rgb(255, 255, 255);
     cursor: pointer;
     margin: 0;
-    
+    position: relative;
+}
+
+.label {
+    display: none;
+}
+
+@media only screen and (max-width: 720px) {
+    .Select h1 {
+        font-size: 30px;
+        background: rgba(165, 165, 165, 0.068);
+        border: 0px solid rgba(255, 255, 255, 0.048);
+        padding: 5px 20px;
+        border-radius: 0px;
+        margin-bottom: 10px;
+    }
+
+    h1.empty {
+        color:rgba(255, 255, 255, 0);
+    }
+
+    .Select h1 h1.label {
+        display: block;
+        background: rgba(255, 255, 255, 0) !important;
+        position: absolute;
+        top: 3px;
+        left: 15px;
+        font-size: .8em;
+        margin: 0;
+        font-weight: lighter;
+        color: rgba(250, 250, 250, 0.233);
+        border: 0px;
+    }
+
+    .throbempty {
+        animation: none !important;
+    }
+
+    .throb {
+        animation: none !important;
+    }
+
+
 }
 
 
@@ -148,6 +196,7 @@ export default {
     --delay: 0;
     margin: 5px 0px;
     animation: slide-up .3s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s);
+    background:rgba(255, 255, 255, 0);
 }
 
 @keyframes slide-up {

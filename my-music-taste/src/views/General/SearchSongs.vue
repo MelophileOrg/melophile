@@ -3,7 +3,7 @@
     <NavBar/>
     <div id="main">
         <SearchBar @changed="search"/>
-        <SearchItem v-for="(track, index) in list" :key="track.id + index" :data="track" :index="index" :saved="false" type="track"/>
+        <SearchItem :topsaved="false" v-for="(track, index) in list" :key="track.id + index" :data="track" :index="index" :saved="false" type="track"/>
         <div class="loading" v-if="!trackSelected && list.length == 0 && waiting && !empty">
           <div v-for="bar in 4" :key="'loadingbar'+bar" class="bar" :style="{'--delay': + (bar - 1)}"/>
         </div>

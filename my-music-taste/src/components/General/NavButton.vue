@@ -29,8 +29,11 @@ export default {
             return images('./' + pic + ".svg");
         },
         route() {
-            if (this.path == this.currPath)
+            if (this.path == this.currPath) {
+                this.$emit('routed');
                 return;
+            }
+            this.$emit('routed');
             this.$router.push({name: this.path});
         },
     }
@@ -89,5 +92,25 @@ img {
 h1 {
     font-size: 14px;
     letter-spacing: .015em;
+}
+
+
+@media screen and (max-width: 720px) {
+    .button-contents {
+        width: calc(100% - 40px);
+        padding: 0px 20px;
+    }
+
+    img {
+    width: 24px;
+    height: 24px;
+    margin-right: 16px;
+    }
+
+    h1 {
+        font-size: 16px;
+        letter-spacing: .02em !important;
+    }
+
 }
 </style>

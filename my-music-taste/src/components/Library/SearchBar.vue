@@ -35,4 +35,12 @@ input {
     font-size: 50px;
 }
 
+@media only screen and (max-width: 720px) {
+  input {
+    font-size: 20px;
+    height: 50px;
+    width: 100vw !important;
+  }
+}
+
 </style>

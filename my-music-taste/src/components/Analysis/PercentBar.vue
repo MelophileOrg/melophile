@@ -23,11 +23,11 @@ export default {
     },
     value() {
       if (this.type == "tempo")
-        return Math.round(this.percent * 208) + "BPM";
+        return Math.round(this.percent * 210) + "BPM";
       if (this.type == "volume")
         return (Math.round(((this.percent * 50) - 50) * 10) / 10) + "dB";
       return Math.round(this.percent * 100) + "%"
-    }
+    },
   },
 }
 </script>
@@ -39,10 +39,6 @@ export default {
     align-items: center;
     margin-bottom: 10px;
     justify-content: space-between;
-}
-
-.bar-title {
-  width: 115px;
 }
 
 .stat-bar {
@@ -79,6 +75,24 @@ h4 {
   align-items: center;
   margin: 4px 0;
   text-align: left;
+}
+
+@media screen and (max-width: 720px) {
+    h4 {
+        font-size: .9em !important;
+    }
+
+    .bar-title {
+      width: 110px !important;
+    }
+
+    .stat-bar {
+        width: calc(100% - 150px);
+    }
+
+    h5 {
+      font-size: .9em !important;
+    }
 }
 
 h5 {

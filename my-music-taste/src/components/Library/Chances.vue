@@ -1,10 +1,10 @@
 <template>
   <div class="Chances" :style="{'--delay': + delay}">
-      <h3>Chances a Song in Your Library:</h3>
-      <PercentBar title="is Accoustic" :percent="audioFeatures.acousticness.value" :color="audioFeatures.acousticness.color" />
-      <PercentBar title="is Instrumental" :percent="audioFeatures.instrumentalness.value" :color="audioFeatures.instrumentalness.color" />
-      <PercentBar title="is Live" :percent="audioFeatures.liveness.value" :color="audioFeatures.liveness.color" />
-      <PercentBar title="is Speaking" :percent="audioFeatures.speechiness.value" :color="audioFeatures.speechiness.color" />
+      <h3 class="window-title">Probability a Song is...</h3>
+      <PercentBar title="Accoustic" :percent="audioFeatures.acousticness.value" :color="audioFeatures.acousticness.color" />
+      <PercentBar title="Instrumental" :percent="audioFeatures.instrumentalness.value" :color="audioFeatures.instrumentalness.color" />
+      <PercentBar title="Live" :percent="audioFeatures.liveness.value" :color="audioFeatures.liveness.color" />
+      <PercentBar title="Speaking" :percent="audioFeatures.speechiness.value" :color="audioFeatures.speechiness.color" />
   </div>
 </template>
 
@@ -41,15 +41,6 @@ export default {
     margin-bottom: 20px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.247);
-}
-
-h3 {
-  text-align: left;
-  animation: none;
-  font-size: 1.6em;
-  margin: 0;
-  margin-bottom: 20px;
-  color: white;
 }
 
 </style>

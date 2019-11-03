@@ -15,7 +15,11 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+@media only screen and (max-width: 720px) {
+    .row {
+      height: 25px !important;
+    }
+}
 
 .loadingspace {
   --delay: 0;
@@ -29,7 +33,7 @@ export default {
   animation: slide-up .5s ease calc(var(--delay) * .1s), peekaboo calc(var(--delay) * .1s) linear;
   display: flex;
   padding: 20px 15px;
-  width: 100%;
+  width: calc(100vw - 30px);
   height: 60px;
   align-items: center; 
   background: rgba(255, 255, 255, 0.103);

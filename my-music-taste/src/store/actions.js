@@ -657,6 +657,21 @@ const HSVtoRGB = async (context, payload) => {
         b: Math.round(b * 255)
     };
 };
+const artistAnalysis = async (context, payload) => {
+    let artist = await context.dispatch("getArtist", payload);
+    let artistObject = await context.dispatch("processArtist", artist);
+    console.log(artistObject);
+    return artistObject;
+};
+
+const processArtist = async (context, payload) => {
+    payload.href = payload.external_urls.spotify;
+    delete payload.external_urls;
+    payload.followers = payload.followers.total;
+    payload.image = payload.images[0].url;
+    delete payload.images;
+    return payload;
+};
 
 ////////////////////////////////////////////////////////////////
 // SOCIAL //////////////////////////////////////////////////////
@@ -824,6 +839,9 @@ export default {
     cleanAudioAnalysis,
     getPercentiles,
     HSVtoRGB,
+
+    artistAnalysis,
+    processArtist,
 
     bangerCalc,
 

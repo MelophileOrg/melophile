@@ -34,13 +34,13 @@
         
         <TimelinePercent :override="progress.tracksLoaded" title="Happiness Over Time:" instructions="" :delay="7" :bars="cleanValuedGraphData(audioFeatures.valence.timeline)" :max="100" y_axis="Percent Happiness" />
 
-        <Graph :override="progress.tracksLoaded" title="Happiness Distribution:" instructions="Go to the Extremes Tab for the Highest and Lowest Tracks" :delay="8" :bars="cleanGraphData(audioFeatures.valence.plot)" max_tag="Happy" min_tag="Sad" y_axis="Number of Songs" :color="audioFeatures.valence.color"/>
+        <Graph @more="goToExtremes" :override="progress.tracksLoaded" title="Happiness Distribution:" instructions="View Charts" :delay="8" :bars="cleanGraphData(audioFeatures.valence.plot)" max_tag="Happy" min_tag="Sad" y_axis="Number of Songs" :color="audioFeatures.valence.color"/>
 
-        <Graph :override="progress.tracksLoaded" title="Energy Distribution:" instructions="Go to the Extremes Tab for the Highest and Lowest Tracks" :delay="9" :bars="cleanGraphData(audioFeatures.energy.plot)" max_tag="Hyper" min_tag="Peaceful" y_axis="Number of Songs" :color="audioFeatures.energy.color"/>
+        <Graph @more="goToExtremes" :override="progress.tracksLoaded" title="Energy Distribution:" instructions="View Charts" :delay="9" :bars="cleanGraphData(audioFeatures.energy.plot)" max_tag="Hyper" min_tag="Peaceful" y_axis="Number of Songs" :color="audioFeatures.energy.color"/>
 
-        <Graph :override="progress.tracksLoaded" title="Danceability Distribution:" instructions="Go to the Extremes Tab for the Highest and Lowest Tracks" :delay="10" :bars="cleanGraphData(audioFeatures.danceability.plot)" max_tag="Let's dance!" min_tag="Couch Potato" y_axis="Number of Songs" :color="audioFeatures.danceability.color"/>
+        <Graph @more="goToExtremes" :override="progress.tracksLoaded" title="Danceability Distribution:" instructions="View Charts" :delay="10" :bars="cleanGraphData(audioFeatures.danceability.plot)" max_tag="Let's dance!" min_tag="Couch Potato" y_axis="Number of Songs" :color="audioFeatures.danceability.color"/>
 
-        <Graph :override="progress.tracksLoaded" title="Should You DJ a Party?" instructions="Go to the Extremes Tab for the Highest and Lowest Tracks" :delay="11" :bars="cleanGraphData(audioFeatures.banger.plot)" max_tag="Absolute Bangers" min_tag="*Snore*" y_axis="Number of Songs" :color="audioFeatures.banger.color"/>
+        <Graph @more="goToExtremes" :override="progress.tracksLoaded" title="Should You DJ a Party?" instructions="View Charts" :delay="11" :bars="cleanGraphData(audioFeatures.banger.plot)" max_tag="Absolute Bangers" min_tag="*Snore Snore*" y_axis="Number of Songs" :color="audioFeatures.banger.color"/>
       </div>
 
       <div class="extremes" v-if="progress.tracksLoaded && tab == 1">
@@ -100,7 +100,19 @@ export default {
       return graphData;
     },
     changeTab(number) {
+      window.scroll({
+        top: 0,
+        behavior: 'auto'
+      });
       this.tab = number;
+
+    },
+    goToExtremes() {
+      window.scroll({
+        top: 0,
+        behavior: 'auto'
+      });
+      this.tab = 1;
     }
   },
   computed: {
@@ -165,6 +177,10 @@ export default {
   created() {
     if (!this.inicialized)
       this.$router.push("/login");
+    window.scroll({
+      top: 0,
+      behavior: 'auto'
+    });
   }
 }
 </script>
@@ -197,6 +213,7 @@ export default {
 #menu {
   width: calc(100% - 64px);
   padding: 10px 32px;
+  animation: slide-up .3s ease .1s, hide .1s linear;
 }
 
 .windows {
@@ -215,6 +232,24 @@ h1 {
     animation: slide-up .3s ease 0s,hide 0s linear;
 }
 
+@media screen and (max-width: 720px) {
+  h1 {
+    display: none;
+  }
+
+  h2 {
+    font-size: 1.2em;
+  }
+
+  #menu {
+    padding: 10px 0;
+    width: 100vw;
+    margin-bottom: 10px;
+    background-color: rgba(255, 251, 251, 0.048);
+  }
+
+}
+
 #tabs {
   display: flex;
   justify-content: center;
@@ -228,7 +263,7 @@ h2 {
   margin: 10px 20px;
   cursor: pointer;
   transition: all .3s ease;
-  animation: slide-up .3s ease .1s, hide .1s linear;
+  
 }
 
 h2.active {

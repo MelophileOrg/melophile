@@ -1,6 +1,6 @@
 <template>
     <div class="YourLibrary" :style="{'--delay': + 0}">
-        <h3 v-if="progress.tracksLoaded">Your Library:</h3>
+        <h3 class="window-title" v-if="progress.tracksLoaded">Your Library:</h3>
         <div v-if="progress.tracksLoaded" class="row flex-space-between">
         <h4 class="light">Saved Songs</h4><h4 class="num">{{formatNumber(total)}}</h4>
         </div>
@@ -68,16 +68,6 @@ export default {
 }
 
 
-h3 {
-  text-align: left;
-  animation: none;
-  font-size: 1.6em;
-  margin: 0;
-  margin-bottom: 20px;
-  color: white;
-}
-
-
 .row {
   display: flex;
   align-items: center;
@@ -90,6 +80,12 @@ h4 {
   align-items: center;
   margin: 0;
   text-align: left;
+}
+
+@media screen and (max-width: 720px) {
+    h4 {
+        font-size: 1.1em !important;
+    }
 }
 
 .light {

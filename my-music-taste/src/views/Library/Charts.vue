@@ -53,6 +53,10 @@ export default {
   created() {
     if (!this.inicialized)
       this.$router.push("/login");
+    window.scroll({
+      top: 0,
+      behavior: 'auto'
+    });
   }
 }
 </script>
@@ -62,7 +66,7 @@ export default {
 #menu {
   width: calc(100% - 64px);
   padding: 10px 32px;
-  margin-bottom: 10px;
+  animation: slide-up .3s ease .1s, hide .1s linear;
 }
 
 h1 {
@@ -89,10 +93,23 @@ h2 {
   margin: 10px 20px;
   cursor: pointer;
   transition: all .3s ease;
-  animation: slide-up .3s ease .1s, hide .1s linear;
+  
 }
 
-.charts-div {
+@media only screen and (max-width: 500px) {
+  h1 {
+    display: none;
+  }
 
+    h2 {
+    font-size: 1.2em;
+  }
+
+  #menu {
+    padding: 10px 0;
+    width: 100vw;
+    margin-bottom: 20px;
+    background-color: rgba(255, 251, 251, 0.048) !important;
+  }
 }
 </style>

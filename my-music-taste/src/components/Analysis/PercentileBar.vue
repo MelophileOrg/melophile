@@ -95,6 +95,24 @@ export default {
   }
 }
 
+@media screen and (max-width: 720px) {
+    h4 {
+        font-size: .9em !important;
+    }
+
+    .bar-title {
+      width: 110px !important;
+    }
+
+    .stat-bar {
+        width: calc(100% - 150px);
+    }
+
+    h5 {
+      font-size: .9em !important;
+    }
+}
+
 h4 {
   color: white;
   display: flex;
