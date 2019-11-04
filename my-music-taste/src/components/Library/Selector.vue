@@ -49,14 +49,14 @@ export default {
 
 .text {
   font-size: 2.5em;
-  color: rgba(255, 255, 255, 0.247);
+  color: rgba(255, 255, 255, 0.171);
   margin: 0;
   margin-right: 5px;
-  text-transform: lowercase;
+  text-transform: capitalize;
   font-weight: lighter;
 }
 
-@media only screen and (max-width: 500px) {
+@media only screen and (max-width: 1050px) {
   .selector {
     display: flex;
   }

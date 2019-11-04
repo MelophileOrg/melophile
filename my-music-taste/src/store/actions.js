@@ -20,7 +20,6 @@ const inicializeGetToken = (context) => {
 };
 // None
 const inicializeParseToken = (context) => {
-    console.log('%c Parsing Token.', 'color: blue;');
     let token = window.location.hash.substring(1).split('&').reduce(function (initial, item) {
         if (item) {
             let parts = item.split('=');
@@ -32,9 +31,7 @@ const inicializeParseToken = (context) => {
 };
 // Token
 const inicializeSetToken = async (context, token) => {
-    console.log('%c Inicializing Authorization.', 'color: purple;');
     await context.state.spotifyApi.setAccessToken(token);
-    console.log('%c Application Authorized.', 'color: green;');
     await context.commit('setInicialized', true);
     context.dispatch('getUser');
 };
@@ -43,17 +40,14 @@ const inicializeSetToken = async (context, token) => {
 ////////////////////////////////////////////////////////////////
 // None
 const loadLibrary = async (context) => {
-    console.log('%c Loading Library.', 'color: blue;');
     context.commit('resetProgress');
     await context.dispatch('retrieveSavedTracks', {limit: 50, offset: 0});
-    console.log('%c Library Processing Finished.', 'color: green;');
     await context.dispatch('retrieveTopPlayed');
     await context.dispatch('calcTracksPerGenre');
     await context.dispatch('calcExtremes');
 };
 // {limit: Number, offset: Number}
 const retrieveSavedTracks = async (context, payload) => {
-    console.log('%c Requesting Tracks. ' + context.state.progress.processed + "/" + context.state.progress.total, 'color: purple;');
     let response = await context.dispatch('getSavedTracks', {limit: payload.limit, offset: payload.offset});
     if (payload.offset == 0)
         context.commit('setTotal', response.total);
@@ -398,14 +392,12 @@ const saveLibrary = async (context, payload) => {
     if (payload.include.added_timeline) 
         data.dateAdded = context.state.dateAdded;
     //if (payload.include.genre_standard_dev)
-    console.log(data);
     return true;
 };
 // Include Object
 const convertTracks = async (context, payload) => {
     let reqTracks = {};
     let addTracks = [];
-    let repeats = 0;
     if (payload.most_played_tracks)
         addTracks = addTracks.concat(await context.dispatch('gatherMostPlayedTracks'));
     if (payload.extremes) 
@@ -416,10 +408,8 @@ const convertTracks = async (context, payload) => {
             nonRepeatedTracks[addTracks[i]] = 0;
         else {
             nonRepeatedTracks[addTracks[i]] += 1;
-            repeats += 1;
         }
     }
-    console.log('%c Saved Track Space From ' + repeats + ' Repeats.', 'color: blue;');
     let ids = Object.keys(nonRepeatedTracks);
     for (let i = 0; i < ids.length; i++) {
         reqTracks[ids[i]] = await context.dispatch("compressTrack", context.state.tracks[ids[i]]);
@@ -458,7 +448,6 @@ const compressTrack = async (context, payload) => {
 const convertArtists = async (context, payload) => {
     let reqArtists = {};
     let addArtists = [];
-    let repeats = 0;
     if (payload.most_played_artists)
         addArtists = addArtists.concat(await context.dispatch('gatherMostPlayedArtists'));
     if (payload.most_saved_artists) 
@@ -469,10 +458,8 @@ const convertArtists = async (context, payload) => {
             nonRepeatedArtists[addArtists[i]] = 0;
         else {
             nonRepeatedArtists[addArtists[i]] += 1;
-            repeats += 1;
         }
     }
-    console.log('%c Saved Artists Space From ' + repeats + ' Repeats.', 'color: blue;');
     let ids = Object.keys(nonRepeatedArtists);
     for (let i = 0; i < ids.length; i++) {
         reqArtists[ids[i]] = await context.dispatch("compressArtist", context.state.artists[ids[i]]);
@@ -660,7 +647,6 @@ const HSVtoRGB = async (context, payload) => {
 const artistAnalysis = async (context, payload) => {
     let artist = await context.dispatch("getArtist", payload);
     let artistObject = await context.dispatch("processArtist", artist);
-    console.log(artistObject);
     return artistObject;
 };
 
@@ -686,7 +672,7 @@ const getTopArtists = async (context, payload) => {
         let response = await context.state.spotifyApi.getMyTopArtists({limit: payload.limit, time_range: payload.time_range});
         return response.items;
     } catch (error) {
-        console.log(error);
+        return;
     } 
 };
 // {limit: Number 1-50, time_range: "long_term" Several years, "medium_term" 6 Months, "short_term" 4 Weeks, offset: Index of first entry to return}
@@ -695,7 +681,7 @@ const getTopTracks = async (context, payload) => {
         let response = await context.state.spotifyApi.getMyTopTracks({limit: payload.limit, time_range: payload.time_range});
         return response.items;
     } catch (error) {
-        console.log(error);
+        return;
     }  
 };
 // {limit: Number 1-50, after: Unix timestamp Milliseconds, before: Unix timestamp Milliseconds
@@ -704,7 +690,7 @@ const getRecentlyPlayed = async (context, payload) => {
         let response = await context.state.spotifyApi.getMyRecentlyPlayedTracks({limit: payload.limit});
         return response;
     } catch (error) {
-        console.log(error);
+        return;
     }
 };
 const getTrack = async (context, track_id) => {
@@ -712,7 +698,7 @@ const getTrack = async (context, track_id) => {
       let response = await context.state.spotifyApi.getTrack(track_id);
       return response;
   } catch (error) {
-      console.log(error);
+      return;
   }
 };
 const getTracks = async (context, track_ids) => {
@@ -720,7 +706,7 @@ const getTracks = async (context, track_ids) => {
       let response = await context.state.spotifyApi.getTracks(track_ids);
       return response;
   } catch (error) {
-      console.log(error);
+      return;
   }
 };
 // {artistId: String}
@@ -729,7 +715,7 @@ const getArtist = async (context, id) => {
         let response = await context.state.spotifyApi.getArtist(id);
         return response;
     } catch (error) {
-        console.log(error);
+        return;
     }
 }; 
 // []
@@ -738,7 +724,7 @@ const getArtists = async (context, ids) => {
       let response = await context.state.spotifyApi.getArtists(ids);
       return response.artists;
   } catch (error) {
-      console.log(error);
+      return;
   }
 };
 // Array IDs
@@ -747,7 +733,7 @@ const getAudioFeaturesForTracks = async (context, track_ids) => {
         let response = await context.state.spotifyApi.getAudioFeaturesForTracks(track_ids);
         return response.audio_features;
     } catch (error) {
-        console.log(error);
+        return;
     }
 };
 const getAudioFeaturesForTrack = async (context, track_id) => {
@@ -755,7 +741,7 @@ const getAudioFeaturesForTrack = async (context, track_id) => {
       let response = await context.state.spotifyApi.getAudioFeaturesForTracks([track_id]);
       return response.audio_features[0];
   } catch (error) {
-      console.log(error);
+      return;
   }
 };
 const getAudioAnalysisForTrack = async (context, track_id) => {
@@ -763,7 +749,7 @@ const getAudioAnalysisForTrack = async (context, track_id) => {
         let response = await context.state.spotifyApi.getAudioAnalysisForTrack(track_id);
         return response;
     } catch (error) {
-        console.log(error);
+        return;
     }
 };
 // {seed_tracks: [track_id], target_dancebility: NUM, limit: 6, max_* min_*}
@@ -772,7 +758,7 @@ const getRecomendations = async (context, payload) => {
         let response = await context.state.spotifyApi.getRecommendations(payload);
         return response;
     } catch (error) {
-        console.log(error);
+        return;
     }
 };
 // {limit: 1-50, offset: first index}
@@ -781,7 +767,7 @@ const getSavedTracks = async (context, payload) => {
         let response = await context.state.spotifyApi.getMySavedTracks({limit: payload.limit, offset: payload.offset});
         return response;
     } catch (error) {
-        console.log(error);
+        return;
     }
 };
 // None
@@ -793,7 +779,7 @@ const getUser = async (context) => {
         await context.commit('setUserData', response);
       }
     } catch (error) {
-        console.log(error);
+        return;
     }
 };
 // Array IDs
@@ -802,7 +788,7 @@ const searchSpotify = async (context, payload) => {
         let response = await context.state.spotifyApi.search(payload.query, ['track'], {limit: 25});
         return response;
     } catch (error) {
-        console.log(error);
+        return;
     }
 };
   

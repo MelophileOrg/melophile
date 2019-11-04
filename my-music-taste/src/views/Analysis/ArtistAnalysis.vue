@@ -107,6 +107,7 @@ export default {
 </script>
 
 <style scoped>
+
 @media screen and (max-width: 720px) {
   #artist-image {
     width: 70px !important;

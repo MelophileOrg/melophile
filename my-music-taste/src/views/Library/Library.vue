@@ -336,5 +336,8 @@ h3 {
   color: white;
 }
 
+.windows {
+  margin-top: 0px;
+}
 
 </style>

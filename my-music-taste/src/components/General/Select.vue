@@ -115,7 +115,7 @@ export default {
     display: none;
 }
 
-@media only screen and (max-width: 720px) {
+@media only screen and (max-width: 1050px) {
     .Select h1 {
         font-size: 30px;
         background: rgba(165, 165, 165, 0.068);

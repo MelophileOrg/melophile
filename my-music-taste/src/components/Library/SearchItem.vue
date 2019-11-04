@@ -14,8 +14,8 @@
 
         <div v-if="type == 'track'" class="artists">
           <div v-for="artistnum in 4" :key="data.name + '-' + (artistnum - 1)">
-            <h4 class="artist" v-if="(artistnum - 1) < data.artists.length && !saved">{{data.artists[(artistnum - 1)].name}}{{comma((artistnum - 1), data.artists.length - 1)}}</h4>
-            <h4 class="artist" v-if="(artistnum - 1) < data.artists.length && saved">{{artists[data.artists[(artistnum - 1)]].name}}{{comma((artistnum), data.artists.length - 1)}}</h4>
+            <h4 class="artist" @click="selectSpecial((artistnum - 1))" v-if="(artistnum - 1) < data.artists.length && !saved">{{data.artists[(artistnum - 1)].name}}{{comma((artistnum - 1), data.artists.length - 1)}}</h4>
+            <h4 class="artist" @click="selectSpecial((artistnum - 1))" v-if="(artistnum - 1) < data.artists.length && saved">{{artists[data.artists[(artistnum - 1)]].name}}{{comma((artistnum - 1), data.artists.length - 1)}}</h4>
           </div>
         </div>
         <div v-if="type == 'genre'" class="artists">
@@ -30,7 +30,7 @@
         </div>
         <div v-if="type == 'artist' && topsaved != true" class="artists">
           <div v-for="artistnum in 4" :key="data.name + '-' + (artistnum - 1)">
-            <h4 class="artist" v-if="(artistnum - 1) < data.genres.length">{{data.genres[(artistnum - 1)]}}{{comma((artistnum), data.genres.length - 1)}}</h4>
+            <h4  @click="selectSpecial((artistnum - 1))" class="artist" v-if="(artistnum - 1) < data.genres.length">{{data.genres[(artistnum - 1)]}}{{comma((artistnum), data.genres.length - 1)}}</h4>
           </div>
           <div v-if="data.genres.length == 0">
             <h4 class="artist" >No Genres Provided</h4>
@@ -63,10 +63,15 @@ export default {
       if (this.type == "genre")
         this.$router.push("/genres/" + this.data.name);
     },
+    selectSpecial(index) {
+      if (this.type == "track")
+        this.$router.push("/artists/" + this.data.artists[index].id);
+      if (this.type == "artist")
+        this.$router.push("/genres/" + this.data.genres[index].name);
+      if (this.type == "genre")
+        return
+    },
     comma(num, total) {
-      if (num == 3) {
-        return ",";
-      }
       if (num == 4) {
         return "";
       }
@@ -134,7 +139,11 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   margin-right: 10px;
+  cursor: pointer;
+}
 
+.artists .artist:hover {
+  text-decoration: underline;
 }
 
 .artists {

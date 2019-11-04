@@ -77,7 +77,7 @@ body {
 
 @media screen and (max-width: 720px) {
   .windows {
-    margin-top: 15px;
+    margin-top: 15px !important;
   }
   #main {
     min-height: calc(100vh - 71px);
@@ -92,7 +92,10 @@ body {
   .window-title {
     font-size: 1.3em !important;
     margin-bottom: 12px !important;
+  }
 
+  .window {
+      margin: 18px 18px !important;
   }
 }
 
@@ -218,6 +221,6 @@ html::-webkit-scrollbar-thumb
   align-items: top;
   flex-wrap: wrap;
   margin-bottom: 50px;
-  margin-top: 0px;
+  margin-top: 30px;
 }
 </style>

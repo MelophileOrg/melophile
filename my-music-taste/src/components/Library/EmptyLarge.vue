@@ -23,6 +23,7 @@ export default {
 
 .loadingspace {
   --delay: 0;
+  margin: 0 !important;
   animation: slide-up .5s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s) linear, throb-row 2s ease-in-out calc(var(--delay) * .23s + var(--delay) * .1s + .5s) infinite;
 }
 

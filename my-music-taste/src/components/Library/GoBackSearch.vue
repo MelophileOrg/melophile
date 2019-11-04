@@ -21,7 +21,8 @@ export default {
 .button {
     width: 100%;
     padding-left: 32px;
-    padding-top: 10px;
+    padding-top: 23px;
+    padding-bottom: 10px;
     height: 40px;
     background-color: rgba(50, 50, 50, 0.377);
     color: rgba(255, 255, 255, 0.205);
