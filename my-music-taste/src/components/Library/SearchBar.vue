@@ -27,18 +27,18 @@ export default {
 input {
     width: 100%;
     padding-left: 32px;
-    height: 100px;
+    height: 75px;
     width: 100%;
     background-color: rgba(50, 50, 50, 0.377);
     color: white;
     border: 0;
-    font-size: 50px;
+    font-size: 25px;
 }
 
 @media only screen and (max-width: 720px) {
   input {
-    font-size: 20px;
-    height: 50px;
+    font-size: 20px !important;
+    height: 50px !important;
     width: 100vw !important;
   }
 }

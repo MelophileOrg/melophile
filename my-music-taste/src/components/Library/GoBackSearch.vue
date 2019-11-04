@@ -21,24 +21,25 @@ export default {
 .button {
     width: 100%;
     padding-left: 32px;
-    padding-top: 20px;
-    height: calc(100px - 20px);
-    width: 100%;
+    padding-top: 10px;
+    height: 40px;
     background-color: rgba(50, 50, 50, 0.377);
     color: rgba(255, 255, 255, 0.205);
     border: 0;
-    font-size: 50px;
+    font-size: 25px;
     cursor: pointer;
     text-align: left;
 }
 
 @media only screen and (max-width: 720px) {
   .button {
-    padding-top: 15px;
-    font-size: 20px;
-    height: 35px;
+    padding-top: 15px !important;
+    padding-bottom: 5px;
+    font-size: 20px !important;
+    height: 35px !important;
     width: 100vw !important;
   }
 }
+
 
 </style>

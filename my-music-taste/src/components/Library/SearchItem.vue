@@ -1,6 +1,6 @@
 <template>
   <div class="searchitem">
-    <div @click="selectTrack(data.id)" class="search-song" :style="{'--delay': index}">
+    <div class="search-song" :style="{'--delay': index}">
       <h1 v-if="showNum">{{index + 1}}</h1>
       <div>
         <div class="search-image" v-if="type == 'track' && saved" :style="{backgroundImage: 'url(\'' + data.image + '\')'}"/>
@@ -9,7 +9,8 @@
         <div class="search-image genre" v-if="type == 'genre'"/>
       </div>
       <div class="info">
-        <h1 class="search-title" :class="{cap: type == 'genre'}" >{{data.name}}</h1>
+
+        <h1 @click="selectTrack(data.id)" class="search-title" :class="{cap: type == 'genre'}" >{{data.name}}</h1>
 
         <div v-if="type == 'track'" class="artists">
           <div v-for="artistnum in 4" :key="data.name + '-' + (artistnum - 1)">
@@ -177,7 +178,7 @@ export default {
   overflow: hidden;
 }
 
-.search-song:hover .search-title
+.search-song .search-title:hover 
 {
   text-decoration: underline;
 }

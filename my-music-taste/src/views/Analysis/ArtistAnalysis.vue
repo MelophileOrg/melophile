@@ -14,8 +14,8 @@
               <div class="col fit">
                 <h1 id="artist-name">{{artistData.name}}</h1>
                 <h2 >{{formatNumber(artistData.followers)}} Followers</h2>
-                <h2 v-if="progress.libraryLoaded">{{songsSaved}}</h2>
-                <h2 v-if="!progress.libraryLoaded">Finding Saved Songs</h2>
+                <h2 v-if="progress.tracksLoaded">{{songsSaved}}</h2>
+                <h2 v-if="!progress.tracksLoaded">Finding Saved Songs</h2>
               </div>
             </div>
           </div>
@@ -73,7 +73,7 @@ export default {
       return this.$store.state.progress;
     },
     songsSaved() {
-      if (this.trackData.artists[this.artistData.id].id in this.$store.state.artists) {
+      if (this.artistData.id in this.$store.state.artists) {
         return this.$store.state.artists[this.artistData.id].tracks.length + " Songs Saved";
       }
       return "No Songs Saved";
@@ -113,6 +113,10 @@ export default {
     height: 70px !important;
     margin-right: 20px;
   }
+
+  .fit {
+    width: calc(100% - 90px) !important;
+  }
 }
 
 #artist-image {
@@ -151,4 +155,14 @@ h2 {
   overflow: hidden;
   white-space: nowrap;
 }
+
+.fit {
+  display: block;
+  width: calc(100% - 120px);
+}
+
+.flex {
+  width: 100%;
+}
+
 </style>
