@@ -7,6 +7,8 @@
 <script>
 export default {
   name: 'authorize',
+  computed: {
+  },
   async created() {
     await this.$store.dispatch('inicializeParseToken');
     if (this.$store.state.inicialized)

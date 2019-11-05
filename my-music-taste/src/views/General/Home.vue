@@ -27,7 +27,10 @@ export default {
     }
   },
   async created() {
-
+    window.scroll({
+      top: 0,
+      behavior: 'auto'
+    });
   }
 }
 </script>

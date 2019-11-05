@@ -2,15 +2,16 @@
   <div class="timeline" :style="{'--graphdelay': delay}">
     <div>
       <h3 class="window-title">{{title}}</h3>
-      <Loading v-if="!override"/>
-      <div v-if="override" class="graph" :style="{'--max': + findMax(bars), '--red': + color.red, '--green': + color.green, '--blue': + color.blue}">
-        <div class="graph-bar time" v-for="(bar, index) in bars" :key="title+ '-timeline' + index" :class="{toolow: bar.value < findMax(bars) / 10}" :style="{'--num': bars.length,'--height': + bar.value}"><p>{{bar.tag}}</p><p class="hover-graph">{{findDate(bars.length - index)}}</p></div>
-        <p class="yAxis">{{y_axis}}</p>
+      <Loading class="loading" v-if="!override"/>
+      <div v-if="override && !none" class="graph" :class="{small: small}" :style="{'--max': + findMax(bars), '--red': + color.red, '--green': + color.green, '--blue': + color.blue}">
+        <div class="graph-bar time" v-for="(bar, index) in bars" :key="title+ '-timeline' + index" :class="{one: bar.value == 1, toolow: bar.value < findMax(bars) / 10}" :style="{'--num': bars.length,'--height': + bar.value}"><p>{{bar.tag}}</p><p class="hover-graph">{{findDate((bars.length - 1) - index)}}</p></div>
+        <p :class="{small: small}" class="yAxis">{{y_axis}}</p>
       </div>
-      <div class="graph-labels">
+      <div v-if="override && !none" class="graph-labels">
         <p>{{findDate(bars.length - 1)}}</p>
         <p>{{findDate(0)}}</p>
       </div>
+      <h4 id="nosongs" v-if="none">No Songs Liked</h4>
     </div>
   </div>
 </template>
@@ -31,20 +32,23 @@ export default {
     color: Object,
     override: Boolean,
     max: Number,
+    small: Boolean,
+    none: Boolean,
   },
   methods: {
-    findDate(months) {
-      let now = new Date();
-      let nowMonth = now.getMonth();
-      let year = 0;
-      nowMonth -= months;
-      while (nowMonth < 0) {
-        year += 1;
-        nowMonth = 12 + nowMonth;
-      } 
-      nowMonth += 1;
-      let returnYear = (now.getFullYear() - year) % 100;
-      return nowMonth + "/" + returnYear;
+    findDate(month) {
+        let now = new Date();
+        let nowMonth = now.getMonth();
+        let year = 0;
+        nowMonth -= month;
+        nowMonth -= 1;
+        while (nowMonth < 0) {
+            year += 1;
+            nowMonth = 12 + nowMonth;
+        } 
+        nowMonth += 1;
+        let returnYear = (now.getFullYear() - year) % 100;
+        return nowMonth + "/" + returnYear;
     },
     findMax(array) {
       if (this.max != -1) {
@@ -64,6 +68,19 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+#nosongs {
+  margin-bottom: 20px;
+}
+
+h4 {
+  margin-bottom: 20px;
+  color: rgba(255, 255, 255, 0.336);
+  padding: 10px;
+  background-color: rgba(7, 7, 7, 0.336);
+  border-radius: 10px;
+}
+
+
 .timeline {
   --graphdelay: 0;
   animation: slide-up .5s ease calc(var(--graphdelay) * .1s), hide calc(var(--graphdelay) * .1s);
@@ -71,11 +88,16 @@ export default {
   width: 75%;
   margin: 22px 22px;
   padding: 20px;
+  padding-bottom: 5px;
   max-width: 400px;
   border-radius: 5px;
   margin-bottom: 20px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.247);
+}
+
+.loading {
+  padding-bottom: 15px;
 }
 
 .graph-bar.time:hover p {
@@ -115,6 +137,10 @@ export default {
   padding-top: 10px;
 }
 
+.graph.small {
+  height: 150px;
+}
+
 .graph-labels {
   display: flex;
   position: relative;
@@ -146,9 +172,16 @@ export default {
   .graph {
     height: 150px;
   }
+  .graph.small {
+    height: 120px !important;
+  }
 
   .yAxis {
    top: 60px !important;
+  }
+
+  .yAxis.small {
+   top: 40px !important;
   }
 
   .graph-labels {
@@ -168,6 +201,10 @@ export default {
   font-size: .8em;
   left: -60px;
   top: 80px;
+}
+
+.yAxis.small {
+  top: 60px;
 }
 
 p {
@@ -192,6 +229,17 @@ p {
   animation: bar-graph-slide .5s ease-out calc(var(--graphdelay) * .1s), hide ;
 }
 
+@keyframes bar-graph-slide {
+  from {
+    height: calc((var(--height) / var(--max)) * 0% - 5px);
+    color: rgba(255, 255, 255, 0);
+  }
+}
+
+.one {
+  height: calc((var(--height) / var(--max)) * 100%) !important;
+}
+
 .graph-bar p{
   color: rgba(255, 255, 255, 0.692);
   font-weight: bolder;
@@ -207,12 +255,7 @@ p {
   }
 }
 
-@keyframes bar-graph-slide {
-  from {
-    height: calc((var(--height) / var(--max)) * 0% - 5px);
-    color: rgba(255, 255, 255, 0);
-  }
-}
+
 
 .graph-bar.time:hover p {
   position: absolute;

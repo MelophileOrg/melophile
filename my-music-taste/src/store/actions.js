@@ -649,7 +649,6 @@ const artistAnalysis = async (context, payload) => {
     let artistObject = await context.dispatch("processArtist", artist);
     return artistObject;
 };
-
 const processArtist = async (context, payload) => {
     payload.href = payload.external_urls.spotify;
     delete payload.external_urls;
@@ -658,7 +657,79 @@ const processArtist = async (context, payload) => {
     delete payload.images;
     return payload;
 };
+const artistTracks = async (context, payload) => {
+    if (!(payload.id in context.state.artists))
+        return [];
+    let ids = context.state.artists[payload.id].tracks;
+    let tracks = [];
+    for (let i = 0; i < ids.length; i++) {
+        tracks.push(context.state.tracks[ids[i]]);
+    }
+    return tracks;
+};
+const artistTimeline = async (context, payload) => {
+    if (!(payload.id in context.state.artists))
+        return {timeline: [], oldest: [], newest: []};
+    let artistObject = payload;
+    let timeline = [];
+    let tracks = [];
+    let now = new Date();
+    let nowTime = now.getTime();
+    const MONTH = 2626560000;
+    let artistSaved = context.state.artists[artistObject.id];
+    for (let i = 0; i < artistSaved.tracks.length; i++) {
+        let date = new Date(context.state.tracks[artistSaved.tracks[i]].date);
+        let dateTime = date.getTime();
+        let diff = nowTime - dateTime;
+        let diffMonth = Math.floor(diff / MONTH);
+        tracks.push({id: artistSaved.tracks[i], time: dateTime, month: diffMonth});
+        if (diffMonth >= timeline.length) {
+            while (diffMonth >= timeline.length) {
+                timeline.push(0);
+            }
+        }
+        timeline[diffMonth] += 1;
+    }
+    tracks.sort((a, b) => (a.time > b.time) ? 1 : -1);
+    let oldest = tracks.slice(0, 3);
+    let newest = tracks.slice(tracks.length - 3, tracks.length);
+    while (timeline.length < context.state.dateAdded.length) {
+        timeline.push(0);
+    }
+    return {timeline: timeline, oldest: oldest, newest: newest};
+};
+const artistTopTracks = async (context, id) => {
+    let tracks = await context.dispatch('getArtistTopTracks', id);
+    let ids = [];
+    for (let i = 0; i < tracks.length; i++) {
+        delete tracks[i].album.album_type;
+        delete tracks[i].album.artists;
+        delete tracks[i].album.available_markets;
+        delete tracks[i].album.available_markets;
+        tracks[i].album.href = tracks[i].album.external_urls.spotify;
+        delete tracks[i].album.type;
+        delete tracks[i].album.uri;
+        delete tracks[i].available_markets;
+        delete tracks[i].disc_number;
+        delete tracks[i].external_ids;
+        tracks[i].href = tracks[i].external_urls.spotify;
+        delete tracks[i].external_urls;
+        delete tracks[i].type;
+        delete tracks[i].uri;
+        if (tracks[i].album.images.length > 1)
+            tracks[i].image = tracks[i].album.images[0].url;
+        ids.push(tracks[i].id);
+    }
+    let audioFeatures = await context.dispatch('getAudioFeaturesForTracks', ids);
 
+    for (let i = 0; i < tracks.length; i++) {
+        tracks[i].valence = audioFeatures[i].valence;
+        tracks[i].energy = audioFeatures[i].energy;
+        tracks[i].danceability = audioFeatures[i].danceability;
+    }
+
+    return tracks;
+};
 ////////////////////////////////////////////////////////////////
 // SOCIAL //////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
@@ -791,6 +862,16 @@ const searchSpotify = async (context, payload) => {
         return;
     }
 };
+
+const getArtistTopTracks = async (context, id) => {
+    try {
+        let response = await context.state.spotifyApi.getArtistTopTracks(id, "US", {});
+        return response.tracks;
+    } catch (error) {
+        return;
+    }
+};
+
   
 export default {
     inicializeGetToken,
@@ -828,6 +909,9 @@ export default {
 
     artistAnalysis,
     processArtist,
+    artistTracks,
+    artistTimeline,
+    artistTopTracks,
 
     bangerCalc,
 
@@ -844,5 +928,6 @@ export default {
     getRecomendations,
     getSavedTracks,
     getUser,
+    getArtistTopTracks,
     searchSpotify
 };

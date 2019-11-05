@@ -197,7 +197,7 @@ html::-webkit-scrollbar-thumb
   display: inline-block;
   width: 75%;
   margin: 22px 22px;
-  padding: 20px;
+  padding: 25px;
   max-width: 400px;
   border-radius: 5px;
   margin-bottom: 20px;
@@ -217,9 +217,11 @@ html::-webkit-scrollbar-thumb
 .windows {
   display: flex;
   width: 100%;
+  max-width: 1400px !important;
   justify-content: center;
   align-items: top;
   flex-wrap: wrap;
+  margin: 0 auto;
   margin-bottom: 50px;
   margin-top: 30px;
 }

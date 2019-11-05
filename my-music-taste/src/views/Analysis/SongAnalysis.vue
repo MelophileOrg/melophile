@@ -31,7 +31,7 @@
                 <h1 id="artist-name" @click="goToArtist">{{trackData.artist.name}}</h1>
                 <h2 >{{formatNumber(trackData.artist.followers.total)}} Followers</h2>
                 <h2 v-if="progress.artistsLoaded">{{songsSaved}}</h2>
-                <h2 v-if="!progress.artistsLoaded">Finding Saved Songs</h2>
+                <Loading v-if="!progress.artistsLoaded"/>
               </div>
             </div>
           </div>
@@ -39,7 +39,7 @@
         </div>
 
         <div class="window" :style="{'--delay': + 2}">
-          <h3  class="window-title" v-if="audioFeaturesDone">Song Characteristics:</h3>
+          <h3  class="window-title" v-if="artistDone">Song Characteristics:</h3>
           <div v-if="audioFeaturesDone">
             <PercentBar title="Happiness" :percent="trackData.valence" :color="audioFeatures.valence.color" />
             <PercentBar title="Energy" :percent="trackData.energy" :color="audioFeatures.energy.color" />
@@ -49,9 +49,41 @@
           <Loading v-else/>
         </div>
 
-        
-        <div class="window" :style="{'--delay': + 3}">
-          <h3  class="window-title" v-if="audioFeaturesDone">Song Statistics:</h3>
+        <div id="banger" class="window"  :style="{'--delay': 3}">
+          <h3 v-if="artistDone" class="nomargin window-title">Audio Analysis</h3>  
+          <div v-if="audioAnalysisReady" class="graph" :style="{'--numBars': + trackData.audioAnalysis.length}">
+              <div class="graph-bar" v-for="(bar, index) in trackData.audioAnalysis" :style="{'--height': + bar.loudness_max, '--red': + bar.red, '--green': + bar.green, '--blue': + bar.blue,}" :key="'audio-analysis'+index">
+                  <p>{{time(bar.start)}}</p>
+              </div>
+          </div>
+          <div v-if="audioAnalysisReady" class="graph-key flex flex-space-between"><p>Height: Volume</p><p>Color: Pitch</p></div>
+          <Loading v-else/>
+        </div>
+
+        <div id="banger" class="window" :style="{'--delay': 5}">
+          <h3 class="window-title" v-if="artistDone">Is This a Banger?</h3>  
+          <div v-if="audioFeaturesDone">
+            <PercentBar title="Banger-Level" :percent="trackData.banger" :color="audioFeatures.banger.color" />
+            <h3 id="banger-conclusion">{{bangerConclusion()}}</h3>
+          </div>
+          <Loading v-else/>
+        </div>
+
+        <div class="window" :style="{'--delay': + 4}">
+          <h3  class="window-title" v-if="artistDone">Compaired to Liked (Percentile):</h3>
+          <div v-if="percentilesReady">
+            <PercentileBar title="Happiness" :percent="trackData.percentiles.valence" :color="audioFeatures.valence.color" />
+            <PercentileBar title="Energy" :percent="trackData.percentiles.energy" :color="audioFeatures.energy.color" />
+            <PercentileBar title="Danceability" :percent="trackData.percentiles.danceability" :color="audioFeatures.danceability.color" />
+            <PercentileBar title="Banger-Level" :percent="trackData.percentiles.banger" :color="audioFeatures.banger.color" />
+          </div>
+          <Loading v-else/>
+        </div>
+
+        <Spotlight :delay="6" :numOff="true" :override="artistDone" title="Genres:" :list="genresComputed" image=""/>
+
+        <div class="window" :style="{'--delay': + 7}">
+          <h3  class="window-title" v-if="artistDone">Song Statistics:</h3>
           <div v-if="audioFeaturesDone">
 
             <div class="flex flex-space-between">
@@ -83,46 +115,8 @@
           <Loading v-else/>
         </div>
 
-        <div id="banger" class="window"  :style="{'--delay': 4}">
-          <h3 v-if="audioAnalysisReady" class="nomargin window-title">Audio Analysis</h3>  
-          <div v-if="audioAnalysisReady" class="graph" :style="{'--numBars': + trackData.audioAnalysis.length}">
-              <div class="graph-bar" v-for="(bar, index) in trackData.audioAnalysis" :style="{'--height': + bar.loudness_max, '--red': + bar.red, '--green': + bar.green, '--blue': + bar.blue,}" :key="'audio-analysis'+index">
-                  <p>{{time(bar.start)}}</p>
-              </div>
-          </div>
-          <div v-if="audioAnalysisReady" class="graph-key flex flex-space-between"><p>Height: Volume</p><p>Color: Pitch</p></div>
-          <Loading v-else/>
-        </div>
-
-
-        <div class="window" :style="{'--delay': + 5}">
-          <h3  class="window-title" v-if="percentilesReady">Compaired to Saved (Percentile):</h3>
-          <div v-if="percentilesReady">
-            <PercentileBar title="Happiness" :percent="trackData.percentiles.valence" :color="audioFeatures.valence.color" />
-            <PercentileBar title="Energy" :percent="trackData.percentiles.energy" :color="audioFeatures.energy.color" />
-            <PercentileBar title="Danceability" :percent="trackData.percentiles.danceability" :color="audioFeatures.danceability.color" />
-            <PercentileBar title="Banger-Level" :percent="trackData.percentiles.banger" :color="audioFeatures.banger.color" />
-          </div>
-          <Loading v-else/>
-        </div>
-
-        <Spotlight :delay="6" :numOff="true" :override="artistDone" title="Genres:" :list="genresComputed" image=""/>
-
-        <div id="banger" class="window" :style="{'--delay': 7}">
-            <h3 class="window-title" v-if="audioFeaturesDone">Is This a Banger?</h3>  
-            <div v-if="audioFeaturesDone">
-              <PercentBar title="Banger-Level" :percent="trackData.banger" :color="audioFeatures.banger.color" />
-              <h3 id="banger-conclusion">{{bangerConclusion()}}</h3>
-            </div>
-            <Loading v-else/>
-        </div>
-
-       
-
       </div>
-
     </div>
-
   </div>
 </template>
 
@@ -208,14 +202,9 @@ export default {
         this.trackData.artist = await this.$store.dispatch('getArtist', this.trackData.artists[0].id);
         this.artistDone = true;
       },
-      findArtistSongsSaved(artist) {
-        if (artist in this.$store.state.artists)
-          return this.$store.state.artists[artist].tracks.length + " Songs Saved";
-        return "No Songs Saved";
-      },
       formatNumber(num) {
         let millions = Math.floor(num / 1000000);
-        let thousands = Math.floor(num / 1000);
+        let thousands = Math.floor(num / 1000)  % 1000;
         let remainder = num % 1000;
         let zeros = "";
         let zeros2 = "";
@@ -238,6 +227,9 @@ export default {
       }
     },
     computed: {
+      inicialized() {
+        return this.$store.state.inicialized;
+      },
       genresComputed() {
         if (this.artistDone)
           return this.trackData.artist.genres.slice(0, 4);
@@ -245,9 +237,9 @@ export default {
       },
       songsSaved() {
         if (this.trackData.artists[0].id in this.$store.state.artists) {
-          return this.$store.state.artists[this.trackData.artists[0].id].tracks.length + " Songs Saved";
+          return this.$store.state.artists[this.trackData.artists[0].id].tracks.length + " Songs Liked";
         }
-        return "No Songs Saved";
+        return "No Songs Liked";
       },
       progress() {
         return this.$store.state.progress;
@@ -261,6 +253,9 @@ export default {
         top: 0,
         behavior: 'auto'
       });
+      if (!this.inicialized)
+        this.$router.push("/login");
+
       this.trackData = await this.$store.dispatch('songAnalysis', this.$route.params.id);
       this.trackData.banger = await this.$store.dispatch('bangerCalc', {tempo: this.trackData.tempo, danceability: this.trackData.danceability, energy: this.trackData.energy});
       this.audioFeaturesDone = true;
@@ -287,9 +282,11 @@ export default {
 .windows {
   display: flex;
   width: 100%;
-  justify-content: center;
-  align-items: top;
+  max-width: 1400px !important;
+  justify-content: top !important;
+  align-items: flex-start;
   flex-wrap: wrap;
+  margin: 0 auto;
   margin-bottom: 50px;
   margin-top: 30px;
 }
@@ -565,6 +562,14 @@ p {
     background-color: rgba(var(--red), var(--green), var(--blue), .9);
     border-radius: 3px;
     position: relative;
+    animation: bar-graph-slide .5s ease-out calc(var(--height) * 1s), hide calc(var(--height) * 1s);
+}
+
+
+@keyframes bar-graph-slide {
+  from {
+    height: calc(0px * var(--height));
+  }
 }
 
 .graph-bar p {

@@ -16,6 +16,10 @@ export default {
     },
   },
   created() {
+    window.scroll({
+      top: 0,
+      behavior: 'auto'
+    });
     if (!this.inicialized)
       this.$router.push("/login");
     this.$router.push("/social/profile/" + this.$store.state.user.id);

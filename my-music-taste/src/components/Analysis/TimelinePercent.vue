@@ -5,7 +5,7 @@
       <Loading v-if="!override"/>
       <div v-if="override" class="graph" :style="{'--max': + findMax(bars)}">
         <div class="graph-bar time" v-for="(bar, index) in bars" :key="title+ '-timeline' + index" :class="{toolow: bar.value < findMax(bars) / 10}" 
-        :style="{'--num': bars.length,'--height': + bar.value, '--red': + findColor(bar.value).r, '--green': + findColor(bar.value).g, '--blue': + findColor(bar.value).b}"><p>{{bar.tag}}</p><p class="hover-graph">{{findDate(bars.length - index)}}</p></div>
+        :style="{'--num': bars.length,'--height': + bar.value, '--red': + findColor(bar.value).r, '--green': + findColor(bar.value).g, '--blue': + findColor(bar.value).b}"><p>{{bar.tag}}</p><p class="hover-graph">{{findDate((bars.length - 1) - index)}}</p></div>
         <p class="yAxis">{{y_axis}}</p>
       </div>
       <div class="graph-labels">
@@ -33,18 +33,20 @@ export default {
     max: Number,
   },
   methods: {
-    findDate(months) {
-      let now = new Date();
-      let nowMonth = now.getMonth();
-      let year = 0;
-      nowMonth -= months;
-      while (nowMonth < 0) {
-        year += 1;
-        nowMonth = 12 + nowMonth;
-      } 
-      nowMonth += 1;
-      let returnYear = (now.getFullYear() - year) % 100;
-      return nowMonth + "/" + returnYear;
+    findDate(month) {
+        let now = new Date();
+        let nowMonth = now.getMonth();
+        let year = 0;
+        nowMonth -= month;
+        nowMonth -= 1;
+        while (nowMonth < 0) {
+            year += 1;
+            nowMonth = 12 + nowMonth;
+        } 
+        nowMonth += 1;
+        let returnYear = (now.getFullYear() - year) % 100;
+        console.log(nowMonth + "/" + returnYear);
+        return nowMonth + "/" + returnYear;
     },
     findMax(array) {
       if (this.max != -1) {
@@ -99,6 +101,7 @@ export default {
   width: 75%;
   margin: 25px 25px;
   padding: 20px;
+  padding-bottom: 5px;
   max-width: 400px;
   border-radius: 5px;
   margin-bottom: 20px;

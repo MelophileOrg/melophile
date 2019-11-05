@@ -20,7 +20,10 @@ export default {
 
   },
   created() {
-
+    window.scroll({
+      top: 0,
+      behavior: 'auto'
+    });
   }
 }
 </script>

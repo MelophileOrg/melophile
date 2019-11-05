@@ -11,7 +11,7 @@ Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   state: {
-    dev: false, 
+    dev: true, 
 
     spotifyApi: new SpotifyWebApi(),
     inicialized: false,

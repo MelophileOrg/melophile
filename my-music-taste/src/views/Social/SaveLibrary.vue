@@ -22,6 +22,10 @@ export default {
     },
   },
   created() {
+    window.scroll({
+      top: 0,
+      behavior: 'auto'
+    });
     if (!this.inicialized)
       this.$router.push("/login");
   }
