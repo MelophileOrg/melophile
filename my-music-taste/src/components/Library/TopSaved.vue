@@ -56,7 +56,6 @@ export default {
         checkResults() {
             if (this.catagory != "") {
                 let ids = this.topSaved[this.chart];
-                console.log(ids);
                 for (var i = 0; i < ids.length; i++) {
                     this.list.push(this.$store.state[this.chart][ids[i]]);
                 }

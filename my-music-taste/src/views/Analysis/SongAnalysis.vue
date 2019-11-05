@@ -284,7 +284,7 @@ export default {
   width: 100%;
   max-width: 1400px !important;
   justify-content: top !important;
-  align-items: flex-start;
+  align-items: top;
   flex-wrap: wrap;
   margin: 0 auto;
   margin-bottom: 50px;
@@ -371,7 +371,7 @@ export default {
     animation: slide-up .5s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s);
     display: inline-block;
     width: 75%;
-    margin: 22px 22px;
+    margin: 25px 25px;
     padding: 25px;
     max-width: 400px;
     border-radius: 5px;

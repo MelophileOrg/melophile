@@ -1,7 +1,7 @@
 <template>
   <div class="featuredtracks window">
       <h3 class="window-title">{{title}}</h3>
-      <Loading v-if="!override"/>
+      <Loading class="displace" v-if="!override && !none"/>
       <div v-if="override && !none && saved">
           <div @click="toSong(id.id)" v-for="id in ids" :key="title + id.id" class="search-song ">
               <img class="search-image" :src="tracks[id.id].image"/>
@@ -67,9 +67,6 @@ export default {
             return this.$store.state.tracks;
         }
     },
-    created() {
-        console.log(this.ids);
-    }
 
 }
 </script>
@@ -82,6 +79,10 @@ export default {
 
 .window-title {
     margin-left: 20px !important;
+}
+
+.displace {
+  transform: translateY(-25px);
 }
 
 @media only screen and (max-width: 720px) {

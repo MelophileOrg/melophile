@@ -7,6 +7,9 @@
 <script>
 export default {
   name: 'authorize',
+  components: {
+    
+  },
   computed: {
   },
   async created() {

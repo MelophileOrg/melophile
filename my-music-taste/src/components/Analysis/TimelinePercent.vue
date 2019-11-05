@@ -45,7 +45,6 @@ export default {
         } 
         nowMonth += 1;
         let returnYear = (now.getFullYear() - year) % 100;
-        console.log(nowMonth + "/" + returnYear);
         return nowMonth + "/" + returnYear;
     },
     findMax(array) {

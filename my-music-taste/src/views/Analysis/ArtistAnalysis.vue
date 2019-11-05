@@ -21,7 +21,7 @@
           <Loading v-else/>
         </div>
 
-        <div class="window" :style="{'--delay': 1}">
+        <div class="window" :style="{'--delay': 1}" v-if="progress.tracksLoaded">
           <div v-if="artistData != null" class="flex">
             <div class="flex">
               <div class="col">
@@ -40,7 +40,7 @@
         </div>
 
 
-        <Spotlight :delay="2" :numOff="true" :override="artistData != null" title="Artist Genres:" :list="genresComputed" image=""/>
+        
 
         <div class="window" :style="{'--delay': + 3}">
           <h3  class="window-title" v-if="artistData != null">Top Track's Characteristics:</h3>
@@ -54,15 +54,13 @@
           <Loading v-else/>
         </div>
 
+        <Spotlight :delay="2" :numOff="true" :override="artistData != null" title="Artist Genres:" :list="genresComputed" image=""/>
+
         <FeaturedTracks :style="{'--delay': + 4}" class="featuredtracks" :saved="false" :none="false" :override="topTracksReady" title="Artist Top Tracks:" :ids="topTracks"/>
 
         <Timeline :none="noneTimeline" :small="true" :override="timelineReady" title="When You Liked Tracks:" instructions="" :max="-1" :delay="5" :bars="datesAdded" y_axis="Number of Songs" :color="{red: 74, green: 189, blue: 180}"/>
 
-        <FeaturedTracks :style="{'--delay': + 6}" class="featuredtracks" :saved="true" :none="noneTimeline" :override="timelineReady" title="First Liked Tracks:" :ids="oldestTracks"/>
-
-        <FeaturedTracks :style="{'--delay': + 7}" class="featuredtracks" :saved="true" :none="noneTimeline" :override="timelineReady" title="Recently Liked Tracks:" :ids="newestTracks"/>
-
-        <div class="window" :style="{'--delay': + 8}">
+        <div class="window" :style="{'--delay': + 6}">
           <h3  class="window-title" v-if="artistData != null">Liked Track's Characteristics:</h3>
           <div v-if="audioFeaturesReady">
             <div v-if="!none">
@@ -72,8 +70,18 @@
             </div>
             <h4 v-else>No Songs Liked</h4>
           </div>
-          <Loading v-else/>
+          <Loading class="displace" v-else/>
         </div>
+
+        <Graph :zero="notSaved" :override="progress.tracksLoaded" title="Liked Tracks Happiness:" :delay="7" :bars="cleanGraphDataForwards(audioFeaturesGraphs.valence)" max_tag="Happy" min_tag="Sad" y_axis="Number of Songs" :color="audioFeatures.valence.color"/>
+
+        <Graph :zero="notSaved" :override="progress.tracksLoaded" title="Liked Tracks Energy:" :delay="8" :bars="cleanGraphDataForwards(audioFeaturesGraphs.energy)" max_tag="Hyper" min_tag="Peaceful" y_axis="Number of Songs" :color="audioFeatures.energy.color"/>
+
+        <Graph :zero="notSaved" :override="progress.tracksLoaded" title="Liked Tracks Danceability:" :delay="9" :bars="cleanGraphDataForwards(audioFeaturesGraphs.danceability)" max_tag="Let's dance!" min_tag="Couch Potato" y_axis="Number of Songs" :color="audioFeatures.danceability.color"/>
+
+        <FeaturedTracks :style="{'--delay': + 10}" class="featuredtracks" :saved="true" :none="noneTimeline" :override="timelineReady" title="First Liked Tracks:" :ids="oldestTracks"/>
+
+        <FeaturedTracks :style="{'--delay': + 11}" class="featuredtracks" :saved="true" :none="noneTimeline" :override="timelineReady" title="Recently Liked Tracks:" :ids="newestTracks"/>
         
 
       </div>
@@ -90,6 +98,7 @@ import Timeline from '@/components/Analysis/Timeline.vue'
 import FeaturedTracks from '@/components/Analysis/FeaturedTracks.vue'
 import PercentBar from '@/components/Analysis/PercentBar.vue'
 import Spotlight from '@/components/Library/Spotlight.vue'
+import Graph from '@/components/Analysis/Graph.vue'
 
 export default {
   name: 'artistanalysis',
@@ -101,6 +110,7 @@ export default {
       FeaturedTracks,
       PercentBar,
       Spotlight,
+      Graph
   },
   data() {
       return {
@@ -110,9 +120,21 @@ export default {
         timelineReady: false,
         audioFeaturesReady: false,
         topTracksReady: false,
+        audioFeaturesGraphs: {
+          valence: [0,0,0,0,0,0,0,0,0,0],
+          energy: [0,0,0,0,0,0,0,0,0,0],
+          danceability: [0,0,0,0,0,0,0,0,0,0],
+        }
       }
   },
   methods: {
+    cleanGraphDataForwards(bars) {
+      let graphData = [];
+      for (let i = 0; i < bars.length; i++) {
+        graphData.push({value: bars[i], tag: bars[i]});
+      }
+      return graphData;
+    },
     formatNumber(num) {
       let millions = Math.floor(num / 1000000);
       let thousands = Math.floor(num / 1000) % 1000;
@@ -144,7 +166,6 @@ export default {
         this.artistData.newest = response.newest;
         clearInterval(this.interval);
         this.timelineReady = true;
-        console.log(this.artistData);
       }
     },
     sumTop(type) {
@@ -176,16 +197,15 @@ export default {
           break;
         for (let j = 0; j < this.artistData.tracks.length; j++) {
           averages[keys[i]] += this.artistData.tracks[j][keys[i]];
+          this.audioFeaturesGraphs[keys[i]][Math.floor(this.artistData.tracks[j][keys[i]] * 10)] += 1;
         }
         this.artistData[keys[i]] = averages[keys[i]] / this.artistData.tracks.length;
       }
-      console.log(this.artistData);
       this.audioFeaturesReady = true;
     },
     async getTopSongs() {
       this.artistData.topSongs = await this.$store.dispatch('artistTopTracks', this.artistData.id);
       for (let i = 0; i < this.artistData.topSongs.length; i++) {
-        console.log("LOL");
         try {
           this.artistData.topSongs[i].image = this.artistData.topSongs[i].album.images[0].url;
         } catch(error) {
@@ -222,6 +242,13 @@ export default {
     },
     progress() {
       return this.$store.state.progress;
+    },
+    notSaved() {
+      if (!this.progress.tracksLoaded)
+        return false;
+      if (!(this.artistData.id in this.$store.state.artists))
+        return true;
+      return this.$store.state.artists[this.artistData.id].tracks.length == 0;
     },
     songsSaved() {
       if (this.artistData.id in this.$store.state.artists) {
@@ -291,13 +318,18 @@ export default {
     else {
       this.interval = setInterval(this.checkTracksLoaded, 2000);
     }  
-    console.log(this.artistData);
   }
 }
 
 </script>
 
 <style scoped>
+
+.displace {
+  transform: translateY(-25px);
+}
+
+
 .featuredtracks {
   --delay: 0;
   animation: slide-up .5s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s);
@@ -316,7 +348,11 @@ export default {
   margin-bottom: 0px;
 }
 .windows {
-  align-items: flex-start !important;
+  align-items: top !important;
+}
+
+.window {
+  margin: 25px 25px;
 }
 
 @media screen and (max-width: 720px) {

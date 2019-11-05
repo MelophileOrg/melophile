@@ -313,7 +313,6 @@ const bangerCalc = async (context, payload) => {
 // Energy Distribution:       energy_distribution
 // Danceability Distribution: danceability_distribution
 // Banger Distribution:       banger_distribution
-// Standard Deviation Genre:  genre_standard_dev
 // Top 30 Songs:              most_played_tracks          True
 // Top 30 Artists:            most_played_artists         True
 // Extremes Top 10:           extremes
@@ -391,7 +390,7 @@ const saveLibrary = async (context, payload) => {
     }
     if (payload.include.added_timeline) 
         data.dateAdded = context.state.dateAdded;
-    //if (payload.include.genre_standard_dev)
+    // SERVER CALLS
     return true;
 };
 // Include Object

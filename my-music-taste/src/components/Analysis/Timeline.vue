@@ -2,7 +2,7 @@
   <div class="timeline" :style="{'--graphdelay': delay}">
     <div>
       <h3 class="window-title">{{title}}</h3>
-      <Loading class="loading" v-if="!override"/>
+      <Loading class="loading" v-if="!override && !none"/>
       <div v-if="override && !none" class="graph" :class="{small: small}" :style="{'--max': + findMax(bars), '--red': + color.red, '--green': + color.green, '--blue': + color.blue}">
         <div class="graph-bar time" v-for="(bar, index) in bars" :key="title+ '-timeline' + index" :class="{one: bar.value == 1, toolow: bar.value < findMax(bars) / 10}" :style="{'--num': bars.length,'--height': + bar.value}"><p>{{bar.tag}}</p><p class="hover-graph">{{findDate((bars.length - 1) - index)}}</p></div>
         <p :class="{small: small}" class="yAxis">{{y_axis}}</p>
@@ -62,7 +62,7 @@ export default {
       }
       return max;
     },
-  }
+  },
 }
 </script>
 
@@ -96,9 +96,6 @@ h4 {
   border: 1px solid rgba(255, 255, 255, 0.247);
 }
 
-.loading {
-  padding-bottom: 15px;
-}
 
 .graph-bar.time:hover p {
   position: absolute;

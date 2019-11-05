@@ -56,7 +56,6 @@ export default {
   },
   methods: {
     selectTrack(id) {
-      console.log(id);
       if (this.type == "track")
         this.$router.push("/songs/" + id);
       if (this.type == "artist")

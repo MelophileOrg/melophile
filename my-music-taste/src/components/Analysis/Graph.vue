@@ -1,18 +1,20 @@
 <template>
   <div class="graphcomp" :style="{'--graphdelay': delay}">
     <p @click="more" v-if="instructions != ''" class="instructions">{{instructions}}</p>
-    <div >
+    <h3 v-if="zero" class="window-title">{{title}}</h3>
+    <div v-if="!zero">
       <h3 class="window-title">{{title}}</h3>
       <Loading v-if="!override"/>
       <div v-if="override" class="graph" :style="{'--max': + findMax(bars), '--red': + color.red, '--green': + color.green, '--blue': + color.blue}">
         <div class="graph-bar" v-for="(bar, index) in bars" :key="title+'-bargraph-'+index" :class="{toolow: bar.value < findMax(bars) / 8}" :style="{'--height': + bar.value}"><p :class="{thousands: bar.value > 999}">{{bar.tag}}</p></div>
         <p v-if="y_axis != ''" class="yAxis">{{y_axis}}</p>
       </div>
-      <div class="graph-labels">
+      <div v-if="override" class="graph-labels">
         <p>{{min_tag}}</p>
         <p>{{max_tag}}</p>
       </div>
     </div>
+    <h4 v-if="zero">No Songs Liked</h4>
   </div>
 </template>
 
@@ -35,6 +37,7 @@ export default {
     color: Object,
     instructions: String,
     override: Boolean,
+    zero: Boolean,
   },
   methods: {
     findMax(array) {
@@ -206,5 +209,13 @@ p {
     height: calc((var(--height) / var(--max)) * 0% - 5px);
     color: rgba(255, 255, 255, 0);
   }
+}
+
+h4 {
+  margin-bottom: 0px;
+  color: rgba(255, 255, 255, 0.336);
+  padding: 10px;
+  background-color: rgba(7, 7, 7, 0.336);
+  border-radius: 10px;
 }
 </style>
