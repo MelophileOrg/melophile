@@ -208,11 +208,11 @@ const calcTracksPerGenre = async (context) => {
         }
     }
     let genreTuples = Object.entries(context.state.genres);
-    let topGenres = genreTuples.sort((a,b) => b[1].tracknum - a[1].tracknum).slice(0,20);
+    let topGenres = genreTuples.sort((a,b) => b[1].tracknum - a[1].tracknum).slice(0,50);
     let topGenreIds = topGenres.map(genre => genre[0]);
     context.commit('setTopSavedGenres', topGenreIds);
     let artistTuples = Object.entries(context.state.artists);
-    let topArtists = artistTuples.sort((a,b) => b[1].tracks.length - a[1].tracks.length).slice(0,20);
+    let topArtists = artistTuples.sort((a,b) => b[1].tracks.length - a[1].tracks.length).slice(0,50);
     let topArtistIds = topArtists.map(artist => artist[0]);
     context.commit('setTopSavedArtists', topArtistIds);
     context.commit('setArtistsLoaded');

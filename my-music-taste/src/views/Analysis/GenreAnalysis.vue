@@ -25,16 +25,21 @@ export default {
   },
   data() {
       return {
-        artistData: null,
+        genreData: null,
       }
   },
   methods: {
-
+    getData() {
+      this.genreData = this.genres[this.$route.params.id];
+    }
   },
   computed: {
     inicialized() {
       return this.$store.state.inicialized;
     },
+    genres() {
+      return this.$store.state.genres;
+    }
   },  
   async created() {
     window.scroll({
@@ -43,6 +48,7 @@ export default {
     });
     if (!this.inicialized)
       this.$router.push("/login");
+
   }
 }
 

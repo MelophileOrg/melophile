@@ -21,7 +21,7 @@
           <Loading v-else/>
         </div>
 
-        <div class="window" :style="{'--delay': 0}">
+        <div class="window" :style="{'--delay': 1}">
           <div v-if="artistData != null" class="flex">
             <div class="flex">
               <div class="col">
@@ -31,7 +31,7 @@
                 <h1 id="artist-name">Liked Songs:</h1>
                 <h2 v-if="timelineReady && !noneTimeline">First Liked: {{oldestLiked}}</h2>
                 <h2 v-if="progress.tracksLoaded && !noneTimeline">{{songsSaved}}</h2>
-                <h2 v-if="!progress.tracksLoaded">Finding Liked Songs</h2>
+                <h2 v-if="!progress.tracksLoaded">Finding Saved Songs...</h2>
                 <h4 id="nosongs" v-if="noneTimeline">No Songs Liked</h4>
               </div>
             </div>
@@ -40,10 +40,10 @@
         </div>
 
 
-        <Spotlight :delay="1" :numOff="true" :override="artistData != null" title="Artist Genres:" :list="genresComputed" image=""/>
+        <Spotlight :delay="2" :numOff="true" :override="artistData != null" title="Artist Genres:" :list="genresComputed" image=""/>
 
-        <div class="window" :style="{'--delay': + 2}">
-          <h3  class="window-title" v-if="artistData != null">Top Song's Characteristics:</h3>
+        <div class="window" :style="{'--delay': + 3}">
+          <h3  class="window-title" v-if="artistData != null">Top Track's Characteristics:</h3>
           <div v-if="topTracksReady">
             <div>
               <PercentBar title="Happiness" :percent="sumTop('valence')" :color="audioFeatures.valence.color" />
@@ -54,8 +54,16 @@
           <Loading v-else/>
         </div>
 
-        <div class="window" :style="{'--delay': + 2}">
-          <h3  class="window-title" v-if="artistData != null">Liked Song's Characteristics:</h3>
+        <FeaturedTracks :style="{'--delay': + 4}" class="featuredtracks" :saved="false" :none="false" :override="topTracksReady" title="Artist Top Tracks:" :ids="topTracks"/>
+
+        <Timeline :none="noneTimeline" :small="true" :override="timelineReady" title="When You Liked Tracks:" instructions="" :max="-1" :delay="5" :bars="datesAdded" y_axis="Number of Songs" :color="{red: 74, green: 189, blue: 180}"/>
+
+        <FeaturedTracks :style="{'--delay': + 6}" class="featuredtracks" :saved="true" :none="noneTimeline" :override="timelineReady" title="First Liked Tracks:" :ids="oldestTracks"/>
+
+        <FeaturedTracks :style="{'--delay': + 7}" class="featuredtracks" :saved="true" :none="noneTimeline" :override="timelineReady" title="Recently Liked Tracks:" :ids="newestTracks"/>
+
+        <div class="window" :style="{'--delay': + 8}">
+          <h3  class="window-title" v-if="artistData != null">Liked Track's Characteristics:</h3>
           <div v-if="audioFeaturesReady">
             <div v-if="!none">
               <PercentBar title="Happiness" :percent="artistData.valence" :color="audioFeatures.valence.color" />
@@ -66,13 +74,6 @@
           </div>
           <Loading v-else/>
         </div>
-
-        <Timeline :none="noneTimeline" :small="true" :override="timelineReady" title="When You Liked Songs:" instructions="" :max="-1" :delay="3" :bars="datesAdded" y_axis="Number of Songs" :color="{red: 74, green: 189, blue: 180}"/>
-
-        <FeaturedTracks :none="noneTimeline" :override="timelineReady" title="First Liked:" :ids="oldestTracks"/>
-
-        <FeaturedTracks :none="noneTimeline" :override="timelineReady" title="Recent Liked:" :ids="newestTracks"/>
-
         
 
       </div>
@@ -183,10 +184,24 @@ export default {
     },
     async getTopSongs() {
       this.artistData.topSongs = await this.$store.dispatch('artistTopTracks', this.artistData.id);
+      for (let i = 0; i < this.artistData.topSongs.length; i++) {
+        console.log("LOL");
+        try {
+          this.artistData.topSongs[i].image = this.artistData.topSongs[i].album.images[0].url;
+        } catch(error) {
+          this.artistData.topSongs[i].image = "";
+        }
+      }
       this.topTracksReady = true;
     },
   },
   computed: {
+    topTracks() {
+      if (this.topTracksReady) {
+        return this.artistData.topSongs.slice(0, 3);
+      }
+      return [];
+    },
     oldestLiked() {
       let month = this.oldestTracks[0].month;
       let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -283,6 +298,10 @@ export default {
 </script>
 
 <style scoped>
+.featuredtracks {
+  --delay: 0;
+  animation: slide-up .5s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s);
+}
 .library {
   background-image: url('../../assets/icons/library.svg');
 }

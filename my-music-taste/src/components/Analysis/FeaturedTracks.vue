@@ -1,17 +1,29 @@
 <template>
-  <div class="window featuredtracks">
-    <h3 class="window-title">{{title}}</h3>
-    <Loading v-if="!override"/>
-    <div v-if="override && !none">
-        <div @click="toSong(id.id)" v-for="id in ids" :key="title + id.id" class="search-song ">
-            <img class="search-image" :src="tracks[id.id].image"/>
-            <div class="col">
-                <h1 class="search-title">{{tracks[id.id].name}}</h1>
-                <h4>{{findDate(id)}}</h4>
-            </div>
+  <div class="featuredtracks window">
+      <h3 class="window-title">{{title}}</h3>
+      <Loading v-if="!override"/>
+      <div v-if="override && !none && saved">
+          <div @click="toSong(id.id)" v-for="id in ids" :key="title + id.id" class="search-song ">
+              <img class="search-image" :src="tracks[id.id].image"/>
+              <div class="col">
+                  <h1 class="search-title">{{tracks[id.id].name}}</h1>
+                  <h4>{{findDate(id)}}</h4>
+              </div>
+          </div>
+      </div>
+
+      <div v-if="override && !none && !saved">
+        <div @click="toSong(track.id)" v-for="track in ids" :key="title + track.id" class="search-song ">
+          <img class="search-image" :src="track.image"/>
+          <div class="col">
+            <h1 class="search-title">{{track.name}}</h1>
+            <h4>{{track.album.name}}</h4>
+          </div>
         </div>
-    </div>
-    <h5 v-if="none">No Songs Liked</h5>
+      </div>
+    
+      <h5 v-if="none">No Songs Liked</h5>
+
   </div>
 </template>
 
@@ -28,6 +40,8 @@ export default {
         ids: Array,
         override: Boolean,
         none: Boolean,
+        saved: Boolean,
+        delay: Number,
     },
     methods: {
         toSong(id) {
@@ -113,7 +127,7 @@ export default {
   margin: 0 10px;
   
   font-weight: lighter;
-  font-size: 20px;
+  font-size: 18px;
   text-align: left;
   width: calc(100% - 20px);
   overflow: hidden;
