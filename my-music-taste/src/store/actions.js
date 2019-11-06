@@ -318,7 +318,7 @@ const bangerCalc = async (context, payload) => {
 // Extremes Top 10:           extremes
 const saveLibrary = async (context, payload) => {
     if (!payload.private && !payload.include.numerical_data && !payload.include.audio_features && !payload.include.most_played_tracks && !payload.include.most_played_artists)
-        return false;
+        return null;
     let data = {};
     data.include = payload.include;
     data.name = payload.name;
@@ -390,8 +390,7 @@ const saveLibrary = async (context, payload) => {
     }
     if (payload.include.added_timeline) 
         data.dateAdded = context.state.dateAdded;
-    // SERVER CALLS
-    return true;
+    return data;
 };
 // Include Object
 const convertTracks = async (context, payload) => {

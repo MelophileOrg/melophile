@@ -1,8 +1,9 @@
 <template>
   <div class="selector">
-    <div v-for="(item, index) in items" :key="index">
+    <div class="relative" v-for="(item, index) in items" :key="index">
       <h1 class="text" v-if="item.type == 'text'">{{item.text}}</h1>
       <Select class="select" @selection="selection" @pending="pending" v-if="item.type == 'select'" :options="item.options" :load="load" :setTitle="item.setTitle" :override="override"/>
+      <div class="choosebutton" v-if="save && index == (items.length - 1)" @click="toggleSave" :class="{add: !state, remove: state}"></div>
     </div>
   </div>
 </template>
@@ -19,6 +20,8 @@ export default {
     items: Array,
     load: Boolean, 
     override: Boolean,
+    save: Boolean,
+    state: Boolean,
   },
   methods: {
     selection(item) {
@@ -26,7 +29,10 @@ export default {
     },
     pending() {
       this.$emit('pending');
-    }
+    },
+    toggleSave() {
+      this.$emit('toggleSave');
+    },
   }
 }
 </script>
@@ -37,6 +43,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
   max-width: 90vw;
   margin: 0 auto;
   flex-wrap: wrap;
@@ -63,5 +70,9 @@ export default {
   .text {
     display: none;
   }
+}
+
+.relative {
+  position: relative;
 }
 </style>

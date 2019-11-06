@@ -13,6 +13,7 @@
         <p>{{findDate(0)}}</p>
       </div>
     </div>
+    <div class="choosebutton" v-if="save" @click="toggleSave" :class="{add: !state, remove: state}"></div>
   </div>
 </template>
 
@@ -31,8 +32,13 @@ export default {
     y_axis: String,
     override: Boolean,
     max: Number,
+    save: Boolean,
+    state: Boolean,
   },
   methods: {
+    toggleSave() {
+      this.$emit('toggleSave');
+    },
     findDate(month) {
         let now = new Date();
         let nowMonth = now.getMonth();
@@ -102,6 +108,7 @@ export default {
   padding: 20px;
   padding-bottom: 5px;
   max-width: 400px;
+  position: relative;
   border-radius: 5px;
   margin-bottom: 20px;
   background: rgba(255, 255, 255, 0.05);

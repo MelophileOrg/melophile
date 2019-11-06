@@ -5,6 +5,7 @@
       <PercentBar title="Instrumental" :percent="audioFeatures.instrumentalness.value" :color="audioFeatures.instrumentalness.color" />
       <PercentBar title="Live" :percent="audioFeatures.liveness.value" :color="audioFeatures.liveness.color" />
       <PercentBar title="Speaking" :percent="audioFeatures.speechiness.value" :color="audioFeatures.speechiness.color" />
+      <div class="choosebutton" v-if="save" @click="toggleSave" :class="{add: !state, remove: state}"></div>
   </div>
 </template>
 
@@ -18,6 +19,13 @@ export default {
     },
     props: {
         delay: Number,
+        save: Boolean,
+        state: Boolean,
+    },
+    methods: {
+        toggleSave() {
+            this.$emit('toggleSave');
+        }
     },
     computed: {
         audioFeatures() {
@@ -35,6 +43,7 @@ export default {
     display: inline-block;
     width: 75%;
     margin: 22px 22px;
+    position: relative;
     padding: 20px;
     max-width: 400px;
     border-radius: 5px;

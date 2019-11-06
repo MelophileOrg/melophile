@@ -1,11 +1,15 @@
 <template>
     <div class="TopSaved">
         <div v-if="progress.extremesLoaded">
-        <Selector :items="selector" :load="false" :override="false" @pending="pending" @selection="select"/>
-        <div class="list" v-if="list.length > 0">
+        <Selector @toggleSave="toggleSave2" :save="save" :state="giveState" :items="selector" :load="false" :override="false" @pending="pending" @selection="select"/>
+        <div class="list" v-if="list.length > 0 && !save">
             <SearchItem :topsaved="true" class="searchItem" v-for="(track, index) in list" :saved="true" :showNum="true" :key="track.id + index" :data="track" :index="index" :type="type"/>
         </div>
-        <Empty class="list" v-else/>
+        <Empty class="list" v-if="list.length <= 0 && !save"/>
+        <div class="list" v-if="list.length > 0 && save" :class="{fade: (type == 'artist' && !stateartists) || (type == 'genre' && !stategenres)}">
+            <SearchItem :topsaved="true" class="searchItem" v-for="index in 20" :saved="true" :showNum="true" :key="list[index - 1].id + index" :data="list[index - 1]" :index="index - 1" :type="type"/>
+        </div>
+        <Empty class="list" v-if="list.length <= 0 && save"/>
         </div>
         <Loading v-else/>
     </div>
@@ -19,6 +23,11 @@ import Loading from '@/components/General/Loading.vue'
 
 export default {
   name: 'TopSaved',
+  props: {
+      save: Boolean,
+      stateartists: Boolean,
+      stategenres: Boolean,
+  },
   components: {
       Selector,
       SearchItem,
@@ -45,6 +54,9 @@ export default {
     }
   },
     methods: {
+        toggleSave2() {
+            this.$emit('toggleSave', "most_saved_" + this.type + "s");
+        },
         select(val) {
             this.chart = val;
             if (val == "artists")
@@ -68,6 +80,11 @@ export default {
         }
     },
     computed: {
+        giveState() {
+            if (this.type == 'genre')
+                return this.stategenres;
+            return this.stateartists;
+        },
         topSaved() {
             return this.$store.state.topSaved;
         },
@@ -98,5 +115,9 @@ export default {
     max-width: 900px;
     
     margin: 0 auto;
+}
+
+.fade {
+  opacity: .3;
 }
 </style>

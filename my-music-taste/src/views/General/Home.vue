@@ -3,6 +3,7 @@
     <NavBar/>
     <div id="main">
       <Features v-if="!inicialized"/>
+      <button @click="save">SAVE</button>
     </div>
   </div>
 </template>
@@ -19,7 +20,9 @@ export default {
     Features,
   },
   methods: {
-
+    save() {
+      this.$router.push('/social/save');
+    }
   },
   computed: {
     inicialized() {

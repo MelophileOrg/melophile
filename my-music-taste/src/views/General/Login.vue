@@ -123,9 +123,10 @@ export default {
   height: 100vh;
   position: relative;
   display: block;
-  background-image: radial-gradient(circle at 0px 0px, rgba(0, 0, 0, 0.377),rgb(0, 0, 0));
+  background-image: linear-gradient( rgba(0, 0, 0, 0.329),rgb(0, 0, 0));
   background-color: rgb(240,240,240);
-  background-size: 100% 100%;
+  background-size: 500% 100%;
+  background-position: center center;
   animation: background-cool calc(var(--speed) * 1s) ease infinite;
   transition: background-color calc(var(--speed) * 1.25s) ease;
 }

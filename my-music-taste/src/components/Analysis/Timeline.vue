@@ -13,6 +13,7 @@
       </div>
       <h4 id="nosongs" v-if="none">No Songs Liked</h4>
     </div>
+    <div class="choosebutton" v-if="save" @click="toggleSave" :class="{add: !state, remove: state}"></div>
   </div>
 </template>
 
@@ -34,8 +35,13 @@ export default {
     max: Number,
     small: Boolean,
     none: Boolean,
+    save: Boolean,
+    state: Boolean,
   },
   methods: {
+    toggleSave() {
+      this.$emit('toggleSave');
+    },
     findDate(month) {
         let now = new Date();
         let nowMonth = now.getMonth();
@@ -91,6 +97,7 @@ h4 {
   padding-bottom: 5px;
   max-width: 400px;
   border-radius: 5px;
+  position: relative;
   margin-bottom: 20px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.247);

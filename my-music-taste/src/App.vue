@@ -174,7 +174,6 @@ html::-webkit-scrollbar-thumb
 }
 
 .flex-wrap {
-  display: block;
   width: 100%;
   flex-wrap: wrap;
 }
@@ -217,12 +216,53 @@ html::-webkit-scrollbar-thumb
 .windows {
   display: flex;
   width: 100%;
-  max-width: 1400px !important;
+  max-width: 1450px !important;
   justify-content: center;
   align-items: top;
   flex-wrap: wrap;
   margin: 0 auto;
   margin-bottom: 50px;
   margin-top: 30px;
+}
+
+.choosebutton {
+  display: block;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  right: -20px;
+  top: -20px;
+  background-size: 110% 110%;
+  background-position: center center;
+  transition: all .3s ease;
+  border-radius: 100%;
+  background-color: rgb(255, 255, 255);
+  z-index: 100;
+}
+
+.choosebutton:hover {
+  opacity: 1;
+}
+
+.choosebutton.add {
+  animation: spin 1s ease;
+  background-image: url('./assets/icons/add.svg');
+}
+
+.choosebutton.remove {
+  animation: spin-again 1s ease;
+  background-image: url('./assets/icons/remove.svg');
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes spin-again {
+  from {
+    transform: rotate(-360deg);
+  }
 }
 </style>

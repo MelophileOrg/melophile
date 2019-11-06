@@ -2,14 +2,15 @@
     <div class="YourLibrary" :style="{'--delay': + 0}">
         <h3 class="window-title" v-if="progress.tracksLoaded">Your Library:</h3>
         <div v-if="progress.tracksLoaded" class="row flex-space-between">
-        <h4 class="light">Saved Songs</h4><h4 class="num">{{formatNumber(total)}}</h4>
+            <h4 class="light">Saved Songs</h4><h4 class="num">{{formatNumber(total)}}</h4>
         </div>
         <div v-if="progress.artistsLoaded" class="row flex-space-between">
-        <h4 class="light">Artists</h4><h4 class="num">{{formatNumber(Object.keys(artists).length)}}</h4>
+            <h4 class="light">Artists</h4><h4 class="num">{{formatNumber(Object.keys(artists).length)}}</h4>
         </div>
         <div v-if="progress.genresLoaded" class="row flex-space-between">
-        <h4 class="light">Genres</h4><h4 class="num">{{formatNumber(Object.keys(genres).length)}}</h4>
+            <h4 class="light">Genres</h4><h4 class="num">{{formatNumber(Object.keys(genres).length)}}</h4>
         </div>
+        <div class="choosebutton" v-if="save" @click="toggleSave" :class="{add: !state, remove: state}"></div>
     </div>
 </template>
 
@@ -18,6 +19,8 @@ export default {
     name: 'YourLibrary',
     props: {
         delay: Number,
+        save: Boolean,
+        state: Boolean,
     },
     methods: {
         formatNumber(num) {
@@ -32,6 +35,9 @@ export default {
                 return thousands + "," + zeros + remainder;
             return remainder;
         },
+        toggleSave() {
+            this.$emit('toggleSave');
+        }
     },
     computed: {
         total() {
@@ -62,6 +68,7 @@ export default {
     padding: 20px;
     max-width: 400px;
     border-radius: 5px;
+    position: relative;
     margin-bottom: 20px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.247);

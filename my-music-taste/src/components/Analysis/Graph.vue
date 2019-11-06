@@ -15,6 +15,7 @@
       </div>
     </div>
     <h4 v-if="zero">No Songs Liked</h4>
+    <div class="choosebutton" v-if="save" @click="toggleSave" :class="{add: !state, remove: state}"></div>
   </div>
 </template>
 
@@ -38,8 +39,13 @@ export default {
     instructions: String,
     override: Boolean,
     zero: Boolean,
+    save: Boolean,
+    state: Boolean,
   },
   methods: {
+    toggleSave() {
+      this.$emit('toggleSave');
+    },
     findMax(array) {
       let max = 0;
       for (var i = 0; i < array.length; i++)

@@ -52,7 +52,7 @@
         <div id="banger" class="window"  :style="{'--delay': 3}">
           <h3 v-if="artistDone" class="nomargin window-title">Audio Analysis</h3>  
           <div v-if="audioAnalysisReady" class="graph" :style="{'--numBars': + trackData.audioAnalysis.length}">
-              <div class="graph-bar" v-for="(bar, index) in trackData.audioAnalysis" :style="{'--height': + bar.loudness_max, '--red': + bar.red, '--green': + bar.green, '--blue': + bar.blue,}" :key="'audio-analysis'+index">
+              <div class="graph-bar" v-for="(bar, index) in trackData.audioAnalysis" :style="{'--height': + bar.loudness_max, '--red': + bar.red, '--green': + bar.green, '--blue': + bar.blue, '--index': + index}" :key="'audio-analysis'+index">
                   <p>{{time(bar.start)}}</p>
               </div>
           </div>
@@ -556,13 +556,14 @@ p {
     --red: 240;
     --green: 193;
     --blue: 111;
+    --index: 0;
     display: block;
     width: calc((100% / var(--numBars)) - 1px);
     height: calc(125px * var(--height));
     background-color: rgba(var(--red), var(--green), var(--blue), .9);
     border-radius: 3px;
     position: relative;
-    animation: bar-graph-slide .5s ease-out calc(var(--height) * 1s), hide calc(var(--height) * 1s);
+    animation: bar-graph-slide .5s ease-out calc(var(--height) * 1s + var(--index) * .005s - .5s), hide calc(var(--height) * 1s + var(--index) * .005s - .5s);
 }
 
 

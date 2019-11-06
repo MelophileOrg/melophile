@@ -5,6 +5,7 @@
       <PercentBar title="Major" :percent="mode.value" :color="mode.major" />
       <PercentBar title="Minor" :percent="1 - mode.value" :color="mode.minor" />
       <PercentBar title="Volume" type="volume" :percent="(audioFeatures.loudness.value + 50) /  50" :color="audioFeatures.loudness.color" />
+      <div class="choosebutton" v-if="save" @click="toggleSave" :class="{add: !state, remove: state}"></div>
   </div>
 </template>
 
@@ -18,6 +19,13 @@ export default {
     },
     props: {
         delay: Number,
+        save: Boolean,
+        state: Boolean,
+    },
+    methods: {
+        toggleSave() {
+            this.$emit('toggleSave');
+        }
     },
     computed: {
         audioFeatures() {
@@ -39,6 +47,7 @@ export default {
     width: 75%;
     margin: 22px 22px;
     padding: 20px;
+    position: relative;
     max-width: 400px;
     border-radius: 5px;
     margin-bottom: 20px;

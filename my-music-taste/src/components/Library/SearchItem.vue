@@ -64,10 +64,14 @@ export default {
         this.$router.push("/genres/" + this.data.name);
     },
     selectSpecial(index) {
-      if (this.type == "track")
-        this.$router.push("/artists/" + this.data.artists[index].id);
+      if (this.type == "track") {
+        if (typeof(this.data.artists[index]) == 'object')
+          this.$router.push("/artists/" + this.data.artists[index].id);
+        else
+          this.$router.push("/artists/" + this.data.artists[index]);
+      }
       if (this.type == "artist")
-        this.$router.push("/genres/" + this.data.genres[index].name);
+        this.$router.push("/genres/" + this.data.genres[index]);
       if (this.type == "genre")
         return
     },
@@ -86,8 +90,6 @@ export default {
       return this.$store.state.artists;
     }
   },
-  created() {
-  }
 }
 </script>
 

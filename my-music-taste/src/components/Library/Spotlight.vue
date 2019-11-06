@@ -24,6 +24,7 @@
     </div>
 
     </div>
+    <div class="choosebutton" v-if="save" @click="toggleSave" :class="{add: !state, remove: state}"></div>
   </div>
 </template>
 
@@ -41,7 +42,9 @@ export default {
     list: Array,
     delay: Number,
     image: String,
-    numOff: Boolean
+    numOff: Boolean,
+    save: Boolean,
+    state: Boolean,
   },
   methods: {
     toCharts(){
@@ -57,6 +60,9 @@ export default {
       else {
         this.$router.push('/artists/' + value.id);
       }
+    },
+    toggleSave() {
+      this.$emit('toggleSave');
     }
   },
 }
@@ -71,6 +77,7 @@ export default {
     width: 75%;
     margin: 22px 22px;
     padding: 20px;
+    position: relative;
     max-width: 400px;
     border-radius: 5px;
     margin-bottom: 20px;
@@ -138,7 +145,7 @@ export default {
 img {
   display: block;
   height: 70px;
-  margin-right: 5px;
+  margin-right: 10px;
 }
 
 
