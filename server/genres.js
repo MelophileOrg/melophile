@@ -2,40 +2,40 @@ const mongoose = require('mongoose');
 const express = require("express");
 const router = express.Router();
 
-const artistsSchema = new mongoose.Schema({
+const genreSchema = new mongoose.Schema({
     id: String,
-    artists: Object,
+    genres: Object,
     created: Date,
 });
 
-const Artist = mongoose.model('Artist', artistsSchema);
+const Genre = mongoose.model('Genre', genreSchema);
 
 router.post("/:id", async (req, res) => {
     try {
-        let artists = await Artist.find({});
+        let genres = await Genre.find({});
         let found = false;
-        for (let i = 0; i < artists.length; i++) {
-            if (artists[i].id == req.params.id)
+        for (let i = 0; i < genres.length; i++) {
+            if (genres[i].id == req.params.id)
                 found = true;
         }
         if (found) {
-            let artists = await Artist.updateOne({
+            let genres = await Genre.updateOne({
                 id: req.params.id,
             }, {
                 $set: {
-                    "artists": req.body.artists,
+                    "genres": req.body.genres,
                     "created": new Date(),
                 }
             });
             return res.send({updated: true, success: true});
         }
         else {
-            let artists = new Artist({
+            let genre = new Genre({
                 id: req.params.id,
-                artists: req.body.artists,
+                genres: req.body.genres,
                 created: new Date(),
             });
-            await artists.save();
+            await genre.save();
             console.log("Profile Created");
             return res.send({updated: false, success: true});
         }
@@ -47,7 +47,7 @@ router.post("/:id", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
     try {
-      let artists = await Artist.findOne({
+      let artists = await Artists.findOne({
         id: req.params.id
       });  
       console.log("Profile Retrieved");
@@ -60,6 +60,6 @@ router.get("/:id", async (req, res) => {
 
 
 module.exports = {
-    model: Artist,
+    model: Genre,
     routes: router,
 }

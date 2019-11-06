@@ -3,7 +3,6 @@ const express = require("express");
 const router = express.Router();
 
 const tracksSchema = new mongoose.Schema({
-    privacy: Boolean,
     id: String,
     tracks: Object,
     created: Date,
@@ -24,7 +23,6 @@ router.post("/:id", async (req, res) => {
                 id: req.params.id,
             }, {
                 $set: {
-                    "privacy": req.body.privacy,
                     "tracks": req.body.tracks,
                     "created": new Date(),
                 }
@@ -33,7 +31,6 @@ router.post("/:id", async (req, res) => {
         }
         else {
             let tracks = new Tracks({
-                privacy: req.body.privacy,
                 id: req.params.id,
                 tracks: req.body.tracks,
                 created: new Date(),

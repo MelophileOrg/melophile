@@ -26,6 +26,7 @@ const collectionsSchema = new mongoose.Schema({
         banger: Object,
     },
     dateAdded: Array,
+    happinessTimeline: Array,
     created: Date,
 });
 
@@ -58,6 +59,8 @@ router.post("/:id", async (req, res) => {
                     "audioFeatures.valence": req.body.audioFeatures.valence,
                     "audioFeatures.tempo": req.body.audioFeatures.tempo,
                     "audioFeatures.banger": req.body.audioFeatures.banger,
+                    "dateAdded": req.body.dateAdded,
+                    "happinessTimeline": req.body.happinessTimeline,
                     "created": new Date(),
                 }
             });
@@ -88,6 +91,7 @@ router.post("/:id", async (req, res) => {
                     banger: req.body.audioFeatures.banger,
                 },
                 dateAdded: req.body.dateAdded,
+                happinessTimeline: req.body.happinessTimeline,
                 created: new Date(),
             });
             await collections.save();

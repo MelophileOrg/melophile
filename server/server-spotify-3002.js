@@ -27,6 +27,9 @@ app.use("/api/tracks", tracks.routes);
 const artists = require("./artists.js");
 app.use("/api/artists", artists.routes);
 
+const genres = require("./genres.js");
+app.use("/api/genres", genres.routes);
+
 const collections = require("./collections.js");
 app.use("/api/collections", collections.routes);
 

@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-//import axios from 'axios';
 var SpotifyWebApi = require('spotify-web-api-js');
 
 import actions from './actions.js';

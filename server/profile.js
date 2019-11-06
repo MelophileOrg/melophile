@@ -35,7 +35,7 @@ router.post("/:id", async (req, res) => {
                 }
             });
             console.log("Profile Updated");
-            return res.send(profile);
+            return res.send("updated");
         }
         else {
             let profile = new Profile({
@@ -47,7 +47,7 @@ router.post("/:id", async (req, res) => {
             });
             await profile.save();
             console.log("Profile Created");
-            return res.send(profile);
+            return res.send("created");
         }
     } catch (error) {
       console.log(error);

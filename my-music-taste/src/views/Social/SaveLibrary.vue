@@ -12,8 +12,9 @@
               <button class="privacybutton" @click="changePrivacy(false)" :class="{active: !privacy}">Public</button>
               <button class="privacybutton" @click="changePrivacy(true)" :class="{active: privacy}">Link Only</button>
             </div>
+            <button id="continue" @click="save">Continue</button>
           </div>
-          <button id="continue">Continue</button>
+          
         </div>
 
         
@@ -95,6 +96,8 @@ import Extremes from '@/components/Library/Extremes.vue'
 import TopSaved from '@/components/Library/TopSaved.vue'
 import TopPlayed from '@/components/Library/TopPlayed.vue'
 
+import axios from 'axios';
+
 export default {
   name: 'savelibrary',
   components: {
@@ -132,6 +135,7 @@ export default {
         most_played_artists: true,
         happiness_timeline: true,
         extremes: true,
+        message: "",
       },
       data: null,
       charttab: 0,
@@ -182,9 +186,27 @@ export default {
       });
       this.tab = 1;
     },
-    save() {
-      this.data = this.$store.dispatch('saveLibrary');
-      console.log(this.data);
+    async save() {
+      try {
+        this.message = "";
+        this.data = await this.$store.dispatch('saveLibrary', {name: this.name, private: this.privacy, include: this.settings});
+        console.log(this.data);
+        if (this.data == null) {
+          this.message = "Public Profiles require Numerical Data, Characteristics, Most Played Tracks and Artists.";
+        }
+        let id = this.$store.state.user.id;
+        let profileResult = await axios.post('/api/profile/' + id, {privacy: this.privacy, name: this.name, includes: this.settings});
+        let trackResult = await axios.post('/api/tracks/' + id, {tracks: this.data.tracks});
+        let artistResult = await axios.post('/api/artists/' + id, {artists: this.data.artists});
+        let genreResult = await axios.post('/api/genres/' + id, {genres: this.data.genres});
+        let collectionResult = await axios.post('/api/collections/' + id, {genres: this.data.genres});
+        console.log(profileResult, trackResult, artistResult, genreResult, collectionResult);
+      } catch (error) {
+        this.message = error;
+      }
+
+      
+
     }
   },
   computed: {
@@ -276,16 +298,19 @@ input {
   background: rgba(255, 255, 255, 0.103);
   border: 0;
   padding: 10px;
+  margin-top: 20px;
   width: 80vw;
   max-width: 400px;
+  color: white;
 }
 
 #privacy {
   display: flex;
+  justify-content: center;
   width: 100%;
   max-width: 400px;
   margin: 0;
-  margin-top: 15px;
+  margin-top: 30px;
 }
 
 .privacybutton {
@@ -299,7 +324,8 @@ input {
   margin-right: 20px;
   width: 150px;
   border-radius: 10px;
-  opacity: .3;
+  opacity: .2;
+  transition: all .3s ease;
 }
 
 .privacybutton.active {
@@ -478,7 +504,7 @@ h3 {
   height: 50px;
   font-weight: bolder;
   border: 1px solid rgba(255, 255, 255, 0.233);
-  margin-left: 50px;
+  margin-top: 30px;
 }
 
 .row {

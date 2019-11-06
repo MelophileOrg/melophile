@@ -1,3 +1,5 @@
+
+
 ////////////////////////////////////////////////////////////////
 // INICIALIZATION //////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
@@ -313,9 +315,11 @@ const bangerCalc = async (context, payload) => {
 // Energy Distribution:       energy_distribution
 // Danceability Distribution: danceability_distribution
 // Banger Distribution:       banger_distribution
+// Happiness Timeline         happiness_timeline
 // Top 30 Songs:              most_played_tracks          True
 // Top 30 Artists:            most_played_artists         True
 // Extremes Top 10:           extremes
+
 const saveLibrary = async (context, payload) => {
     if (!payload.private && !payload.include.numerical_data && !payload.include.audio_features && !payload.include.most_played_tracks && !payload.include.most_played_artists)
         return null;
@@ -390,6 +394,9 @@ const saveLibrary = async (context, payload) => {
     }
     if (payload.include.added_timeline) 
         data.dateAdded = context.state.dateAdded;
+    if (payload.include.happiness_timeline) {
+        data.happinessTimeline = context.state.audioFeatures.valence.timeline;
+    }
     return data;
 };
 // Include Object
@@ -484,7 +491,7 @@ const gatherMostSavedArtists = async (context) => {
 };
 // Track object
 const compressArtist = async (context, payload) => {
-    return {name: payload.name, image: payload.images[0].url, genres: payload.genres};
+    return {name: payload.name, image: payload.image, genres: payload.genres};
 };
 // Include Object
 const convertGenres = async (context, payload) => {
