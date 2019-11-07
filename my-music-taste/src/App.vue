@@ -17,7 +17,7 @@ font-family: 'EB Garamond', serif;
 */
 
 html {
-  background: black;
+  background: rgba(0, 0, 0, 0.986);
 }
 body {
   margin: 0;
@@ -102,19 +102,19 @@ body {
 html::-webkit-scrollbar-track
 {
     -webkit-box-shadow: inset 0 0 6px rgba(124, 102, 102, 0.3);
-    background-color: rgb(6,6,6)
+    background-color: rgba(6, 6, 6, 0)
 }
 
 html::-webkit-scrollbar
 {
-    width: 18px;
-    background-color: rgb(6,6,6)
+    width: 5px;
+    background-color: rgba(6, 6, 6, 0.007)
 }
 
 html::-webkit-scrollbar-thumb
 {
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-    background-color: rgba(255, 255, 255, 0.164);
+    -webkit-box-shadow: inset 0 0 6px rgba(255, 255, 255, 0);
+    background-color: rgba(255, 255, 255, 0.288);
 }
 
 .loading {

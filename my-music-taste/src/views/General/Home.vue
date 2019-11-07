@@ -2,8 +2,7 @@
   <div id="main-flex" class="home">
     <NavBar/>
     <div id="main">
-      <Features v-if="!inicialized"/>
-      <button @click="save">SAVE</button>
+      <Features/>
     </div>
   </div>
 </template>

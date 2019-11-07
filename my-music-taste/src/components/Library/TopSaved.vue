@@ -3,11 +3,11 @@
         <div v-if="progress.extremesLoaded || profile">
         <Selector @toggleSave="toggleSave2" :save="save" :state="giveState" :items="filterSelector" :load="false" :override="false" @pending="pending" @selection="select"/>
         <div class="list" v-if="list.length > 0 && !save">
-            <SearchItem :profile="profile" :profileData="{genres: data.genres, artists: data.artists}" :topsaved="true" class="searchItem" v-for="(track, index) in list" :saved="true" :showNum="true" :key="track.id + index" :data="track" :index="index" :type="type"/>
+            <SearchItem :profile="profile" :profileData="profileData" :topsaved="true" class="searchItem" v-for="(track, index) in list" :saved="true" :showNum="true" :key="'topsaved' + index" :data="track" :index="index" :type="type"/>
         </div>
         <Empty class="list" v-if="list.length <= 0 && !save"/>
         <div class="list" v-if="list.length > 0 && save" :class="{fade: (type == 'artist' && !stateartists) || (type == 'genre' && !stategenres)}">
-            <SearchItem :profile="profile"  :profileData="{genres: data.genres, artists: data.artists}" :topsaved="true" class="searchItem" v-for="index in 20" :saved="true" :showNum="true" :key="list[index - 1].id + index" :data="list[index - 1]" :index="index - 1" :type="type"/>
+            <SearchItem :profile="profile"  :profileData="profileData" :topsaved="true" class="searchItem" v-for="index in 20" :saved="true" :showNum="true" :key="'topsaved' + index" :data="list[index - 1]" :index="index - 1" :type="type"/>
         </div>
         <Empty class="list" v-if="list.length <= 0 && save"/>
         </div>
@@ -116,6 +116,11 @@ export default {
                 return this.selector;
             this.filter();
             return this.selector;
+        },
+        profileData() {
+            if (!this.profile)
+                return null;
+            return {genres: this.data.genres, artists: this.data.artists}
         }
 
     }
@@ -135,6 +140,10 @@ export default {
 @media only screen and (max-width: 500px) {
     .list {
         margin-top: 10px;
+    }
+
+    .TopSaved {
+        margin-bottom: 0px !important;
     }
 }
 

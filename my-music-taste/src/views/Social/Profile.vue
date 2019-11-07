@@ -3,6 +3,8 @@
     <NavBar/>
     <div id="main">
 
+      <Loading v-if="!dataRetrieved"/>
+
       <h1 v-if="dataRetrieved" id="margin">{{name}}'s Library</h1>
 
       <div v-if="dataRetrieved" id="menu">
@@ -76,6 +78,7 @@ import Chances from '@/components/Library/Chances.vue'
 import Extremes from '@/components/Library/Extremes.vue'
 import TopSaved from '@/components/Library/TopSaved.vue'
 import TopPlayed from '@/components/Library/TopPlayed.vue'
+import Loading from '@/components/General/Loading.vue'
 
 import axios from 'axios';
 
@@ -93,7 +96,8 @@ export default {
     Extremes,
     TimelinePercent,
     TopSaved,
-    TopPlayed
+    TopPlayed,
+    Loading
   },
   data() {
     return {

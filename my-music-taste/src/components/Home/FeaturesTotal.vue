@@ -40,13 +40,12 @@ export default {
 <style scoped>
 .FeaturesTotal {
     display: block;
-    width: 100%;
+    width: calc(100vw - 260px);
     background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.295)), linear-gradient(0.25turn, #f18686, #969ef8);
     background-size: 100% 100%;
     background-position: center center;
     color: white;
     text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.144);
-    padding: 10vh;
 }
 
 .titles {
