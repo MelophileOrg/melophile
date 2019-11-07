@@ -14,8 +14,9 @@
 
         <div v-if="type == 'track'" class="artists">
           <div v-for="artistnum in 4" :key="data.name + '-' + (artistnum - 1)">
-            <h4 class="artist" @click="selectSpecial((artistnum - 1))" v-if="(artistnum - 1) < data.artists.length && !saved">{{data.artists[(artistnum - 1)].name}}{{comma((artistnum - 1), data.artists.length - 1)}}</h4>
-            <h4 class="artist" @click="selectSpecial((artistnum - 1))" v-if="(artistnum - 1) < data.artists.length && saved">{{artists[data.artists[(artistnum - 1)]].name}}{{comma((artistnum - 1), data.artists.length - 1)}}</h4>
+            <h4 class="artist" @click="selectSpecial((artistnum - 1))" v-if="(artistnum - 1) < data.artists.length && !saved && !profile">{{data.artists[(artistnum - 1)].name}}{{comma((artistnum - 1), data.artists.length - 1)}}</h4>
+            <h4 class="artist" @click="selectSpecial((artistnum - 1))" v-if="(artistnum - 1) < data.artists.length && saved && !profile">{{artists[data.artists[(artistnum - 1)]].name}}{{comma((artistnum - 1), data.artists.length - 1)}}</h4>
+            <h4 class="artist" @click="selectSpecial((artistnum - 1))" v-if="(artistnum - 1) < data.artists.length && profile">{{data.artists[(artistnum - 1)].name}}{{comma((artistnum - 1), data.artists.length - 1)}}</h4>
           </div>
         </div>
         <div v-if="type == 'genre'" class="artists">
@@ -53,6 +54,8 @@ export default {
     showNum: Boolean,
     saved: Boolean,
     topsaved: Boolean,
+    profile: Boolean,
+    profileData: Object,
   },
   methods: {
     selectTrack(id) {
@@ -65,7 +68,7 @@ export default {
     },
     selectSpecial(index) {
       if (this.type == "track") {
-        if (typeof(this.data.artists[index]) == 'object')
+        if (typeof(this.data.artists[index]) == 'object') 
           this.$router.push("/artists/" + this.data.artists[index].id);
         else
           this.$router.push("/artists/" + this.data.artists[index]);
@@ -87,9 +90,14 @@ export default {
   },
   computed: {
     artists() {
-      return this.$store.state.artists;
+      if (!this.profile)
+        return this.$store.state.artists;
+      return this.profileData.artists;
     }
   },
+  created() {
+    console.log(this.data.name);
+  }
 }
 </script>
 

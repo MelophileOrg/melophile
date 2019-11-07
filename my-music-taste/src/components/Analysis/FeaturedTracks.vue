@@ -187,7 +187,7 @@ h5 {
 
 .window {
   width: calc(75% + 40px);
-  margin: 22px 22px;
+  margin: 30px 30px !important;
   padding: 20px 0px;
   max-width: 440px;
   border-radius: 5px;

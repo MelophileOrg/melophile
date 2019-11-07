@@ -21,6 +21,8 @@ export default {
         delay: Number,
         save: Boolean,
         state: Boolean,
+        profile: Boolean,
+        data: Object,
     },
     methods: {
         toggleSave() {
@@ -29,10 +31,14 @@ export default {
     },
     computed: {
         audioFeatures() {
-            return this.$store.state.audioFeatures;
+            if (!this.profile)
+                return this.$store.state.audioFeatures;
+            return this.data.audioFeatures;
         },
         mode() {
-          return this.$store.state.mode;
+            if (!this.profile)
+                return this.$store.state.mode;
+            return this.data.mode;
         }
     },
 }
@@ -45,7 +51,7 @@ export default {
     animation: slide-up .5s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s);
     display: inline-block;
     width: 75%;
-    margin: 22px 22px;
+    margin: 30px 30px !important;
     padding: 20px;
     position: relative;
     max-width: 400px;

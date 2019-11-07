@@ -3,21 +3,54 @@
     <NavBar/>
     <div id="main">
       
-      <div id="done">
-        <h1>Saving Library</h1>
-        <div class="flex flex-center flex-wrap settings">
-          <div class="col">
+      <div id="done" v-if="!saved.attempted">
+        <h1 class="small">Share Library</h1>
+        <div class="flex flex-center flex-wrap settings small"> 
             <input type="text" v-model="name" placeholder="Display Name"/>
             <div id="privacy">
               <button class="privacybutton" @click="changePrivacy(false)" :class="{active: !privacy}">Public</button>
               <button class="privacybutton" @click="changePrivacy(true)" :class="{active: privacy}">Link Only</button>
             </div>
-            <button id="continue" @click="save">Continue</button>
-          </div>
-          
+            <button id="continue" @click="save">Save Library</button>
+
+            <p @click="toggleInformation" class="information-button" v-if="!information">More Information</p>
         </div>
 
+        <div class="flex flex-center flex-wrap settings large">
+            <h1>Share Library</h1>
+            <input type="text" v-model="name" placeholder="Display Name"/>
+            <div id="privacy">
+              <button class="privacybutton" @click="changePrivacy(false)" :class="{active: !privacy}">Public</button>
+              <button class="privacybutton" @click="changePrivacy(true)" :class="{active: privacy}">Link Only</button>
+            </div>
+            <button id="continue" @click="save">Save Library</button>
+            <p @click="toggleInformation" v-if="!information" class="information-button">More Information</p>
+        </div>
         
+        <div id="save-details" v-if="information">
+          <h4 class="top">Information on Saving Your Library</h4>
+          <p>Save and share your library analysis with friends with a unique generated link!</p>
+          <h4>Edit Your Profile</h4>
+          <p>Pick and choose what information is displayed!</p>
+          <p>Scroll down and turn off all items you don't want displayed.</p>
+          <h4>Public Profiles</h4>
+          <p>Listed and viewable by all who visit the site.</p>
+          <h4>Link Only Profiles</h4>
+          <p>Public but not listed. Link Only profiles can only be accessed by those who have your link.</p>
+          <h4>Can I Change it Later?</h4>
+          <p>Any future saves will overwrite your last profile, including privacy changes</p>
+          <p></p>
+          <p @click="toggleInformation" class="information-button">Close</p>
+        </div>
+      </div>
+
+      <div id="done" v-if="saved.attempted">
+        <div class="flex flex-center flex-wrap settings saved"> 
+          <h1 v-if="saved.success && !saved.updated">Your Profile was Saved Successfully!</h1>
+          <h1 v-if="saved.success && saved.updated">Your Profile was Updated Successfully!</h1>
+          <h1 v-if="!saved.success">Whoops! Failed to Save Your Profile.</h1>
+        </div>
+        <p @click="myprofile" v-if="saved.success" id="link">{{link}}</p>
       </div>
 
       <h1 id="margin">Edit Profile</h1>
@@ -31,7 +64,7 @@
 
       <div v-if="progress.tracksLoaded && tab == 0" class="windows">
         
-        <YourLibrary :class="{fade: !settings.numerical_data}" :state="settings.numerical_data" :save="true" :delay="0"  @toggleSave="toggleSave('numerical_data')"/>
+        <YourLibrary :title="name + '\'s Library'" :class="{fade: !settings.numerical_data}" :state="settings.numerical_data" :save="true" :delay="0"  @toggleSave="toggleSave('numerical_data')"/>
 
         <Characteristics :class="{fade: !settings.audio_features}" :state="settings.audio_features" :save="true" @toggleSave="toggleSave('audio_features')" class="relative" :delay="0"/>
 
@@ -74,9 +107,6 @@
       <div class="extremes" v-if="progress.tracksLoaded && tab == 2">
         <Extremes :class="{fade: !settings.extremes}" :state="settings.extremes" :save="true" @toggleSave="toggleSave('extremes')"/>
       </div>
-
-
-
     </div>
   </div>
 </template>
@@ -117,8 +147,10 @@ export default {
   data() {
     return {
       tab: 0,
+      saved: {attempted: false, sucess: false, updated: false},
       name: "",
-      privacy: true,
+      privacy: false,
+      information: false,
       settings: {
         numerical_data: true,
         most_saved_artists: true,
@@ -144,6 +176,9 @@ export default {
   methods: {
     changePrivacy(val) {
       this.privacy = val;
+    },
+    toggleInformation() {
+      this.information = !this.information;
     },
     toggleSave(key) {
       this.settings[key] = !this.settings[key];
@@ -172,6 +207,9 @@ export default {
       });
       this.tab = number;
     },
+    myprofile() {
+      this.$router.push('/social/myprofile');
+    },
     changeChartTab(number) {
       window.scroll({
         top: 0,
@@ -184,25 +222,40 @@ export default {
         top: 0,
         behavior: 'auto'
       });
-      this.tab = 1;
+      this.tab = 2;
     },
     async save() {
       try {
+        console.log("TRYING");
         this.message = "";
         this.data = await this.$store.dispatch('saveLibrary', {name: this.name, private: this.privacy, include: this.settings});
-        console.log(this.data);
         if (this.data == null) {
           this.message = "Public Profiles require Numerical Data, Characteristics, Most Played Tracks and Artists.";
         }
         let id = this.$store.state.user.id;
-        let profileResult = await axios.post('/api/profile/' + id, {privacy: this.privacy, name: this.name, includes: this.settings});
+        let profileResult = await axios.post('/api/profile/' + id, {privacy: this.privacy, name: this.name, include: this.settings, 
+          tracks: Object.keys(this.$store.state.tracks).length, artists: Object.keys(this.$store.state.artists).length, genres: Object.keys(this.$store.state.genres).length
+        });
         let trackResult = await axios.post('/api/tracks/' + id, {tracks: this.data.tracks});
+        console.log(Object.keys(this.data.artists).length);
         let artistResult = await axios.post('/api/artists/' + id, {artists: this.data.artists});
         let genreResult = await axios.post('/api/genres/' + id, {genres: this.data.genres});
-        let collectionResult = await axios.post('/api/collections/' + id, {genres: this.data.genres});
-        console.log(profileResult, trackResult, artistResult, genreResult, collectionResult);
+        let collectionResult = await axios.post('/api/collections/' + id, 
+        {
+          topPlayed: this.data.topPlayed,
+          topSaved: this.data.topSaved,
+          audioFeatures: this.data.audioFeatures,
+          dateAdded: this.data.dateAdded,
+          happinessTimeline: this.data.happinessTimeline,
+          mode: this.data.mode,
+        });
+        this.saved.attempted = true;
+        console.log(profileResult.data.success, trackResult.data.success, artistResult.data.success, genreResult.data.success, collectionResult.data.success);
+        this.saved.success = profileResult.data.success && trackResult.data.success && artistResult.data.success && genreResult.data.success && collectionResult.data.success;
+        this.saved.updated = profileResult.data.updated && trackResult.data.updated && artistResult.data.updated && genreResult.data.updated && collectionResult.data.updated;
       } catch (error) {
         this.message = error;
+        console.log(error);
       }
 
       
@@ -266,6 +319,9 @@ export default {
         list.push(genre);
       }
       return list;
+    },
+    link() {
+      return "mymusic.andrewdanielyoung.com/social/profile/" + this.$store.state.user.id;
     }
   },
   created() {
@@ -280,6 +336,7 @@ export default {
 </script>
 
 <style scoped>
+
 .toggle {
   font-size: 20px;
   background-color: rgba(59, 59, 59, 0.048);
@@ -292,44 +349,49 @@ export default {
   transition: all .3s ease;
 }
 
+.form {
+  display: block;
+  margin: 0 auto;
+    margin-top: 20px;
+}
+
 input {
   font-size: 20px;
-  border-radius: 10px;
+  border-radius: 0px;
   background: rgba(255, 255, 255, 0.103);
   border: 0;
   padding: 10px;
-  margin-top: 20px;
-  width: 80vw;
+
+  width: calc(100% - 20px);
   max-width: 400px;
   color: white;
 }
 
 #privacy {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   width: 100%;
-  max-width: 400px;
   margin: 0;
   margin-top: 30px;
 }
 
 .privacybutton {
-  background-color: rgba(184, 184, 184, 0.062);
+  background-color: rgba(146, 146, 146, 0.13);
   border: 0px;
   font-size: 20px;
   font-weight: bold;
   text-transform: uppercase;
   padding: 10px;
-  color: rgba(255, 255, 255, 0.89);
-  margin-right: 20px;
-  width: 150px;
-  border-radius: 10px;
-  opacity: .2;
+  color: rgba(255, 255, 255, 0.137);
+  width: 45%;
+  border-radius: 0px;
+  border: 1px solid rgba(255, 255, 255, 0);
   transition: all .3s ease;
 }
 
 .privacybutton.active {
-  opacity: 1;
+  background-color: rgba(184, 184, 184, 0.164);
+  color: rgba(255, 255, 255, 0.89);
 }
 
 #margin {
@@ -421,12 +483,45 @@ h1 {
     text-align: left;
     -webkit-animation: slide-up .3s ease 0s,hide 0s linear;
     animation: slide-up .3s ease 0s,hide 0s linear;
+    position: relative;
 }
 
+#done h1 {
+  animation: none;
+}
+
+.small {
+  display: none !important;
+}
+
+.settings {
+  display: block;
+  background-color: rgba(255, 255, 255, 0);
+  width: calc(80vw - 260px);
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.settings h1 {
+  margin-left: 0px;
+}
 @media screen and (max-width: 720px) {
   h1 {
     text-align: center !important;
     margin-left: 0px !important;
+  }
+
+  .settings {
+  width: calc(80vw) !important;
+  }
+
+  .small {
+    display: block !important;
+  }
+
+  .large {
+    display: none;
   }
 
   h2 {
@@ -442,6 +537,11 @@ h1 {
 
   #done {
     width: 100vw !important;
+  }
+
+  
+  #save-details {
+    width: calc(90vw - 60px) !important;
   }
 
 }
@@ -471,7 +571,7 @@ h2.active {
   animation: slide-up .5s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s);
   display: inline-block;
   width: 75%;
-  margin: 22px 22px;
+  margin: 30px 30px !important;
   padding: 20px;
   max-width: 400px;
   border-radius: 5px;
@@ -493,18 +593,21 @@ h3 {
   padding: 30px 0px;
   padding-top: 22px;
   background: rgba(248, 248, 248, 0.103);
+  animation: slide-up .3s ease;
 }
 
 #continue {
-  padding: 10px 30px;
+  padding: 10px 0;
+  width: 100%;
   font-size: 20px;
-  background-color: rgb(71, 170, 250);
-  border-radius: 50px;
+  background-color: rgba(81, 177, 255, 0.993);
+  border-radius: 0px;
   color: white;
   height: 50px;
   font-weight: bolder;
-  border: 1px solid rgba(255, 255, 255, 0.233);
+  border: 1px solid rgba(255, 255, 255, 0.055);
   margin-top: 30px;
+  margin-bottom: 10px;
 }
 
 .row {
@@ -538,9 +641,7 @@ h5 {
   margin-top: 20px;
 }
 
-.settings {
-  margin-bottom: 25px;
-}
+
 
 .num {
   margin-right: 5px;
@@ -558,6 +659,85 @@ h3 {
 
 .windows {
   margin-top: 0px;
+}
+
+#save-details {
+  margin: 0 auto;
+  margin-top: 20px;
+  width: calc(90vw - 60px - 260px);
+  max-width: calc(1000px - 60px);
+  background: rgba(255, 255, 255, 0.055);
+  padding: 30px;
+  margin-bottom: 20px;
+  animation: slide-up .5s ease-out;
+}
+
+#save-details p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.575);
+  line-height: 25px;
+  margin-bottom: 10px;
+  font-family: 'Roboto', sans-serif;
+  text-align: left;
+}
+
+.information-button {
+    font-family: 'Roboto', sans-serif;
+    color: rgba(255, 255, 255, 0.404);
+    transition: all .3s ease;
+    display: inline-block;
+    margin: 0 auto;
+    margin-bottom: 10px;
+    margin-top: 10px !important;
+    cursor: pointer;
+}
+.information-button:hover {
+  color: white;
+}
+
+#save-details h4 {
+  margin: 0;
+  color: rgb(255, 255, 255);
+  line-height: 25px;
+  margin-bottom: 3px;
+  margin-top: 20px;
+  text-align: left;
+}
+
+#save-details h4.top {
+  margin-top: 0px;
+  font-size: 25px;
+  margin-bottom: 8px;
+  text-transform: capitalize;
+}
+
+.settings.saved h1 {
+  margin-bottom: 0px;
+}
+
+#linkdesc {
+  display: none;
+  color: rgba(255, 255, 255, 0.425);
+  font-family: 'Roboto', sans-serif;
+  font-size: 20px;
+  text-align: left;
+  font-weight: bolder;
+  margin-bottom: 0;
+}
+
+#link {
+  display: inline-block;
+  max-width: calc(85vw - 30px);
+  margin: 0 auto;
+  margin-top: 10px;
+  margin-bottom: 15px;
+  font-family: 'Roboto', sans-serif;
+  color: white;
+  word-break: break-all;
+  line-height: 20px;
+  background-color: rgba(255, 255, 255, 0.096);
+  padding: 15px;
+  cursor: pointer;
 }
 
 </style>

@@ -22,7 +22,8 @@ export default {
     });
     if (!this.inicialized)
       this.$router.push("/login");
-    this.$router.push("/social/profile/" + this.$store.state.user.id);
+    let profileLink = "/social/profile/" + this.$store.state.user.id;
+    this.$router.push(profileLink);
   }
 }
 </script>

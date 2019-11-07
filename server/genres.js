@@ -27,6 +27,7 @@ router.post("/:id", async (req, res) => {
                     "created": new Date(),
                 }
             });
+            console.log("Genres Updated - " + req.params.id);
             return res.send({updated: true, success: true});
         }
         else {
@@ -36,7 +37,7 @@ router.post("/:id", async (req, res) => {
                 created: new Date(),
             });
             await genre.save();
-            console.log("Profile Created");
+            console.log("Genres Saved - " + req.params.id);
             return res.send({updated: false, success: true});
         }
     } catch (error) {
@@ -47,11 +48,11 @@ router.post("/:id", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
     try {
-      let artists = await Artists.findOne({
+      let genres = await Genre.findOne({
         id: req.params.id
       });  
-      console.log("Profile Retrieved");
-      return res.send(artists);
+      console.log("Genres Retrieved - " + req.params.id);
+      return res.send(genres);
     } catch (error) {
       console.log(error);
       return res.sendStatus(500);

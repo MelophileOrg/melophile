@@ -1,14 +1,16 @@
 <template>
     <div class="YourLibrary" :style="{'--delay': + 0}">
-        <h3 class="window-title" v-if="progress.tracksLoaded">Your Library:</h3>
-        <div v-if="progress.tracksLoaded" class="row flex-space-between">
+        <h3 class="window-title" v-if="progress.tracksLoaded || profile">{{title}}:</h3>
+        <div v-if="progress.tracksLoaded || profile" class="row flex-space-between">
             <h4 class="light">Saved Songs</h4><h4 class="num">{{formatNumber(total)}}</h4>
         </div>
-        <div v-if="progress.artistsLoaded" class="row flex-space-between">
-            <h4 class="light">Artists</h4><h4 class="num">{{formatNumber(Object.keys(artists).length)}}</h4>
+        <div v-if="progress.artistsLoaded || profile" class="row flex-space-between">
+            <h4 class="light" v-if="!profile">Artists</h4><h4 v-if="!profile" class="num">{{formatNumber(Object.keys(artists).length)}}</h4>
+            <h4 class="light" v-if="profile">Artists</h4><h4 v-if="profile" class="num">{{formatNumber(artists)}}</h4>
         </div>
-        <div v-if="progress.genresLoaded" class="row flex-space-between">
-            <h4 class="light">Genres</h4><h4 class="num">{{formatNumber(Object.keys(genres).length)}}</h4>
+        <div v-if="progress.genresLoaded || profile" class="row flex-space-between">
+            <h4 class="light" v-if="!profile">Genres</h4><h4  v-if="!profile" class="num">{{formatNumber(Object.keys(genres).length)}}</h4>
+            <h4 class="light" v-if="profile">Genres</h4><h4 v-if="profile" class="num">{{formatNumber(genres)}}</h4>
         </div>
         <div class="choosebutton" v-if="save" @click="toggleSave" :class="{add: !state, remove: state}"></div>
     </div>
@@ -20,7 +22,10 @@ export default {
     props: {
         delay: Number,
         save: Boolean,
+        title: String,
         state: Boolean,
+        profile: Boolean,
+        data: Object,
     },
     methods: {
         formatNumber(num) {
@@ -41,16 +46,22 @@ export default {
     },
     computed: {
         total() {
-            return this.$store.state.progress.total;
+            if (!this.profile)
+                return this.$store.state.progress.total;
+            return this.data.tracks;
         },
         progress() {
             return this.$store.state.progress;
         },
         artists() {
-            return this.$store.state.artists;
+            if (!this.profile)
+                return this.$store.state.artists;
+            return this.data.artists;
         },
         genres() {
-            return this.$store.state.genres;
+            if (!this.profile)
+                return this.$store.state.genres;
+            return this.data.genres;
         },
     }
 
@@ -64,7 +75,7 @@ export default {
     animation: slide-up .5s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s);
     display: inline-block;
     width: 75%;
-    margin: 22px 22px;
+    margin: 30px 30px !important;
     padding: 20px;
     max-width: 400px;
     border-radius: 5px;

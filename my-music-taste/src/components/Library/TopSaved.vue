@@ -1,13 +1,13 @@
 <template>
     <div class="TopSaved">
-        <div v-if="progress.extremesLoaded">
-        <Selector @toggleSave="toggleSave2" :save="save" :state="giveState" :items="selector" :load="false" :override="false" @pending="pending" @selection="select"/>
+        <div v-if="progress.extremesLoaded || profile">
+        <Selector @toggleSave="toggleSave2" :save="save" :state="giveState" :items="filterSelector" :load="false" :override="false" @pending="pending" @selection="select"/>
         <div class="list" v-if="list.length > 0 && !save">
-            <SearchItem :topsaved="true" class="searchItem" v-for="(track, index) in list" :saved="true" :showNum="true" :key="track.id + index" :data="track" :index="index" :type="type"/>
+            <SearchItem :profile="profile" :profileData="{genres: data.genres, artists: data.artists}" :topsaved="true" class="searchItem" v-for="(track, index) in list" :saved="true" :showNum="true" :key="track.id + index" :data="track" :index="index" :type="type"/>
         </div>
         <Empty class="list" v-if="list.length <= 0 && !save"/>
         <div class="list" v-if="list.length > 0 && save" :class="{fade: (type == 'artist' && !stateartists) || (type == 'genre' && !stategenres)}">
-            <SearchItem :topsaved="true" class="searchItem" v-for="index in 20" :saved="true" :showNum="true" :key="list[index - 1].id + index" :data="list[index - 1]" :index="index - 1" :type="type"/>
+            <SearchItem :profile="profile"  :profileData="{genres: data.genres, artists: data.artists}" :topsaved="true" class="searchItem" v-for="index in 20" :saved="true" :showNum="true" :key="list[index - 1].id + index" :data="list[index - 1]" :index="index - 1" :type="type"/>
         </div>
         <Empty class="list" v-if="list.length <= 0 && save"/>
         </div>
@@ -27,6 +27,10 @@ export default {
       save: Boolean,
       stateartists: Boolean,
       stategenres: Boolean,
+      profile: Boolean,
+      data: Object,
+      artistsAllowed: Boolean,
+      genresAllowed: Boolean,
   },
   components: {
       Selector,
@@ -69,7 +73,10 @@ export default {
             if (this.catagory != "") {
                 let ids = this.topSaved[this.chart];
                 for (var i = 0; i < ids.length; i++) {
-                    this.list.push(this.$store.state[this.chart][ids[i]]);
+                    if (!this.profile)
+                        this.list.push(this.$store.state[this.chart][ids[i]]);
+                    else
+                        this.list.push(this.data[this.chart][ids[i]]);
                 }
                 this.pendingStatus = false;
             }
@@ -77,6 +84,17 @@ export default {
         pending() {
             this.pendingStatus = true;
             this.list = [];
+        },
+        filter() {
+            if (!this.data.artistsAllowed) {
+                this.selector.splice(0, 2, {type: "text", text: this.data.name + "'s Top Saved Genres"});
+            }
+            else if (!this.data.genresAllowed) {
+                this.selector.splice(0, 2, {type: "text", text: this.data.name + "'s Top Saved Artists"});
+            }
+            else {
+                this.selector.splice(0, 1, {type: "text", text: this.data.name + "'s Top Saved"})
+            }
         }
     },
     computed: {
@@ -86,11 +104,20 @@ export default {
             return this.stateartists;
         },
         topSaved() {
-            return this.$store.state.topSaved;
+            if (!this.profile)
+                return this.$store.state.topSaved;
+            return this.data.topSaved;
         },
         progress() {
             return this.$store.state.progress;
+        },
+        filterSelector() {
+            if (!this.profile)
+                return this.selector;
+            this.filter();
+            return this.selector;
         }
+
     }
 }
 </script>

@@ -335,16 +335,22 @@ const saveLibrary = async (context, payload) => {
     if (payload.include.most_saved_artists || payload.include.most_saved_genres) {
         data.topSaved = {};
         if (payload.include.most_saved_artists)
-            data.topSaved.artists = context.state.topSaved.artists;
+            data.topSaved.artists = context.state.topSaved.artists.slice(0, 20);
         if (payload.include.most_saved_genres)
-            data.topSaved.genres = context.state.topSaved.genres;
+            data.topSaved.genres = context.state.topSaved.genres.slice(0, 20);
     }
     if (payload.include.most_played_tracks || payload.include.most_played_artists) {
         data.topPlayed = {};
         if (payload.include.most_played_tracks) 
-            data.topPlayed.tracks = context.state.topPlayed.tracks;
+            data.topPlayed.tracks = [];
+            data.topPlayed.tracks[0] = context.state.topPlayed.tracks[0].slice(0, 20);
+            data.topPlayed.tracks[1] = context.state.topPlayed.tracks[1].slice(0, 20);
+            data.topPlayed.tracks[2] = context.state.topPlayed.tracks[2].slice(0, 20);
         if (payload.include.most_played_artists) 
-            data.topPlayed.artists = context.state.topPlayed.artists;
+            data.topPlayed.artists = [];
+            data.topPlayed.artists[0] = context.state.topPlayed.artists[0].slice(0, 20);
+            data.topPlayed.artists[1] = context.state.topPlayed.artists[1].slice(0, 20);
+            data.topPlayed.artists[2] = context.state.topPlayed.artists[2].slice(0, 20);
     }
     if (payload.include.audio_features || payload.include.numerical_features || payload.include.extremes || payload.include.probability_features) {
         data.audioFeatures = {
@@ -364,6 +370,11 @@ const saveLibrary = async (context, payload) => {
             data.audioFeatures.energy.value = context.state.audioFeatures.energy.value;
             data.audioFeatures.danceability.value = context.state.audioFeatures.danceability.value;
         }
+        if (payload.include.numerical_features) {
+            data.audioFeatures.tempo.value = context.state.audioFeatures.tempo.value;
+            data.audioFeatures.loudness.value = context.state.audioFeatures.loudness.value;
+            data.mode = context.state.mode.value;
+        }
         if (payload.include.probability_features) {
             data.audioFeatures.acousticness.value = context.state.audioFeatures.acousticness.value;
             data.audioFeatures.instrumentalness.value = context.state.audioFeatures.instrumentalness.value;
@@ -375,7 +386,7 @@ const saveLibrary = async (context, payload) => {
             let charts = ["minchart", "maxchart"]
             for (let i = 0; i < keys.length; i++) {
                 for (let j = 0; j < charts.length; j++) {
-                    data.audioFeatures[keys[i]][charts[j]] = context.state.audioFeatures[keys[i]][charts[j]];
+                    data.audioFeatures[keys[i]][charts[j]] = context.state.audioFeatures[keys[i]][charts[j]].slice(0, 10);
                 }
             }
         }
@@ -425,7 +436,7 @@ const convertTracks = async (context, payload) => {
 const gatherMostPlayedTracks = async (context) => {
     let ids = [];
     for (let i = 0; i < context.state.topPlayed.tracks.length; i++) {
-        for (let j = 0; j < context.state.topPlayed.tracks[i].length && j < 20; j++) {
+        for (let j = 0; (j < context.state.topPlayed.tracks[i].length && j < 20); j++) {
             ids.push(context.state.topPlayed.tracks[i][j]);
         }
     }
@@ -438,16 +449,25 @@ const gatherExtremes = async (context) => {
     let ids = [];
     for (let i = 0; i < keys.length; i++) {
         for (let j = 0; j < charts.length; j++) {
-            for (let k = 0; k < context.state.audioFeatures[keys[i]][charts[j]].length && k < 10; k++) {
+            for (let k = 0; k < (context.state.audioFeatures[keys[i]][charts[j]].length) && k < 10; k++) {
+                console.log(i, j, k);
                 ids.push(context.state.audioFeatures[keys[i]][charts[j]][k]);
             }
         }
     }
+    console.log(ids);
     return ids;
 }
 // Track object
 const compressTrack = async (context, payload) => {
-    return {name: payload.name, image: payload.album.images[0].url, artists: payload.artists};
+    let newArtists = [];
+    for (let i = 0; i < payload.artists.length; i++) {
+        if (typeof(payload.artists[i]) == 'object')
+            newArtists.push({id: payload.artists[i], name: payload.artists[i].name});
+        else 
+            newArtists.push({id: payload.artists[i], name: context.state.artists[payload.artists[i]].name});
+    }
+    return {id: payload.id, name: payload.name, image: payload.album.images[0].url, artists: newArtists};
 };
 // None
 const convertArtists = async (context, payload) => {
@@ -460,7 +480,7 @@ const convertArtists = async (context, payload) => {
     let nonRepeatedArtists = {};
     for (let i = 0; i < addArtists.length; i++) {
         if (!(addArtists[i] in nonRepeatedArtists))
-            nonRepeatedArtists[addArtists[i]] = 0;
+            nonRepeatedArtists[addArtists[i]] = 1;
         else {
             nonRepeatedArtists[addArtists[i]] += 1;
         }
@@ -475,7 +495,7 @@ const convertArtists = async (context, payload) => {
 const gatherMostPlayedArtists = async (context) => {
     let ids = [];
     for (let i = 0; i < context.state.topPlayed.artists.length; i++) {
-        for (let j = 0; j < context.state.topPlayed.artists[i].length && j < 20; j++) {
+        for (let j = 0; (j < context.state.topPlayed.artists[i].length && j < 20); j++) {
             ids.push(context.state.topPlayed.artists[i][j]);
         }
     }
@@ -491,13 +511,13 @@ const gatherMostSavedArtists = async (context) => {
 };
 // Track object
 const compressArtist = async (context, payload) => {
-    return {name: payload.name, image: payload.image, genres: payload.genres};
+    return {id: payload.id, name: payload.name, image: payload.image, genres: payload.genres, tracks: payload.tracks};
 };
 // Include Object
 const convertGenres = async (context, payload) => {
     let reqGenres = {};
     if (payload.most_saved_genres) {
-        for (let i = 0; i < context.state.topSaved.genres.length; i++) {
+        for (let i = 0; (i < context.state.topSaved.genres.length && i < 20); i++) {
             reqGenres[context.state.topSaved.genres[i]] = context.state.genres[context.state.topSaved.genres[i]];
         }
     }

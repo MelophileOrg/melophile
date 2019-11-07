@@ -3,7 +3,10 @@
     <NavBar />
     <div id="main">
       <div v-if="progress.tracksLoaded" id="menu">
-        <h1>Your Library Analysis</h1>
+        <div id="title">
+          <h1>Your Library Analysis</h1>
+          <button @click="save">Share</button>
+        </div>
         <div id="tabs">
           <h2 @click="changeTab(0)" :class="{active: tab == 0}">Big Picture</h2>
           <h2 @click="changeTab(1)" :class="{active: tab == 1}">Extremes</h2>
@@ -18,7 +21,7 @@
       
       <div v-if="progress.tracksLoaded && tab == 0" class="windows">
 
-        <YourLibrary :delay="0"/>
+        <YourLibrary title="Your Library" :delay="0"/>
 
         <Characteristics :delay="1"/>
 
@@ -113,6 +116,9 @@ export default {
         behavior: 'auto'
       });
       this.tab = 1;
+    },
+    save() {
+      this.$router.push('/social/save');
     }
   },
   computed: {
@@ -186,6 +192,30 @@ export default {
 </script>
 
 <style scoped>
+#title {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+#title h1 {
+  display: inline-block;
+}
+#title button {
+  border: 0px;
+  color: rgba(255, 255, 255, 0.486);
+  background-color: rgba(255, 255, 255, 0.103);
+  font-size: 1.2em;
+  height: 2em;
+  border-radius: 20px;
+  margin-left: 20px;
+  padding: 5px 20px;
+  transition: all .3s ease;
+}
+#title button:hover {
+  color: rgb(255, 255, 255);
+  background-color: rgba(255, 255, 255, 0.103);
+}
 .progress {
   display: block;
   width: 100%;
@@ -227,13 +257,14 @@ export default {
 
 h1 {
     color: #fff;
+    position: relative;
     text-align: left;
     -webkit-animation: slide-up .3s ease 0s,hide 0s linear;
     animation: slide-up .3s ease 0s,hide 0s linear;
 }
 
 @media screen and (max-width: 720px) {
-  h1 {
+  #title {
     display: none;
   }
 
@@ -275,7 +306,7 @@ h2.active {
   animation: slide-up .5s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s);
   display: inline-block;
   width: 75%;
-  margin: 22px 22px;
+  margin: 30px 30px !important;
   padding: 20px;
   max-width: 400px;
   border-radius: 5px;

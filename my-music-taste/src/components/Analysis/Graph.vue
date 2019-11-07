@@ -69,7 +69,7 @@ export default {
   animation: slide-up .5s ease calc(var(--graphdelay) * .1s), hide calc(var(--graphdelay) * .1s);
   display: inline-block;
   width: calc(80% - 40px);
-  margin: 22px 22px;
+  margin: 30px 30px !important;
   padding: 20px;
   padding-bottom: 20px;
   max-width: 400px;

@@ -195,7 +195,7 @@ html::-webkit-scrollbar-thumb
   animation: slide-up .5s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s);
   display: inline-block;
   width: 75%;
-  margin: 22px 22px;
+  margin: 30px 30px !important;
   padding: 25px;
   max-width: 400px;
   border-radius: 5px;

@@ -20,6 +20,8 @@ export default {
         delay: Number,
         save: Boolean,
         state: Boolean,
+        profile: Boolean,
+        data: Object,
     },
     methods: {
         toggleSave() {
@@ -28,7 +30,9 @@ export default {
     },
     computed: {
         audioFeatures() {
-            return this.$store.state.audioFeatures;
+            if (!this.profile)
+                return this.$store.state.audioFeatures;
+            return this.data;
         },
     }
 }
@@ -41,7 +45,7 @@ export default {
     animation: slide-up .5s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s);
     display: inline-block;
     width: 75%;
-    margin: 22px 22px;
+    margin: 30px 30px !important;
     position: relative;
     padding: 20px;
     max-width: 400px;

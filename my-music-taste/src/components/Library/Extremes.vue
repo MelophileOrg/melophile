@@ -1,13 +1,13 @@
 <template>
     <div class="Extremes">
-        <div v-if="progress.extremesLoaded">
+        <div v-if="progress.extremesLoaded || profile">
         <Selector @toggleSave="toggleSave2" :save="save" :state="state" :items="selector" :load="false" :override="false" @pending="pending" @selection="select"/>
         <div class="list" v-if="list.length > 0 && !save">
-            <SearchItem :topsaved="false" class="searchItem" v-for="(track, index) in list" :saved="true"  :showNum="true" :key="track.id + index" :data="track" :index="index" type="track"/>
+            <SearchItem :profile="profile" :topsaved="false" class="searchItem" v-for="(track, index) in list" :saved="true"  :showNum="true" :key="track.id + index" :data="track" :index="index" type="track"/>
         </div>
         <Empty class="list" v-if="list.length <= 0 && !save"/>
         <div class="list" v-if="list.length > 0 && save">
-            <SearchItem :topsaved="false" class="searchItem" v-for="index in 10" :saved="true"  :showNum="true" :key="list[index - 1].id + index" :data="list[index - 1]" :index="index - 1" type="track"/>
+            <SearchItem :profile="profile" :topsaved="false" class="searchItem" v-for="index in 10" :saved="true"  :showNum="true" :key="list[index - 1].id + index" :data="list[index - 1]" :index="index - 1" type="track"/>
         </div>
         <Empty class="list" v-if="list.length <= 0 && save"/>
         </div>
@@ -23,51 +23,53 @@ import Empty from '@/components/Library/Empty.vue'
 import Loading from '@/components/General/Loading.vue'
 
 export default {
-  name: 'Extremes',
-  props: {
-      save: Boolean,
-      state: Boolean,
-  },
-  components: {
-      Selector,
-      SearchItem,
-      Empty,
-      Loading
-  },
-  data() {
-    return {
-        list: [],
-        type: "track",
-        selector: [
-            {type: "text", text: "List My"}, 
-            {
-                type: "select", 
-                options: [
-                    {value: "maxchart", text: "Most"},
-                    {value: "minchart", text: "Least"}
-                ]
-            },
-            {
-                type: "select", 
-                options: [
-                    {value: "valence", text: "Happy"},
-                    {value: "energy", text: "Energetic"},
-                    {value: "danceability", text: "Danceable"},
-                    {value: "tempo", text: "High Tempos"},
-                    {value: "banger", text: "Bangers"},
-                    {value: "acousticness", text: "Accoustic"},
-                    {value: "instrumentalness", text: "Instrumental"},
-                    {value: "liveness", text: "Live"},
-                    {value: "speechiness", text: "Talking"},
-                ]
-            }
-        ],
-        catagory: "",
-        chart: "",
-        pendingStatus: true,
+    name: 'Extremes',
+    props: {
+        save: Boolean,
+        state: Boolean,
+        profile: Boolean,
+        data: Object, 
+    },
+    components: {
+        Selector,
+        SearchItem,
+        Empty,
+        Loading
+    },
+    data() {
+        return {
+            list: [],
+            type: "track",
+            selector: [
+                {type: "text", text: "List My"}, 
+                {
+                    type: "select", 
+                    options: [
+                        {value: "maxchart", text: "Most"},
+                        {value: "minchart", text: "Least"}
+                    ]
+                },
+                {
+                    type: "select", 
+                    options: [
+                        {value: "valence", text: "Happy"},
+                        {value: "energy", text: "Energetic"},
+                        {value: "danceability", text: "Danceable"},
+                        {value: "tempo", text: "High Tempos"},
+                        {value: "banger", text: "Bangers"},
+                        {value: "acousticness", text: "Accoustic"},
+                        {value: "instrumentalness", text: "Instrumental"},
+                        {value: "liveness", text: "Live"},
+                        {value: "speechiness", text: "Talking"},
+                    ]
+                }
+            ],
+            catagory: "",
+            chart: "",
+            pendingStatus: true,
 
-    }
-  },
+        }
+    },
     methods: {
         toggleSave2() {
             this.$emit('toggleSave');
@@ -87,6 +89,7 @@ export default {
                 }
                 this.pendingStatus = false;
             }
+            console.log(this.list);
         },
         pending() {
             this.pendingStatus = true;
@@ -95,14 +98,21 @@ export default {
     },
     computed: {
         audioFeatures() {
+        if (!this.profile)
             return this.$store.state.audioFeatures;
+        return this.data.audioFeatures;
         },
         tracks() {
-            return this.$store.state.tracks;
+            if (!this.profile)
+                return this.$store.state.tracks;
+            return this.data.tracks;
         },
         progress() {
             return this.$store.state.progress;
         }
+    },
+    created() {
+        console.log(this.tracks);
     }
 }
 </script>

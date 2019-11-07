@@ -3,7 +3,6 @@ const express = require("express");
 const router = express.Router();
 
 const collectionsSchema = new mongoose.Schema({
-    privacy: Boolean,
     id: String,
     topPlayed: {
         tracks: Array,
@@ -25,6 +24,7 @@ const collectionsSchema = new mongoose.Schema({
         tempo: Object,
         banger: Object,
     },
+    mode: Object,
     dateAdded: Array,
     happinessTimeline: Array,
     created: Date,
@@ -48,7 +48,7 @@ router.post("/:id", async (req, res) => {
                     "topPlayed.tracks": req.body.topPlayed.tracks,
                     "topPlayed.artists": req.body.topPlayed.artists,
                     "topSaved.artists": req.body.topSaved.artists,
-                    "topSaved.genres": req.body.topSaved.artists,
+                    "topSaved.genres": req.body.topSaved.genres,
                     "audioFeatures.acousticness": req.body.audioFeatures.acousticness,
                     "audioFeatures.danceability": req.body.audioFeatures.danceability,
                     "audioFeatures.energy": req.body.audioFeatures.energy,
@@ -59,17 +59,18 @@ router.post("/:id", async (req, res) => {
                     "audioFeatures.valence": req.body.audioFeatures.valence,
                     "audioFeatures.tempo": req.body.audioFeatures.tempo,
                     "audioFeatures.banger": req.body.audioFeatures.banger,
+                    "mode.value": req.body.mode,
                     "dateAdded": req.body.dateAdded,
                     "happinessTimeline": req.body.happinessTimeline,
                     "created": new Date(),
                 }
             });
+            console.log("Collections Updated - " + req.params.id);
             return res.send({updated: true, success: true});
         }
         else {
             let collections = new Collections({
-                privacy: req.body.privacy,
-                id: req.body.id,
+                id: req.params.id,
                 topPlayed: {
                     tracks: req.body.topPlayed.tracks,
                     artists: req.body.topPlayed.artists,
@@ -90,12 +91,15 @@ router.post("/:id", async (req, res) => {
                     tempo: req.body.audioFeatures.tempo,
                     banger: req.body.audioFeatures.banger,
                 },
+                mode: {
+                    value: req.body.mode
+                },
                 dateAdded: req.body.dateAdded,
                 happinessTimeline: req.body.happinessTimeline,
                 created: new Date(),
             });
             await collections.save();
-            console.log("Profile Created");
+            console.log("Collections Created - " + req.params.id);
             return res.send({updated: false, success: true});
         }
     } catch (error) {
@@ -109,7 +113,7 @@ router.get("/:id", async (req, res) => {
       let collections = await Collections.findOne({
         id: req.params.id
       });  
-      console.log("Profile Retrieved");
+      console.log("Collections Retrieved - " + req.params.id);
       return res.send(collections);
     } catch (error) {
       console.log(error);

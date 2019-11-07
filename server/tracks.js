@@ -27,6 +27,7 @@ router.post("/:id", async (req, res) => {
                     "created": new Date(),
                 }
             });
+            console.log("Tracks Updated - " + req.params.id);
             return res.send({updated: true, success: true});
         }
         else {
@@ -36,7 +37,7 @@ router.post("/:id", async (req, res) => {
                 created: new Date(),
             });
             await tracks.save();
-            console.log("Profile Created");
+            console.log("Tracks Saved - " + req.params.id);
             return res.send({updated: false, success: true});
         }
     } catch (error) {
@@ -50,7 +51,7 @@ router.get("/:id", async (req, res) => {
       let tracks = await Tracks.findOne({
         id: req.params.id
       });  
-      console.log("Profile Retrieved");
+      console.log("Tracks Retrieved - " + req.params.id);
       return res.send(tracks);
     } catch (error) {
       console.log(error);

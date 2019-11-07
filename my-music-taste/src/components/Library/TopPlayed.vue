@@ -1,13 +1,13 @@
 <template>
     <div class="TopPlayed">
-        <div v-if="progress.extremesLoaded">
-        <Selector @toggleSave="toggleSave2" :save="save" :state="giveState" :items="selector" :load="false" :override="false" @pending="pending" @selection="select"/>
+        <div v-if="progress.extremesLoaded || profile">
+        <Selector @toggleSave="toggleSave2" :save="save" :state="giveState" :items="filterSelector" :load="false" :override="false" @pending="pending" @selection="select"/>
         <div class="list" v-if="list.length > 0 && !save">
-            <SearchItem :topsaved="false" class="searchItem" v-for="(track, index) in list"  :saved="true" :showNum="true" :key="track.id + index" :data="track" :index="index" :type="type"/>
+            <SearchItem :profile="profile" :profileData="{tracks: data.tracks, artists: data.artists}" :topsaved="false" class="searchItem" v-for="(track, index) in list"  :saved="true" :showNum="true" :key="track.id + index" :data="track" :index="index" :type="type"/>
         </div>
         <Empty class="list" v-if="list.length <= 0 && !save"/>
         <div class="list" v-if="list.length > 0 && save" :class="{fade: (type == 'artist' && !stateartists) || (type == 'track' && !statetracks)}">
-            <SearchItem :topsaved="false" class="searchItem" v-for="index in 20"  :saved="true" :showNum="true" :key="list[index -1].id + (index - 1)" :data="list[index - 1]" :index="index - 1" :type="type"/>
+            <SearchItem :profile="profile" :profileData="{tracks: data.tracks, artists: data.artists}" :topsaved="false" class="searchItem" v-for="index in 20"  :saved="true" :showNum="true" :key="list[index -1].id + (index - 1)" :data="list[index - 1]" :index="index - 1" :type="type"/>
         </div>
         <Empty class="list" v-if="list.length <= 0 && save"/>
         </div>
@@ -27,6 +27,10 @@ export default {
       save: Boolean,
       statetracks: Boolean,
       stateartists: Boolean,
+      profile: Boolean,
+      data: Object,
+      artistsAllowed: Boolean,
+      tracksAllowed: Boolean,
   },
   components: {
       Selector,
@@ -82,14 +86,32 @@ export default {
             if (this.chart != "" && (this.range == 0 || this.range == 1 || this.range == 2)) {
                 let ids = this.topPlayed[this.chart][this.range];
                 for (var i = 0; i < ids.length; i++) {
-                    this.list.push(this.$store.state[this.chart][ids[i]]);
+                    if (!this.profile)
+                        this.list.push(this.$store.state[this.chart][ids[i]]);
+                    else  {
+                        let track = this.data[this.chart][ids[i]];
+                        track.id = ids[i];
+                        this.list.push(track);
+                    }
                 }
+                console.log(this.list);
                 this.pendingStatus = false;
             }
         },
         pending() {
             this.pendingStatus = true;
             this.list = [];
+        },
+        filter() {
+            if (!this.data.artistsAllowed) {
+                this.selector.splice(0, 2, {type: "text", text: this.data.name + "'s Top Played Tracks"});
+            }
+            else if (!this.data.tracksAllowed) {
+                this.selector.splice(0, 2, {type: "text", text: this.data.name + "'s Top Played Artists"});
+            }
+            else {
+                this.selector.splice(0, 1, {type: "text", text: this.data.name + "'s Top Played"})
+            }
         }
     },
     computed: {
@@ -99,10 +121,18 @@ export default {
             return this.statetracks;
         },
         topPlayed() {
-            return this.$store.state.topPlayed;
+            if (!this.profile)
+                return this.$store.state.topPlayed;
+            return this.data.topPlayed;
         },
         progress() {
             return this.$store.state.progress;
+        },
+        filterSelector() {
+            if (!this.profile)
+                return this.selector;
+            this.filter();
+            return this.selector;
         }
     }
 }
