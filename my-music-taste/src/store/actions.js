@@ -450,12 +450,10 @@ const gatherExtremes = async (context) => {
     for (let i = 0; i < keys.length; i++) {
         for (let j = 0; j < charts.length; j++) {
             for (let k = 0; k < (context.state.audioFeatures[keys[i]][charts[j]].length) && k < 10; k++) {
-                console.log(i, j, k);
                 ids.push(context.state.audioFeatures[keys[i]][charts[j]][k]);
             }
         }
     }
-    console.log(ids);
     return ids;
 }
 // Track object

@@ -95,9 +95,6 @@ export default {
       return this.profileData.artists;
     }
   },
-  created() {
-    console.log(this.data.name);
-  }
 }
 </script>
 

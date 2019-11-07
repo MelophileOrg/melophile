@@ -94,7 +94,6 @@ export default {
                         this.list.push(track);
                     }
                 }
-                console.log(this.list);
                 this.pendingStatus = false;
             }
         },

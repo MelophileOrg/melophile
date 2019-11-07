@@ -89,7 +89,6 @@ export default {
                 }
                 this.pendingStatus = false;
             }
-            console.log(this.list);
         },
         pending() {
             this.pendingStatus = true;
@@ -111,9 +110,6 @@ export default {
             return this.$store.state.progress;
         }
     },
-    created() {
-        console.log(this.tracks);
-    }
 }
 </script>
 
