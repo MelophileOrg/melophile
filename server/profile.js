@@ -8,7 +8,7 @@ const profileSchema = new mongoose.Schema({
     name: String,
     include: Object,
     tracks: Number,
-    artist: Number,
+    artists: Number,
     genres: Number,
     likes: Array,
     created: Date,
