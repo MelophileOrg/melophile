@@ -96,7 +96,6 @@ export default {
                 }
                 this.pendingStatus = false;
             }
-            console.log(this.list);
         },
         pending() {
             this.pendingStatus = true;

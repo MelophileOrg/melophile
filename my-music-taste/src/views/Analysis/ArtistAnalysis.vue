@@ -166,7 +166,6 @@ export default {
         this.artistData.newest = response.newest;
         clearInterval(this.interval);
         this.timelineReady = true;
-        console.log(this.artistData);
       }
     },
     sumTop(type) {
@@ -315,7 +314,6 @@ export default {
       this.artistData.oldest = response.oldest;
       this.artistData.newest = response.newest;
       this.timelineReady = true;
-      console.log(this.artistData);
     }
     else {
       this.interval = setInterval(this.checkTracksLoaded, 2000);
