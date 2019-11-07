@@ -3,20 +3,29 @@
     <div class="search-song" :style="{'--delay': index}">
       <h1 v-if="showNum">{{index + 1}}</h1>
       <div>
-        <div class="search-image" v-if="type == 'track' && saved" :style="{backgroundImage: 'url(\'' + data.image + '\')'}"/>
-        <div class="search-image" v-if="type == 'track' && !saved" :style="{backgroundImage: 'url(\'' + data.album.images[0].url + '\')'}"/>
-        <div class="search-image" v-if="type == 'artist'" :style="{backgroundImage: 'url(\'' + data.image + '\')'}"/>
+        <div class="search-image" v-if="type == 'track' && ('image' in data)" :style="{backgroundImage: 'url(\'' + data.image + '\')'}"/>
+        <div class="search-image" v-if="type == 'track' && 'album' in data && !('image' in data)" :style="{backgroundImage: 'url(\'' + data.album.images[0].url + '\')'}"/>
+        <div class="search-image" v-if="type == 'artist' && ('image' in data)" :style="{backgroundImage: 'url(\'' + data.image + '\')'}"/>
+        <div class="search-image" v-if="type == 'artist' && !('image' in data)" :style="{backgroundImage: 'url(\'' + data.images[0].url + '\')'}"/>
         <div class="search-image genre" v-if="type == 'genre'"/>
       </div>
       <div class="info">
 
         <h1 @click="selectTrack(data.id)" class="search-title" :class="{cap: type == 'genre'}" >{{data.name}}</h1>
 
-        <div v-if="type == 'track'" class="artists">
-          <div v-for="artistnum in 4" :key="data.name + '-' + (artistnum - 1)">
-            <h4 class="artist" @click="selectSpecial((artistnum - 1))" v-if="(artistnum - 1) < data.artists.length && !saved && !profile">{{data.artists[(artistnum - 1)].name}}{{comma((artistnum - 1), data.artists.length - 1)}}</h4>
-            <h4 class="artist" @click="selectSpecial((artistnum - 1))" v-if="(artistnum - 1) < data.artists.length && saved && !profile">{{artists[data.artists[(artistnum - 1)]].name}}{{comma((artistnum - 1), data.artists.length - 1)}}</h4>
-            <h4 class="artist" @click="selectSpecial((artistnum - 1))" v-if="(artistnum - 1) < data.artists.length && profile">{{data.artists[(artistnum - 1)].name}}{{comma((artistnum - 1), data.artists.length - 1)}}</h4>
+        <div v-if="type == 'track' && !profile && !artistObjectForm" class="artists">
+          <div v-for="(artist, index) in data.artists" :key="data.name + '-' + index">
+            <h4 class="artist" @click="selectSpecial(index)" v-if="index < 4">{{artists[artist].name}}{{comma(index, data.artists.length - 1)}}</h4>
+          </div>
+        </div>
+        <div v-if="type == 'track' && !profile && artistObjectForm" class="artists">
+          <div v-for="(artist, index) in data.artists" :key="data.name + '-' + index">
+            <h4 class="artist" @click="selectSpecial(index)" v-if="index < 4">{{artist.name}}{{comma(index, data.artists.length - 1)}}</h4>
+          </div>
+        </div>
+        <div v-if="type == 'track' && profile" class="artists">
+          <div v-for="(artist, index) in data.artists" :key="data.name + '-' + index">
+            <h4 class="artist" @click="selectSpecial(index)" v-if="index < 4">{{artist.name}}{{comma(index, data.artists.length - 1)}}</h4>
           </div>
         </div>
         <div v-if="type == 'genre'" class="artists">
@@ -31,7 +40,7 @@
         </div>
         <div v-if="type == 'artist' && topsaved != true" class="artists">
           <div v-for="artistnum in 4" :key="data.name + '-' + (artistnum - 1)">
-            <h4  @click="selectSpecial((artistnum - 1))" class="artist" v-if="(artistnum - 1) < data.genres.length">{{data.genres[(artistnum - 1)]}}{{comma((artistnum), data.genres.length - 1)}}</h4>
+            <h4 @click="selectSpecial((artistnum - 1))" class="artist" v-if="(artistnum - 1) < data.genres.length">{{data.genres[(artistnum - 1)]}}{{comma((artistnum), data.genres.length - 1)}}</h4>
           </div>
           <div v-if="data.genres.length == 0">
             <h4 class="artist" >No Genres Provided</h4>
@@ -45,8 +54,6 @@
 <script>
 export default {
   name: 'searchitem',
-  components: {
-  },
   props: {
     type: String,
     data: Object,
@@ -56,6 +63,11 @@ export default {
     topsaved: Boolean,
     profile: Boolean,
     profileData: Object,
+  },
+  data() {
+    return {
+      artistObjectForm: false,
+    }
   },
   methods: {
     selectTrack(id) {
@@ -95,6 +107,14 @@ export default {
       return this.profileData.artists;
     }
   },
+  created() {
+    if (this.type == "track") {
+      if (typeof(this.data.artists[0]) == "object") {
+        this.artistObjectForm = true;
+      }
+    }
+  }
+
 }
 </script>
 

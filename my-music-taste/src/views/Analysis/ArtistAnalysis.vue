@@ -166,6 +166,7 @@ export default {
         this.artistData.newest = response.newest;
         clearInterval(this.interval);
         this.timelineReady = true;
+        console.log(this.artistData);
       }
     },
     sumTop(type) {
@@ -204,7 +205,7 @@ export default {
       this.audioFeaturesReady = true;
     },
     async getTopSongs() {
-      this.artistData.topSongs = await this.$store.dispatch('artistTopTracks', this.artistData.id);
+      this.artistData.topSongs = await this.$store.dispatch('artistTopTracks', this.$route.params.id);
       for (let i = 0; i < this.artistData.topSongs.length; i++) {
         try {
           this.artistData.topSongs[i].image = this.artistData.topSongs[i].album.images[0].url;
@@ -246,13 +247,13 @@ export default {
     notSaved() {
       if (!this.progress.tracksLoaded)
         return false;
-      if (!(this.artistData.id in this.$store.state.artists))
+      if (!(this.$route.params.id in this.$store.state.artists))
         return true;
-      return this.$store.state.artists[this.artistData.id].tracks.length == 0;
+      return this.$store.state.artists[this.$route.params.id].tracks.length == 0;
     },
     songsSaved() {
-      if (this.artistData.id in this.$store.state.artists) {
-        return this.$store.state.artists[this.artistData.id].tracks.length + " Songs Liked";
+      if (this.$route.params.id in this.$store.state.artists) {
+        return this.$store.state.artists[this.$route.params.id].tracks.length + " Songs Liked";
       }
       return "";
     },
@@ -314,6 +315,7 @@ export default {
       this.artistData.oldest = response.oldest;
       this.artistData.newest = response.newest;
       this.timelineReady = true;
+      console.log(this.artistData);
     }
     else {
       this.interval = setInterval(this.checkTracksLoaded, 2000);

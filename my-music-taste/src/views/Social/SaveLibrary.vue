@@ -80,13 +80,13 @@
         
         <TimelinePercent :class="{fade: !settings.happiness_timeline}" :state="settings.happiness_timeline" :save="true" @toggleSave="toggleSave('happiness_timeline')" class="relative" :override="progress.tracksLoaded" title="Happiness Over Time:" instructions="" :delay="0" :bars="cleanValuedGraphData(audioFeatures.valence.timeline)" :max="100" y_axis="Percent Happiness" />
 
-        <Graph :class="{fade: !settings.happiness_distribution}" :state="settings.happiness_distribution" :save="true" @toggleSave="toggleSave('happiness_distribution')" class="relative" @more="goToExtremes" :override="progress.tracksLoaded" title="Happiness Distribution:" instructions="View Charts" :delay="0" :bars="cleanGraphData(audioFeatures.valence.plot)" max_tag="Happy" min_tag="Sad" y_axis="Number of Songs" :color="audioFeatures.valence.color"/>
+        <Graph :class="{fade: !settings.happiness_distribution}" :state="settings.happiness_distribution" :save="true" @toggleSave="toggleSave('happiness_distribution')" class="relative" @more="goToExtremes" :override="progress.tracksLoaded" title="Happiness Distribution:" instructions="View Lists" :delay="0" :bars="cleanGraphData(audioFeatures.valence.plot)" max_tag="Happy" min_tag="Sad" y_axis="Number of Songs" :color="audioFeatures.valence.color"/>
 
-        <Graph :class="{fade: !settings.energy_distribution}" :state="settings.energy_distribution" :save="true" @toggleSave="toggleSave('energy_distribution')" class="relative" @more="goToExtremes" :override="progress.tracksLoaded" title="Energy Distribution:" instructions="View Charts" :delay="0" :bars="cleanGraphData(audioFeatures.energy.plot)" max_tag="Hyper" min_tag="Peaceful" y_axis="Number of Songs" :color="audioFeatures.energy.color"/>
+        <Graph :class="{fade: !settings.energy_distribution}" :state="settings.energy_distribution" :save="true" @toggleSave="toggleSave('energy_distribution')" class="relative" @more="goToExtremes" :override="progress.tracksLoaded" title="Energy Distribution:" instructions="View Lists" :delay="0" :bars="cleanGraphData(audioFeatures.energy.plot)" max_tag="Hyper" min_tag="Peaceful" y_axis="Number of Songs" :color="audioFeatures.energy.color"/>
 
-        <Graph :class="{fade: !settings.danceability_distribution}" :state="settings.danceability_distribution" :save="true" @toggleSave="toggleSave('danceability_distribution')" class="relative" @more="goToExtremes" :override="progress.tracksLoaded" title="Danceability Distribution:" instructions="View Charts" :delay="0" :bars="cleanGraphData(audioFeatures.danceability.plot)" max_tag="Let's dance!" min_tag="Couch Potato" y_axis="Number of Songs" :color="audioFeatures.danceability.color"/>
+        <Graph :class="{fade: !settings.danceability_distribution}" :state="settings.danceability_distribution" :save="true" @toggleSave="toggleSave('danceability_distribution')" class="relative" @more="goToExtremes" :override="progress.tracksLoaded" title="Danceability Distribution:" instructions="View Lists" :delay="0" :bars="cleanGraphData(audioFeatures.danceability.plot)" max_tag="Let's dance!" min_tag="Couch Potato" y_axis="Number of Songs" :color="audioFeatures.danceability.color"/>
 
-        <Graph :class="{fade: !settings.banger_distribution}" :state="settings.banger_distribution" :save="true" @toggleSave="toggleSave('banger_distribution')" class="relative" @more="goToExtremes" :override="progress.tracksLoaded" title="Should You DJ a Party?" instructions="View Charts" :delay="0" :bars="cleanGraphData(audioFeatures.banger.plot)" max_tag="Absolute Bangers" min_tag="*Snore Snore*" y_axis="Number of Songs" :color="audioFeatures.banger.color"/>
+        <Graph :class="{fade: !settings.banger_distribution}" :state="settings.banger_distribution" :save="true" @toggleSave="toggleSave('banger_distribution')" class="relative" @more="goToExtremes" :override="progress.tracksLoaded" title="Should You DJ a Party?" instructions="View Lists" :delay="0" :bars="cleanGraphData(audioFeatures.banger.plot)" max_tag="Absolute Bangers" min_tag="*Snore Snore*" y_axis="Number of Songs" :color="audioFeatures.banger.color"/>
       </div>
 
       <div class="topcharts" v-if="progress.tracksLoaded && tab ==1">
@@ -253,9 +253,6 @@ export default {
       } catch (error) {
         this.message = error;
       }
-
-      
-
     }
   },
   computed: {

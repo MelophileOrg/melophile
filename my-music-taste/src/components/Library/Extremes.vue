@@ -29,6 +29,7 @@ export default {
         state: Boolean,
         profile: Boolean,
         data: Object, 
+        name: String,
     },
     components: {
         Selector,
@@ -55,8 +56,8 @@ export default {
                         {value: "valence", text: "Happy"},
                         {value: "energy", text: "Energetic"},
                         {value: "danceability", text: "Danceable"},
-                        {value: "tempo", text: "High Tempos"},
-                        {value: "banger", text: "Bangers"},
+                        {value: "tempo", text: "Speedy"},
+                        {value: "banger", text: "Bangerific"},
                         {value: "acousticness", text: "Accoustic"},
                         {value: "instrumentalness", text: "Instrumental"},
                         {value: "liveness", text: "Live"},
@@ -110,6 +111,10 @@ export default {
             return this.$store.state.progress;
         }
     },
+    created() {
+        if (this.profile)
+            this.selector.splice(0, 1, {type: "text", text: "List " + this.name + "'s"});
+    }
 }
 </script>
 

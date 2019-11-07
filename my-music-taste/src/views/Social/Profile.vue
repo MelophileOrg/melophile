@@ -32,13 +32,13 @@
         
         <TimelinePercent v-if="include.happiness_timeline"  :override="dataRetrieved" title="Happiness Over Time:" instructions="" :delay="7" :bars="cleanValuedGraphData(happinessTimeline)" :max="100" y_axis="Percent Happiness" />
 
-        <Graph v-if="include.happiness_distribution"  @more="goToExtremes" :override="dataRetrieved" title="Happiness Distribution:" instructions="View Charts" :delay="8" :bars="cleanGraphData(audioFeatures.valence.plot)" max_tag="Happy" min_tag="Sad" y_axis="Number of Songs" :color="{red: 74, green: 189, blue: 180}"/>
+        <Graph v-if="include.happiness_distribution"  @more="goToExtremes" :override="dataRetrieved" title="Happiness Distribution:" instructions="View Lists" :delay="8" :bars="cleanGraphData(audioFeatures.valence.plot)" max_tag="Happy" min_tag="Sad" y_axis="Number of Songs" :color="{red: 74, green: 189, blue: 180}"/>
 
-        <Graph v-if="include.energy_distribution"  @more="goToExtremes" :override="dataRetrieved" title="Energy Distribution:" instructions="View Charts" :delay="9" :bars="cleanGraphData(audioFeatures.energy.plot)" max_tag="Hyper" min_tag="Peaceful" y_axis="Number of Songs" :color="{red: 89, green: 161, blue: 79}"/>
+        <Graph v-if="include.energy_distribution"  @more="goToExtremes" :override="dataRetrieved" title="Energy Distribution:" instructions="View Lists" :delay="9" :bars="cleanGraphData(audioFeatures.energy.plot)" max_tag="Hyper" min_tag="Peaceful" y_axis="Number of Songs" :color="{red: 89, green: 161, blue: 79}"/>
 
-        <Graph v-if="include.danceability_distribution"  @more="goToExtremes" :override="dataRetrieved" title="Danceability Distribution:" instructions="View Charts" :delay="10" :bars="cleanGraphData(audioFeatures.danceability.plot)" max_tag="Let's dance!" min_tag="Couch Potato" y_axis="Number of Songs" :color="{red: 78, green: 121, blue: 167}"/>
+        <Graph v-if="include.danceability_distribution"  @more="goToExtremes" :override="dataRetrieved" title="Danceability Distribution:" instructions="View Lists" :delay="10" :bars="cleanGraphData(audioFeatures.danceability.plot)" max_tag="Let's dance!" min_tag="Couch Potato" y_axis="Number of Songs" :color="{red: 78, green: 121, blue: 167}"/>
 
-        <Graph v-if="include.banger_distribution"  @more="goToExtremes" :override="dataRetrieved" :title="'Should ' + name + ' Throw a Party?'" instructions="View Charts" :delay="11" :bars="cleanGraphData(audioFeatures.banger.plot)" max_tag="Absolute Bangers" min_tag="*Snore Snore*" y_axis="Number of Songs" :color="{red: 225, green: 87, blue: 89}"/>
+        <Graph v-if="include.banger_distribution"  @more="goToExtremes" :override="dataRetrieved" :title="'Should ' + name + ' Throw a Party?'" instructions="View Lists" :delay="11" :bars="cleanGraphData(audioFeatures.banger.plot)" max_tag="Absolute Bangers" min_tag="*Snore Snore*" y_axis="Number of Songs" :color="{red: 225, green: 87, blue: 89}"/>
       </div>
 
       
@@ -58,7 +58,7 @@
       </div> 
 
       <div class="extremes" v-if="dataRetrieved && tab == 2 && include.extremes">
-        <Extremes :profile="true" :data="{audioFeatures: audioFeatures, tracks: tracks}"/>
+        <Extremes :name="name" :profile="true" :data="{audioFeatures: audioFeatures, tracks: tracks}"/>
       </div>
     </div>
   </div>

@@ -10,10 +10,10 @@
         </div>
       </div>
       <div v-if="tab == 0 && progress.genresLoaded" class="charts-div">
-        <TopPlayed/>
+        <TopPlayed :profile="false"/>
       </div>
       <div v-if="tab == 1 && progress.genresLoaded" class="charts-div">
-        <TopSaved/>
+        <TopSaved :profile="false"/>
       </div>
     </div>
   </div>

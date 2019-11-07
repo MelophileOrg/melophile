@@ -37,13 +37,13 @@
         
         <TimelinePercent :override="progress.tracksLoaded" title="Happiness Over Time:" instructions="" :delay="7" :bars="cleanValuedGraphData(audioFeatures.valence.timeline)" :max="100" y_axis="Percent Happiness" />
 
-        <Graph @more="goToExtremes" :override="progress.tracksLoaded" title="Happiness Distribution:" instructions="View Charts" :delay="8" :bars="cleanGraphData(audioFeatures.valence.plot)" max_tag="Happy" min_tag="Sad" y_axis="Number of Songs" :color="audioFeatures.valence.color"/>
+        <Graph @more="goToExtremes" :override="progress.tracksLoaded" title="Happiness Distribution:" instructions="View Lists" :delay="8" :bars="cleanGraphData(audioFeatures.valence.plot)" max_tag="Happy" min_tag="Sad" y_axis="Number of Songs" :color="audioFeatures.valence.color"/>
 
-        <Graph @more="goToExtremes" :override="progress.tracksLoaded" title="Energy Distribution:" instructions="View Charts" :delay="9" :bars="cleanGraphData(audioFeatures.energy.plot)" max_tag="Hyper" min_tag="Peaceful" y_axis="Number of Songs" :color="audioFeatures.energy.color"/>
+        <Graph @more="goToExtremes" :override="progress.tracksLoaded" title="Energy Distribution:" instructions="View Lists" :delay="9" :bars="cleanGraphData(audioFeatures.energy.plot)" max_tag="Hyper" min_tag="Peaceful" y_axis="Number of Songs" :color="audioFeatures.energy.color"/>
 
-        <Graph @more="goToExtremes" :override="progress.tracksLoaded" title="Danceability Distribution:" instructions="View Charts" :delay="10" :bars="cleanGraphData(audioFeatures.danceability.plot)" max_tag="Let's dance!" min_tag="Couch Potato" y_axis="Number of Songs" :color="audioFeatures.danceability.color"/>
+        <Graph @more="goToExtremes" :override="progress.tracksLoaded" title="Danceability Distribution:" instructions="View Lists" :delay="10" :bars="cleanGraphData(audioFeatures.danceability.plot)" max_tag="Let's dance!" min_tag="Couch Potato" y_axis="Number of Songs" :color="audioFeatures.danceability.color"/>
 
-        <Graph @more="goToExtremes" :override="progress.tracksLoaded" title="Should You DJ a Party?" instructions="View Charts" :delay="11" :bars="cleanGraphData(audioFeatures.banger.plot)" max_tag="Absolute Bangers" min_tag="*Snore Snore*" y_axis="Number of Songs" :color="audioFeatures.banger.color"/>
+        <Graph @more="goToExtremes" :override="progress.tracksLoaded" title="Should You DJ a Party?" instructions="View Lists" :delay="11" :bars="cleanGraphData(audioFeatures.banger.plot)" max_tag="Absolute Bangers" min_tag="*Snore Snore*" y_axis="Number of Songs" :color="audioFeatures.banger.color"/>
       </div>
 
       <div class="extremes" v-if="progress.tracksLoaded && tab == 1">

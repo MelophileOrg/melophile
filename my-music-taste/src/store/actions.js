@@ -101,8 +101,8 @@ const inicialScanReduceIds = async (context, payload) => {
             }
             else
                 context.commit('addTrackToArtist', {id: trackObject.artists[j].id, track: trackObject.id});
-            trackObject.artists[j] = trackObject.artists[j].id;
         }
+        trackObject.artists = trackObject.artists.map(artist => artist.id);
         trackObject.date = payload[i].added_at;
         let addedDate = new Date(trackObject.date);
         let addedDateTime = addedDate.getTime();
@@ -133,7 +133,7 @@ const inicialScanReduceIds = async (context, payload) => {
 // Array {id: String, tracks: [String]}
 const findAndStoreArtists = async (context, payload) => {
     let ids = Object.values(payload).map(artist => artist.id);
-    let trackSets = Object.values(payload).map(artist => artist.tracks);
+    let trackSets = Object.values(payload);
     let artists = [];
     while (ids.length > 0) {
         let sectionIds = ids.splice(0, 50);
@@ -142,6 +142,13 @@ const findAndStoreArtists = async (context, payload) => {
     }
     for (let i = 0; i < artists.length; i++) {
         let artistObject = artists[i];
+        for (let j = 0; j < trackSets.length; j++) {
+            if (artistObject.id == trackSets[j].id){
+                artistObject.tracks = trackSets[j].tracks;
+                trackSets.splice(j, 1);
+                break;
+            }
+        }
         artistObject.href = artistObject.external_urls.spotify;
         delete artistObject.external_urls;
         artistObject.followers = artistObject.followers.total;
@@ -156,7 +163,6 @@ const findAndStoreArtists = async (context, payload) => {
         if (artistObject.images.length > 0)
             artistObject.image = artistObject.images[0].url;
         delete artistObject.images;
-        artistObject.tracks = trackSets[i];
         await context.commit('pushArtist', {id: artistObject.id, value: artistObject});
     }
 };
@@ -204,17 +210,33 @@ const distributeTrackAudioFeatures = async (context, payload) => {
 };
 const calcTracksPerGenre = async (context) => {
     let artistIds = Object.keys(context.state.artists);
-    for (let i = 0; i < artistIds.length; i++) {
-        for (let j = 0; j < context.state.artists[artistIds[i]].genres.length; j++) {
-            await context.commit('addGenreTrackNum', {id: context.state.artists[artistIds[i]].genres[j], value: context.state.artists[artistIds[i]].tracks.length});
-        }
-    }
+    for (let i = 0; i < artistIds.length; i++) 
+        for (let j = 0; j < context.state.artists[artistIds[i]].genres.length; j++) 
+            if ("tracks" in context.state.artists[artistIds[i]])
+                if (context.state.artists[artistIds[i]].tracks.length > 0)
+                    await context.commit('addGenreTrackNum', {id: context.state.artists[artistIds[i]].genres[j], value: context.state.artists[artistIds[i]].tracks.length});
     let genreTuples = Object.entries(context.state.genres);
-    let topGenres = genreTuples.sort((a,b) => b[1].tracknum - a[1].tracknum).slice(0,50);
+    let topGenres = genreTuples.sort(function(a,b) {
+        if (!("tracknum" in a[1]) && !("tracknum" in b[1]))
+            return 0;
+        if (!("tracknum" in b[1]))
+            return 0 - a[1].tracknum;
+        if (!("tracknum" in a[1]))
+            return b[1].tracknum;
+        return b[1].tracknum - a[1].tracknum
+    }).slice(0,50);
     let topGenreIds = topGenres.map(genre => genre[0]);
     context.commit('setTopSavedGenres', topGenreIds);
     let artistTuples = Object.entries(context.state.artists);
-    let topArtists = artistTuples.sort((a,b) => b[1].tracks.length - a[1].tracks.length).slice(0,50);
+    let topArtists = artistTuples.sort(function(a,b) {
+        if (!("tracks" in a[1]) && !("tracks" in b[1]))
+            return 0;
+        if (!("tracks" in b[1]))
+            return 0 - a[1].tracks.length;
+        if (!("tracks" in a[1]))
+            return b[1].tracks.length;
+        return b[1].tracks.length - a[1].tracks.length
+    }).slice(0,50);
     let topArtistIds = topArtists.map(artist => artist[0]);
     context.commit('setTopSavedArtists', topArtistIds);
     context.commit('setArtistsLoaded');
@@ -257,6 +279,7 @@ const retrieveTopPlayedArtists = async (context) => {
                 artistObject.followers = artistObject.followers.total;
                 delete artistObject.type;
                 delete artistObject.uri;
+                artistObject.tracks = [];
                 context.commit('pushArtist', {id: artists[j].id, value: artistObject});
             }
         }
