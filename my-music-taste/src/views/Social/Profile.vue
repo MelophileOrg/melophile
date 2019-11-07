@@ -129,7 +129,10 @@ export default {
       this.include = profile.data.include;
       this.created = profile.data.created;
       this.numbers.tracks = profile.data.tracks;
-      this.numbers.artists = profile.data.artists.num;
+      if (typeof(profile.data.artists) == 'object')
+        this.numbers.artists = profile.data.artists.num;
+      else
+        this.numbers.artists = profile.data.artists;
       this.numbers.genres = profile.data.genres;
       this.tracks = tracks.data.tracks;
       this.artists = artists.data.artists;

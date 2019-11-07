@@ -321,7 +321,7 @@ export default {
       return list;
     },
     link() {
-      return "mymusic.andrewdanielyoung.com/social/profile/" + this.$store.state.user.id;
+      return "mymusictaste.org/social/profile/" + this.$store.state.user.id;
     }
   },
   created() {
