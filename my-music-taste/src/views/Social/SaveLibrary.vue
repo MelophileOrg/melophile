@@ -226,7 +226,6 @@ export default {
     },
     async save() {
       try {
-        console.log("TRYING");
         this.message = "";
         this.data = await this.$store.dispatch('saveLibrary', {name: this.name, private: this.privacy, include: this.settings});
         if (this.data == null) {
@@ -237,7 +236,6 @@ export default {
           tracks: Object.keys(this.$store.state.tracks).length, artists: Object.keys(this.$store.state.artists).length, genres: Object.keys(this.$store.state.genres).length
         });
         let trackResult = await axios.post('/api/tracks/' + id, {tracks: this.data.tracks});
-        console.log(Object.keys(this.data.artists).length);
         let artistResult = await axios.post('/api/artists/' + id, {artists: this.data.artists});
         let genreResult = await axios.post('/api/genres/' + id, {genres: this.data.genres});
         let collectionResult = await axios.post('/api/collections/' + id, 
@@ -250,12 +248,10 @@ export default {
           mode: this.data.mode,
         });
         this.saved.attempted = true;
-        console.log(profileResult.data.success, trackResult.data.success, artistResult.data.success, genreResult.data.success, collectionResult.data.success);
         this.saved.success = profileResult.data.success && trackResult.data.success && artistResult.data.success && genreResult.data.success && collectionResult.data.success;
         this.saved.updated = profileResult.data.updated && trackResult.data.updated && artistResult.data.updated && genreResult.data.updated && collectionResult.data.updated;
       } catch (error) {
         this.message = error;
-        console.log(error);
       }
 
       
