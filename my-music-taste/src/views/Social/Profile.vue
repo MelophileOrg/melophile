@@ -168,6 +168,7 @@ export default {
       this.topSaved = collections.data.topSaved;
       this.topPlayed = collections.data.topPlayed;
       this.dataRetrieved = true;
+      console.log(this.numbers);
     },
     changeTab(number) {
       window.scroll({

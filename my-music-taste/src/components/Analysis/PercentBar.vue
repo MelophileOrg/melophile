@@ -70,7 +70,7 @@ export default {
 }
 
 h4 {
-  color: white;
+  color: rgba(255, 255, 255, 0.904) !important;
   display: flex;
   align-items: center;
   margin: 4px 0;
@@ -96,7 +96,7 @@ h4 {
 }
 
 h5 {
-  color: white;
+  color: rgba(255, 255, 255, 0.904) !important;
   margin: 4px 0;
   text-align: right;
 }

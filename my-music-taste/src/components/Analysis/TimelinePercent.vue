@@ -105,7 +105,7 @@ export default {
   display: inline-block;
   width: 75%;
   margin: 30px 30px !important;
-  padding: 20px;
+  padding: 30px;
   padding-bottom: 5px;
   max-width: 400px;
   position: relative;
@@ -185,6 +185,9 @@ export default {
 
   .graph-bar.time {
     width: calc((100% / var(--num))) !important;
+  }
+  .timeline {
+    padding: 22px !important;
   }
 }
 

@@ -31,7 +31,6 @@
                 <h1 id="artist-name" @click="goToArtist">{{trackData.artist.name}}</h1>
                 <h2 >{{formatNumber(trackData.artist.followers.total)}} Followers</h2>
                 <h2 v-if="progress.artistsLoaded">{{songsSaved}}</h2>
-                <Loading v-if="!progress.artistsLoaded"/>
               </div>
             </div>
           </div>

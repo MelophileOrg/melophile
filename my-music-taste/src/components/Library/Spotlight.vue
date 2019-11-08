@@ -77,7 +77,7 @@ export default {
     display: inline-block;
     width: 75%;
     margin: 30px 30px !important;
-    padding: 20px;
+    padding: 30px;
     position: relative;
     max-width: 400px;
     border-radius: 5px;
@@ -86,6 +86,13 @@ export default {
     border: 1px solid rgba(255, 255, 255, 0.247);
     position: relative;
 }
+
+@media screen and (max-width: 720px) {
+  .spotlight {
+    padding: 22px !important;
+  }
+}
+
 .max {
   width: 100%;
   overflow: hidden;

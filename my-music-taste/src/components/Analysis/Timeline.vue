@@ -93,7 +93,7 @@ h4 {
   display: inline-block;
   width: 75%;
   margin: 30px 30px !important;
-  padding: 20px;
+  padding: 30px;
   padding-bottom: 5px;
   max-width: 400px;
   border-radius: 5px;
@@ -194,6 +194,9 @@ h4 {
 
     .graph-bar.time:hover p {
     font-size: .8em;
+  }
+  .timeline {
+    padding: 22px !important;
   }
 }
 

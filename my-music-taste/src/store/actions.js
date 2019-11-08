@@ -247,18 +247,15 @@ const calcExtremes = async (context) => {
     let trackTuples = Object.entries(context.state.tracks);
     let charts = ["minchart", "maxchart"];
     let topTracks;
-    for (let i = 0; i < keys.length; i++) {
+    for (let i = 0; i < keys.length; i++) 
         for (let j = 0; j < charts.length; j++) {
-            if (charts[j] == "minchart") {
+            if (charts[j] == "minchart")
                 topTracks = trackTuples.sort((a,b) => a[1][keys[i]] - b[1][keys[i]]).slice(0,25);
-            }
-            else {
+            else
                 topTracks = trackTuples.sort((a,b) => b[1][keys[i]] - a[1][keys[i]]).slice(0,25);
-            }
             let topTracksIds = topTracks.map(track => track[0]);
             context.commit('setAudioFeatureChart', {key: keys[i], chart: [charts[j]], value: topTracksIds});
         }
-    }
     context.commit('setExtremesLoaded');
 };
 const retrieveTopPlayed = async (context) => {

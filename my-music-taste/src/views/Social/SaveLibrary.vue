@@ -232,8 +232,26 @@ export default {
           this.message = "Public Profiles require Numerical Data, Characteristics, Most Played Tracks and Artists.";
         }
         let id = this.$store.state.user.id;
+        let valence = -1;
+        let danceability = -1;
+        let energy = -1;
+        if (this.settings.audio_features) {
+          valence = this.$store.state.audioFeatures.valence.value;
+          danceability = this.$store.state.audioFeatures.danceability.value;
+          energy = this.$store.state.audioFeatures.energy.value;
+        }
+        let topGenre = "";
+        if (this.settings.most_saved_genres) {
+          topGenre = this.data.topSaved.genres[0];
+        }
         let profileResult = await axios.post('/api/profile/' + id, {privacy: this.privacy, name: this.name, include: this.settings, 
-          tracks: Object.keys(this.$store.state.tracks).length, artists: Object.keys(this.$store.state.artists).length, genres: Object.keys(this.$store.state.genres).length
+          tracks: Object.keys(this.$store.state.tracks).length, 
+          artists: Object.keys(this.$store.state.artists).length, 
+          genres: Object.keys(this.$store.state.genres).length,
+          valence: valence,
+          danceability: danceability,
+          energy: energy,
+          topGenre: topGenre,
         });
         let trackResult = await axios.post('/api/tracks/' + id, {tracks: this.data.tracks});
         let artistResult = await axios.post('/api/artists/' + id, {artists: this.data.artists});

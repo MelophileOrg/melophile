@@ -76,13 +76,19 @@ export default {
     display: inline-block;
     width: 75%;
     margin: 30px 30px !important;
-    padding: 20px;
+    padding: 30px;
     max-width: 400px;
     border-radius: 5px;
     position: relative;
     margin-bottom: 20px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.247);
+}
+
+@media screen and (max-width: 720px) {
+  .YourLibrary {
+    padding: 22px !important;
+  }
 }
 
 

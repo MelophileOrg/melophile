@@ -185,15 +185,10 @@ h5 {
     width: calc(100% - 40px);
 }
 
-.window {
+.featuredtracks.window {
   width: calc(75% + 40px);
-  margin: 30px 30px !important;
   padding: 20px 0px;
   max-width: 440px;
-  border-radius: 5px;
-  margin-bottom: 20px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.247);
 }
 
 </style>

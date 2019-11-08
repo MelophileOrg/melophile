@@ -70,7 +70,7 @@ export default {
   display: inline-block;
   width: calc(80% - 40px);
   margin: 30px 30px !important;
-  padding: 20px;
+  padding: 30px;
   padding-bottom: 20px;
   max-width: 400px;
   border-radius: 5px;
@@ -79,6 +79,13 @@ export default {
   border: 1px solid rgba(255, 255, 255, 0.247);
   position: relative;
 }
+
+@media screen and (max-width: 720px) {
+  .graphcomp {
+    padding: 22px !important;
+  }
+}
+
 .graph {
   --max: 0;
   --red: 0;

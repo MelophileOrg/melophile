@@ -11,6 +11,10 @@ const profileSchema = new mongoose.Schema({
     artists: Number,
     genres: Number,
     likes: Array,
+    valence: Number,
+    energy: Number,
+    danceability: Number,
+    topGenre: String,
     created: Date,
 });
 
@@ -39,6 +43,10 @@ router.post("/:id", async (req, res) => {
                     "tracks": req.body.tracks,
                     "artists": req.body.artists,
                     "genres": req.body.genres,
+                    "valence": req.body.valence,
+                    "energy": req.body.energy,
+                    "danceability": req.body.danceability,
+                    "topGenre": req.body.topGenre,
                     "created": new Date(),
                 }
             });
@@ -55,6 +63,9 @@ router.post("/:id", async (req, res) => {
                 artists: req.body.artists,
                 genres: req.body.genres,
                 likes: [],
+                valence: req.body.valence,
+                energy: req.body.energy,
+                danceability: req.body.danceability,
                 created: new Date(),
             });
             await profile.save();
