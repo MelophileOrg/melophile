@@ -23,6 +23,11 @@ export default new Vuex.Store({
     progress: {
       total: 0,
       processed: 0,
+      tracks: false,
+      artists: false,
+      genres: false,
+      charts: false,
+      timelines: false,
     },
 
     topPlayed: {

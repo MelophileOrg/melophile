@@ -115,8 +115,25 @@ const updateTimelines = async (context, payload) => {
 };
 const processAudioFeatures = async (context, payload) => {
     let keys = Object.keys(context.state.audioFeatures);
+    payload.banger = await context.dispatch('bangerCalc', {tempo: payload.tempo, energy: payload.energy, danceability: payload.danceability});
     for (let i = 0; i < keys.length; i++) {
-        // EXTREMES
+        let index = context.state.audioFeatures[keys[i]].minchart.length - 1;
+        if (index < 0) 
+            index = 0;
+        if (context.state.audioFeatures[keys[i]].minchart.length < 25 || payload[keys[i]] < context.state.audioFeatures[keys[i]].minchart[index].value) {                
+            while (index > 0 && payload[keys[i]] < context.state.audioFeatures[keys[i]].minchart[index].value) {
+                index -= 1;
+            }
+            await context.commit('spliceAudioFeatureExtremes', {key: keys[i], chart: 'minchart', index: index, value: {id: payload.id, value: payload[keys[i]]}});
+        }
+        index = context.state.audioFeatures[keys[i]].maxchart.length - 1;
+        if (index < 0) 
+            index = 0;
+        if (context.state.audioFeatures[keys[i]].maxchart.length < 25 || payload[keys[i]] > context.state.audioFeatures[keys[i]].maxchart[index].value) {
+            while (index > 0 && payload[keys[i]] > context.state.audioFeatures[keys[i]].maxchart[index].value)
+                index -= 1;
+            await context.commit('spliceAudioFeatureExtremes', {key: keys[i], chart: 'maxchart', index: index, value: {id: payload.id, value: payload[keys[i]]}});
+        }
         context.commit('addAudioFeatureValue', {key: keys[i], value: payload[keys[i]]});
         context.commit('plotAudioFeatureValue', {key: keys[i], value: payload[keys[i]]});
     }
@@ -180,7 +197,6 @@ const retrieveTopCharts = async (context) => {
 }
 */
 const convertTrackObject = async (context, payload) => {
-    try {
     let trackObject = {};
     trackObject.id = payload.track.id;
     trackObject.name = payload.track.name;
@@ -193,12 +209,8 @@ const convertTrackObject = async (context, payload) => {
     if ('date' in payload)
         trackObject.date = payload.date;
     return trackObject;
-    } catch (error) {
-        console.log(payload);
-    }
 };
 const convertArtistObject = async (context, payload) => {
-    console.log(payload);
     let artistObject = {};
     artistObject.id = payload.id;
     artistObject.name = payload.name;
@@ -218,7 +230,9 @@ const generateGenre = async (context, payload) => {
     genreObject.trackNum = 1;
     return genreObject;
 };
-
+const bangerCalc = async (context, payload) => {
+    return ((payload.tempo - 96 + (payload.energy * 100) + (payload.danceability*50)) / 210);
+}
 ////////////////////////////////////////////////////////////////
 // API CALLS ///////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
@@ -417,6 +431,8 @@ export default {
     convertTrackObject,
     convertArtistObject,
     generateGenre,
+
+    bangerCalc,
 
     getTrack,
     getTracks,

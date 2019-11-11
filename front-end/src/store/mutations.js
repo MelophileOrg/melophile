@@ -78,9 +78,10 @@ const setTopSavedGenres = (state, payload) => {
 const addAudioFeatureValue = (state, payload) => {
     state.audioFeatures[payload.key].value += payload.value;
 };
-// {key: String, chart: String, value: Array}
-const setAudioFeatureExtremes = (state, payload) => {
-    state.audioFeatures[payload.key][payload.chart] = payload.value;
+// {key: String, chart: String, index: Number, value: Array}
+const spliceAudioFeatureExtremes = (state, payload) => {
+    state.audioFeatures[payload.key][payload.chart].splice(payload.index, 0, payload.value);
+    state.audioFeatures[payload.key][payload.chart] = state.audioFeatures[payload.key][payload.chart].slice(0, 25);
 };
 // {key: string, month: Number, value: Number}
 const addAudioFeatureTimeline = (state, payload) => {
@@ -148,8 +149,7 @@ export default {
     setTopSavedGenres,
 
     addAudioFeatureValue,
-    setAudioFeatureExtremes,
-
+    spliceAudioFeatureExtremes,
     addAudioFeatureTimeline,
     averageAudioFeatureValues,
     plotAudioFeatureValue,
