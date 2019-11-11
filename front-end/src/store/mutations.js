@@ -46,8 +46,8 @@ const addArtistToGenre = (state, payload) => {
     state.genres[payload.id].artists.push(payload.artist);
 };
 // id
-const addGenreTrackNum = (state, id) => {
-    state.genres[id].trackNum += 1;
+const addGenreTrackNum = (state, payload) => {
+    state.genres[payload.key].trackNum += payload.value;
 };
 ////////////////////////////////////////////////////////////////
 // TOP PLAYED TRACKS/ARTISTS ///////////////////////////////////

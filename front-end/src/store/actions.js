@@ -86,7 +86,6 @@ const retrieveSavedArtists = async (context, payload) => {
         let newArtists = await context.dispatch('getArtists', sectionIds);
         artists = artists.concat(newArtists);
     }
-
     for (let i = 0; i < artists.length; i++) {
         artists[i].tracks = tracks[i];
         let artistObject = await context.dispatch('convertArtistObject', artists[i]);
@@ -95,10 +94,10 @@ const retrieveSavedArtists = async (context, payload) => {
             if (artists[i].genres[j] in context.state.genres) {
                 if (!(context.state.genres[artists[i].genres[j]].artists.includes(artists[i].id)))
                     context.commit('addArtistToGenre', {id: artists[i].genres[j], artist: artists[i].id});
-                context.commit('addGenreTrackNum', artists[i].genres[j]);
+                context.commit('addGenreTrackNum', {key: artists[i].genres[j], value: tracks[i].length});
                 continue;
             }
-            context.commit('pushGenre', context.dispatch('generateGenre', {name: artists[i].genres[j], artists: [artists[i].id]}));
+            context.commit('pushGenre', await context.dispatch('generateGenre', {name: artists[i].genres[j], artists: [artists[i].id]}));
         }
     }
 };
@@ -198,7 +197,8 @@ const convertTrackObject = async (context, payload) => {
         console.log(payload);
     }
 };
-const convertArtistObject = async (payload) => {
+const convertArtistObject = async (context, payload) => {
+    console.log(payload);
     let artistObject = {};
     artistObject.id = payload.id;
     artistObject.name = payload.name;
@@ -211,7 +211,7 @@ const convertArtistObject = async (payload) => {
         artistObject.tracks = payload.tracks;
     return artistObject;
 };
-const generateGenre = async (payload) => {
+const generateGenre = async (context, payload) => {
     let genreObject = {};
     genreObject.name = payload.name;
     genreObject.artists = payload.artists;
