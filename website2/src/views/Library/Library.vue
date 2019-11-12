@@ -2,7 +2,7 @@
   <div id="main-flex" class="mylibrary">
     <NavBar />
     <div id="main">
-      <div v-if="progress.tracks" id="menu">
+      <div v-if="progress.tracksLoaded" id="menu">
         <div id="title">
           <h1>Your Library Analysis</h1>
           <button @click="save">Share</button>
@@ -13,40 +13,40 @@
         </div>
       </div>
 
-      <div class="progress" v-if="!progress.tracks" >
+      <div class="progress" v-if="!progress.tracksLoaded" >
         <div class="progress-info" >
           <ProgressBar/>
         </div>
       </div>
       
-      <div v-if="progress.tracks && tab == 0" class="windows">
+      <div v-if="progress.tracksLoaded && tab == 0" class="windows">
 
         <YourLibrary title="Your Library" :delay="0"/>
 
         <Characteristics :delay="1"/>
 
-        <Spotlight :delay="2" :override="progress.artists" title="Most Saved Artists:" :list="topSavedArtists" :image="topSavedArtists[0].image"/>
+        <Spotlight :delay="2" :override="progress.artistsLoaded" title="Most Saved Artists:" :list="topSavedArtists" :image="topSavedArtists[0].image"/>
 
-        <Spotlight :delay="3" :override="progress.genres" title="Most Saved Genres:" :list="topSavedGenres.slice(0, 4)" image=""/>
+        <Spotlight :delay="3" :override="progress.genresLoaded" title="Most Saved Genres:" :list="topSavedGenres.slice(0, 4)" image=""/>
 
         <Averages :delay="4"/>
 
         <Chances :delay="5"/>
 
-        <Timeline :override="progress.tracks" title="When You Added Songs:" instructions="" :max="-1" :delay="6" :bars="cleanGraphData(dateAdded)" y_axis="Number of Songs" :color="{red: 74, green: 189, blue: 180}"/>
+        <Timeline :override="progress.tracksLoaded" title="When You Added Songs:" instructions="" :max="-1" :delay="6" :bars="cleanGraphData(dateAdded)" y_axis="Number of Songs" :color="{red: 74, green: 189, blue: 180}"/>
         
-        <TimelinePercent :override="progress.tracks" title="Happiness Over Time:" instructions="" :delay="7" :bars="cleanValuedGraphData(audioFeatures.valence.timeline)" :max="100" y_axis="Percent Happiness" />
+        <TimelinePercent :override="progress.tracksLoaded" title="Happiness Over Time:" instructions="" :delay="7" :bars="cleanValuedGraphData(audioFeatures.valence.timeline)" :max="100" y_axis="Percent Happiness" />
 
-        <Graph @more="goToExtremes" :override="progress.tracks" title="Happiness Distribution:" instructions="View Lists" :delay="8" :bars="cleanGraphData(audioFeatures.valence.plot)" max_tag="Happy" min_tag="Sad" y_axis="Number of Songs" :color="audioFeatures.valence.color"/>
+        <Graph @more="goToExtremes" :override="progress.tracksLoaded" title="Happiness Distribution:" instructions="View Lists" :delay="8" :bars="cleanGraphData(audioFeatures.valence.plot)" max_tag="Happy" min_tag="Sad" y_axis="Number of Songs" :color="audioFeatures.valence.color"/>
 
-        <Graph @more="goToExtremes" :override="progress.tracks" title="Energy Distribution:" instructions="View Lists" :delay="9" :bars="cleanGraphData(audioFeatures.energy.plot)" max_tag="Hyper" min_tag="Peaceful" y_axis="Number of Songs" :color="audioFeatures.energy.color"/>
+        <Graph @more="goToExtremes" :override="progress.tracksLoaded" title="Energy Distribution:" instructions="View Lists" :delay="9" :bars="cleanGraphData(audioFeatures.energy.plot)" max_tag="Hyper" min_tag="Peaceful" y_axis="Number of Songs" :color="audioFeatures.energy.color"/>
 
-        <Graph @more="goToExtremes" :override="progress.tracks" title="Danceability Distribution:" instructions="View Lists" :delay="10" :bars="cleanGraphData(audioFeatures.danceability.plot)" max_tag="Let's dance!" min_tag="Couch Potato" y_axis="Number of Songs" :color="audioFeatures.danceability.color"/>
+        <Graph @more="goToExtremes" :override="progress.tracksLoaded" title="Danceability Distribution:" instructions="View Lists" :delay="10" :bars="cleanGraphData(audioFeatures.danceability.plot)" max_tag="Let's dance!" min_tag="Couch Potato" y_axis="Number of Songs" :color="audioFeatures.danceability.color"/>
 
-        <Graph @more="goToExtremes" :override="progress.tracks" title="Should You DJ a Party?" instructions="View Lists" :delay="11" :bars="cleanGraphData(audioFeatures.banger.plot)" max_tag="Absolute Bangers" min_tag="*Snore Snore*" y_axis="Number of Songs" :color="audioFeatures.banger.color"/>
+        <Graph @more="goToExtremes" :override="progress.tracksLoaded" title="Should You DJ a Party?" instructions="View Lists" :delay="11" :bars="cleanGraphData(audioFeatures.banger.plot)" max_tag="Absolute Bangers" min_tag="*Snore Snore*" y_axis="Number of Songs" :color="audioFeatures.banger.color"/>
       </div>
 
-      <div class="extremes" v-if="progress.tracks && tab == 1">
+      <div class="extremes" v-if="progress.tracksLoaded && tab == 1">
         <Extremes/>
       </div>
     </div>
@@ -132,22 +132,22 @@ export default {
       return this.$store.state.progress;
     },
     artists() {
-      if (!this.progress.tracks)
+      if (!this.progress.tracksLoaded)
         return;
       return this.$store.state.artists;
     },
     genres() {
-      if (!this.progress.tracks)
+      if (!this.progress.tracksLoaded)
         return;
       return this.$store.state.genres;
     },
     audioFeatures() {
-      if (!this.progress.tracks)
+      if (!this.progress.tracksLoaded)
         return;
       return this.$store.state.audioFeatures;
     },
     dateAdded() {
-      if (!this.progress.tracks)
+      if (!this.progress.tracksLoaded)
         return;
       let normal = this.$store.state.dateAdded;
       let reversed = [];
@@ -157,7 +157,7 @@ export default {
       return reversed;
     },
     topSavedArtists() {
-      if (!this.progress.artists)
+      if (!this.progress.artistsLoaded)
         return;
       let ids = this.$store.state.topSaved.artists;
       let list = [];
@@ -168,7 +168,7 @@ export default {
       return list;
     },
     topSavedGenres() {
-      if (!this.progress.genres)
+      if (!this.progress.genresLoaded)
         return;
       let ids = this.$store.state.topSaved.genres;
       let list = [];

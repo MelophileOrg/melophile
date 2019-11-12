@@ -52,7 +52,6 @@ const loadLibrary = async (context) => {
 };
 const retrieveSavedTracks = async (context, payload) => {
     let tracks = await context.dispatch('getSavedTracks', {limit: payload.limit, offset: payload.offset});
-    
     let ids = tracks.map(track => track.track.id);
     let audioFeatures = await context.dispatch('getAudioFeaturesForTracks', ids);
     let artistIds = {};
@@ -60,12 +59,13 @@ const retrieveSavedTracks = async (context, payload) => {
         if (tracks[i].track.id in context.state.tracks)
             continue;
         context.dispatch('updateTimelines', {date: tracks[i].added_at, features: audioFeatures[i]});
-        
         context.commit('pushTrack', await context.dispatch('convertTrackObject', {track: tracks[i].track, date: tracks[i].added_at}));
         context.dispatch('processAudioFeatures', audioFeatures[i]);
         for (let j = 0; j < tracks[i].track.artists.length; j++) {
-            if (tracks[i].track.artists[j].id in context.state.tracks)
+            if (tracks[i].track.artists[j].id in context.state.tracks) {
                 context.commit('addTrackToArtist', {id: tracks[i].track.artists[j].id, track: tracks[i].track.id});
+                console.log(tracks[i].track.artists[j].id, tracks[i].track.id)
+            }
             else {
                 if (!(tracks[i].track.artists[j].id in artistIds)) 
                     artistIds[tracks[i].track.artists[j].id] = [tracks[i].track.id];

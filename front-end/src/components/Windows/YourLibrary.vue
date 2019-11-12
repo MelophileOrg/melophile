@@ -1,14 +1,14 @@
 <template>
     <div class="YourLibrary window" :style="{'--delay': + 0}">
-        <h3 class="window-title" v-if="progress.tracksLoaded || profile">{{title}}:</h3>
-        <div v-if="progress.tracksLoaded || profile" class="row flex-space-between">
+        <h3 class="window-title" v-if="progress.tracks || profile">{{title}}:</h3>
+        <div v-if="progress.tracks || profile" class="row flex-space-between">
             <h4 class="light">Saved Songs</h4><h4 class="num">{{formatNumber(total)}}</h4>
         </div>
-        <div v-if="progress.artistsLoaded || profile" class="row flex-space-between">
+        <div v-if="progress.artists || profile" class="row flex-space-between">
             <h4 class="light" v-if="!profile">Artists</h4><h4 v-if="!profile" class="num">{{formatNumber(Object.keys(artists).length)}}</h4>
             <h4 class="light" v-if="profile">Artists</h4><h4 v-if="profile" class="num">{{formatNumber(artists)}}</h4>
         </div>
-        <div v-if="progress.genresLoaded || profile" class="row flex-space-between">
+        <div v-if="progress.genres || profile" class="row flex-space-between">
             <h4 class="light" v-if="!profile">Genres</h4><h4  v-if="!profile" class="num">{{formatNumber(Object.keys(genres).length)}}</h4>
             <h4 class="light" v-if="profile">Genres</h4><h4 v-if="profile" class="num">{{formatNumber(genres)}}</h4>
         </div>

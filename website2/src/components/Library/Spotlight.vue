@@ -159,7 +159,7 @@ img {
 
 @media screen and (max-width: 720px) {
   .favorite {
-    font-size: 1.4em;
+    font-size: 1em;
   }
 
   .favorite-div
@@ -175,7 +175,7 @@ img {
   }
 
   .artist h4 {
-    font-size: .9em;
+    font-size: 1em;
   }
 
 }
@@ -184,7 +184,7 @@ h5 {
     color: hsla(0,0%,100%,.514);
     margin: 0;
     text-align: left;
-    font-size: .8em;
+    font-size: .9em;
 }
 
 h4 {

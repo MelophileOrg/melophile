@@ -81,11 +81,11 @@ export default {
 }
 
 .nomargin {
-  margin-bottom: 15px !important;
+  margin-bottom: 0px !important;
 }
 
 .favorite {
-  font-size: 1.8em;
+  font-size: 1.2em;
   text-transform: capitalize;
   margin-left: 3px;
 }
@@ -93,8 +93,7 @@ export default {
 .favorite-div
 {
   margin-top: 10px;
-  margin-bottom: 10px;
-  height: 75px;
+  margin-bottom: 5px;
   padding: 10px 10px;
   background: rgba(255, 255, 255, 0.062);
   overflow: hidden;
@@ -102,7 +101,7 @@ export default {
 
 .favorite-div h5 {
   font-size: 1em;
-  margin-top: 5px;
+  margin-top: 0px;
   margin-left: 3px;
   
 }
@@ -126,18 +125,19 @@ export default {
   text-overflow: ellipsis;
   width: 100%;
   text-transform: capitalize;
+  font-size: .9em;
 }
 
 img {
   display: block;
-  height: 70px;
+  height: 50px;
   margin-right: 10px;
 }
 
 
 @media screen and (max-width: 720px) {
   .favorite {
-    font-size: 1.4em;
+    font-size: 1em;
   }
 
   .favorite-div
@@ -147,7 +147,7 @@ img {
 
   img {
     display: block;
-    height: 60px;
+    height: 45px;
     max-width: 87px;
     margin-right: 5px;
   }
