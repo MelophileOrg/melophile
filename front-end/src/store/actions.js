@@ -43,6 +43,11 @@ const loadLibrary = async (context) => {
     context.commit('averageAudioFeatureValues');
     context.commit('averageMode');
     await context.dispatch('retrieveTopCharts');
+    context.commit('setProgressTracks');
+    context.commit('setProgressArtists');
+    context.commit('setProgressGenres');
+    context.commit('setProgressCharts');
+    context.commit('setProgressTimelines');
     console.log(context.state);
 };
 const retrieveSavedTracks = async (context, payload) => {

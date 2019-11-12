@@ -120,6 +120,7 @@ html::-webkit-scrollbar-thumb
   margin-bottom: 20px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.247);
+  position: relative;
 }
 
 .window-title {
@@ -172,6 +173,12 @@ html::-webkit-scrollbar-thumb
   from {
     opacity: 0;
     transform: translateY(100px);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
   }
 }
 </style>
