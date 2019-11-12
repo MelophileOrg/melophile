@@ -14,6 +14,11 @@ const setUserData = (state, payload) => {
 ////////////////////////////////////////////////////////////////
 const resetProgress = (state) => {
     state.progress.processed = 0;
+    state.progress.tracks = false;
+    state.progress.artists = false;
+    state.progress.genres = false;
+    state.progress.charts = false;
+    state.progress.timelines = false;
 };
 // Number
 const setTotal = (state, payload) => {
@@ -22,6 +27,26 @@ const setTotal = (state, payload) => {
 // None
 const addProcessed = (state) => {
     state.progress.processed += 1;
+};
+// None
+const setProgressTracks = (state) => {
+    state.progress.tracks = true;
+};
+// None
+const setProgressArtists = (state) => {
+    state.progress.artists = true;
+};
+// None
+const setProgressGenres = (state) => {
+    state.progress.genres = true;
+};
+// None
+const setProgressCharts = (state) => {
+    state.progress.charts = true;
+};
+// None 
+const setProgressTimelines = (state) => {
+    state.progress.timelines = true;
 };
 ////////////////////////////////////////////////////////////////
 // DATA OBJECTS ////////////////////////////////////////////////
@@ -135,6 +160,11 @@ export default {
     resetProgress,
     setTotal,
     addProcessed,
+    setProgressTracks,
+    setProgressArtists,
+    setProgressGenres,
+    setProgressCharts,
+    setProgressTimelines,
 
     pushTrack,
     pushArtist,

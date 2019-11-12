@@ -142,13 +142,13 @@ const processAudioFeatures = async (context, payload) => {
 const retrieveTopCharts = async (context) => {
     let genreTuples = Object.entries(context.state.genres);
     let topGenres = genreTuples.sort(function(a,b) {
-        if (!("tracknum" in a[1]) && !("tracknum" in b[1]))
+        if (!("trackNum" in a[1]) && !("trackNum" in b[1]))
             return 0;
-        if (!("tracknum" in b[1]))
-            return 0 - a[1].tracknum;
-        if (!("tracknum" in a[1]))
-            return b[1].tracknum;
-        return b[1].tracknum - a[1].tracknum
+        if (!("trackNum" in b[1]))
+            return 0 - a[1].trackNum;
+        if (!("trackNum" in a[1]))
+            return b[1].trackNum;
+        return b[1].trackNum - a[1].trackNum;
     }).slice(0,50);
     let topGenreIds = topGenres.map(genre => genre[0]);
     context.commit('setTopSavedGenres', topGenreIds);
@@ -232,7 +232,7 @@ const generateGenre = async (context, payload) => {
 };
 const bangerCalc = async (context, payload) => {
     return ((payload.tempo - 96 + (payload.energy * 100) + (payload.danceability*50)) / 210);
-}
+};
 ////////////////////////////////////////////////////////////////
 // API CALLS ///////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
