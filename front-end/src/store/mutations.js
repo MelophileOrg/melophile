@@ -58,7 +58,6 @@ const pushArtist = (state, artistObject) => {
     state.artists[artistObject.id] = artistObject;
 };
 const addTrackToArtist = (state, payload) => {
-    console.log(payload);
     if (!(state.artists[payload.id].tracks.includes(payload.track)))
         state.artists[payload.id].tracks.push(payload.track);
 };
@@ -126,8 +125,14 @@ const averageAudioFeatureValues = (state) => {
             if (state.audioFeatures[keys[i]].timeline[j].total > 0)
                 state.audioFeatures[keys[i]].timeline[j].value /= state.audioFeatures[keys[i]].timeline[j].total;
             else if (state.audioFeatures[keys[i]].timeline[j].total == 0) {
-                console.log(keys[i], j, state.audioFeatures[keys[i]].timeline[j]);
-
+                let diff = 1;
+                while(state.audioFeatures[keys[i]].timeline[j + diff].total == 0 && j + diff != state.audioFeatures[keys[i]].timeline.length) {
+                    diff += 1;
+                }
+                if (j + diff == state.audioFeatures[keys[i]].timeline.length)
+                    state.audioFeatures[keys[i]].timeline[j].value = 0.5;
+                else 
+                    state.audioFeatures[keys[i]].timeline[j].value = state.audioFeatures[keys[i]].timeline[j + diff].value / state.audioFeatures[keys[i]].timeline[j + diff].total
             }
         }
     }

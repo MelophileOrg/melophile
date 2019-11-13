@@ -2,16 +2,7 @@
   <div id="main-flex" class="analysis">
     <NavBar />
     <div id="main">
-      <div v-if="progress.tracks" id="menu">
-        <div id="title">
-          <h1>Your Library Analysis</h1>
-          <button @click="save">Share</button>
-        </div>
-        <div id="tabs">
-          <h2 @click="changeTab(0)" :class="{active: tab == 0}">Big Picture</h2>
-          <h2 @click="changeTab(1)" :class="{active: tab == 1}">Extremes</h2>
-        </div>
-      </div>
+      <PageTitle title="Big Picture" link="/social/save" linkTitle="Share"/>
 
       <div class="progress" v-if="!progress.tracks" >
         <div class="progress-info" >
@@ -43,10 +34,11 @@
         <Graph @more="goToExtremes" :override="progress.tracks" title="Danceability Distribution:" instructions="View Lists" :delay="10" :bars="cleanGraphData(audioFeatures.danceability.plot)" max_tag="Let's dance!" min_tag="Couch Potato" y_axis="Number of Songs" :color="audioFeatures.danceability.color"/>
 
         <Graph @more="goToExtremes" :override="progress.tracks" title="Should You DJ a Party?" instructions="View Lists" :delay="11" :bars="cleanGraphData(audioFeatures.banger.plot)" max_tag="Absolute Bangers" min_tag="*Snore Snore*" y_axis="Number of Songs" :color="audioFeatures.banger.color"/>
-      </div>
+      
+        <TimelinePercent :override="progress.tracks" title="Energy Over Time:" instructions="" :delay="7" :bars="cleanValuedGraphData(audioFeatures.energy.timeline)" :max="100" y_axis="Percent Happiness" />
 
-      <div class="extremes" v-if="progress.tracks && tab == 1">
-        <Extremes/>
+        <TimelinePercent :override="progress.tracks" title="Danceability Over Time:" instructions="" :delay="7" :bars="cleanValuedGraphData(audioFeatures.danceability.timeline)" :max="100" y_axis="Percent Happiness" />
+
       </div>
     </div>
   </div>
@@ -63,7 +55,7 @@ import YourLibrary from '@/components/Windows/YourLibrary.vue'
 import Characteristics from '@/components/Windows/Characteristics.vue'
 import Averages from '@/components/Windows/Averages.vue'
 import Chances from '@/components/Windows/Chances.vue'
-import Extremes from '@/components/Lists/Extremes.vue'
+import PageTitle from '@/components/Menu/PageTitle.vue'
 
 export default {
   name: 'analysis',
@@ -76,8 +68,8 @@ export default {
     Characteristics,
     Averages,
     Chances,
-    Extremes,
     TimelinePercent,
+    PageTitle
   },
   data() {
     return {
@@ -87,36 +79,18 @@ export default {
   methods: {
     cleanGraphData(bars) {
       let graphData = [];
-      for (let i = 0; i < bars.length; i++) {
+      for (let i = (bars.length - 1); i >= 0; i--) {
         graphData.push({value: bars[i], tag: bars[i]});
       }
       return graphData;
     },
     cleanValuedGraphData(bars) {
       let graphData = [];
-      for (let i = 0; i < bars.length; i++) {
+      for (let i = (bars.length - 1); i >= 0; i--) {
         graphData.push({value: Math.round(bars[i].value * 100), tag: Math.round(bars[i].value * 100) + "%"});
       }
       return graphData;
     },
-    changeTab(number) {
-      window.scroll({
-        top: 0,
-        behavior: 'auto'
-      });
-      this.tab = number;
-
-    },
-    goToExtremes() {
-      window.scroll({
-        top: 0,
-        behavior: 'auto'
-      });
-      this.tab = 1;
-    },
-    save() {
-      this.$router.push('/social/save');
-    }
   },
   computed: {
     inicialized() {
@@ -146,12 +120,7 @@ export default {
     dateAdded() {
       if (!this.progress.tracks)
         return;
-      let normal = this.$store.state.dateAdded;
-      let reversed = [];
-      for (var i = normal.length - 1; i >= 0; i--) {
-        reversed.push(normal[i]);
-      }
-      return reversed;
+      return this.$store.state.dateAdded;
     },
     topSavedArtists() {
       if (!this.progress.artists)
