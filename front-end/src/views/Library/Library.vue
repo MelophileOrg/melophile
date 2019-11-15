@@ -2,7 +2,7 @@
   <div id="main-flex" class="library">
     <NavBar/>
     <div id="main">
-
+      <PageTitle title="Your Library"/>
     </div>
   </div>
 </template>
@@ -10,11 +10,13 @@
 <script>
 // @ is an alias to /src
 import NavBar from '@/components/Navigation/NavBar.vue'
+import PageTitle from '@/components/Menu/PageTitle.vue'
 
 export default {
   name: 'library',
   components: {
     NavBar,
+    PageTitle
   },
   methods: {
 

@@ -12,12 +12,32 @@
           </div>
       </div>
 
-      <div v-if="override && !none && !saved">
+      <div v-if="override && !none && !saved && type == 'track'">
         <div @click="toSong(track.id)" v-for="track in ids" :key="title + track.id" class="search-song ">
           <img class="search-image" :src="track.image"/>
           <div class="col">
             <h1 class="search-title">{{track.name}}</h1>
             <h4>{{track.album.name}}</h4>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="override && !none && !saved && type == 'artist'">
+        <div @click="toArtist(item.id)" v-for="item in ids" :key="title + item.id" class="search-song ">
+          <img class="search-image" :src="item.image"/>
+          <div class="col">
+            <h1 class="search-title">{{item.name}}</h1>
+            <h4>{{item.genres[0]}}</h4>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="override && !none && !saved && type == 'genre'">
+        <div @click="toGenre(item.id)" v-for="item in ids" :key="title + item.id" class="search-song ">
+          <img class="search-image" src="../../assets/icons/genres.svg"/>
+          <div class="col">
+            <h1 class="search-title">{{item.name}}</h1>
+            <h4>{{item.genres[0]}}</h4>
           </div>
         </div>
       </div>
@@ -38,6 +58,7 @@ export default {
     props: {
         title: String,
         ids: Array,
+        type: String,
         override: Boolean,
         none: Boolean,
         saved: Boolean,
@@ -81,10 +102,6 @@ export default {
     margin-left: 20px !important;
 }
 
-.displace {
-  transform: translateY(-25px);
-}
-
 @media only screen and (max-width: 720px) {
   .search-title {
     font-size: 16px !important;
@@ -116,8 +133,8 @@ export default {
 
 .search-image {
   display: block;
-  width: 35px;
-  height: 35px;
+  width: 50px;
+  height: 50px;
   background-size: auto 100%;
   margin-right: 5px;
   background-position: center center;
@@ -147,10 +164,11 @@ export default {
   position: relative;
   padding: 5px 10px;
   background: rgba(255, 255, 255, 0.103);
-  height: 45px;
+  height: 60px;
   margin: 3px auto;
+  margin-bottom: 0px;
   font-family: 'Roboto', sans-serif;
-  width: calc(100% - 60px);
+  width: calc(100% - 20px);
 }
 
 h4 {
@@ -186,9 +204,10 @@ h5 {
 }
 
 .featuredtracks.window {
-  width: calc(75% + 40px);
+  width: calc(75% + 60px);
   padding: 20px 0px;
-  max-width: 440px;
+  padding-bottom: 0px;
+  max-width: 460px;
 }
 
 </style>

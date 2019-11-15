@@ -1,6 +1,6 @@
 <template>
     <div class="TopPlayed">
-        <div v-if="progress.extremesLoaded || profile">
+        <div v-if="progress.tracks || profile">
         <Selector @toggleSave="toggleSave2" :save="save" :state="giveState" :items="filterSelector" :load="false" :override="false" @pending="pending" @selection="select"/>
         <div class="list" v-if="list.length > 0 && !save">
             <SearchItem :profile="profile" :profileData="profileData" :topsaved="false" class="searchItem" v-for="(track, index) in list"  :saved="true" :showNum="true" :key="'topplayed' + index" :data="track" :index="index" :type="type"/>

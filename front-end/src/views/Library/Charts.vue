@@ -2,8 +2,8 @@
   <div id="main-flex" class="charts">
     <NavBar/>
     <div id="main">
+      <PageTitle title="Your Charts" link="/social/save" linkTitle="Share"/>
       <div v-if="progress.genres" id="menu">
-        <h1>Your Charts</h1>
         <div id="tabs">
           <h2 @click="changeTab(0)" :class="{active: tab == 0}">Top Played</h2>
           <h2 @click="changeTab(1)" :class="{active: tab == 1}">Top Saved</h2>
@@ -23,6 +23,7 @@
 <script>
 // @ is an alias to /src
 import NavBar from '@/components/Navigation/NavBar.vue'
+import PageTitle from '@/components/Menu/PageTitle.vue'
 import TopSaved from '@/components/Lists/TopSaved.vue'
 import TopPlayed from '@/components/Lists/TopPlayed.vue'
 
@@ -31,7 +32,8 @@ export default {
   components: {
     NavBar,
     TopSaved,
-    TopPlayed
+    TopPlayed,
+    PageTitle
   },
   data() {
     return {
@@ -114,3 +116,20 @@ h2 {
   }
 }
 </style>
+
+
+
+
+<body>
+  <a class="home-button" href="">Home</a>
+</body>
+
+body {
+  position: relative;
+}
+
+.home-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}

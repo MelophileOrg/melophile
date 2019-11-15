@@ -27,6 +27,7 @@ export default {
   justify-content: center;
   align-items: center;
   width: 100%;
+  margin-bottom: 20px;
   height: calc(var(--height) * 1px);
 }
 

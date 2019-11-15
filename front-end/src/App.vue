@@ -115,6 +115,7 @@ html::-webkit-scrollbar-thumb
   width: 75%;
   margin: 30px 30px;
   padding: 30px;
+  padding-top: 20px;
   max-width: 400px;
   border-radius: 5px;
   margin-bottom: 20px;

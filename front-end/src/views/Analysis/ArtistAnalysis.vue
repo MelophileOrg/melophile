@@ -39,10 +39,7 @@
           <Loading v-else/>
         </div>
 
-
-        
-
-        <div class="window" :style="{'--delay': + 3}">
+        <div class="window" :style="{'--delay': + 2}">
           <h3  class="window-title" v-if="artistData != null">Top Track's Characteristics:</h3>
           <div v-if="topTracksReady">
             <div>
@@ -54,11 +51,11 @@
           <Loading v-else/>
         </div>
 
-        <Spotlight :delay="2" :numOff="true" :override="artistData != null" title="Artist Genres:" :list="genresComputed" image=""/>
+        <Timeline :none="noneTimeline" :small="true" :override="timelineReady" title="When You Liked Tracks:" instructions="" :max="-1" :delay="3" :bars="datesAdded" y_axis="Number of Songs" :color="{red: 74, green: 189, blue: 180}"/>
 
-        <FeaturedTracks :style="{'--delay': + 4}" class="featuredtracks" :saved="false" :none="false" :override="topTracksReady" title="Artist Top Tracks:" :ids="topTracks"/>
+        <Spotlight :profile="true" :delay="4" :numOff="false" :override="topTracksReady" title="Artist Top Tracks:" :list="topTracks" image="set"/>
 
-        <Timeline :none="noneTimeline" :small="true" :override="timelineReady" title="When You Liked Tracks:" instructions="" :max="-1" :delay="5" :bars="datesAdded" y_axis="Number of Songs" :color="{red: 74, green: 189, blue: 180}"/>
+        <Spotlight :delay="5" :numOff="true" :override="artistData != null" title="Artist Genres:" :list="genresComputed" image=""/>
 
         <div class="window" :style="{'--delay': + 6}">
           <h3  class="window-title" v-if="artistData != null">Liked Track's Characteristics:</h3>
@@ -79,9 +76,11 @@
 
         <Graph :zero="notSaved" :override="progress.tracks" title="Liked Tracks Danceability:" :delay="9" :bars="cleanGraphDataForwards(audioFeaturesGraphs.danceability)" max_tag="Let's dance!" min_tag="Couch Potato" y_axis="Number of Songs" :color="audioFeatures.danceability.color"/>
 
-        <FeaturedTracks :style="{'--delay': + 10}" class="featuredtracks" :saved="true" :none="noneTimeline" :override="timelineReady" title="First Liked Tracks:" :ids="oldestTracks"/>
+        <FeaturedTracks type="track" :style="{'--delay': + 11}" class="featuredtracks" :saved="true" :none="noneTimeline" :override="timelineReady" title="Recently Liked Tracks:" :ids="newestTracks"/>
 
-        <FeaturedTracks :style="{'--delay': + 11}" class="featuredtracks" :saved="true" :none="noneTimeline" :override="timelineReady" title="Recently Liked Tracks:" :ids="newestTracks"/>
+        <FeaturedTracks type="track" :style="{'--delay': + 10}" class="featuredtracks" :saved="true" :none="noneTimeline" :override="timelineReady" title="Oldest Liked Tracks:" :ids="oldestTracks"/>
+
+        
         
 
       </div>
@@ -175,8 +174,8 @@ export default {
             timeline[diffMonth] += 1;
         }
         tracks.sort((a, b) => (a.time > b.time) ? 1 : -1);
-        let oldest = tracks.slice(0, 3);
-        let newest = tracks.slice(tracks.length - 3, tracks.length);
+        let oldest = tracks.slice(0, 4);
+        let newest = tracks.slice(tracks.length - 4, tracks.length);
         while (timeline.length < this.$store.state.dateAdded.length) {
             timeline.push(0);
         }
@@ -186,32 +185,18 @@ export default {
         let tracks = await this.$store.dispatch('getArtistTopTracks', id);
         let ids = [];
         for (let i = 0; i < tracks.length; i++) {
-            delete tracks[i].album.album_type;
-            delete tracks[i].album.artists;
-            delete tracks[i].album.available_markets;
-            delete tracks[i].album.available_markets;
             tracks[i].album.href = tracks[i].album.external_urls.spotify;
-            delete tracks[i].album.type;
-            delete tracks[i].album.uri;
-            delete tracks[i].available_markets;
-            delete tracks[i].disc_number;
-            delete tracks[i].external_ids;
             tracks[i].href = tracks[i].external_urls.spotify;
-            delete tracks[i].external_urls;
-            delete tracks[i].type;
-            delete tracks[i].uri;
             if (tracks[i].album.images.length > 1)
                 tracks[i].image = tracks[i].album.images[0].url;
             ids.push(tracks[i].id);
         }
         let audioFeatures = await this.$store.dispatch('getAudioFeaturesForTracks', ids);
-
         for (let i = 0; i < tracks.length; i++) {
             tracks[i].valence = audioFeatures[i].valence;
             tracks[i].energy = audioFeatures[i].energy;
             tracks[i].danceability = audioFeatures[i].danceability;
         }
-
         return tracks;
     },
     cleanGraphDataForwards(bars) {
@@ -275,17 +260,25 @@ export default {
       }
       return newArr;
     },
-    processTracks() {
+    async processTracks() { 
+      let ids = this.artistData.tracks.map(value => value.id);
       let averages = {valence: 0, danceability: 0, energy: 0};
       let keys = Object.keys(averages);
-      for (let i = 0; i < keys.length; i++) {
-        if (this.artistData.tracks.length == 0)
-          break;
-        for (let j = 0; j < this.artistData.tracks.length; j++) {
-          averages[keys[i]] += this.artistData.tracks[j][keys[i]];
-          this.audioFeaturesGraphs[keys[i]][Math.floor(this.artistData.tracks[j][keys[i]] * 10)] += 1;
+
+      while (ids.length > 0) {
+        let newIds = ids.splice(0, 50);
+        let audioFeatures = await this.$store.dispatch('getAudioFeaturesForTracks', newIds);
+        console.log(audioFeatures);
+        for (let i = 0; i < audioFeatures.length; i++) {
+          for (let j = 0; j < keys.length; j++) {
+            averages[keys[j]] += audioFeatures[i][keys[j]];
+            this.audioFeaturesGraphs[keys[j]][Math.floor(audioFeatures[i][keys[j]] * 10)] += 1;
+          }
         }
-        this.artistData[keys[i]] = averages[keys[i]] / this.artistData.tracks.length;
+      }
+      for ( let i = 0; i < keys.length; i++) {
+        averages[keys[i]] = averages[keys[i]] / this.artistData.tracks.length;
+        this.artistData[keys[i]] = averages[keys[i]];
       }
       this.audioFeaturesReady = true;
     },
@@ -304,7 +297,7 @@ export default {
   computed: {
     topTracks() {
       if (this.topTracksReady) {
-        return this.artistData.topSongs.slice(0, 3);
+        return this.artistData.topSongs.slice(0, 4);
       }
       return [];
     },
@@ -413,16 +406,12 @@ export default {
 
 <style scoped>
 
-.displace {
-  transform: translateY(-25px);
-}
-
 .featuredtracks {
   --delay: 0;
   animation: slide-up .5s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s);
 }
 .library {
-  background-image: url('../../assets/icons/library.svg');
+  background-image: url('../../assets/icons/heart.svg');
 }
 #nosongs {
   margin-bottom: 10px;

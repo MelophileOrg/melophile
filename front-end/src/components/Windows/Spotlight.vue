@@ -3,8 +3,7 @@
     <Loading v-if="!override"/>
     <div v-if="override && list.length > 0" id="spotlight-data">
         <h3  class="window-title nomargin">{{title}}</h3>
-        <div class="row favorite-div" v-for="(item, index) in list" :key="'spotlight-'+ item.name">
-          <h4 class="index">{{index + 1}}</h4>
+        <div class="row favorite-div" v-for="(item, index) in list" :key="'spotlight-'+  title + index">
             <div class="image" v-if="image != ''" :style="{ backgroundImage: 'url(\'' + item.image + '\')'}"/>
             <img v-if="image == ''" src="../../assets/icons/genres.svg"/>
             <div>
@@ -99,6 +98,7 @@ export default {
 .favorite-div
 {
   margin-top: 2px;
+  height: 60px;
   padding: 5px 10px;
   background: rgba(255, 255, 255, 0.062);
   overflow: hidden;
