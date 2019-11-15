@@ -6,7 +6,7 @@
         <h1>My Music Taste</h1>
       </div>
       <NavButton path="home" title="Home" image="home" :active="path == 'home'"/>
-      <NavButton path="recommend" title="Discover" image="heart-empty" :active="path == 'recommend'"/>
+      <NavButton path="recommend" title="Discover" image="heart" :active="path == 'recommend'"/>
       <NavButton path="search" title="Search" image="search" :active="path == 'song' || path == 'genre'|| path == 'artist'|| path == 'search'"/>
       <h2>Your Library</h2>
       <NavButton path="libraryanalysis" title="Big Picture" image="characteristics" :active="path == 'libraryanalysis' || path == 'librarysave'"/>
@@ -26,7 +26,7 @@
     </div>
     <div v-if="menuShow" id="pop-up-menu">
       <NavButton path="home" title="Home" image="home" :active="path == 'home'"/>
-      <NavButton path="recommend" title="Discover" image="heart-empty" :active="path == 'recommend'"/>
+      <NavButton path="recommend" title="Discover" image="heart" :active="path == 'recommend'"/>
       <NavButton path="search" title="Search" image="search" :active="path == 'song' || path == 'genre'|| path == 'artist'|| path == 'search'"/>
       <h2>Your Library</h2>
       <NavButton path="libraryanalysis" title="Big Picture" image="characteristics" :active="path == 'libraryanalysis' || path == 'librarysave'"/>
@@ -162,7 +162,7 @@ export default {
 
 h2 {
   font-size: 13px;
-  color: #c4c4c4;
+  color: #ffffff;
   text-transform: uppercase;
   letter-spacing: .16em;
   margin: 10px 20px;
@@ -170,6 +170,11 @@ h2 {
   margin-left: 18px;
   text-align: left;
   cursor: default;
+}
+@media screen and (max-width: 720px) {
+  h2 {
+    margin-left: 32px !important;
+  }
 }
 
 @media screen and (min-width: 720px) {
@@ -196,10 +201,6 @@ h2 {
 
   #pop-up-menu {
     display: none;
-  }
-
-  .contents h2 {
-    font-size: 11px;
   }
 
 }

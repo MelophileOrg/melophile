@@ -25,7 +25,7 @@ export default {
     },
     methods: {
         getImgUrl(pic) {
-            var images = require.context('../../assets/icons', false, /\.svg$/)
+            var images = require.context('../../assets/icons', false, /\.svg$/);
             return images('./' + pic + ".svg");
         },
         route() {
@@ -98,18 +98,20 @@ h1 {
 @media screen and (max-width: 720px) {
     .button-contents {
         width: calc(100% - 40px);
-        padding: 0px 20px;
+        padding: 0px 28px;
     }
 
     img {
-    width: 24px;
-    height: 24px;
-    margin-right: 16px;
+        margin-right: 16px;
     }
 
     h1 {
         font-size: 16px;
         letter-spacing: .02em !important;
+    }
+
+    .navbutton {
+        height: 52px;
     }
 
 }

@@ -131,9 +131,9 @@ export default {
   justify-content: left;
   align-items: center;
   position: relative;
-  padding: 20px 15px;
+  padding: 15px 15px;
   background: rgba(255, 255, 255, 0.103);
-  height: 60px;
+  height: 45px;
   margin: 3px 0px;
   font-family: 'Roboto', sans-serif;
   animation: slide-up .5s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s) linear;
@@ -187,8 +187,8 @@ export default {
 
 .search-image {
   display: block;
-  width: 60px;
-  height: 60px;
+  width: 45px;
+  height: 45px;
   background-size: auto 100%;
   margin-right: 5px;
   background-position: center center;
@@ -198,7 +198,7 @@ export default {
   color: white;
   margin: 0 10px;
   font-weight: lighter;
-  font-size: 28px;
+  font-size: 22px;
   text-align: left;
   width: calc(100% - 20px);
   overflow: hidden;
@@ -235,13 +235,13 @@ h1 {
   }
 
   .search-title {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   .search-image {
-    width: 50px;
+    width: 40px;
     margin-left: 10px;
-    height: 50px;
+    height: 40px;
   }
 
   .search-song {

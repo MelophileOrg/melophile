@@ -154,7 +154,7 @@ export default {
 .yAxis {
   position: absolute;
   transform: rotate(-90deg);
-  color: rgba(250, 246, 246, 0.404);
+  color: rgba(250, 246, 246, 0.137);
   font-size: .8em;
   left: -58px;
   top: 80px;

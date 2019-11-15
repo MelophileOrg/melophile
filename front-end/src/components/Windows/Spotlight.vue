@@ -3,26 +3,17 @@
     <Loading v-if="!override"/>
     <div v-if="override && list.length > 0" id="spotlight-data">
         <h3  class="window-title nomargin">{{title}}</h3>
-        <div class="row favorite-div">
-            <img v-if="image != ''" :src="image"/>
+        <div class="row favorite-div" v-for="(item, index) in list" :key="'spotlight-'+ item.name">
+          <h4 class="index">{{index + 1}}</h4>
+            <div class="image" v-if="image != ''" :style="{ backgroundImage: 'url(\'' + item.image + '\')'}"/>
             <img v-if="image == ''" src="../../assets/icons/genres.svg"/>
             <div>
-            <h4 v-if="numOff" @click="routeTo(list[0])" class="favorite">{{list[0]}}</h4>
-            <h4 v-if="!numOff" @click="routeTo(list[0])" class="favorite">{{list[0].name}}</h4>
-            <h5 v-if="!numOff">{{list[0].value}} Songs</h5>
-            </div>
-        </div>
-        <div>
-            <div class="flex max">
-            <div class="artist" v-for="i in (list.length - 1)" :key="list[i].id" >
-              <h4 v-if="numOff" @click="routeTo(list[i])">{{list[i]}}</h4>
-                <h4 v-if="!numOff" @click="routeTo(list[i])">{{list[i].name}}</h4>
-                <h5 v-if="!numOff">{{list[i].value}} Songs</h5>
+            <h4 v-if="numOff" @click="routeTo(item)" class="favorite">{{item}}</h4>
+            <h4 v-if="!numOff" @click="routeTo(item)" class="favorite">{{item.name}}</h4>
+            <h5 v-if="!numOff">{{item.value}} Songs</h5>
             </div>
         </div>
         <p v-if="!numOff && !profile" @click="toCharts">View More</p>
-    </div>
-
     </div>
     <div class="choosebutton" v-if="save" @click="toggleSave" :class="{add: !state, remove: state}"></div>
   </div>
@@ -66,6 +57,9 @@ export default {
       this.$emit('toggleSave');
     }
   },
+  created() {
+    console.log(this.list);
+  }
 }
 </script>
 
@@ -80,27 +74,38 @@ export default {
   align-items: center;
 }
 
-.nomargin {
-  margin-bottom: 0px !important;
-}
+
 
 .favorite {
-  font-size: 1.2em;
+  font-size: 1.1em;
   text-transform: capitalize;
   margin-left: 3px;
 }
 
+.index {
+  color: rgba(255, 255, 255, 0.493);
+  font-size: 1.1em;
+  display: inline-block !important;
+  text-transform: capitalize;
+  margin-left: 3px;
+  width: 20px;
+}
+
+.index:hover {
+  text-decoration: none;
+  cursor: default;
+}
+
 .favorite-div
 {
-  margin-top: 10px;
-  margin-bottom: 5px;
-  padding: 10px 10px;
+  margin-top: 2px;
+  padding: 5px 10px;
   background: rgba(255, 255, 255, 0.062);
   overflow: hidden;
 }
 
 .favorite-div h5 {
-  font-size: 1em;
+  font-size: .9em;
   margin-top: 0px;
   margin-left: 3px;
   
@@ -111,27 +116,20 @@ export default {
   flex-wrap: wrap;
 }
 
-.artist {
-  margin: 0 auto;
-  margin-top: 10px;
-  display: block;
-  padding: 0px 10px;
-}
-
-.artist h4 {
-  display: block;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  width: 100%;
-  text-transform: capitalize;
-  font-size: .9em;
-}
-
 img {
   display: block;
   height: 50px;
+  width: 50px;
   margin-right: 10px;
+}
+
+.image {
+  display: block;
+  height: 50px;
+  width: 50px;
+  margin-right: 10px;
+  background-position: center center;
+  background-size: auto 100%;
 }
 
 
@@ -142,7 +140,7 @@ img {
 
   .favorite-div
   {
-    padding: 5px 10px;
+    padding: 10px 10px;
   }
 
   img {

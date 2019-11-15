@@ -149,17 +149,17 @@ const routes = [
     component: BoringRadar
   },
   {
-    path: '/song/:id',
+    path: '/songs/:id',
     name: 'song',
     component: SongAnalysis
   },
   {
-    path: '/artist/:id',
+    path: '/artists/:id',
     name: 'artist',
     component: ArtistAnalysis
   },
   {
-    path: '/genre/:id',
+    path: '/genres/:id',
     name: 'genre',
     component: GenreAnalysis
   },

@@ -1,137 +1,110 @@
 const mongoose = require('mongoose');
 const express = require("express");
+const { checkSchema } = require('express-validator');
 const router = express.Router();
 
+// Track Object
 const profileSchema = new mongoose.Schema({
-    privacy: Boolean,
     id: String,
     name: String,
-    include: Object,
-    tracks: Number,
-    artists: Number,
-    genres: Number,
+    privacy: Boolean,
     likes: Array,
+    trackNum: Number,
+    artistNum: Number,
+    genreNum: Number,
     valence: Number,
     energy: Number,
     danceability: Number,
-    topGenre: String,
-    created: Date,
+    include: Object,
 });
-
 const Profile = mongoose.model('Profile', profileSchema);
 
-router.post("/:id", async (req, res) => {
+router.post("/:id", checkSchema({
+    id: {
+        in: ['params', 'query'],
+        errorMessage: 'ID is wrong',
+    },
+    tracks: {
+        in: ['body'],
+        errorMessage: 'Tracks is wrong',
+    }
+}), async (req, res) => { 
     try {
-        let profiles = await Profile.find({});
-        let found = false;
-        console.log(req.body.artists);
-        for (let i = 0; i < profiles.length; i++)
-        {
-            if (profiles[i].id == req.params.id)
-            {
-                found = true;
-            }
-        }
-        if (found) {
-            let profile = await Profile.updateOne({
+        let updated = true;
+        let trackIds = Object.keys(req.body.tracks);
+        let updatedProfile = await ProfileTracks.findAndModify({
+            query: { id: req.params.id },
+            update: { $set: {
+                "tracks": trackIds,
+                "created": new Date(),
+            }},
+            new: true,
+        });
+        if (updatedProfile == null)
+            updated = false;
+        if (!updated) {
+            let newProfile = new ProfileTracks({
                 id: req.params.id,
-            }, {
-                $set: {
-                    "privacy": req.body.privacy,
-                    "name": req.body.name,
-                    "include": req.body.include,
-                    "tracks": req.body.tracks,
-                    "artists": req.body.artists,
-                    "genres": req.body.genres,
-                    "valence": req.body.valence,
-                    "energy": req.body.energy,
-                    "danceability": req.body.danceability,
-                    "topGenre": req.body.topGenre,
-                    "created": new Date(),
-                }
-            });
-            console.log("Profile Updated - " + req.params.id);
-            return res.send({updated: true, success: true});
-        }
-        else {
-            let profile = new Profile({
-                privacy: req.body.privacy,
-                id: req.params.id,
-                name: req.body.name,
-                include: req.body.include,
-                tracks: req.body.tracks,
-                artists: req.body.artists,
-                genres: req.body.genres,
-                likes: [],
-                valence: req.body.valence,
-                energy: req.body.energy,
-                danceability: req.body.danceability,
+                tracks: trackIds,
                 created: new Date(),
             });
-            await profile.save();
-            console.log("Profile Created - " + req.params.id);
-            return res.send({updated: false, success: true});
+            await newProfile.save();
+            console.log("Tracks Saved - " + req.params.id);
         }
-    } catch (error) {
-      console.log(error);
-      return res.send({updated: false, success: false});
-    }
-});
-
-router.get("/", async (req, res) => {
-    try {
-      let profiles = await Profile.find({
-        privacy: false,
-      });
-      console.log("Profiles Retrieved");
-      return res.send(profiles);
-    } catch (error) {
-      console.log(error);
-      return res.send(Status(500));
-    }
-});
-
-router.get("/:id", async (req, res) => {
-    try {
-      let profile = await Profile.findOne({
-        id: req.params.id
-      });  
-      console.log("Profile Retrieved - " + req.params.id);
-      return res.send(profile);
+        else {
+            console.log("Tracks Updated - " + req.params.id);
+        }
+        for (let i = 0; i < trackIds.length; i++) {
+            if ((await Track.findOne({id: trackIds[i]}) == null)) {
+                let newTrack = new Track({
+                    id: trackIds[i],
+                    name: req.body.tracks[trackIds[i]].name,
+                    album: req.body.tracks[trackIds[i]].album,
+                    image: req.body.tracks[trackIds[i]].image,
+                    artists: req.body.tracks[trackIds[i]].artists,
+                });
+                await newTrack.save();
+            }
+        }
+        return res.send({updated: updated, success: true});
     } catch (error) {
       console.log(error);
       return res.sendStatus(500);
     }
 });
 
-router.put("/like/:id", async (req, res) => {
-  try {
-    let profile = await Profile.findOne({
-      id: req.params.id
-    });  
-    for (let i = 0; i < profile.likes.length; i++) {
-      if (req.body.id == profile.likes[i]) {
-        return res.send({success: false});
+router.get("/:id", body().custom(value => {
+    console.log("Checking Body");
+    console.log(value);
+    if (Object.keys(value).length > 0)
+        return Promise.reject('Empty Body Required.');
+}), checkSchema({
+    id: {
+        in: ['params', 'query'],
+        errorMessage: 'ID is wrong',
+    },
+}), async (req, res) => {
+    try {
+      let profileTracks = await ProfileTracks.findOne({
+        id: req.params.id
+      }); 
+      let trackObjects = {}; 
+      for (let i = 0; i < profileTracks.tracks.length; i++) {
+        trackObjects[profileTracks.tracks[i]] = await Track.findOne({
+            id: profileTracks.tracks[i],
+        })
       }
+      profileTracks.tracks = trackObjects;
+      console.log("Tracks Retrieved - " + req.params.id);
+      return res.send(profileTracks);
+    } catch (error) {
+      console.log(error);
+      return res.sendStatus(500);
     }
-    profile.likes.push(req.body.id);
-    await Profile.updateOne({
-      id: req.params.id,
-    }, {
-        $set: {
-          "likes": profile.likes,
-        }
-    })
-    console.log("Profile Liked - " + req.params.id);
-    return res.send({success: true});
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(500);
-  }
 });
 
 
 module.exports = {
-    model: Profile,
+    model: Track,
     routes: router,
 }

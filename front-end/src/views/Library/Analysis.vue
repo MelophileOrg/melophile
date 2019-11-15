@@ -2,7 +2,7 @@
   <div id="main-flex" class="analysis">
     <NavBar />
     <div id="main">
-      <PageTitle title="Big Picture" link="/social/save" linkTitle="Share"/>
+      <PageTitle title="Your Big Picture" link="/social/save" linkTitle="Share"/>
 
       <div class="progress" v-if="!progress.tracks" >
         <div class="progress-info" >
@@ -15,25 +15,25 @@
 
         <Characteristics :delay="1"/>
 
-        <Spotlight :delay="2" :override="progress.artists" title="Most Saved Artists:" :list="topSavedArtists" :image="topSavedArtists[0].image"/>
+        <Averages :delay="2"/>
 
-        <Spotlight :delay="3" :override="progress.genres" title="Most Saved Genres:" :list="topSavedGenres.slice(0, 4)" image=""/>
+        <Chances :delay="3"/>
 
-        <Averages :delay="4"/>
-
-        <Chances :delay="5"/>
-
-        <Timeline :override="progress.tracks" title="When You Added Songs:" instructions="" :max="-1" :delay="6" :bars="cleanGraphData(dateAdded)" y_axis="Number of Songs" :color="{red: 74, green: 189, blue: 180}"/>
+        <Timeline :override="progress.tracks" title="When You Liked Songs:" instructions="" :max="-1" :delay="4" :bars="cleanGraphData(dateAdded)" y_axis="Number of Songs" :color="{red: 74, green: 189, blue: 180}"/>
         
-        <TimelinePercent :override="progress.tracks" title="Happiness Over Time:" instructions="" :delay="7" :bars="cleanValuedGraphData(audioFeatures.valence.timeline)" :max="100" y_axis="Percent Happiness" />
+        <TimelinePercent :override="progress.tracks" title="Happiness Over Time:" instructions="" :delay="5" :bars="cleanValuedGraphData(audioFeatures.valence.timeline)" :max="100" y_axis="Percent Happiness" />
 
-        <Graph @more="goToExtremes" :override="progress.tracks" title="Happiness Distribution:" instructions="View Lists" :delay="8" :bars="cleanGraphData(audioFeatures.valence.plot)" max_tag="Happy" min_tag="Sad" y_axis="Number of Songs" :color="audioFeatures.valence.color"/>
+        <Spotlight :delay="6" :override="progress.artists" title="Top Liked Artists:" :list="topSavedArtists" :image="topSavedArtists[0].image"/>
 
-        <Graph @more="goToExtremes" :override="progress.tracks" title="Energy Distribution:" instructions="View Lists" :delay="9" :bars="cleanGraphData(audioFeatures.energy.plot)" max_tag="Hyper" min_tag="Peaceful" y_axis="Number of Songs" :color="audioFeatures.energy.color"/>
+        <Spotlight :delay="7" :override="progress.genres" title="Top Liked Genres:" :list="topSavedGenres.slice(0, 4)" image=""/>
 
-        <Graph @more="goToExtremes" :override="progress.tracks" title="Danceability Distribution:" instructions="View Lists" :delay="10" :bars="cleanGraphData(audioFeatures.danceability.plot)" max_tag="Let's dance!" min_tag="Couch Potato" y_axis="Number of Songs" :color="audioFeatures.danceability.color"/>
+        <Graph :override="progress.tracks" title="Happiness Distribution:" instructions="View Lists" :delay="8" :bars="cleanGraphData(audioFeatures.valence.plot)" max_tag="Happy" min_tag="Sad" y_axis="Number of Songs" :color="audioFeatures.valence.color"/>
 
-        <Graph @more="goToExtremes" :override="progress.tracks" title="Should You DJ a Party?" instructions="View Lists" :delay="11" :bars="cleanGraphData(audioFeatures.banger.plot)" max_tag="Absolute Bangers" min_tag="*Snore Snore*" y_axis="Number of Songs" :color="audioFeatures.banger.color"/>
+        <Graph :override="progress.tracks" title="Energy Distribution:" instructions="View Lists" :delay="9" :bars="cleanGraphData(audioFeatures.energy.plot)" max_tag="Hyper" min_tag="Peaceful" y_axis="Number of Songs" :color="audioFeatures.energy.color"/>
+
+        <Graph :override="progress.tracks" title="Danceability Distribution:" instructions="View Lists" :delay="10" :bars="cleanGraphData(audioFeatures.danceability.plot)" max_tag="Let's dance!" min_tag="Couch Potato" y_axis="Number of Songs" :color="audioFeatures.danceability.color"/>
+
+        <Graph :override="progress.tracks" title="Should You DJ a Party?" instructions="View Lists" :delay="11" :bars="cleanGraphData(audioFeatures.banger.plot)" max_tag="Absolute Bangers" min_tag="*Snore Snore*" y_axis="Number of Songs" :color="audioFeatures.banger.color"/>
       
         <TimelinePercent :override="progress.tracks" title="Energy Over Time:" instructions="" :delay="7" :bars="cleanValuedGraphData(audioFeatures.energy.timeline)" :max="100" y_axis="Percent Happiness" />
 
@@ -140,7 +140,7 @@ export default {
       let list = [];
       for (let i = 0; i < ids.length && i < 4; i++) {
         let genre = this.$store.state.genres[ids[i]];
-        genre.value = genre.tracknum;
+        genre.value = genre.trackNum;
         list.push(genre);
       }
       return list;
@@ -212,14 +212,6 @@ export default {
   animation: slide-up .3s ease .1s, hide .1s linear;
 }
 
-.windows {
-  display: flex;
-  width: 100%;
-  justify-content: center;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  margin-bottom: 50px;
-}
 
 h1 {
     color: #fff;
@@ -267,19 +259,6 @@ h2.active {
   color: white;
 }
 
-.window {
-  --delay: 0;
-  animation: slide-up .5s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s);
-  display: inline-block;
-  width: 75%;
-  margin: 30px 30px !important;
-  padding: 20px;
-  max-width: 400px;
-  border-radius: 5px;
-  margin-bottom: 20px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.247);
-}
 
 h3 {
   margin: 5px;
@@ -333,8 +312,5 @@ h3 {
   color: white;
 }
 
-.windows {
-  margin-top: 0px;
-}
 
 </style>

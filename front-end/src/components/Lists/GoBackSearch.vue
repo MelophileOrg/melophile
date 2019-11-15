@@ -1,6 +1,6 @@
 <template>
   <div class="GoBackSearch">
-    <div @click="goBack" class="button">Return to Search</div>
+    <input type="text" @click="goBack" class="button" placeholder="Return to Search"/>
   </div>
 </template>
 
@@ -9,7 +9,7 @@ export default {
   name: 'GoBackSearch',
   methods: {
     goBack() {
-      this.$router.push('/songs');
+      this.$router.push('/search');
     }
   },
 }
@@ -21,9 +21,8 @@ export default {
 .button {
     width: 100%;
     padding-left: 32px;
-    padding-top: 23px;
-    padding-bottom: 10px;
-    height: 40px;
+    height: 75px;
+    width: 100%;
     background-color: rgba(75, 75, 75, 0.377);
     color: rgba(255, 255, 255, 0.205);
     border: 0;
@@ -34,10 +33,8 @@ export default {
 
 @media only screen and (max-width: 720px) {
   .button {
-    padding-top: 15px !important;
-    padding-bottom: 5px;
     font-size: 20px !important;
-    height: 35px !important;
+    height: 50px !important;
     width: 100vw !important;
   }
 }

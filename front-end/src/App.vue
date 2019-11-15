@@ -113,7 +113,7 @@ html::-webkit-scrollbar-thumb
   animation: slide-up .5s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s);
   display: inline-block;
   width: 75%;
-  margin: 30px 30px !important;
+  margin: 30px 30px;
   padding: 30px;
   max-width: 400px;
   border-radius: 5px;
@@ -141,12 +141,12 @@ html::-webkit-scrollbar-thumb
   flex-wrap: wrap;
   margin: 0 auto;
   margin-bottom: 50px;
-  margin-top: 30px;
+  margin-top: 15px;
 }
 
 @media screen and (max-width: 720px) {
   .windows {
-    margin-top: 15px !important;
+    margin-top: 0px !important;
   }
 
   .window-title {

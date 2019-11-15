@@ -1,34 +1,29 @@
 <template>
   <div id="main-flex" class="myprofile">
-    <NavBar/>
-    <div id="main">
-
-    </div>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import NavBar from '@/components/Navigation/NavBar.vue'
 
 export default {
   name: 'myprofile',
   components: {
-    NavBar,
-  },
-  methods: {
-
   },
   computed: {
     inicialized() {
       return this.$store.state.inicialized;
-    }
+    },
   },
-  async created() {
+  created() {
     window.scroll({
       top: 0,
       behavior: 'auto'
     });
+    if (!this.inicialized)
+      this.$router.push("/login");
+    let profileLink = "/social/profile/" + this.$store.state.user.id;
+    this.$router.push(profileLink);
   }
 }
 </script>

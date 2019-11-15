@@ -2,7 +2,7 @@
     <div class="YourLibrary window" :style="{'--delay': + 0}">
         <h3 class="window-title" v-if="progress.tracks || profile">{{title}}:</h3>
         <div v-if="progress.tracks || profile" class="row flex-space-between">
-            <h4 class="light">Saved Songs</h4><h4 class="num">{{formatNumber(total)}}</h4>
+            <h4 class="light">Liked Songs</h4><h4 class="num">{{formatNumber(total)}}</h4>
         </div>
         <div v-if="progress.artists || profile" class="row flex-space-between">
             <h4 class="light" v-if="!profile">Artists</h4><h4 v-if="!profile" class="num">{{formatNumber(Object.keys(artists).length)}}</h4>

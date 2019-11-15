@@ -29,8 +29,8 @@ export default {
     align-items: center;
     justify-content: left;
     width: calc(100% - 64px);
-    padding: 10px 32px;
-    margin-top: 10px;
+    padding: 10px 48px;
+    margin-top: 24px;
     -webkit-animation: slide-up .3s ease 0s,hide 0s linear;
     animation: slide-up .3s ease 0s,hide 0s linear;
 }
@@ -57,6 +57,18 @@ export default {
 .pagetitle button:hover {
   color: rgb(255, 255, 255);
   background-color: rgba(255, 255, 255, 0.103);
+}
+
+@media screen and (max-width: 720px) {
+  .pagetitle {
+    justify-content: center;
+    width: calc(100% - 40px);
+    padding: 10px 20px;
+  }
+
+  .pagetitle h1 {
+    font-size: 1.8em;
+  }
 }
 
 </style>

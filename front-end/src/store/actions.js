@@ -116,8 +116,6 @@ const updateTimelines = async (context, payload) => {
     for (let i = 0; i < keys.length; i++) {
         context.commit('addAudioFeatureTimeline', {key: keys[i], month: months, value: payload.features[keys[i]]});
     }
-    console.log(context.state.dateAdded);
-    console.log(context.state.audioFeatures.valence.timeline);
 };
 const processAudioFeatures = async (context, payload) => {
     let keys = Object.keys(context.state.audioFeatures);

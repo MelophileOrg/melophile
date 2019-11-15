@@ -1,58 +1,105 @@
 const mongoose = require('mongoose');
 const express = require("express");
+const { checkSchema } = require('express-validator');
 const router = express.Router();
 
-const tracksSchema = new mongoose.Schema({
+// Track Object
+const trackSchema = new mongoose.Schema({
     id: String,
-    tracks: Object,
+    name: String,
+    album: String,
+    image: String,
+    artists: Array,
+});
+const Track = mongoose.model('Track', trackSchema);
+
+// User Track Ids
+const profileTracksSchema = new mongoose.Schema({
+    id: String,
+    tracks: Array,
     created: Date,
 });
+const ProfileTracks = mongoose.model('ProfileTracks', profileTracksSchema);
 
-const Tracks = mongoose.model('Tracks', tracksSchema);
-
-router.post("/:id", async (req, res) => {
+// { tracks: Object }
+router.post("/:id", checkSchema({
+    id: {
+        in: ['params', 'query'],
+        errorMessage: 'ID is wrong',
+    },
+    tracks: {
+        in: ['body'],
+        errorMessage: 'Tracks is wrong',
+    }
+}), async (req, res) => { 
     try {
-        let tracks = await Tracks.find({});
-        let found = false;
-        for (let i = 0; i < tracks.length; i++) {
-            if (tracks[i].id == req.params.id)
-                found = true;
-        }
-        if (found) {
-            let tracks = await Tracks.updateOne({
+        let updated = true;
+        let trackIds = Object.keys(req.body.tracks);
+        let updatedProfile = await ProfileTracks.findAndModify({
+            query: { id: req.params.id },
+            update: { $set: {
+                "tracks": trackIds,
+                "created": new Date(),
+            }},
+            new: true,
+        });
+        if (updatedProfile == null)
+            updated = false;
+        if (!updated) {
+            let newProfile = new ProfileTracks({
                 id: req.params.id,
-            }, {
-                $set: {
-                    "tracks": req.body.tracks,
-                    "created": new Date(),
-                }
-            });
-            console.log("Tracks Updated - " + req.params.id);
-            return res.send({updated: true, success: true});
-        }
-        else {
-            let tracks = new Tracks({
-                id: req.params.id,
-                tracks: req.body.tracks,
+                tracks: trackIds,
                 created: new Date(),
             });
-            await tracks.save();
+            await newProfile.save();
             console.log("Tracks Saved - " + req.params.id);
-            return res.send({updated: false, success: true});
         }
+        else {
+            console.log("Tracks Updated - " + req.params.id);
+        }
+        for (let i = 0; i < trackIds.length; i++) {
+            if ((await Track.findOne({id: trackIds[i]}) == null)) {
+                let newTrack = new Track({
+                    id: trackIds[i],
+                    name: req.body.tracks[trackIds[i]].name,
+                    album: req.body.tracks[trackIds[i]].album,
+                    image: req.body.tracks[trackIds[i]].image,
+                    artists: req.body.tracks[trackIds[i]].artists,
+                });
+                await newTrack.save();
+            }
+        }
+        return res.send({updated: updated, success: true});
     } catch (error) {
       console.log(error);
       return res.sendStatus(500);
     }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", body().custom(value => {
+    console.log("Checking Body");
+    console.log(value);
+    if (Object.keys(value).length > 0)
+        return Promise.reject('Empty Body Required.');
+}), checkSchema({
+    id: {
+        in: ['params', 'query'],
+        errorMessage: 'ID is wrong',
+    },
+}), async (req, res) => {
     try {
-      let tracks = await Tracks.findOne({
+      let profileTracks = await ProfileTracks.findOne({
         id: req.params.id
-      });  
+      }); 
+      let trackObjects = {}; 
+      for (let i = 0; i < profileTracks.tracks.length; i++) {
+        trackObjects[profileTracks.tracks[i]] = await Track.findOne({
+            id: profileTracks.tracks[i],
+        })
+      }
+      profileTracks.tracks = trackObjects;
       console.log("Tracks Retrieved - " + req.params.id);
-      return res.send(tracks);
+      return res.send(profileTracks);
     } catch (error) {
       console.log(error);
       return res.sendStatus(500);
@@ -61,6 +108,6 @@ router.get("/:id", async (req, res) => {
 
 
 module.exports = {
-    model: Tracks,
+    model: Track,
     routes: router,
 }
