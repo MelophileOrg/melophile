@@ -107,6 +107,8 @@
       <div class="extremes" v-if="progress.tracksLoaded && tab == 2">
         <Extremes :class="{fade: !settings.extremes}" :state="settings.extremes" :save="true" @toggleSave="toggleSave('extremes')"/>
       </div>
+
+      <Progress v-if="inicialized && progress.processed < progress.total"/>
     </div>
   </div>
 </template>
@@ -125,6 +127,7 @@ import Chances from '@/components/Windows/Chances.vue'
 import Extremes from '@/components/Lists/Extremes.vue'
 import TopSaved from '@/components/Lists/TopSaved.vue'
 import TopPlayed from '@/components/Lists/TopPlayed.vue'
+import Progress from '@/components/General/Progress.vue'
 
 import axios from 'axios';
 
@@ -142,7 +145,8 @@ export default {
     Extremes,
     TimelinePercent,
     TopSaved,
-    TopPlayed
+    TopPlayed,
+    Progress
   },
   data() {
     return {

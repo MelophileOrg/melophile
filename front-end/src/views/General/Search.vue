@@ -9,6 +9,7 @@
           <h1>No Results Found</h1>
         </div>
         <EmptyLarge v-if="empty"/>
+        <Progress v-if="inicialized && progress.processed < progress.total"/>
     </div>
   </div>
 </template>
@@ -19,6 +20,7 @@ import SearchBar from '@/components/Lists/SearchBar.vue'
 import SearchItem from '@/components/Lists/SearchItem.vue'
 import EmptyLarge from '@/components/Lists/EmptyLarge.vue'
 import Loading from '@/components/General/Loading.vue'
+import Progress from '@/components/General/Progress.vue'
 
 export default {
   name: 'searchsong',
@@ -27,7 +29,8 @@ export default {
     SearchBar,
     SearchItem,
     EmptyLarge,
-    Loading
+    Loading,
+    Progress,
   },
   data() {
       return {
@@ -74,6 +77,9 @@ export default {
     inicialized() {
       return this.$store.state.inicialized;
     },
+    progress() {
+      return this.$store.state.progress;
+    }
   },
   created() {
     window.scroll({

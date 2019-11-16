@@ -2,7 +2,7 @@
   <div id="main-flex" class="charts">
     <NavBar/>
     <div id="main">
-      <PageTitle title="Your Charts" link="/social/save" linkTitle="Share"/>
+      <PageTitle title="Your Top Charts" link="/social/save" linkTitle="Share"/>
       <div v-if="progress.genres" id="menu">
         <div id="tabs">
           <h2 @click="changeTab(0)" :class="{active: tab == 0}">Top Played</h2>
@@ -16,6 +16,7 @@
       <div v-if="tab == 1 && progress.genres" class="charts-div">
         <TopSaved :profile="false"/>
       </div>
+      <Progress v-if="inicialized && progress.processed < progress.total"/>
     </div>
   </div>
 </template>
@@ -26,6 +27,7 @@ import NavBar from '@/components/Navigation/NavBar.vue'
 import PageTitle from '@/components/Menu/PageTitle.vue'
 import TopSaved from '@/components/Lists/TopSaved.vue'
 import TopPlayed from '@/components/Lists/TopPlayed.vue'
+import Progress from '@/components/General/Progress.vue'
 
 export default {
   name: 'charts',
@@ -33,7 +35,8 @@ export default {
     NavBar,
     TopSaved,
     TopPlayed,
-    PageTitle
+    PageTitle,
+    Progress
   },
   data() {
     return {

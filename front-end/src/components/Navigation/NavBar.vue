@@ -10,8 +10,8 @@
       <NavButton path="search" title="Search" image="search" :active="path == 'song' || path == 'genre'|| path == 'artist'|| path == 'search'"/>
       <h2>Your Library</h2>
       <NavButton path="libraryanalysis" title="Big Picture" image="characteristics" :active="path == 'libraryanalysis' || path == 'librarysave'"/>
+      <NavButton path="charts" title="Top Charts" image="chart" :active="path == 'charts'"/>
       <NavButton path="library" title="Library" image="library" :active="path == 'library' || path == 'librarysong' || path == 'libraryartist' || path == 'librarygenre'"/>
-      <NavButton path="charts" title="Charts" image="chart" :active="path == 'charts'"/>
       <h2>Social</h2>
       <NavButton path="myprofile" title="My Profile" image="profile" :active="path == 'myprofile'"/>
       <NavButton path="profiles" title="Public Profiles" image="public" :active="path == 'profiles'"/>
@@ -30,8 +30,8 @@
       <NavButton path="search" title="Search" image="search" :active="path == 'song' || path == 'genre'|| path == 'artist'|| path == 'search'"/>
       <h2>Your Library</h2>
       <NavButton path="libraryanalysis" title="Big Picture" image="characteristics" :active="path == 'libraryanalysis' || path == 'librarysave'"/>
-      <NavButton path="library" title="Library" image="library" :active="path == 'library' || path == 'librarysong' || path == 'libraryartist' || path == 'librarygenre'"/>
-      <NavButton path="charts" title="Charts" image="chart" :active="path == 'charts'"/>
+      <NavButton path="charts" title="Top Charts" image="chart" :active="path == 'charts'"/>
+      <NavButton path="library" title="Library" image="library" :active="path == 'library' || path == 'librarysong' || path == 'libraryartist' || path == 'librarygenre'"/>  
       <h2>Social</h2>
       <NavButton path="myprofile" title="My Profile" image="profile" :active="path == 'myprofile'"/>
       <NavButton path="public" title="Public Profiles" image="public" :active="path == 'public'"/>

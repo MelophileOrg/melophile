@@ -2,7 +2,7 @@
   <div id="main-flex" class="songanalysis">
     <NavBar/>    
     <div id="main">
-      <GoBackSearch/>
+      <TrackHeader :trackData="trackData"/>
       <div class="windows">
 
         <div id="song" class="window" :style="{'--delay': 0}">
@@ -123,20 +123,20 @@
 // @ is an alias to /src
 import NavBar from '@/components/Navigation/NavBar.vue'
 import Loading from '@/components/General/Loading.vue'
-import GoBackSearch from '@/components/Lists/GoBackSearch.vue'
 import Spotlight from '@/components/Windows/Spotlight.vue'
 import PercentBar from '@/components/Analysis/PercentBar.vue'
 import PercentileBar from '@/components/Analysis/PercentileBar.vue'
+import TrackHeader from '@/components/Track/TrackHeader.vue'
 
 export default {
     name: 'songanalysis',
     components: {
         NavBar,
-        GoBackSearch,
         Loading,
         PercentBar,
         PercentileBar,
-        Spotlight
+        Spotlight,
+        TrackHeader
     },
     data() {
         return {

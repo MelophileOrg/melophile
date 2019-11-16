@@ -2,9 +2,62 @@
   <div id="main-flex" class="artistanalysis">
     <NavBar/>    
     <div id="main">
-      <GoBackSearch/>
-      <div class="windows">
+      <ArtistHeader @changeTab="changeTab" :artistData="artistData"/>
+      <div class="page" id="overview" v-if="tab == 0">
+        <h1 class="section-title">Artist Overview</h1>
+        <div class="section">
+          
+        </div>
+        <h1 class="section-title">Top Tracks</h1>
+        <div class="section">
+          
+        </div>
+      </div>
 
+      <div class="page" id="likedtracks" v-if="tab == 1">
+        <h1 class="section-title">Liked Tracks</h1>
+        <div class="section">
+          
+        </div>
+
+        <h1 class="section-title">Characteristics</h1>
+        <div class="section">
+          
+        </div>
+
+        <h1 class="section-title">Timeline</h1>
+        <div class="section">
+          
+        </div>
+
+        <h1 class="section-title">Playlists</h1>
+        <div class="section">
+          
+        </div>
+
+
+
+      </div>
+
+      <div class="page" id="comparison" v-if="tab == 2">
+
+        <h1 class="section-title">Percentiles</h1>
+        <div class="section">
+          
+        </div>
+
+        <h1 class="section-title">Simular</h1>
+        <div class="section">
+          
+        </div>
+      </div>
+
+
+      <Progress v-if="inicialized && progress.processed < progress.total"/>
+
+<!-- 
+      <div class="windows">
+        
         <div class="window" :style="{'--delay': 0}">
           <div v-if="artistData != null" class="flex">
             <div class="flex">
@@ -39,6 +92,10 @@
           <Loading v-else/>
         </div>
 
+        <FeaturedTracks type="track" secondary="popularity" :style="{'--delay': + 4}" class="featuredtracks" :saved="false" :none="false" :override="topTracksReady" title="Artist Top Tracks:" :ids="topTracks"/>
+
+        <FeaturedTracks type="genre" secondary="" :style="{'--delay': + 5}" class="featuredtracks" :saved="false" :none="false" :override="artistData != null" title="Artist Genres:" :ids="genresComputed"/>
+
         <div class="window" :style="{'--delay': + 2}">
           <h3  class="window-title" v-if="artistData != null">Top Track's Characteristics:</h3>
           <div v-if="topTracksReady">
@@ -52,10 +109,6 @@
         </div>
 
         <Timeline :none="noneTimeline" :small="true" :override="timelineReady" title="When You Liked Tracks:" instructions="" :max="-1" :delay="3" :bars="datesAdded" y_axis="Number of Songs" :color="{red: 74, green: 189, blue: 180}"/>
-
-        <Spotlight :profile="true" :delay="4" :numOff="false" :override="topTracksReady" title="Artist Top Tracks:" :list="topTracks" image="set"/>
-
-        <Spotlight :delay="5" :numOff="true" :override="artistData != null" title="Artist Genres:" :list="genresComputed" image=""/>
 
         <div class="window" :style="{'--delay': + 6}">
           <h3  class="window-title" v-if="artistData != null">Liked Track's Characteristics:</h3>
@@ -76,14 +129,14 @@
 
         <Graph :zero="notSaved" :override="progress.tracks" title="Liked Tracks Danceability:" :delay="9" :bars="cleanGraphDataForwards(audioFeaturesGraphs.danceability)" max_tag="Let's dance!" min_tag="Couch Potato" y_axis="Number of Songs" :color="audioFeatures.danceability.color"/>
 
-        <FeaturedTracks type="track" :style="{'--delay': + 11}" class="featuredtracks" :saved="true" :none="noneTimeline" :override="timelineReady" title="Recently Liked Tracks:" :ids="newestTracks"/>
+        <FeaturedTracks type="track" secondary="date" :style="{'--delay': + 11}" class="featuredtracks" :saved="true" :none="noneTimeline" :override="timelineReady" title="Recently Liked Tracks:" :ids="newestTracks"/>
 
-        <FeaturedTracks type="track" :style="{'--delay': + 10}" class="featuredtracks" :saved="true" :none="noneTimeline" :override="timelineReady" title="Oldest Liked Tracks:" :ids="oldestTracks"/>
+        <FeaturedTracks type="track" secondary="date" :style="{'--delay': + 10}" class="featuredtracks" :saved="true" :none="noneTimeline" :override="timelineReady" title="Oldest Liked Tracks:" :ids="oldestTracks"/>
 
         
         
 
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -91,25 +144,26 @@
 <script>
 // @ is an alias to /src
 import NavBar from '@/components/Navigation/NavBar.vue'
-import Loading from '@/components/General/Loading.vue'
-import GoBackSearch from '@/components/Lists/GoBackSearch.vue'
-import Timeline from '@/components/Windows/Timeline.vue'
-import FeaturedTracks from '@/components/Windows/FeaturedTracks.vue'
-import PercentBar from '@/components/Analysis/PercentBar.vue'
-import Spotlight from '@/components/Windows/Spotlight.vue'
-import Graph from '@/components/Windows/Graph.vue'
+// import Loading from '@/components/General/Loading.vue'
+// import Timeline from '@/components/Windows/Timeline.vue'
+// import FeaturedTracks from '@/components/Windows/FeaturedTracks.vue'
+// import PercentBar from '@/components/Analysis/PercentBar.vue'
+// import Graph from '@/components/Windows/Graph.vue'
+
+import Progress from '@/components/General/Progress.vue'
+import ArtistHeader from '@/components/Artist/ArtistHeader.vue'
 
 export default {
   name: 'artistanalysis',
   components: {
       NavBar,
-      Loading,
-      GoBackSearch,
-      Timeline,
-      FeaturedTracks,
-      PercentBar,
-      Spotlight,
-      Graph
+      // Loading,
+      // Timeline,
+      // FeaturedTracks,
+      // PercentBar,
+      // Graph,
+      ArtistHeader,
+      Progress
   },
   data() {
       return {
@@ -123,10 +177,14 @@ export default {
           valence: [0,0,0,0,0,0,0,0,0,0],
           energy: [0,0,0,0,0,0,0,0,0,0],
           danceability: [0,0,0,0,0,0,0,0,0,0],
-        }
+        },
+        tab: 0,
       }
   },
   methods: {
+    changeTab(val) {
+      this.tab = val;
+    },
     async artistAnalysis(id) {
         let artist = await this.$store.dispatch("getArtist", id);
         let artistObject = await this.processArtist(artist);
@@ -174,8 +232,11 @@ export default {
             timeline[diffMonth] += 1;
         }
         tracks.sort((a, b) => (a.time > b.time) ? 1 : -1);
-        let oldest = tracks.slice(0, 4);
-        let newest = tracks.slice(tracks.length - 4, tracks.length);
+        let num = tracks.length;
+        if (tracks.length > 10) 
+          num = 10;
+        let oldest = tracks.slice(0, num);
+        let newest = tracks.slice(tracks.length - num, tracks.length);
         while (timeline.length < this.$store.state.dateAdded.length) {
             timeline.push(0);
         }
@@ -268,7 +329,6 @@ export default {
       while (ids.length > 0) {
         let newIds = ids.splice(0, 50);
         let audioFeatures = await this.$store.dispatch('getAudioFeaturesForTracks', newIds);
-        console.log(audioFeatures);
         for (let i = 0; i < audioFeatures.length; i++) {
           for (let j = 0; j < keys.length; j++) {
             averages[keys[j]] += audioFeatures[i][keys[j]];
@@ -297,7 +357,7 @@ export default {
   computed: {
     topTracks() {
       if (this.topTracksReady) {
-        return this.artistData.topSongs.slice(0, 4);
+        return this.artistData.topSongs.slice(0, 10);
       }
       return [];
     },
@@ -371,7 +431,7 @@ export default {
     },
     genresComputed() {
       if (this.artistData != null)
-        return this.artistData.genres.slice(0, 4);
+        return this.artistData.genres.slice(0, 10);
       return [];
     },
   },  
@@ -405,6 +465,27 @@ export default {
 </script>
 
 <style scoped>
+.page {
+  display: block;
+  margin: 24px;
+}
+
+.section-title{
+  font-size: 1.3em;
+  color: rgba(255, 255, 255, 0.815);
+  font-weight: lighter;
+  margin-bottom: 16px;
+}
+
+.section {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 24px;
+  width: calc(100% - 48px);
+  background-color: rgba(255, 255, 255, 0.089);
+  border-radius: 5px;
+  margin-bottom: 48px;
+}
 
 .featuredtracks {
   --delay: 0;

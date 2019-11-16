@@ -3,11 +3,6 @@
     <NavBar />
     <div id="main">
       <PageTitle title="Your Big Picture" link="/social/save" linkTitle="Share"/>
-
-      <div class="progress" v-if="!progress.tracks" >
-        <div class="progress-info" >
-        </div>
-      </div>
       
       <div v-if="progress.tracks && tab == 0" class="windows">
 
@@ -35,11 +30,13 @@
 
         <Graph :override="progress.tracks" title="Should You DJ a Party?" instructions="View Lists" :delay="11" :bars="cleanGraphData(audioFeatures.banger.plot)" max_tag="Absolute Bangers" min_tag="*Snore Snore*" y_axis="Number of Songs" :color="audioFeatures.banger.color"/>
       
-        <TimelinePercent :override="progress.tracks" title="Energy Over Time:" instructions="" :delay="7" :bars="cleanValuedGraphData(audioFeatures.energy.timeline)" :max="100" y_axis="Percent Happiness" />
+        <TimelinePercent :override="progress.tracks" title="Energy Over Time:" instructions="" :delay="12" :bars="cleanValuedGraphData(audioFeatures.energy.timeline)" :max="100" y_axis="Percent Happiness" />
 
-        <TimelinePercent :override="progress.tracks" title="Danceability Over Time:" instructions="" :delay="7" :bars="cleanValuedGraphData(audioFeatures.danceability.timeline)" :max="100" y_axis="Percent Happiness" />
+        <TimelinePercent :override="progress.tracks" title="Danceability Over Time:" instructions="" :delay="13" :bars="cleanValuedGraphData(audioFeatures.danceability.timeline)" :max="100" y_axis="Percent Happiness" />
 
       </div>
+
+      <Progress v-if="inicialized && progress.processed < progress.total"/>
     </div>
   </div>
 </template>
@@ -56,6 +53,7 @@ import Characteristics from '@/components/Windows/Characteristics.vue'
 import Averages from '@/components/Windows/Averages.vue'
 import Chances from '@/components/Windows/Chances.vue'
 import PageTitle from '@/components/Menu/PageTitle.vue'
+import Progress from '@/components/General/Progress.vue'
 
 export default {
   name: 'analysis',
@@ -69,7 +67,8 @@ export default {
     Averages,
     Chances,
     TimelinePercent,
-    PageTitle
+    PageTitle,
+    Progress
   },
   data() {
     return {
@@ -181,29 +180,6 @@ export default {
 #title button:hover {
   color: rgb(255, 255, 255);
   background-color: rgba(255, 255, 255, 0.103);
-}
-.progress {
-  display: block;
-  width: 100%;
-  height: 100%;
-  background-color: rgb(238, 126, 137);
-  background-image: radial-gradient(circle at center center, rgb(137, 126, 238), rgb(238, 126, 137));
-  background-size: 100% 300%;
-  background-position: center -300%;
-  animation: background-move 10s linear infinite;
-}
-
-@keyframes background-move {
-  0% {
-    background-position: center -300%;
-  }
-  100% {
-    background-position: center 0%;
-  }
-}
-
-.progress-info {
-  padding-top: 12vh;
 }
 
 #menu {

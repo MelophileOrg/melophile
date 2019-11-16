@@ -13,6 +13,7 @@ const inicializeGetToken = (context) => {
         'user-top-read',
         'user-library-read',
         'user-read-email',
+        'playlist-read-private',
     ];
     if (!context.state.access_token) {
         window.location = `${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join('%20')}&response_type=token&show_dialog=true`;

@@ -2,47 +2,51 @@
   <div class="featuredtracks window">
       <h3 class="window-title">{{title}}</h3>
       <Loading class="displace" v-if="!override && !none"/>
-      <div v-if="override && !none && saved">
+      <div class="overflow" v-if="override && !none && saved">
           <div @click="toSong(id.id)" v-for="id in ids" :key="title + id.id" class="search-song ">
-              <img class="search-image" :src="tracks[id.id].image"/>
+              <div class="search-image" :style="{backgroundImage: 'url(\'' + tracks[id.id].image + '\')'}"/>
               <div class="col">
                   <h1 class="search-title">{{tracks[id.id].name}}</h1>
-                  <h4>{{findDate(id)}}</h4>
+                  <h4 v-if="secondary == 'date'">{{findDate(id)}}</h4>
               </div>
           </div>
       </div>
 
-      <div v-if="override && !none && !saved && type == 'track'">
+      <div class="overflow" v-if="override && !none && !saved && type == 'track'">
         <div @click="toSong(track.id)" v-for="track in ids" :key="title + track.id" class="search-song ">
-          <img class="search-image" :src="track.image"/>
+          <div class="search-image" :style="{backgroundImage: 'url(\'' + track.image + '\')'}"/>
           <div class="col">
             <h1 class="search-title">{{track.name}}</h1>
-            <h4>{{track.album.name}}</h4>
+            <h4 v-if="secondary == 'album'">{{track.album.name}}</h4>
+            <h4 v-if="secondary == 'popularity'">{{track.name}}</h4>
           </div>
         </div>
       </div>
 
-      <div v-if="override && !none && !saved && type == 'artist'">
+      <div class="overflow" v-if="override && !none && !saved && type == 'artist'">
         <div @click="toArtist(item.id)" v-for="item in ids" :key="title + item.id" class="search-song ">
-          <img class="search-image" :src="item.image"/>
+          <div class="search-image" :style="{backgroundImage: 'url(\'' + item.image + '\')'}"/>
           <div class="col">
             <h1 class="search-title">{{item.name}}</h1>
-            <h4>{{item.genres[0]}}</h4>
+            <h4 v-if="secondary == 'genre'">{{item.genres[0]}}</h4>
+            <h4 v-if="secondary == 'trackNum'">{{item.tracks.length}}</h4>
           </div>
         </div>
       </div>
 
-      <div v-if="override && !none && !saved && type == 'genre'">
-        <div @click="toGenre(item.id)" v-for="item in ids" :key="title + item.id" class="search-song ">
-          <img class="search-image" src="../../assets/icons/genres.svg"/>
+      <div class="overflow" v-if="override && !none && !saved && type == 'genre'">
+        <div @click="toGenre(item)" v-for="item in ids" :key="title + item" class="search-song genre">
+          <div class="search-image"/>
           <div class="col">
-            <h1 class="search-title">{{item.name}}</h1>
-            <h4>{{item.genres[0]}}</h4>
+            <h1 class="search-title">{{item}}</h1>
+            <h4 v-if="secondary == 'trackNum'">{{item.trackNum}}</h4>
           </div>
         </div>
       </div>
     
-      <h5 v-if="none">No Songs Liked</h5>
+      <h5 v-if="ids.length == 0 && type == 'track'">No Tracks</h5>
+      <h5 v-if="ids.length == 0 && type == 'artist'">No Artists</h5>
+      <h5 v-if="ids.length == 0 && type == 'genre'">No Genres Listed</h5>
 
   </div>
 </template>
@@ -56,38 +60,48 @@ export default {
         Loading,
     },
     props: {
-        title: String,
-        ids: Array,
-        type: String,
-        override: Boolean,
-        none: Boolean,
-        saved: Boolean,
-        delay: Number,
+      title: String,
+      ids: Array,
+      type: String,
+      secondary: String,
+      override: Boolean,
+      none: Boolean,
+      saved: Boolean,
+      delay: Number,
     },
     methods: {
-        toSong(id) {
-            this.$router.push('/songs/' + id);
-        },
-        findDate(object) {
-            let now = new Date();
-            let nowMonth = now.getMonth();
-            let year = 0;
-            nowMonth -= object.month;
-            nowMonth -= 1;
-            while (nowMonth < 0) {
-                year += 1;
-                nowMonth = 12 + nowMonth;
-            } 
-            nowMonth += 1;
-            let returnYear = (now.getFullYear() - year) % 100;
-            return nowMonth + "/" + returnYear;
-        },
-        },
-    computed: {
-        tracks() {
-            return this.$store.state.tracks;
-        }
+      toSong(id) {
+          this.$router.push('/songs/' + id);
+      },
+      toArtist(id) {
+          this.$router.push('/artist/' + id);
+      },
+      toGenre(id) {
+          this.$router.push('/genres/' + id);
+      },
+      findDate(object) {
+          let now = new Date();
+          let nowMonth = now.getMonth();
+          let year = 0;
+          nowMonth -= object.month;
+          nowMonth -= 1;
+          while (nowMonth < 0) {
+              year += 1;
+              nowMonth = 12 + nowMonth;
+          } 
+          nowMonth += 1;
+          let returnYear = (now.getFullYear() - year) % 100;
+          return nowMonth + "/" + returnYear;
+      },
     },
+    computed: {
+      tracks() {
+          return this.$store.state.tracks;
+      }
+    },
+    created() {
+      console.log(this.ids);
+    }
 
 }
 </script>
@@ -110,20 +124,14 @@ export default {
   h4 {
       margin-left: 6px !important;
   }
-  .col {
-      width: calc(100% - 55px) !important;
+
+  .featuredtracks.window {
+    width: calc(75% + 45px) !important;
+    padding: 20px 0px !important;
+    padding-bottom: 0px !important;
+    max-width: 460px !important;
   }
 
-  .search-image {
-    width: 35px !important;
-    margin-left: 5px;
-    height: 35px !important;
-  }
-
-  .search-song {
-    padding: 5px 5px !important;
-    width: calc(100% - 45px) !important;
-  }
 }
 
 .search-song:hover .search-title
@@ -133,11 +141,16 @@ export default {
 
 .search-image {
   display: block;
-  width: 50px;
+  width: 50px !important;
   height: 50px;
-  background-size: auto 100%;
+  background-size: 100% auto;
   margin-right: 5px;
   background-position: center center;
+  background-repeat: no-repeat;
+}
+
+.genre .search-image {
+  background-image: url('../../assets/icons/genres.svg');
 }
 
 .search-title {
@@ -147,12 +160,15 @@ export default {
   font-weight: lighter;
   font-size: 18px;
   text-align: left;
-  width: calc(100% - 20px);
+  width: calc(100% - 15px);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  
+}
+
+.genre .search-title {
+  text-transform: capitalize;
 }
 
 .search-song {
@@ -165,8 +181,8 @@ export default {
   padding: 5px 10px;
   background: rgba(255, 255, 255, 0.103);
   height: 60px;
-  margin: 3px auto;
-  margin-bottom: 0px;
+  margin: 0px auto;
+  margin-bottom: 3px;
   font-family: 'Roboto', sans-serif;
   width: calc(100% - 20px);
 }
@@ -200,7 +216,7 @@ h5 {
 }
 
 .col {
-    width: calc(100% - 40px);
+    width: calc(100% - 20px - 50px);
 }
 
 .featuredtracks.window {
@@ -208,6 +224,33 @@ h5 {
   padding: 20px 0px;
   padding-bottom: 0px;
   max-width: 460px;
+}
+
+.overflow {
+  display: block;
+  max-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* width */
+.overflow::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+.overflow::-webkit-scrollbar-track {
+  background: #f1f1f100; 
+}
+ 
+/* Handle */
+.overflow::-webkit-scrollbar-thumb {
+  background: rgba(253, 255, 255, 0.411); 
+}
+
+/* Handle on hover */
+.overflow::-webkit-scrollbar-thumb:hover {
+  background: #555; 
 }
 
 </style>

@@ -39,11 +39,11 @@ export default {
   },
   methods: {
     toCharts(){
-      this.$router.push('/charts');
+      this.$router.push('/library/charts');
     },
     routeTo(value) {
       if (this.numOff) {
-        this.$router.push('/genres/' + value);
+        this.$router.push('/tracks/' + value);
       }
       else if (this.image == "") {
         this.$router.push('/genres/' + value.name);
