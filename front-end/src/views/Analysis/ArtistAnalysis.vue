@@ -5,10 +5,13 @@
       <ArtistHeader @changeTab="changeTab" :tracksLoaded="timelineReady" :artistData="artistData"/>
       <div class="page" id="overview" v-if="tab == 0">
         <h1 class="section-title">Top Tracks</h1>
-        <div v-if="artistData != null && artistData.topSongs.length > 0" class="section">
-            <div v-for="(track, index) in artistData.topSongs" class="top-track" :key="'top-tracks-' + index">
+        <div v-if="artistData != null" class="section">
+            <div @click="toTrack(track.id)" v-for="(track, index) in artistData.topSongs" class="top-track" :key="'top-tracks-' + index">
               <div class="track-image" :style="{backgroundImage: 'url(\'' + track.album.images[0].url + '\')'}"/>
-              <p>{{track.name}}</p>
+              <div class="flex flex-align-center border">
+                <p>{{index + 1}}</p>
+                <p>{{track.name}}</p>
+              </div>
             </div>
         </div>
 
@@ -389,6 +392,9 @@ export default {
       }
       this.topTracksReady = true;
     },
+    toTrack(id) {
+      this.$router.push("/songs/" + id);
+    }
   },
   computed: {
     topTracks() {
@@ -544,24 +550,32 @@ img {
 
 .top-track {
   display: flex;
-  flex-align: center;
+  align-items: center;
   background-color: rgba(255, 255, 255, 0.021);
   width: 100%;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.219);
+  
 }
 
 .top-track p {
   display: block;
+  line-height: 16px;
+  height: 16px;
   color: white;
   text-align: left;
   font-weight: lighter;
   color: rgba(255, 255, 255, 0.699);
+  margin-left: 16px;
+}
+
+.border {
+  height: 100%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.219);
 }
 
 .top-track .track-image {
   display: block;
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   margin: 0;
   background-size: 100% 100%;
   background-position: center center;

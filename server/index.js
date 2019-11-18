@@ -10,13 +10,7 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 
-const mongoose = require('mongoose');
-
-// connect to the database
-mongoose.connect('mongodb://localhost:27017/spotify', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+co
 
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
