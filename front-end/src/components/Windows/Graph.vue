@@ -1,5 +1,5 @@
 <template>
-  <div class="graphcomp window" :style="{'--delay': delay}">
+  <div class="graphcomp" :style="{'--delay': delay}">
     <p @click="more" v-if="instructions != ''" class="instructions">{{instructions}}</p>
     <h3 v-if="zero" class="window-title">{{title}}</h3>
     <div v-if="!zero">

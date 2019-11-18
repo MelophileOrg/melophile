@@ -1,5 +1,5 @@
 <template>
-    <div class="YourLibrary window" :style="{'--delay': + 0}">
+    <div class="YourLibrary" :style="{'--delay': + 0}">
         <h3 class="window-title" v-if="progress.tracks || profile">{{title}}:</h3>
         <div v-if="progress.tracks || profile" class="row flex-space-between">
             <h4 class="light">Liked Songs</h4><h4 class="num">{{formatNumber(total)}}</h4>

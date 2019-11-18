@@ -413,6 +413,7 @@ const searchSpotify = async (context, payload) => {
 const getArtistTopTracks = async (context, id) => {
     try {
         let response = await context.state.spotifyApi.getArtistTopTracks(id, "US", {});
+        console.log(response.tracks);
         return response.tracks;
     } catch (error) {
         return;

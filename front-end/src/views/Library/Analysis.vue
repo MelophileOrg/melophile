@@ -6,34 +6,61 @@
       
       <div v-if="progress.tracks && tab == 0" class="windows">
 
+        <div class="window">
         <YourLibrary title="Your Library" :delay="0"/>
+        </div>
 
+        <div class="window">
         <Characteristics :delay="1"/>
+        </div>
 
+        <div class="window">
         <Averages :delay="2"/>
+        </div>
 
+        <div class="window">
         <Chances :delay="3"/>
+        </div>
 
+        <div class="window">
         <Timeline :override="progress.tracks" title="When You Liked Songs:" instructions="" :max="-1" :delay="4" :bars="cleanGraphData(dateAdded)" y_axis="Number of Songs" :color="{red: 74, green: 189, blue: 180}"/>
-        
+        </div>
+
+        <div class="window">
         <TimelinePercent :override="progress.tracks" title="Happiness Over Time:" instructions="" :delay="5" :bars="cleanValuedGraphData(audioFeatures.valence.timeline)" :max="100" y_axis="Percent Happiness" />
+        </div>
 
+        <div class="window">
         <Spotlight :delay="6" :override="progress.artists" title="Top Liked Artists:" :list="topSavedArtists" :image="topSavedArtists[0].image"/>
-
+        </div>
+        
+        <div class="window">
         <Spotlight :delay="7" :override="progress.genres" title="Top Liked Genres:" :list="topSavedGenres.slice(0, 4)" image=""/>
+        </div>
 
+        <div class="window">
         <Graph :override="progress.tracks" title="Happiness Distribution:" instructions="View Lists" :delay="8" :bars="cleanGraphData(audioFeatures.valence.plot)" max_tag="Happy" min_tag="Sad" y_axis="Number of Songs" :color="audioFeatures.valence.color"/>
+        </div>
 
+        <div class="window">
         <Graph :override="progress.tracks" title="Energy Distribution:" instructions="View Lists" :delay="9" :bars="cleanGraphData(audioFeatures.energy.plot)" max_tag="Hyper" min_tag="Peaceful" y_axis="Number of Songs" :color="audioFeatures.energy.color"/>
+        </div>
 
+        <div class="window">
         <Graph :override="progress.tracks" title="Danceability Distribution:" instructions="View Lists" :delay="10" :bars="cleanGraphData(audioFeatures.danceability.plot)" max_tag="Let's dance!" min_tag="Couch Potato" y_axis="Number of Songs" :color="audioFeatures.danceability.color"/>
+        </div>
 
+        <div class="window">
         <Graph :override="progress.tracks" title="Should You DJ a Party?" instructions="View Lists" :delay="11" :bars="cleanGraphData(audioFeatures.banger.plot)" max_tag="Absolute Bangers" min_tag="*Snore Snore*" y_axis="Number of Songs" :color="audioFeatures.banger.color"/>
-      
+        </div>
+
+        <div class="window">      
         <TimelinePercent :override="progress.tracks" title="Energy Over Time:" instructions="" :delay="12" :bars="cleanValuedGraphData(audioFeatures.energy.timeline)" :max="100" y_axis="Percent Happiness" />
+        </div>
 
+        <div class="window">
         <TimelinePercent :override="progress.tracks" title="Danceability Over Time:" instructions="" :delay="13" :bars="cleanValuedGraphData(audioFeatures.danceability.timeline)" :max="100" y_axis="Percent Happiness" />
-
+        </div>
       </div>
 
       <Progress v-if="inicialized && progress.processed < progress.total"/>

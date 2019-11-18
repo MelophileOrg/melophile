@@ -1,5 +1,5 @@
 <template>
-  <div class="Averages window" :style="{'--delay': + delay}">
+  <div class="Averages" :style="{'--delay': + delay}">
       <h3 class="window-title">Averages:</h3>
       <PercentBar title="Tempo" type="tempo" :percent="audioFeatures.tempo.value / 208" :color="audioFeatures.tempo.color" />
       <PercentBar title="Major" :percent="mode.value" :color="mode.major" />

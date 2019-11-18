@@ -1,5 +1,5 @@
 <template>
-  <div class="Chances window" :style="{'--delay': + delay}">
+  <div class="Chances" :style="{'--delay': + delay}">
       <h3 class="window-title">Probability a Song is...</h3>
       <PercentBar title="Accoustic" :percent="audioFeatures.acousticness.value" :color="audioFeatures.acousticness.color" />
       <PercentBar title="Instrumental" :percent="audioFeatures.instrumentalness.value" :color="audioFeatures.instrumentalness.color" />

@@ -1,29 +1,34 @@
 <template>
-    <div class="trackheader">
-        <div class="trackimage" :style="{backgroundImage: 'url(\'' + trackData.album.images[0].url + '\')'}"/>
-        <div class="content">
-          <h1>{{trackData.name}}</h1>
-          <div class="artists">
-            <h2 @click="toArtist(artist.id)" v-for="(artist, index) in trackData.artists" :key="artist.id">{{artist.name}}{{comma(index, trackData.artists.length)}}</h2>
-          </div>
-          <div class="menu">
-            <button @click="changeTab(0)" :class="{active: tab == 0}">Overview</button>
-            <button @click="changeTab(1)" :class="{active: tab == 1}">Analysis</button>
-            <button @click="changeTab(2)" :class="{active: tab == 2}">Compairson</button>
-          </div>
+    <div class="trackheader" :class="{background: colors}" :style="{'--red': + red, '--green': + green, '--blue': + blue, '--alpha': + alpha}">
+      <div class="trackimage" v-if="trackData != null" :style="{backgroundImage: 'url(\'' + trackData.album.images[0].url + '\')'}"/>
+      <div class="trackimage null" v-else/>
+      <div class="content">
+        <h1 v-if="trackData != null">{{trackData.name}}</h1>
+        <div v-if="trackData != null" class="artists">
+          <h2 @click="toArtist(artist.id)" v-for="(artist, index) in trackData.artists" :key="artist.id">{{artist.name}}{{comma(index, trackData.artists.length)}}</h2>
         </div>
+        <div class="menu">
+          <button @click="changeTab(0)" :class="{active: tab == 0}">Overview</button>
+          <button @click="changeTab(1)" :class="{active: tab == 1}">Analysis</button>
+          <button @click="changeTab(2)" :class="{active: tab == 2}">Compairson</button>
+        </div>
+      </div>
     </div>
 </template>
 
 <script>
+import analyze from 'rgbaster';
+
 export default {
   name: 'trackheader',
   props: {
     trackData: Object,
+    trackReady: Boolean,
   },
   data() {
     return {
       tab: 0,
+      color: {r: 0, g: 0, b: 0, a: 0},
     }
   },
   methods: {
@@ -39,8 +44,40 @@ export default {
             return ",";
         }
         return "";
-    }
+    },
+    async dominantColor() {
+      console.log("DOING IT");
+      if (this.trackReady) {
+        let result = await analyze(this.trackData.album.images[0].url, {ignore: ['rgb(0,0,0)']});
+        let re = RegExp(/\d+/i, 'g');
+        this.color.r = parseInt(re.exec(result[0].color), 10);
+        this.color.g = parseInt(re.exec(result[0].color), 10);
+        this.color.b = parseInt(re.exec(result[0].color), 10);
+        this.color.a = .2;
+      }
+    },
   },
+  computed: {
+    colors() {
+      if (this.trackReady) {
+        this.dominantColor();
+        return true;
+      }
+      return false;
+    },
+    red() {
+      return this.color.r;
+    },
+    green() {
+      return this.color.g;
+    },
+    blue() {
+      return this.color.b;
+    },
+    alpha() {
+      return this.color.a;
+    }
+  }
 }
 </script>
 
@@ -50,7 +87,9 @@ export default {
     display: flex;
     width: 100%;
     min-height: 80px;
+    transition: all .5s ease;
     background: rgba(255, 255, 255, 0.05);
+    position: relative;
 }
 
 .trackimage {
@@ -60,6 +99,31 @@ export default {
   background-size: auto 100%;
   background-repeat: no-repeat;
   background-position: center center;
+}
+
+.trackimage.null {
+  background-image: linear-gradient(rgba(46, 46, 46, 0.541), rgba(90, 90, 90, 0.541), rgba(46, 46, 46, 0.541));
+  background-repeat: repeat;
+  background-size: 100% 100%;
+  animation: background-cycle 1s linear 0s infinite;
+}
+
+@keyframes background-cycle {
+  0% {
+    background-position: -100% -100% !important;
+  }
+  100% {
+    background-position: 100% 100% !important;
+  }
+  
+}
+
+.trackheader.background {
+  --red: 255;
+  --green: 255;
+  --blue: 255;
+  --alpha: 0;
+  background: rgba(var(--red), var(--green), var(--blue), var(--alpha));
 }
 
 .content {
@@ -179,6 +243,14 @@ h2:hover {
     .artists {
         display: flex;
         justify-content: center;
+    }
+
+    .trackheader.background {
+      --red: 255;
+      --green: 255;
+      --blue: 255;
+      --alpha: 0;
+      background: rgba(var(--red), var(--green), var(--blue), 0);
     }
 }
 </style>

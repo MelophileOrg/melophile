@@ -116,6 +116,30 @@ button:focus:active {
 }
 </style>
 <style>/* Windows */
+.page {
+  --margin: 48;
+  max-width: calc(100vw - 260px - 2px * var(--margin));
+  display: block;
+  margin: calc(var(--margin) * 1px);
+}
+
+h1.section-title {
+  font-size: 1.3em;
+  color: rgba(255, 255, 255, 0.815);
+  font-weight: lighter;
+  margin-bottom: 16px;
+  margin-top: 48px !important;
+}
+
+.section {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 24px 14px;
+  width: calc(100% - 48px);
+  background-color: rgba(255, 255, 255, 0.089);
+  border-radius: 5px;
+}
+
 .window {
   --delay: 0;
   animation: slide-up .5s ease calc(var(--delay) * .1s), hide calc(var(--delay) * .1s);
@@ -167,6 +191,11 @@ button:focus:active {
       margin: 18px 18px !important;
       padding: 22px !important;
   }
+
+  .page {
+    --margin: 24 !important;
+    max-width: calc(100vw - 2px * var(--margin)) !important;
+  }
 }
 </style>
 <style>/* Animations */
@@ -215,5 +244,12 @@ button:focus:active {
 
 .flex-align-center {
   align-items: center;
+}
+</style>
+<style>
+.vc-slideshow {
+  position: relative;
+  width: 100%;
+  
 }
 </style>

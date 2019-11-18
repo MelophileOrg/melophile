@@ -2,15 +2,38 @@
   <div id="main-flex" class="artistanalysis">
     <NavBar/>    
     <div id="main">
-      <ArtistHeader @changeTab="changeTab" :artistData="artistData"/>
+      <ArtistHeader @changeTab="changeTab" :tracksLoaded="timelineReady" :artistData="artistData"/>
       <div class="page" id="overview" v-if="tab == 0">
+        <h1 class="section-title">Top Tracks</h1>
+        <div v-if="artistData != null && artistData.topSongs.length > 0" class="section">
+            <div v-for="(track, index) in artistData.topSongs" class="top-track" :key="'top-tracks-' + index">
+              <div class="track-image" :style="{backgroundImage: 'url(\'' + track.album.images[0].url + '\')'}"/>
+              <p>{{track.name}}</p>
+            </div>
+        </div>
+
         <h1 class="section-title">Artist Overview</h1>
         <div class="section">
-          
-        </div>
-        <h1 class="section-title">Top Tracks</h1>
-        <div class="section">
-          
+          <div v-if="artistData != null" class="flex flex-space-around flex-wrap">
+            <img v-if="images.length > 0" :src="images[0].image" id="image2">
+            <div class="sub-section" id="profile" v-if="'profile' in artistData && artistData.profile.length > 0">
+              <h2 class="sub-title">Artist Biography</h2>
+              <p>{{artistData.profile}}</p>
+            </div>
+            <div class="sub-section" id="popularity" v-if="'popularity' in artistData">
+              <h2 class="sub-title">Popularity</h2>
+              <p>{{Math.round(artistData.popularity)}} / 100 Popularity</p>
+              <p>{{formatNumber(artistData.followers)}} Followers</p>
+            </div>
+            <div class="sub-section" id="members" v-if="'members' in artistData">
+              <h2 class="sub-title">Band Members</h2>
+              <div v-for="member in artistData.members" :key="'band-members-'+member.id" class="flex flex-align-center">
+                <img class="member-active" src="../../assets/icons/memberpresent.svg" v-if="member.active">
+                <img class="member-active" src="../../assets/icons/membergone.svg" v-else>
+                <p>{{member.name}}</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -142,28 +165,27 @@
 </template>
 
 <script>
-// @ is an alias to /src
+const axios = require('axios');
 import NavBar from '@/components/Navigation/NavBar.vue'
+import Progress from '@/components/General/Progress.vue'
+import ArtistHeader from '@/components/Artist/ArtistHeader.vue'
 // import Loading from '@/components/General/Loading.vue'
 // import Timeline from '@/components/Windows/Timeline.vue'
 // import FeaturedTracks from '@/components/Windows/FeaturedTracks.vue'
 // import PercentBar from '@/components/Analysis/PercentBar.vue'
 // import Graph from '@/components/Windows/Graph.vue'
 
-import Progress from '@/components/General/Progress.vue'
-import ArtistHeader from '@/components/Artist/ArtistHeader.vue'
-
 export default {
   name: 'artistanalysis',
   components: {
       NavBar,
+      ArtistHeader,
+      Progress,
       // Loading,
       // Timeline,
       // FeaturedTracks,
       // PercentBar,
       // Graph,
-      ArtistHeader,
-      Progress
   },
   data() {
       return {
@@ -179,6 +201,7 @@ export default {
           danceability: [0,0,0,0,0,0,0,0,0,0],
         },
         tab: 0,
+        images: [],
       }
   },
   methods: {
@@ -187,16 +210,31 @@ export default {
     },
     async artistAnalysis(id) {
         let artist = await this.$store.dispatch("getArtist", id);
-        let artistObject = await this.processArtist(artist);
+        let discogs = await axios.get('/api/discogs/artist/' + artist.name);
+        console.log(discogs.data);
+        let artistObject = await this.processArtist(artist, discogs.data);
+        console.log(artistObject);
         return artistObject;
     },
-    async processArtist(artist) {
-        artist.href = artist.external_urls.spotify;
-        delete artist.external_urls;
-        artist.followers = artist.followers.total;
-        artist.image = artist.images[0].url;
-        delete artist.images;
-        return artist;
+    async processArtist(artist, discogs) {
+      artist.href = artist.external_urls.spotify;
+      artist.followers = artist.followers.total;
+      artist.image = artist.images[0].url;
+      if ('images' in discogs && discogs.images.length > 0)
+        for (let i = 0; i < discogs.images.length; i++) {
+          this.images.push({image: discogs.images[i].resource_url});
+        }
+      if ('members' in discogs)
+        artist.members = discogs.members;
+      if ('namevariations' in discogs);
+        artist.namevariations = discogs.namevariations;
+      if ('profile' in discogs);
+        artist.profile = discogs.profile;
+      if ('realname' in discogs);
+        artist.realname = discogs.realname;
+      if ('urls' in discogs);
+        artist.urls = discogs.url;
+      return artist;
     },
     async artistTracks(artistData) {
         if (!(artistData.id in this.$store.state.artists))
@@ -246,8 +284,6 @@ export default {
         let tracks = await this.$store.dispatch('getArtistTopTracks', id);
         let ids = [];
         for (let i = 0; i < tracks.length; i++) {
-            tracks[i].album.href = tracks[i].album.external_urls.spotify;
-            tracks[i].href = tracks[i].external_urls.spotify;
             if (tracks[i].album.images.length > 1)
                 tracks[i].image = tracks[i].album.images[0].url;
             ids.push(tracks[i].id);
@@ -465,26 +501,70 @@ export default {
 </script>
 
 <style scoped>
-.page {
-  display: block;
-  margin: 24px;
-}
-
-.section-title{
+h1.section-title {
   font-size: 1.3em;
   color: rgba(255, 255, 255, 0.815);
   font-weight: lighter;
   margin-bottom: 16px;
 }
 
-.section {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 24px;
-  width: calc(100% - 48px);
-  background-color: rgba(255, 255, 255, 0.089);
+.sub-title {
+  color: rgba(255, 255, 255, 0.945);
+  font-weight: bold;
+  font-size: 1.1em;
+  margin: 0;
+}
+
+p {
+  color: rgba(255, 255, 255, 0.534);
+  text-align: left;
+  margin: 0px 0px;
+  line-height: 25px;
+}
+
+.member-active {
+  display: block;
+  height: 20px;
+  width: 20px;
+  margin: 0;
+  margin-right: 5px;
+}
+
+img {
+  max-width: 300px;
+  max-height: 300px;
+  margin: 0px 10px;
   border-radius: 5px;
-  margin-bottom: 48px;
+}
+
+#profile {
+  max-width: 300px;
+  margin: 0px 10px;
+}
+
+.top-track {
+  display: flex;
+  flex-align: center;
+  background-color: rgba(255, 255, 255, 0.021);
+  width: 100%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.219);
+}
+
+.top-track p {
+  display: block;
+  color: white;
+  text-align: left;
+  font-weight: lighter;
+  color: rgba(255, 255, 255, 0.699);
+}
+
+.top-track .track-image {
+  display: block;
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  background-size: 100% 100%;
+  background-position: center center;
 }
 
 .featuredtracks {
@@ -564,7 +644,6 @@ h4 {
 
 h1 {
   font-size: 1.7em;
-  
   display: block;
   color: white;
   text-align: left;

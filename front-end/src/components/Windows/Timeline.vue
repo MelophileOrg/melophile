@@ -1,5 +1,5 @@
 <template>
-  <div class="timeline window" :style="{'--delay': delay}">
+  <div class="timeline" :style="{'--delay': delay}">
     <div>
       <h3 class="window-title">{{title}}</h3>
       <Loading class="loading" v-if="!override && !none"/>

@@ -2,7 +2,34 @@
   <div id="main-flex" class="songanalysis">
     <NavBar/>    
     <div id="main">
-      <TrackHeader :trackData="trackData"/>
+      <TrackHeader :trackReady="audioFeaturesDone" @changeTab="changeTab" :trackData="trackData"/>
+
+      <div class="page" id="overview" v-if="tab == 0">
+        <h1 class="section-title">Track Overview</h1>
+        <div class="section">
+          
+        </div>
+
+        <h1 class="section-title">Characteristics</h1>
+        <div class="section">
+          
+        </div>
+      </div>
+
+      <div class="page" id="overview" v-if="tab == 1">
+        <h1 class="section-title">Track Analysis</h1>
+        <div class="section">
+          
+        </div>
+      </div>
+
+      <div class="page" id="overview" v-if="tab == 2">
+        <h1 class="section-title">Library Comparison</h1>
+        <div class="section">
+          
+        </div>
+      </div>
+      
       <div class="windows">
 
         <div id="song" class="window" :style="{'--delay': 0}">
@@ -147,9 +174,13 @@ export default {
           percentilesReady: false,
           interval: null,
           keys: ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"],
+          tab: 0,
         }
     },
     methods: {
+      changeTab(val) {
+        this.tab = val;
+      },
       async songAnalysis(id) {
         let trackData;
         trackData = await this.$store.dispatch('getTrack', id);
@@ -377,6 +408,13 @@ export default {
 </script>
 
 <style scoped>
+h1.section-title {
+  font-size: 1.3em;
+  color: rgba(255, 255, 255, 0.815);
+  font-weight: lighter;
+  margin-bottom: 16px;
+}
+
 .mode {
   display: inline-block;
   color: rgba(255, 255, 255, 0.13);

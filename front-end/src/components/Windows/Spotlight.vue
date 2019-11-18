@@ -1,5 +1,5 @@
 <template>
-  <div class="spotlight window" :style="{'--delay': + delay}">
+  <div class="spotlight" :style="{'--delay': + delay}">
     <Loading v-if="!override"/>
     <div v-if="override && list.length > 0" id="spotlight-data">
         <h3  class="window-title nomargin">{{title}}</h3>

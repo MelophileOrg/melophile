@@ -1,5 +1,5 @@
 <template>
-  <div class="featuredtracks window">
+  <div class="featuredtracks">
       <h3 class="window-title">{{title}}</h3>
       <Loading class="displace" v-if="!override && !none"/>
       <div class="overflow" v-if="override && !none && saved">

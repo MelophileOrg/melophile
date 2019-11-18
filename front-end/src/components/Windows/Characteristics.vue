@@ -1,5 +1,5 @@
 <template>
-  <div class="Characteristics window" :style="{'--delay': + delay}">
+  <div class="Characteristics" :style="{'--delay': + delay}">
       <h3 class="window-title">Characteristics:</h3>
       <PercentBar title="Happiness" :percent="audioFeatures.valence.value" :color="audioFeatures.valence.color" />
       <PercentBar title="Energy" :percent="audioFeatures.energy.value" :color="audioFeatures.energy.color" />
