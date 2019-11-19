@@ -127,6 +127,7 @@ h1.section-title {
   font-size: 1.3em;
   color: rgba(255, 255, 255, 0.815);
   font-weight: lighter;
+  text-align: left;
   margin-bottom: 16px;
   margin-top: 48px !important;
 }

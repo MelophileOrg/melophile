@@ -1,86 +1,23 @@
 <template>
   <div id="main-flex" class="artistanalysis">
     <NavBar/>    
-    <div id="main">
-      <ArtistHeader @changeTab="changeTab" :tracksLoaded="timelineReady" :artistData="artistData"/>
+    <div id="main" :style="{'--red': + red, '--green': + green, '--blue': + blue, '--alpha': + alpha}">
+      <ArtistHeader @changeTab="changeTab" :savedProcessed="savedProcessed" :color="color" :artistData="artistData"/>
       <div class="page" id="overview" v-if="tab == 0">
-        <h1 class="section-title">Top Tracks</h1>
-        <div v-if="artistData != null" class="section">
-            <div @click="toTrack(track.id)" v-for="(track, index) in artistData.topSongs" class="top-track" :key="'top-tracks-' + index">
-              <div class="track-image" :style="{backgroundImage: 'url(\'' + track.album.images[0].url + '\')'}"/>
-              <div class="flex flex-align-center border">
-                <p>{{index + 1}}</p>
-                <p>{{track.name}}</p>
-              </div>
-            </div>
-        </div>
-
-        <h1 class="section-title">Artist Overview</h1>
-        <div class="section">
-          <div v-if="artistData != null" class="flex flex-space-around flex-wrap">
-            <img v-if="images.length > 0" :src="images[0].image" id="image2">
-            <div class="sub-section" id="profile" v-if="'profile' in artistData && artistData.profile.length > 0">
-              <h2 class="sub-title">Artist Biography</h2>
-              <p>{{artistData.profile}}</p>
-            </div>
-            <div class="sub-section" id="popularity" v-if="'popularity' in artistData">
-              <h2 class="sub-title">Popularity</h2>
-              <p>{{Math.round(artistData.popularity)}} / 100 Popularity</p>
-              <p>{{formatNumber(artistData.followers)}} Followers</p>
-            </div>
-            <div class="sub-section" id="members" v-if="'members' in artistData">
-              <h2 class="sub-title">Band Members</h2>
-              <div v-for="member in artistData.members" :key="'band-members-'+member.id" class="flex flex-align-center">
-                <img class="member-active" src="../../assets/icons/memberpresent.svg" v-if="member.active">
-                <img class="member-active" src="../../assets/icons/membergone.svg" v-else>
-                <p>{{member.name}}</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ArtistTopTracks :topTracks="topTracksLoaded" :override="topProcessed" :color="color"/>
+        <!-- Top Track Analysis -->
+        <!-- Genres -->
       </div>
-
       <div class="page" id="likedtracks" v-if="tab == 1">
-        <h1 class="section-title">Liked Tracks</h1>
-        <div class="section">
-          
-        </div>
-
-        <h1 class="section-title">Characteristics</h1>
-        <div class="section">
-          
-        </div>
-
-        <h1 class="section-title">Timeline</h1>
-        <div class="section">
-          
-        </div>
-
-        <h1 class="section-title">Playlists</h1>
-        <div class="section">
-          
-        </div>
-
+        
 
 
       </div>
 
       <div class="page" id="comparison" v-if="tab == 2">
 
-        <h1 class="section-title">Percentiles</h1>
-        <div class="section">
-          
-        </div>
-
-        <h1 class="section-title">Simular</h1>
-        <div class="section">
-          
-        </div>
+      
       </div>
-
-
-      <Progress v-if="inicialized && progress.processed < progress.total"/>
-
 <!-- 
       <div class="windows">
         
@@ -163,128 +100,183 @@
         
 
       </div> -->
+
+      <Progress v-if="inicialized && progress.processed < progress.total"/>
     </div>
   </div>
 </template>
 
 <script>
 const axios = require('axios');
+import analyze from 'rgbaster';
+
 import NavBar from '@/components/Navigation/NavBar.vue'
 import Progress from '@/components/General/Progress.vue'
 import ArtistHeader from '@/components/Artist/ArtistHeader.vue'
-// import Loading from '@/components/General/Loading.vue'
-// import Timeline from '@/components/Windows/Timeline.vue'
-// import FeaturedTracks from '@/components/Windows/FeaturedTracks.vue'
-// import PercentBar from '@/components/Analysis/PercentBar.vue'
-// import Graph from '@/components/Windows/Graph.vue'
+import ArtistTopTracks from '@/components/Artist/ArtistTopTracks.vue'
 
 export default {
   name: 'artistanalysis',
   components: {
       NavBar,
       ArtistHeader,
+      ArtistTopTracks,
       Progress,
-      // Loading,
-      // Timeline,
-      // FeaturedTracks,
-      // PercentBar,
-      // Graph,
   },
   data() {
       return {
         artistData: null,
-        libraryLoaded: false,
-        interval: null,
-        timelineReady: false,
-        audioFeaturesReady: false,
-        topTracksReady: false,
+
+        color: {r: 0, g: 0, b: 0, a: 0},
+
         audioFeaturesGraphs: {
           valence: [0,0,0,0,0,0,0,0,0,0],
           energy: [0,0,0,0,0,0,0,0,0,0],
           danceability: [0,0,0,0,0,0,0,0,0,0],
         },
+
+        artistProcessed: false,
+        topProcessed: false,
+        savedProcessed: false,
+
         tab: 0,
-        images: [],
+        interval: null,
       }
   },
   methods: {
     changeTab(val) {
+      console.log(this.artistData);
       this.tab = val;
     },
-    async artistAnalysis(id) {
-        let artist = await this.$store.dispatch("getArtist", id);
-        let discogs = await axios.get('/api/discogs/artist/' + artist.name);
-        console.log(discogs.data);
-        let artistObject = await this.processArtist(artist, discogs.data);
-        console.log(artistObject);
-        return artistObject;
+    async dominantColor(image) {
+      let result = await analyze(image);
+      let re = RegExp(/\d+/i, 'g');
+      this.color.r = parseInt(re.exec(result[0].color), 10);
+      this.color.g = parseInt(re.exec(result[0].color), 10);
+      this.color.b = parseInt(re.exec(result[0].color), 10);
+      this.color.a = .4;
     },
-    async processArtist(artist, discogs) {
-      artist.href = artist.external_urls.spotify;
-      artist.followers = artist.followers.total;
-      artist.image = artist.images[0].url;
-      if ('images' in discogs && discogs.images.length > 0)
-        for (let i = 0; i < discogs.images.length; i++) {
-          this.images.push({image: discogs.images[i].resource_url});
-        }
+    async retrieveArtistData() {
+      let spotifyData = await this.$store.dispatch("getArtist", this.$route.params.id);
+      if ('images' in spotifyData && spotifyData.images.length > 0)
+        this.dominantColor(spotifyData.images[0].url);
+      let discogsData = await axios.get('/api/discogs/artist/' + spotifyData.name);
+      this.artistData = await this.processArtist(spotifyData, discogsData.data);
+      this.artistProcessed = true;
+      await this.getTopTracks();
+      this.topProcessed = true;
+      this.interval = setInterval(this.checkTracks, 500);
+    },
+    processArtist(artist, discogs) {
+      console.log(artist);
+      console.log(discogs);
+      let artistObject = Object.assign({}, artist);
+      artistObject.images = [artistObject.images[0].url];
+      if ('images' in discogs)
+        if (discogs.images.length > 0)
+          for (let i = 0; i < discogs.images.length; i++) {
+            artistObject.images.push(discogs.images[i].resource_url);
+          }
+      artistObject.members = [];
       if ('members' in discogs)
-        artist.members = discogs.members;
+        artistObject.members = discogs.members;
+      artistObject.namevariations = [];
       if ('namevariations' in discogs);
-        artist.namevariations = discogs.namevariations;
+        artistObject.namevariations = discogs.namevariations;
+      artistObject.profile = "";
       if ('profile' in discogs);
-        artist.profile = discogs.profile;
+        artistObject.profile = discogs.profile;
+      artistObject.realname = "";
       if ('realname' in discogs);
-        artist.realname = discogs.realname;
-      if ('urls' in discogs);
-        artist.urls = discogs.url;
-      return artist;
-    },
-    async artistTracks(artistData) {
-        if (!(artistData.id in this.$store.state.artists))
-            return [];
-        let ids = this.$store.state.artists[artistData.id].tracks;
-        let tracks = [];
-        for (let i = 0; i < ids.length; i++) {
-            tracks.push(this.$store.state.tracks[ids[i]]);
+        artistObject.realname = discogs.realname;
+      artistObject.website = "";
+      artistObject.facebook = "";
+      artistObject.instagram = "";
+      artistObject.youtube = "";
+      if ('urls' in discogs)
+        for (let i = 0; i < discogs.urls.length; i++) {
+          if (discogs.urls[i].includes('facebook'))
+            artistObject.facebook = discogs.urls[i];
+          else if (discogs.urls[i].includes('instagram'))
+            artistObject.instagram = discogs.urls[i];
+          else if (discogs.urls[i].includes('youtube'))
+            artistObject.youtube = discogs.urls[i];
+          else if (i == 0) 
+            artistObject.website = discogs.urls[i];
         }
-        return tracks;
+      artistObject.timeline = [];
+      artistObject.oldest = [];
+      artistObject.newest = [];
+      artistObject.savedTracks = {tracks: [], energy: 0, valence: 0, danceability: 0};
+      artistObject.topTracks = {tracks: [], energy: 0, valence: 0, danceability: 0};
+      
+      return artistObject;
     },
-    async artistTimeline(artistData) {
-        if (!(artistData.id in this.$store.state.artists))
-            return {timeline: [], oldest: [], newest: []};
-        let artistObject = artistData;
-        let timeline = [];
-        let tracks = [];
-        let now = new Date();
-        let nowTime = now.getTime();
-        const MONTH = 2626560000;
-        let artistSaved = this.$store.state.artists[artistObject.id];
-        for (let i = 0; i < artistSaved.tracks.length; i++) {
-            let date = new Date(this.$store.state.tracks[artistSaved.tracks[i]].date);
-            let dateTime = date.getTime();
-            let diff = nowTime - dateTime;
-            let diffMonth = Math.floor(diff / MONTH);
-            tracks.push({id: artistSaved.tracks[i], time: dateTime, month: diffMonth});
-            if (diffMonth >= timeline.length) {
-                while (diffMonth >= timeline.length) {
-                    timeline.push(0);
-                }
-            }
-            timeline[diffMonth] += 1;
-        }
-        tracks.sort((a, b) => (a.time > b.time) ? 1 : -1);
-        let num = tracks.length;
-        if (tracks.length > 10) 
-          num = 10;
-        let oldest = tracks.slice(0, num);
-        let newest = tracks.slice(tracks.length - num, tracks.length);
-        while (timeline.length < this.$store.state.dateAdded.length) {
-            timeline.push(0);
-        }
-        return {timeline: timeline, oldest: oldest, newest: newest};
+    async checkTracks() {
+      if (this.progress.tracks) {
+        clearInterval(this.interval);
+        this.artistData.savedTracks.tracks = await this.artistTracks();
+        await this.processTracks();
+        this.savedProcessed = true;
+      }
     },
-    async artistTopTracks(id) {
-        let tracks = await this.$store.dispatch('getArtistTopTracks', id);
+    async artistTracks() {
+      if (!(this.artistData.id in this.$store.state.artists))
+        return [];
+      let ids = this.$store.state.artists[this.artistData.id].tracks;
+      let tracks = [];
+
+      let now = new Date();
+      let nowTime = now.getTime();
+      const MONTH = 2626560000;
+
+      let orderByDate = [];
+      for (let i = 0; i < ids.length; i++) {
+          tracks.push(this.$store.state.tracks[ids[i]]);
+          let date = new Date(tracks[i].date);
+          let dateTime = date.getTime();
+          let diff = nowTime - dateTime;
+          let diffMonth = Math.floor(diff / MONTH);
+          orderByDate.push({id: tracks[i], time: dateTime, month: diffMonth});
+          if (diffMonth >= this.artistData.timeline.length) {
+              while (diffMonth >= this.artistData.timeline.length) {
+                  this.artistData.timeline.push(0);
+              }
+          }
+          this.artistData.timeline[diffMonth] += 1;
+      }
+      orderByDate.sort((a, b) => (a.time > b.time) ? 1 : -1);
+      let num = orderByDate.length;
+      if (orderByDate.length > 10) 
+        num = 10;
+      
+      this.artistData.oldest = orderByDate.slice(0, num);
+      this.artistData.newest = orderByDate.slice(orderByDate.length - num, orderByDate.length);
+      while (this.artistData.timeline.length < this.$store.state.dateAdded.length) {
+          this.artistData.timeline.push(0);
+      }
+      return tracks;
+    },
+    async processTracks() { 
+      let ids = this.artistData.savedTracks.tracks.map(value => value.id);
+      let keys = ['valence', 'danceability', 'energy'];
+
+      while (ids.length > 0) {
+        let newIds = ids.splice(0, 50);
+        let audioFeatures = await this.$store.dispatch('getAudioFeaturesForTracks', newIds);
+        for (let i = 0; i < audioFeatures.length; i++) {
+          for (let j = 0; j < keys.length; j++) {
+            this.artistData.savedTracks[keys[j]] += audioFeatures[i][keys[j]];
+            this.audioFeaturesGraphs[keys[j]][Math.floor(audioFeatures[i][keys[j]] * 10)] += 1;
+          }
+        }
+      }
+      for ( let i = 0; i < keys.length; i++) {
+        this.artistData.savedTracks[keys[i]] = this.artistData.savedTracks[keys[i]] / this.artistData.savedTracks.tracks.length;
+      }
+    },
+    async artistTopTracks() {
+        let tracks = await this.$store.dispatch('getArtistTopTracks', this.$route.params.id);
         let ids = [];
         for (let i = 0; i < tracks.length; i++) {
             if (tracks[i].album.images.length > 1)
@@ -299,6 +291,22 @@ export default {
         }
         return tracks;
     },
+
+    async getTopTracks() {
+      let tracks = await this.artistTopTracks();
+      for (let i = 0; i < tracks.length; i++) {
+        this.artistData.topTracks.tracks.push(tracks[i]);
+        this.artistData.topTracks.valence += tracks[i].valence;
+        this.artistData.topTracks.energy += tracks[i].energy;
+        this.artistData.topTracks.danceability += tracks[i].danceability;
+        this.artistData.topTracks.tracks[i].image = this.artistData.topTracks.tracks[i].album.images[0].url;
+      }
+      this.artistData.topTracks.valence /= this.artistData.topTracks.tracks.length;
+      this.artistData.topTracks.energy /= this.artistData.topTracks.tracks.length;
+      this.artistData.topTracks.danceability /= this.artistData.topTracks.tracks.length;
+      this.topTracksReady = true;
+    },
+
     cleanGraphDataForwards(bars) {
       let graphData = [];
       for (let i = 0; i < bars.length; i++) {
@@ -326,25 +334,13 @@ export default {
           return thousands + "," + zeros + remainder;
       return remainder;
     },
-    async checktracks() {
-      if (this.progress.tracks) {
-        let response = await this.artistTracks(this.artistData);
-        this.artistData.tracks = response;
-        this.processTracks();
-        response = await this.artistTimeline(this.artistData);
-        this.artistData.timeline = response.timeline;
-        this.artistData.oldest = response.oldest;
-        this.artistData.newest = response.newest;
-        clearInterval(this.interval);
-        this.timelineReady = true;
-      }
-    },
+
     sumTop(type) {
       let sum = 0;
-      for (let i = 0; i < this.artistData.topSongs.length; i++) {
-        sum += this.artistData.topSongs[i][type];
+      for (let i = 0; i < this.artistData.topTracks.length; i++) {
+        sum += this.artistData.topTracks[i][type];
       }
-      return sum / this.artistData.topSongs.length;
+      return sum / this.artistData.topTracks.length;
     },
     cleanGraphData(bars) {
       let graphData = [];
@@ -360,48 +356,28 @@ export default {
       }
       return newArr;
     },
-    async processTracks() { 
-      let ids = this.artistData.tracks.map(value => value.id);
-      let averages = {valence: 0, danceability: 0, energy: 0};
-      let keys = Object.keys(averages);
-
-      while (ids.length > 0) {
-        let newIds = ids.splice(0, 50);
-        let audioFeatures = await this.$store.dispatch('getAudioFeaturesForTracks', newIds);
-        for (let i = 0; i < audioFeatures.length; i++) {
-          for (let j = 0; j < keys.length; j++) {
-            averages[keys[j]] += audioFeatures[i][keys[j]];
-            this.audioFeaturesGraphs[keys[j]][Math.floor(audioFeatures[i][keys[j]] * 10)] += 1;
-          }
-        }
-      }
-      for ( let i = 0; i < keys.length; i++) {
-        averages[keys[i]] = averages[keys[i]] / this.artistData.tracks.length;
-        this.artistData[keys[i]] = averages[keys[i]];
-      }
-      this.audioFeaturesReady = true;
-    },
-    async getTopSongs() {
-      this.artistData.topSongs = await this.artistTopTracks(this.$route.params.id);
-      for (let i = 0; i < this.artistData.topSongs.length; i++) {
-        try {
-          this.artistData.topSongs[i].image = this.artistData.topSongs[i].album.images[0].url;
-        } catch(error) {
-          this.artistData.topSongs[i].image = "";
-        }
-      }
-      this.topTracksReady = true;
-    },
     toTrack(id) {
       this.$router.push("/songs/" + id);
     }
   },
   computed: {
-    topTracks() {
-      if (this.topTracksReady) {
-        return this.artistData.topSongs.slice(0, 10);
+    red() {
+      return this.color.r;
+    },
+    green() {
+      return this.color.g;
+    },
+    blue() {
+      return this.color.b;
+    },
+    alpha() {
+      return this.color.a;
+    },
+    topTracksLoaded() {
+      if (this.artistData == null) {
+        return {tracks: [], valence: 0, energy: 0, danceability: 0};
       }
-      return [];
+      return this.artistData.topTracks;
     },
     oldestLiked() {
       let month = this.oldestTracks[0].month;
@@ -438,17 +414,17 @@ export default {
       return "";
     },
     datesAdded() {
-      if (!this.timelineReady)
+      if (!this.savedProcessed)
         return [];
       return this.cleanGraphData(this.artistData.timeline);
     },
     oldestTracks() {
-      if (!this.timelineReady)
+      if (!this.savedProcessed)
         return [];
       return this.artistData.oldest;
     },
     newestTracks() {
-      if (!this.timelineReady)
+      if (!this.savedProcessed)
         return [];
       return this.reverse(this.artistData.newest);
     },
@@ -456,7 +432,7 @@ export default {
       return this.$store.state.audioFeatures;
     },
     none() {
-      if (this.audioFeaturesReady) {
+      if (this.savedProcessed) {
         if (this.artistData.tracks.length == 0) {
           return true;
         }
@@ -464,7 +440,7 @@ export default {
       return false;
     },
     noneTimeline() {
-      if (this.timelineReady) {
+      if (this.savedProcessed) {
         if (this.artistData.timeline.length == 0) {
           return true;
         }
@@ -484,21 +460,8 @@ export default {
     });
     if (!this.inicialized)
       this.$router.push("/login");
-    this.artistData = await this.artistAnalysis(this.$route.params.id);
-    this.getTopSongs();
-    if (this.progress.tracks) {
-      let response = await this.artistTracks(this.artistData);
-      this.artistData.tracks = response;
-      this.processTracks();
-      response = await this.artistTimeline(this.artistData);
-      this.artistData.timeline = response.timeline;
-      this.artistData.oldest = response.oldest;
-      this.artistData.newest = response.newest;
-      this.timelineReady = true;
-    }
-    else {
-      this.interval = setInterval(this.checktracks, 2000);
-    }  
+    // REQUEST Artist Data
+    this.retrieveArtistData();
   }
 }
 /*
@@ -507,6 +470,13 @@ export default {
 </script>
 
 <style scoped>
+#main {
+  --red: 255;
+  --green: 255;
+  --blue: 255;
+  --alpha: 0;
+  /* background: rgba(var(--red), var(--green), var(--blue), var(--alpha)); */
+}
 h1.section-title {
   font-size: 1.3em;
   color: rgba(255, 255, 255, 0.815);
@@ -551,12 +521,11 @@ img {
 .top-track {
   display: flex;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.021);
-  width: 100%;
-  
+  height: 45px;
 }
 
 .top-track p {
+  width: calc(100% - 20px - 45px);
   display: block;
   line-height: 16px;
   height: 16px;
@@ -567,9 +536,19 @@ img {
   margin-left: 16px;
 }
 
+.top-track .index {
+  width: 20px;
+  color: rgba(255, 255, 255, 0.349);
+  text-align: center;
+}
+
 .border {
   height: 100%;
   border-bottom: 1px solid rgba(255, 255, 255, 0.219);
+}
+
+.bordertop {
+  border-top: 1px solid rgba(255, 255, 255, 0.219);
 }
 
 .top-track .track-image {
@@ -579,6 +558,11 @@ img {
   margin: 0;
   background-size: 100% 100%;
   background-position: center center;
+  border: 1px solid rgba(0, 0, 0, 0.452);
+}
+
+#topTracksList {
+  max-width: 400px;
 }
 
 .featuredtracks {

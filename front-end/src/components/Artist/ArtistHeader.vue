@@ -1,6 +1,6 @@
 <template>
-    <div class="artistheader" :class="{background: tracksLoaded}" :style="{'--red': + red, '--green': + green, '--blue': + blue, '--alpha': + alpha}">
-      <div class="artistimage" v-if="artistData != null" :style="{backgroundImage: 'url(\'' + artistData.image + '\')'}"/>
+    <div class="artistheader" :class="{background: color.a != 0}" :style="{'--red': + red, '--green': + green, '--blue': + blue, '--alpha': + alpha}">
+      <div class="artistimage" v-if="artistData != null" :style="{backgroundImage: 'url(\'' + artistData.images[0] + '\')'}"/>
       <div class="artistimage null" v-else/>
       <div class="content">
         <h1 v-if="artistData != null">{{artistData.name}}<h2 class="small" v-if="artistData != null">{{trackNum}}</h2></h1>
@@ -8,25 +8,25 @@
         <div class="menu">
           <button @click="changeTab(0)" :class="{active: tab == 0}">Overview</button>
           <button @click="changeTab(1)" :class="{active: tab == 1}">Liked Tracks</button>
-          <button @click="changeTab(2)" :class="{active: tab == 2}">Compairson</button>
+          <button @click="changeTab(2)" :class="{active: tab == 2}">Comparison</button>
         </div>
       </div>
     </div>
 </template>
 
 <script>
-import analyze from 'rgbaster';
+
 
 export default {
   name: 'artistheader',
   props: {
     artistData: Object,
-    tracksLoaded: Boolean,
+    savedProcessed: Boolean,
+    color: Object,
   },
   data() {
     return {
       tab: 0,
-      color: {r: 0, g: 0, b: 0, a: 0},
     }
   },
   methods: {
@@ -34,23 +34,12 @@ export default {
       this.tab = index;
       this.$emit('changeTab', this.tab);
     },
-    async dominantColor() {
-      if (this.tracksLoaded) {
-        let result = await analyze(this.artistData.image);
-        let re = RegExp(/\d+/i, 'g');
-        this.color.r = parseInt(re.exec(result[0].color), 10);
-        this.color.g = parseInt(re.exec(result[0].color), 10);
-        this.color.b = parseInt(re.exec(result[0].color), 10);
-        this.color.a = .2;
-      }
-    },
   },
   computed: {
     trackNum() {
-      if (this.tracksLoaded) {
-        this.dominantColor();
-        if (this.artistData.tracks.length > 0)
-          return this.artistData.tracks.length + " Liked Tracks";
+      if (this.savedProcessed) {
+        if (this.artistData.savedTracks.tracks.length > 0)
+          return this.artistData.savedTracks.tracks.length + " Liked Tracks";
         else 
           return "No Liked Tracks";
       }

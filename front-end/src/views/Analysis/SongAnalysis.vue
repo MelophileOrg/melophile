@@ -11,8 +11,19 @@
         </div>
 
         <h1 class="section-title">Characteristics</h1>
-        <div class="section">
+        <div class="windows">
           
+          <div class="window" :style="{'--delay': + 2}">
+            <h3  class="window-title" v-if="artistDone">Song Characteristics:</h3>
+            <div v-if="audioFeaturesDone">
+              <PercentBar title="Happiness" :percent="trackData.valence" :color="audioFeatures.valence.color" />
+              <PercentBar title="Energy" :percent="trackData.energy" :color="audioFeatures.energy.color" />
+              <PercentBar title="Danceability" :percent="trackData.danceability" :color="audioFeatures.danceability.color" />
+              <PercentBar title="Popularity" :percent="trackData.popularity / 100" :color="audioFeatures.instrumentalness.color" />
+            </div>
+            <Loading v-else/>
+          </div>
+
         </div>
       </div>
 
@@ -64,16 +75,7 @@
           <Loading v-else/>
         </div>
 
-        <div class="window" :style="{'--delay': + 2}">
-          <h3  class="window-title" v-if="artistDone">Song Characteristics:</h3>
-          <div v-if="audioFeaturesDone">
-            <PercentBar title="Happiness" :percent="trackData.valence" :color="audioFeatures.valence.color" />
-            <PercentBar title="Energy" :percent="trackData.energy" :color="audioFeatures.energy.color" />
-            <PercentBar title="Danceability" :percent="trackData.danceability" :color="audioFeatures.danceability.color" />
-            <PercentBar title="Popularity" :percent="trackData.popularity / 100" :color="audioFeatures.instrumentalness.color" />
-          </div>
-          <Loading v-else/>
-        </div>
+
 
         <div id="banger" class="window"  :style="{'--delay': 3}">
           <h3 v-if="artistDone" class="nomargin window-title">Audio Analysis</h3>  
