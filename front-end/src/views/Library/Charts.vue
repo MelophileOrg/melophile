@@ -10,6 +10,11 @@
           <h2 @click="changeTab(2)" :class="{active: tab == 2}">Extremes</h2>
         </div>
       </div>
+      <v-tabs active-class="active" background-color="rgba(0,0,0,0)">
+        <v-tab>Top Played</v-tab>
+        <v-tab>Top Saved</v-tab>
+        <v-tab>Top Extremes</v-tab>
+      </v-tabs>
       <div v-if="tab == 0 && progress.genres" class="charts-div">
         <TopPlayed :profile="false"/>
       </div>
@@ -82,7 +87,7 @@ h1 {
     animation: slide-up .3s ease 0s,hide 0s linear;
 }
 
-h2.active {
+.active {
   color: white;
 }
 
