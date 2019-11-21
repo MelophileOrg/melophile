@@ -119,20 +119,3 @@ h2 {
   }
 }
 </style>
-
-
-
-
-<body>
-  <a class="home-button" href="">Home</a>
-</body>
-
-body {
-  position: relative;
-}
-
-.home-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-}
