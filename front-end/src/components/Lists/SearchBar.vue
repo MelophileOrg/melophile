@@ -1,12 +1,19 @@
 <template>
   <div class="SearchBar">
-    <input v-model="text" placeholder="Search..." type="text"/>
+    <h1>{{title}}</h1>
+    <div class="flex align-bottom">
+      <img src="../../assets/icons/search.svg">
+      <v-text-field v-model="text" color="rgb(255,255,255)" dark placeholder="Search for a track..." single-line outlined></v-text-field>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: 'SearchBar',
+  props: {
+    title: String,
+  },
   data() {
     return {
         text: "",
@@ -23,24 +30,32 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
-input {
-    width: 100%;
-    padding-left: 32px;
-    height: 75px;
-    width: 100%;
-    background-color: rgba(75, 75, 75, 0.377);
-    color: white;
-    border: 0;
-    font-size: 25px;
+.SearchBar {
+  padding: 24px;
 }
 
+.align-bottom {
+  align-items: flex-start;
+}
+
+img {
+  height: 30px;
+  width: 30px;
+  margin-right: 10px;
+  margin-top: 4px;
+}
+
+.SearchBar h1 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  text-align: left;
+  color: white;
+  font-weight: lighter;
+}
+
+
 @media only screen and (max-width: 720px) {
-  input {
-    font-size: 20px !important;
-    height: 50px !important;
-    width: 100vw !important;
-  }
+
 }
 
 </style>

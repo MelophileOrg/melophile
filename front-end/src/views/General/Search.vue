@@ -2,7 +2,7 @@
   <div id="main-flex" class="searchsong">
     <NavBar/>
     <div id="main">
-        <SearchBar @changed="search"/>
+        <SearchBar @changed="search" title="Search for a track"/>
         <SearchItem :topsaved="false" v-for="(track, index) in list" :key="track.id + index" :data="track" :index="index" :saved="false" type="track"/>
         <Loading v-if="!trackSelected && list.length == 0 && waiting && !empty"/>
         <div id="no-results" v-if="!trackSelected && list.length == 0 && !waiting && !load && !empty">

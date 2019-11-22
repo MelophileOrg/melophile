@@ -3,24 +3,17 @@
     <NavBar/>
     <div id="main">
       <PageTitle title="Your Top Charts" link="/social/save" linkTitle="Share"/>
-      <div v-if="progress.genres" id="menu">
-        <div id="tabs">
-          <h2 @click="changeTab(0)" :class="{active: tab == 0}">Top Played</h2>
-          <h2 @click="changeTab(1)" :class="{active: tab == 1}">Top Saved</h2>
-          <h2 @click="changeTab(2)" :class="{active: tab == 2}">Extremes</h2>
-        </div>
-      </div>
-      <v-tabs active-class="active" background-color="rgba(0,0,0,0)">
-        <v-tab>Top Played</v-tab>
-        <v-tab>Top Saved</v-tab>
-        <v-tab>Top Extremes</v-tab>
+      <v-tabs @change="changeTab" background-color="rgba(255,255,255,.05)" color="#ffffff" dark>
+        <v-tab :ripple="true" v-for="tab in tabs" :key="'tabs'+tab.text">{{tab.text}}</v-tab>
       </v-tabs>
+
       <div v-if="tab == 0 && progress.genres" class="charts-div">
         <TopPlayed :profile="false"/>
       </div>
       <div v-if="tab == 1 && progress.genres" class="charts-div">
         <TopSaved :profile="false"/>
       </div>
+
       <Progress v-if="inicialized && progress.processed < progress.total"/>
     </div>
   </div>
@@ -46,6 +39,11 @@ export default {
   data() {
     return {
         tab: 0,
+        tabs: [
+          {text: "Top Played"},
+          {text: "Top Saved"},
+          {text: "Extremes"}
+        ],
     }
   },
   methods: {

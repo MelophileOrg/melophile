@@ -2,7 +2,7 @@
   <div id="main-flex" class="analysis">
     <NavBar />
     <div id="main">
-      <PageTitle title="Your Big Picture" link="/social/save" linkTitle="Share"/>
+      <PageTitle title="Your Big Picture" description="An indepth analysis of your library." :button="{text: 'Share', path: '/social/save'}" />
       
       <div v-if="progress.tracks && tab == 0" class="windows">
 
@@ -37,6 +37,8 @@
         <div class="window">
         <Spotlight :delay="7" :override="progress.genres" title="Top Liked Genres:" :list="topSavedGenres.slice(0, 4)" image=""/>
         </div>
+
+        <LineGraphPercent title="Happiness Distribution" :data="cleanGraphData(audioFeatures.valence.plot)" yAxis="Number of Songs" xAxis="Happiness"/>
 
         <div class="window">
         <Graph :override="progress.tracks" title="Happiness Distribution:" instructions="View Lists" :delay="8" :bars="cleanGraphData(audioFeatures.valence.plot)" max_tag="Happy" min_tag="Sad" y_axis="Number of Songs" :color="audioFeatures.valence.color"/>
@@ -81,6 +83,7 @@ import Averages from '@/components/Windows/Averages.vue'
 import Chances from '@/components/Windows/Chances.vue'
 import PageTitle from '@/components/Menu/PageTitle.vue'
 import Progress from '@/components/General/Progress.vue'
+import LineGraphPercent from '@/components/Graphs/LineGraphPercent.vue'
 
 export default {
   name: 'analysis',
@@ -95,7 +98,8 @@ export default {
     Chances,
     TimelinePercent,
     PageTitle,
-    Progress
+    Progress,
+    LineGraphPercent
   },
   data() {
     return {

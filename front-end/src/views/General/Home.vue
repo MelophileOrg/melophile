@@ -3,11 +3,7 @@
     <NavBar/>
     <div id="main">
       <button @click="login">Login</button>
-      <v-tabs @change="change" background-color="rgba(0,0,0,0)" color="#ffffff">
-        <v-tab>Top Played</v-tab>
-        <v-tab>Top Saved</v-tab>
-        <v-tab>Top Extremes</v-tab>
-      </v-tabs>
+
       <Progress v-if="inicialized && progress.processed < progress.total"/>
     </div>
   </div>

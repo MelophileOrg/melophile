@@ -1,7 +1,8 @@
 <template>
   <div class="pagetitle">
       <h1>{{title}}</h1>
-      <button @click="route" v-if="link">{{linkTitle}}</button>
+      <h2>{{description}}</h2>
+      <!-- <button @click="route" v-if="link">{{linkTitle}}</button> -->
   </div>
 </template>
 
@@ -11,64 +12,50 @@ export default {
   name: 'pagetitle',
   props: {
       title: String,
-      linkTitle: String,
-      link: String,
+      description: String,
+      button: Object,
   },
   methods: {
-      route() {
-        this.$router.push(this.link);
-      }
+    route() {
+      this.$router.push(this.link);
+    }
   }
 }
 </script>
 
 <style scoped>
-
 .pagetitle {
-    display: flex;
-    align-items: center;
-    justify-content: left;
-    width: calc(100% - 64px);
-    padding: 10px 48px;
-    margin-top: 24px;
-    -webkit-animation: slide-up .3s ease 0s,hide 0s linear;
-    animation: slide-up .3s ease 0s,hide 0s linear;
+    width: calc(100vw - 260px);
+    padding: 22px 24px;
+    background: rgba(235, 235, 235, 0.034);
 }
 
 .pagetitle h1 {
-    display: inline-block;
-    color: #fff;
-    position: relative;
-    text-align: left;
-    margin: 0;
-}
-.pagetitle button {
-  border: 0px;
-  color: rgba(255, 255, 255, 0.486);
-  background-color: rgba(255, 255, 255, 0.103);
-  font-size: 1.2em;
-  height: 2em;
-  border-radius: 20px;
-  margin-left: 20px;
-  padding: 5px 20px;
-  transition: all .3s ease;
+  color: white;
+  text-align: left;
+  margin: 0;
+  font-size: 32px;
 }
 
-.pagetitle button:hover {
-  color: rgb(255, 255, 255);
-  background-color: rgba(255, 255, 255, 0.103);
+.pagetitle h2 {
+  color: rgba(255, 255, 255, 0.589);
+  text-align: left;
+  margin: 0;
+  margin-top: 8px;
+  font-size: 16px;
+  font-weight: lighter;
 }
+
 
 @media screen and (max-width: 720px) {
   .pagetitle {
-    justify-content: center;
-    width: calc(100% - 40px);
-    padding: 10px 20px;
+    width: 100vw;
   }
-
+  
   .pagetitle h1 {
-    font-size: 1.8em;
+    font-size: 24px;
   }
 }
+
 
 </style>
