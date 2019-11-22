@@ -3,7 +3,7 @@
     <NavBar/>
     <div id="main">
       <button @click="login">Login</button>
-
+      <FeatureGraph/>
       <Progress v-if="inicialized && progress.processed < progress.total"/>
     </div>
   </div>
@@ -13,12 +13,14 @@
 // @ is an alias to /src
 import NavBar from '@/components/Navigation/NavBar.vue'
 import Progress from '@/components/General/Progress.vue'
+import FeatureGraph from '@/components/Graphs/FeatureGraph.vue'
 
 export default {
   name: 'home',
   components: {
     NavBar,
-    Progress
+    Progress,
+    FeatureGraph
   },
   methods: {
     login() {

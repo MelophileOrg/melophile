@@ -169,10 +169,9 @@ export default {
                 }
             };
             var ctx = document
-                .getElementById("line-graph-percent-" + title)
+                .getElementById("line-graph-percent-" + this.title)
                 .getContext("2d");
             this.graph = new Chart(ctx, options);
-            }
         }
     }
 };
