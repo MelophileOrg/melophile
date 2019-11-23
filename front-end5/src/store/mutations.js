@@ -139,7 +139,7 @@ const averageAudioFeatureValues = (state) => {
 };
 // {key: String, value: Number}
 const plotAudioFeatureValue = (state, payload) => {
-    let index = Math.floor(payload.value * 10);
+    let index = Math.round(payload.value * 10);
     if (index < 0)
         index = 0;
     if (index > 9) 

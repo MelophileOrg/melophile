@@ -7,6 +7,7 @@
 
 <style>/* Fonts */
 @import url('https://fonts.googleapis.com/css?family=Acme|EB+Garamond|Monoton|Patua+One|Roboto|Staatliches&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
 /*
 font-family: 'Roboto', sans-serif;
 font-family: 'Acme', sans-serif;
@@ -27,7 +28,7 @@ body {
 }
 
 #app {
-  font-family: Avenir,Helvetica,Arial,sans-serif !important;
+  font-family: 'Open Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -165,6 +166,10 @@ h1.section-title {
   margin: 0;
   margin-bottom: 20px;
   color: white;
+}
+
+.window-title.marginless {
+  margin-bottom: 0px;
 }
 
 .windows {
