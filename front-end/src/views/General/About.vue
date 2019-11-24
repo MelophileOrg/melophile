@@ -1,6 +1,6 @@
 <template>
   <div class="about">
-    <h1>Sucka dick</h1>
+    <h1>About</h1>
     
   </div>
 </template>

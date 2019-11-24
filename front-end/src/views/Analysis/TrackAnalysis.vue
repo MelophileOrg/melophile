@@ -1,6 +1,6 @@
 <template>
   <div class="trackanalysis">
-    <h1>Sucka dick</h1>
+    <h1>Track</h1>
     
   </div>
 </template>

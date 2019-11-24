@@ -1,6 +1,6 @@
 <template>
   <div class="publicprofiles">
-    <h1>Sucka dick</h1>
+    <h1>Public Profiles</h1>
     
   </div>
 </template>

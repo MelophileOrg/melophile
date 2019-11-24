@@ -1,6 +1,6 @@
 <template>
   <div class="authorize">
-    <h1>FUKC</h1>
+    <h1>Authorizing</h1>
   </div>
 </template>
 

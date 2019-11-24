@@ -1,6 +1,6 @@
 <template>
   <div class="search">
-    <h1>Sucka dick</h1>
+    <h1>Search</h1>
     
   </div>
 </template>

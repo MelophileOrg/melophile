@@ -26,7 +26,7 @@ export default {
 .pagetitle {
     width: calc(100vw - 260px);
     padding: 22px 24px;
-    background: rgba(235, 235, 235, 0.034);
+    background: rgba(0, 0, 0, 0.555);
 }
 
 .pagetitle h1 {

@@ -1,9 +1,25 @@
 <template>
   <div class="bigpicture">
-    <PageTitle title="Your Big Picture"/>
+    <PageTitle title="Your Big Picture" description="Overall Library statistics."/>
     <v-tabs @change="changeTab" background-color="rgba(255,255,255,.05)" color="#ffffff" dark>
       <v-tab :ripple="true" v-for="tab in tabs" :key="'tabs'+tab.text">{{tab.text}}</v-tab>
+      <v-tab-item :value="0">
+        <v-card flat tile>
+          <v-card-text>Overview</v-card-text>
+        </v-card>
+      </v-tab-item>
+      <v-tab-item :value="1">
+        <v-card flat tile>
+          <v-card-text>Traits</v-card-text>
+        </v-card>
+      </v-tab-item>
+      <v-tab-item :value="2">
+        <v-card flat tile>
+          <v-card-text>History</v-card-text>
+        </v-card>
+      </v-tab-item>
     </v-tabs>
+
     
   </div>
 </template>

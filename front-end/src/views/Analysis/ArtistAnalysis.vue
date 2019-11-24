@@ -1,6 +1,6 @@
 <template>
   <div class="artistanalysis">
-    <h1>Sucka dick</h1>
+    <h1>Artist</h1>
     
   </div>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <div class="genreanalysis">
-    <h1>Sucka dick</h1>
+    <h1>Genre</h1>
     
   </div>
 </template>

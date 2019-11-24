@@ -1,6 +1,6 @@
 <template>
   <div class="albumanalysis">
-    <h1>Sucka dick</h1>
+    <h1>Album</h1>
     
   </div>
 </template>

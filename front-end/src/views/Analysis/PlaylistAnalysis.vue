@@ -1,6 +1,6 @@
 <template>
   <div class="playlistanalysis">
-    <h1>Sucka dick</h1>
+    <h1>Playlist</h1>
     
   </div>
 </template>
