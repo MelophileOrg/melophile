@@ -16,13 +16,14 @@ export default {
   },
   data() {
     return {
-
+      
     }
   },
   methods: {
     login() {
       this.$store.dispatch('inicializeGetToken');
-    }
+    },
+    
   },
   created() {
 

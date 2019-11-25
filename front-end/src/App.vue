@@ -227,7 +227,7 @@ html::-webkit-scrollbar-thumb
 .nav-drawer-title {
   padding: 0px 12px;
   margin-top: 6px;
-  margin-bottom: 12px;
+  margin-bottom: 4px;
 }
 
 .nav-drawer-title h1 {
