@@ -1,7 +1,7 @@
 <template>
   <div class="topcharts">
     <PageTitle title="Your Charts" description="See what you've been listening and save most."/>
-    <v-tabs @change="changeTab" background-color="rgba(255,255,255,.05)" color="#ffffff" dark>
+    <v-tabs @change="changeTab" fixed-tabs background-color="rgba(255,255,255,.05)" color="#ffffff" dark>
       <v-tab :ripple="true" v-for="tab in tabs" :key="'tabs'+tab.text">{{tab.text}}</v-tab>
       <v-tab-item :value="0">
         <v-card flat tile>
@@ -58,3 +58,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+div.v-tab {
+  justify-content: center;
+}
+</style>

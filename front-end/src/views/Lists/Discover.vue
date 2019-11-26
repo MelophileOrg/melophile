@@ -89,6 +89,9 @@ export default {
 </script>
 
 <style scoped>
+.discover {
+  min-height: 100vw;
+}
 #search-bar {
   padding: 22px;
   padding-bottom: 0px;
@@ -105,12 +108,13 @@ div.v-stepper__header {
 }
 
 div#header {
-  background-image: linear-gradient(45deg, rgb(255, 55, 82),rgb(255, 94, 20));
+  
 }
 
 div#header .title {
-  display: inline-block;
+  display: block;
   padding: 22px 24px;
+  padding-bottom: 0px;
   color: white;
   text-align: left;
   margin: 0;

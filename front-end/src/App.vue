@@ -1,6 +1,6 @@
 <template>
   <v-app v-resize="onResize" id="app">
-    <v-app-bar v-if="windowSize.x < 1264" app clipped-left color="#121212" dense>
+    <v-app-bar v-if="windowSize.x < 1264" app clipped-left color="rgba(0,0,0,0)" dense>
       <img src="./assets/logo.svg">
       <v-toolbar-title class="mr-12 align-center">
         <span class="title">My Music Taste</span>
@@ -125,12 +125,13 @@ font-family: 'EB Garamond', serif;
 </style>
 <style>/* Base CSS */
 html {
-  background: rgba(0, 0, 0, 0.986);
+  background: #29325e;
 }
 
 body {
   margin: 0;
   overflow-x: hidden;
+
 }
 
 #app {
@@ -228,6 +229,7 @@ html::-webkit-scrollbar-thumb
   padding: 0px 12px;
   margin-top: 6px;
   margin-bottom: 4px;
+  color: #ffffff;
 }
 
 .nav-drawer-title h1 {
@@ -262,12 +264,16 @@ html::-webkit-scrollbar-thumb
 }
 
 .theme--dark.v-application {
-  background-image: radial-gradient(circle at 0px 0px, rgb(43, 42, 42),rgb(0, 0, 0)) !important;
+  background-color: rgb(0,0,0,0) !important;
   background-size: 100% 100%;
 }
 
 .v-navigation-drawer__content {
-  background-color: #121212;
+  background-color: #2e3880;
+}
+
+.second-color {
+  background-color: #2e3880;
 }
 
 div.v-tab {
@@ -277,7 +283,7 @@ div.v-tab {
 }
 
 .v-tabs--vertical .v-tabs-slider-wrapper .v-tabs-slider {
-  background-color: #1ed75f !important;
+  background-color: #ff78cb !important;
   width: 4px !important;
 }
 
@@ -296,7 +302,7 @@ div.v-tab {
 .v-application .v-subheader.mt-4 {
   opacity: .7;
   margin-top: 20px !important;
-  color:rgba(255, 0, 0, 0.062) !important;
+  color:#b4bdff !important;
   text-transform: uppercase;
   font-size: 12px;
   font-family: Avenir,Helvetica,Arial,sans-serif;
@@ -325,6 +331,14 @@ div.v-alert__content {
 prepend {
   display: flex;
   align-items: center;
+}
+
+.v-app-bar--fixed {
+  background-color: #2e3880 !important;
+}
+
+.theme--dark.v-tabs-items {
+  background-color: rgb(0,0,0,0) !important;
 }
 
 /* 1264 */

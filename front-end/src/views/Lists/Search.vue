@@ -1,7 +1,7 @@
 <template>
   <div class="search">
     <div id="search-bar">
-    <v-text-field @change="search" label="Search for a Track" outlined prepend-inner-icon="fa-search"></v-text-field>
+      <v-text-field @change="search" label="Search for a Track" outlined dark prepend-inner-icon="fa-search"></v-text-field>
     </div>
   </div>
 </template>
@@ -42,10 +42,15 @@ export default {
 </script>
 
 <style scoped>
+.search {
+
+  height: 100vh;
+}
+
 #search-bar {
   padding: 22px;
   padding-bottom: 0px;
-  background: rgba(255, 255, 255, 0.048)
+  background-color: rgba(0,0,0,0);
 }
 
 .v-text-field .v-input_prepend-inner {

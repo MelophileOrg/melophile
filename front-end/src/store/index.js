@@ -127,9 +127,6 @@ export default new Vuex.Store({
       minor: {red: 180, green: 189, blue: 74},
     },
     dateAdded: [],
-    artistAdded: [],
-    genreAdded: [],
-
   },
   mutations,
   actions,
