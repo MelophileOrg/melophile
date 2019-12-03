@@ -125,7 +125,7 @@ font-family: 'EB Garamond', serif;
 </style>
 <style>/* Base CSS */
 html {
-  background: #29325e;
+  background: #0c1528;
 }
 
 body {
@@ -269,11 +269,11 @@ html::-webkit-scrollbar-thumb
 }
 
 .v-navigation-drawer__content {
-  background-color: #2e3880;
+  background-color: rgb(23, 37, 66);
 }
 
 .second-color {
-  background-color: #2e3880;
+  background-color: rgb(23, 37, 66);
 }
 
 div.v-tab {
@@ -283,7 +283,7 @@ div.v-tab {
 }
 
 .v-tabs--vertical .v-tabs-slider-wrapper .v-tabs-slider {
-  background-color: #ff78cb !important;
+  background-color: rgb(228, 93, 94) !important;
   width: 4px !important;
 }
 
@@ -334,7 +334,7 @@ prepend {
 }
 
 .v-app-bar--fixed {
-  background-color: #2e3880 !important;
+  background-color: rgb(23, 37, 66) !important;
 }
 
 .theme--dark.v-tabs-items {

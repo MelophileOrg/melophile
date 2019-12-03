@@ -1,17 +1,15 @@
 <template>
   <div class="bigpicture">
-    <PageTitle title="Your Big Picture" description="Overall Library statistics."/>
     <v-tabs @change="changeTab" background-color="rgba(255,255,255,.05)" color="#ffffff" dark>
       <v-tab :ripple="true" v-for="tab in tabs" :key="'tabs'+tab.text">{{tab.text}}</v-tab>
       <v-tab-item :value="0">
-        <h1>Overview</h1>
+        <Overview/>
       </v-tab-item>
       <v-tab-item :value="1">
-        <h1>Traits</h1>
-        <FeatureGraph :graph_data="featureDistibution('Happiness Distribution', 'valence', audioFeatures.valence.plot)"/>
+        <Traits/>
       </v-tab-item>
       <v-tab-item :value="2">
-        <h1>Timeline</h1>
+        <History/>
       </v-tab-item>
     </v-tabs>
 
@@ -21,14 +19,16 @@
 
 <script>
 // @ is an alias to /src
-import PageTitle from '@/components/General/PageTitle.vue'
-import FeatureGraph from '@/components/LineGraphs/FeatureGraph.vue'
+import Overview from '@/components/BigPicture/Overview.vue'
+import Traits from '@/components/BigPicture/Traits.vue'
+import History from '@/components/BigPicture/History.vue'
 
 export default {
   name: 'bigpicture',
   components: {
-    PageTitle,
-    FeatureGraph,
+    Overview,
+    Traits,
+    History,
   },
   data() {
     return {
@@ -36,7 +36,7 @@ export default {
       tabs: [
         {text: "Overview"},
         {text: "Traits"},
-        {text: "Timeline"}
+        {text: "History"}
       ],
     }
   },
@@ -44,7 +44,7 @@ export default {
     changeTab(number) {
       this.tab = number;
     },
-    featureDistibution(title, feature, bars) {
+    featureDistibution(title) {
       let width;
       if (window.innerWidth > 720) {
         width = (window.innerWidth - 260) / 2 - 60;
@@ -54,8 +54,6 @@ export default {
       }
       return {
         title: title,
-        feature: feature,
-        bars: bars,
         width: width,
         height: 225,
       }
@@ -101,11 +99,12 @@ div.v-tab {
 }
 
 div.v-card.theme--dark {
-  background: rgb(0,0,0,0) !important;
+  background: rgb(23, 37, 66) !important;
 }
 
 .theme--dark.v-tabs-items {
-  background-color: rgb(0,0,0,0) !important;
-  background: rgb(0,0,0,0) !important;
+  width: 100%;
+  background-color: rgb(23, 37, 66) !important;
+  background: rgb(23, 37, 66) !important;
 }
 </style>
