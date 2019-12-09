@@ -1,22 +1,19 @@
 <template>
   <div class="topcharts">
-    <PageTitle title="Your Charts" description="See what you've been listening and save most."/>
+    <div id="page-title">
+      <div id="top-charts" class="page-title-icon"></div>
+      <h1 id="page-title-text">Your Top Charts</h1>
+    </div>
     <v-tabs @change="changeTab" fixed-tabs background-color="rgba(255,255,255,.05)" color="#ffffff" dark>
       <v-tab :ripple="true" v-for="tab in tabs" :key="'tabs'+tab.text">{{tab.text}}</v-tab>
       <v-tab-item :value="0">
-        <v-card flat tile>
-          <v-card-text>Top Played</v-card-text>
-        </v-card>
+        <TopPlayed/>
       </v-tab-item>
       <v-tab-item :value="1">
-        <v-card flat tile>
-          <v-card-text>Top Saved</v-card-text>
-        </v-card>
+        <TopSaved/>
       </v-tab-item>
       <v-tab-item :value="2">
-        <v-card flat tile>
-          <v-card-text>Extremes</v-card-text>
-        </v-card>
+        <Extremes/>
       </v-tab-item>
     </v-tabs>
 
@@ -26,13 +23,16 @@
 </template>
 
 <script>
-// @ is an alias to /src
-import PageTitle from '@/components/General/PageTitle.vue'
+import TopPlayed from '@/components/Lists/TopPlayed.vue'
+import TopSaved from '@/components/Lists/TopSaved.vue'
+import Extremes from '@/components/Lists/Extremes.vue'
 
 export default {
   name: 'topcharts',
   components: {
-    PageTitle
+    TopPlayed,
+    TopSaved,
+    Extremes
   },
   data() {
     return {

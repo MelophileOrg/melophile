@@ -14,7 +14,7 @@
         <h1>My Music Taste</h1>
       </div>
       <div class="spacer" v-if="windowSize.x <= 1264">Menu</div>
-      <v-tabs @change="route" vertical background-color="rgba(0,0,0,0)" :grow="true">
+      <v-tabs v-model="tab" @change="route" vertical background-color="rgba(0,0,0,0)" :grow="true">
         <div v-for="(tab, index) in tabs" :key="'nav-bar-tab-' + tab.title + index">
           <v-tab v-if="tab.type == 'link'">
             <img class="nav-icon" :src="getImgUrl(tab.img)"/>
@@ -47,6 +47,7 @@
     name: "app",
     data: () => ({
       drawer: null,
+      tab: 0,
       tabs: [
         {type: 'link', title: 'Home', img: 'home', path: '/'},
         {type: 'link', title: 'Discover', img: 'discover', path: '/discover'},
@@ -103,7 +104,18 @@
       }
     },
     created () {
-      this.$vuetify.theme.dark = true
+      this.$vuetify.theme.dark = true;
+      let tabs = ["home", "discover", "search", "bigpicture", "topcharts", "library", "myprofile", "publicprofiles"];
+      if (this.$route.name == "profile")
+        this.tab = tabs.indexOf("publicprofiles");
+      else {
+        let tabFound = tabs.indexOf(this.$route.name);
+        if (tabFound == -1) 
+          this.tab = 0;
+        else 
+          this.tab = tabFound;
+      }
+      
     },
     mounted() {
       this.onResize();
@@ -342,4 +354,72 @@ prepend {
 }
 
 /* 1264 */
+</style>
+
+<style>
+#page-title {
+  display: flex;
+  padding: 24px 42px;
+  padding-bottom: 0px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+#page-title-text {
+  color: white;
+  text-align: left;
+  margin: 0;
+}
+
+.page-title-icon {
+  display: block;
+  margin-right: 15px;
+  width: 32px;
+  height: 32px;
+  background-size: 100% 100%;
+  background-position: center center;
+}
+
+.windows {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: top;
+}
+
+.window {
+  display: block;
+  width: 95%;
+  max-width: 400px;
+  padding: 25px;
+  margin: 20px;
+  background-color: rgb(23, 37, 66);
+}
+
+.window h1 {
+  text-align: left;
+  margin: 0;
+  font-size: 1.5em;
+  padding-bottom: 12px;
+}
+
+.window h1.paddingless {
+  padding-bottom: 0px;
+}
+
+</style>
+
+<style>
+#big-picture {
+  background-image: url('./assets/nav-bar-icons/bigpicture.svg');
+}
+
+#top-charts {
+  background-image: url('./assets/nav-bar-icons/chart.svg');
+}
+
+#library {
+  background-image: url('./assets/nav-bar-icons/library.svg');
+}
 </style>

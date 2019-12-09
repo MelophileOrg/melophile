@@ -1,5 +1,9 @@
 <template>
   <div class="library">
+    <div id="page-title">
+      <div id="library" class="page-title-icon"></div>
+      <h1 id="page-title-text">Your Library</h1>
+    </div>
     <v-tabs @change="changeTab" background-color="rgba(255,255,255,.05)" fixed-tabs color="#ffffff" dark :style="{'--red': + color.r, '--green': + color.g, '--blue': + color.b}">
       <v-tab :ripple="true" v-for="tab in tabs" :key="'tabs'+tab.text">{{tab.text}}</v-tab>
       <v-tab-item :value="0">
