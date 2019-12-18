@@ -1,8 +1,10 @@
 const express = require('express');
 const axios = require('axios');
 const router = express.Router();
-const key = 'LpKGrAObCHJGJTlXEaJS';
-const secret = 'wbiOyjSFvgkyvCLNXVMFACJVnuvUJQHz';
+const dotenv = require('dotenv');
+dotenv.config();
+const key = process.env.discogsKey;
+const secret = process.env.discogsSecret;
 
 router.get("/artist/:id", async (req, res) => { 
     try {

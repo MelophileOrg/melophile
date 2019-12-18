@@ -145,7 +145,7 @@ div.v-card.theme--dark {
 
 .window div h2 {
   color: rgba(161, 161, 161, 0.644);
-  font-size: 1.3em;
+  font-size: 1em;
   padding-bottom: 6px;
 }
 

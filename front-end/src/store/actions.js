@@ -1,10 +1,11 @@
 ////////////////////////////////////////////////////////////////
 // INICIALIZATION //////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
-// None
+
+
 const inicializeGetToken = (context) => {
     const authEndpoint = 'https://accounts.spotify.com/authorize';
-    const clientId = '42903eeb2bf943c4bd4903370f7a93f5';
+    const clientId = process.env.VUE_APP_CLIENTID;
     let redirectUri = 'http://mymusictaste.org/redirect/';
     if (context.state.dev)
         redirectUri = 'http://localhost:8080/redirect/';

@@ -1,6 +1,5 @@
 <template>
     <div class="BarValue">
-        <h1>{{valueText()}}</h1>
         <div class="bar">
             <div :style="{'--value': + value, '--red': + color.red, '--green': + color.green, '--blue': + color.blue}" class="bar-fill"/>
         </div>

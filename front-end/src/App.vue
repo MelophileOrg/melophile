@@ -74,7 +74,6 @@
           return;
         if (this.first) {
           this.first = false;
-          return;
         }
         this.$router.push(routes[index]);
         window.scroll({
@@ -360,9 +359,8 @@ prepend {
 #page-title {
   display: flex;
   padding: 24px 42px;
-  padding-bottom: 0px;
   align-items: center;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0);
 }
 
 #page-title-text {
