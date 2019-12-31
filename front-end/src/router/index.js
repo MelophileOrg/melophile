@@ -8,7 +8,11 @@ import Authorize from '../views/General/Authorize.vue'
 import Discover from '../views/Lists/Discover.vue'
 import Library from '../views/Lists/Library.vue'
 import Search from '../views/Lists/Search.vue'
-import TopCharts from '../views/Lists/TopCharts.vue'
+//import TopCharts from '../views/Lists/TopCharts.vue'
+
+import TopPlayed from '../views/Lists/TopPlayed.vue'
+import TopSaved from '../views/Lists/TopSaved.vue'
+import Extremes from '../views/Lists/Extremes.vue'
 
 import MyProfile from '../views/Social/MyProfile.vue'
 import Profile from '../views/Social/Profile.vue'
@@ -60,9 +64,19 @@ const routes = [
     component: Search
   },
   {
-    path: '/library/charts',
-    name: 'topcharts',
-    component: TopCharts
+    path: '/library/charts/played',
+    name: 'topplayed',
+    component: TopPlayed
+  },
+  {
+    path: '/library/charts/saved',
+    name: 'topsaved',
+    component: TopSaved
+  },
+  {
+    path: '/library/charts/extremes',
+    name: 'extremes',
+    component: Extremes
   },
   {
     path: '/library/bigpicture',
