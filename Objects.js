@@ -16,3 +16,43 @@ let graph_data = {
     width: Number,
     height: Number,
 }
+
+
+
+
+
+
+
+
+let Track = {
+    id: String,
+    name: String,
+    artists: Array, // IDs
+    album: String,  // ID
+    image: String,
+
+    key: Number,
+    mode: Number,
+    tempo: Number,
+
+    valence: Number,
+    danceability: Number,
+    energy: Number,
+
+    acousticness: Number,
+    instrumentalness: Number,
+    liveness: Number,
+    loudness: Number,
+    speechiness: Number,
+
+    analysis: Array,
+}
+
+let Artist = {
+    id: String,
+    name: String, 
+
+    images: Array,
+    
+
+}
