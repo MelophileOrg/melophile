@@ -43,7 +43,6 @@ const inicializeSetToken = async (context, token) => {
 // LOAD LIBRARY ////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
 const loadLibrary = async (context) => {
-    console.log("SDLKFJ");
     await context.dispatch('retrieveSavedTracks', {limit: 50, offset: 0});
     context.commit('averageAudioFeatureValues');
     context.commit('averageMode');

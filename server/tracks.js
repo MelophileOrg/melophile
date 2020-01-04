@@ -107,7 +107,3 @@ router.get("/:id", body().custom(value => {
 });
 
 
-module.exports = {
-    model: Track,
-    routes: router,
-}

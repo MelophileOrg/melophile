@@ -10,7 +10,6 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     accessToken: null,
-    refreshToken: null,
 
     progress: {
       total: 0,

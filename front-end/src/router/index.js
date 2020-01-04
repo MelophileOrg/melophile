@@ -111,27 +111,27 @@ const routes = [
     component: LibraryAnalysis
   },
   {
-    path: '/library/album/:id',
+    path: '/album/:id',
     name: 'album',
     component: AlbumAnalysis
   },
   {
-    path: '/library/artist/:id',
+    path: '/artist/:id',
     name: 'artist',
     component: ArtistAnalysis
   },
   {
-    path: '/library/genre/:id',
+    path: '/genre/:id',
     name: 'genre',
     component: GenreAnalysis
   },
   {
-    path: '/library/playlist/:id',
+    path: '/playlist/:id',
     name: 'playlist',
     component: PlaylistAnalysis
   },
   {
-    path: '/library/track/:id',
+    path: '/track/:id',
     name: 'track',
     component: TrackAnalysis
   },

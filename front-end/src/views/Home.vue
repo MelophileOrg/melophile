@@ -1,6 +1,7 @@
 <template>
   <div class="home">
     <button @click="login">Press Me</button>
+    <button @click="process">Press Me 2nd</button>
   </div>
 </template>
 
@@ -16,7 +17,10 @@ export default {
   methods: {
     async login() {
       await this.$store.dispatch('login');
-    }
+    },
+    async process() {
+      await this.$store.dispatch('process');
+    },
   }
 }
 </script>

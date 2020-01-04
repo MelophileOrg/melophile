@@ -9,9 +9,6 @@ import axios from 'axios'
 
 export default {
     name: 'redirect',
-    methods: {
-
-    },
     async created() {
         let data = {};
         let items = window.location.search.substring(1).split('&');
@@ -20,6 +17,7 @@ export default {
         }
         let response = await axios.get('/api/auth/callback?code=' + data.code + '&state=' + data.state);
         await this.$store.dispatch('inicialize', response.data);
+        this.$router.push("/");
     }
 }
 </script>

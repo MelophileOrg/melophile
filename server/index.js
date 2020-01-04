@@ -26,46 +26,11 @@ app.use(cookieParser());
 let SpotifyWebApi = require('spotify-web-api-js');
 let spotifyApi = new SpotifyWebApi();
 
-const trackSchema = new mongoose.Schema({
-  id: String,
-  name: String,
-  artists: Array, 
-  album: String,  
-  image: String,
-  key: Number,
-  mode: Number,
-  tempo: Number,
-  valence: Number,
-  danceability: Number,
-  energy: Number,
-  acousticness: Number,
-  instrumentalness: Number,
-  liveness: Number,
-  loudness: Number,
-  speechiness: Number,
-  analysis: Array,
-});
-const Track = mongoose.model('Track', trackSchema);
-
-const artistSchema = new mongoose.Schema({
-  id: String,
-  name: String, 
-  images: Array,
-  genres: Array,
-  profile: String,
-  urls: Array,
-  members: Array,
-});
-const Artist = mongoose.model('Artist', artistSchema);
-
-const userSchema = new mongoose.Schema({
-  id: String,
-  tracks: Array,
-});
-const User = mongoose.model('User', userSchema);
-
 const auth = require("./auth.js");
 app.use("/api/auth", auth.routes);
+
+const process = require("./process.js");
+app.use("/api/process", process.routes);
 
 
 app.listen(3002, () => console.log('Server listening on port 3002!'));

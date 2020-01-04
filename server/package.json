@@ -20,7 +20,9 @@
     "mongoose": "^5.7.11",
     "querystring": "^0.2.0",
     "request": "^2.88.0",
-    "spotify-web-api-js": "^1.2.0"
+    "spotify-web-api-js": "^1.2.0",
+    "spotify-web-api-node": "^4.0.0",
+    "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.12.0"

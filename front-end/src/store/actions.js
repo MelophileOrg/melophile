@@ -8,10 +8,15 @@ const login = async () => {
 
 const inicialize = async(context, payload) => {
     context.commit('setAccessToken', payload.access_token);
-    context.commit('setRefreshToken', payload.refresh_token);
+};
+
+const process = async (context) => {
+    let response = await axios.post('/api/process', {accessToken: context.state.accessToken});
+    console.log(response.data);
 };
 
 export default {
     login,
     inicialize,
+    process,
 };
