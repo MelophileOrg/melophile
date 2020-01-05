@@ -15,6 +15,9 @@ class MelomaniacProcessor {
     async start() {
         await this.createUser();
         await this.processSavedTracks();
+        await this.processTopCharts();
+        await this.processUserPlaylists();
+        await this.updateUser();
     }
 
     setupSpotifyAPI(accessToken) {
@@ -32,6 +35,39 @@ class MelomaniacProcessor {
                     username: userData.display_name,
                     images: userData.images,
                     tracks: [],
+                    topPlayed: {
+                        tracks: [],
+                        artists: [],
+                    },
+                    privacy: {
+                        public: false,
+                        protected: true,
+                        audioFeatures: {
+                            characteristics: false, // valence, danceability, energy
+                            averages: false, // tempo, mode, loudness, key
+                            probabilities: false, // speechiness, instrumentalness, acousticness, liveness
+                        },
+                        topPlayed: {
+                            tracks: false,
+                            artists: false,
+                        },
+                        topSaved: {
+                            artists: false,
+                            genres: false,
+                        },
+                        extremes: {
+                            valence: false,
+                            danceability: false,
+                            energy: false,
+                            tempo: false,
+                            loudness: false,
+                            speechiness: false,
+                            instrumentalness: false,
+                            acousticness: false,
+                            liveness: false,
+                        },
+
+                    },
                 });
                 user.save();
             }
@@ -47,7 +83,6 @@ class MelomaniacProcessor {
         this.savedArtists = {};
         await this.retrieveSavedTracks(0);
         await this.retrieveSavedArtists();
-        await this.updateUser();
     }
 
     async retrieveSavedTracks(offset) {
@@ -118,7 +153,7 @@ class MelomaniacProcessor {
                     },
                     {
                         $set: {
-                            "tracks": this.insertTracks(existingArtist[0].tracks, this.savedArtists[artists[i]]),
+                            "tracks": this.concatUnique(existingArtist[0].tracks, this.savedArtists[artists[i]]),
                         }
                     });
                 } catch(error) {
@@ -155,6 +190,60 @@ class MelomaniacProcessor {
         }
     }
 
+    async processTopCharts() {
+        let newTracks = [];
+        for (let i = 0; i < 3; i++) {
+            let tracks = await this.getTopTracks(i, 0);
+            let trackIDs = [];
+            for (let j = 0; j < tracks.length; j++) {
+                trackIDs.push(tracks[j].id);
+                try {
+                    if ((await Track.find({_id: tracks[j].id})).length == 0 && !((newTracks.map(track => track.id)).includes(tracks[j].id))) 
+                        newTracks.push(tracks[j]);
+                } catch(error) {
+                    console.log(error);
+                }
+            }
+            this.topTracks.push(trackIDs);
+        }
+        let audioFeatures = await this.getAudioFeaturesForTracks(newTracks.map(track => track.id));
+        for (let i = 0; i < newTracks.length; i++) {
+            try {
+                let image;
+                if (newTracks[i].album.images.length == 0) 
+                    image = "Undefined";
+                else    
+                    image = newTracks[i].album.images[0].url;
+                let track = new Track({
+                    _id: newTracks[i].id,
+                    name: newTracks[i].name,
+                    artists: newTracks[i].artists.map(artist => artist.id),
+                    image: image,
+                    key: audioFeatures[i].key,
+                    mode: audioFeatures[i].mode,
+                    tempo: audioFeatures[i].tempo,
+                    valence: audioFeatures[i].valence,
+                    danceability: audioFeatures[i].danceability,
+                    energy: audioFeatures[i].energy,
+                    acousticness: audioFeatures[i].acousticness,
+                    instrumentalness: audioFeatures[i].instrumentalness,
+                    liveness: audioFeatures[i].liveness,
+                    loudness: audioFeatures[i].loudness,
+                    speechiness: audioFeatures[i].speechiness,
+                });
+                await track.save();
+            } catch(error) {
+                console.log(error);
+            }
+        }
+
+
+    }
+
+    async processUserPlaylists() {
+        // Get All
+    }
+
     async updateUser() {
         try {
             await User.updateOne({
@@ -170,7 +259,7 @@ class MelomaniacProcessor {
         }
     }
 
-    insertTracks(arr1, arr2) {
+    concatUnique(arr1, arr2) {
         let newArr = arr1;
         for (let i = 0; i < arr2.length; i++) {
             if (!(newArr.includes(arr2[i])))
@@ -190,42 +279,6 @@ class MelomaniacProcessor {
     async getMe() {
         try {
             let response = await this.spotifyAPI.getMe();
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        }
-    }
-    async getUser(userID) {
-        try {
-            let response = await this.spotifyAPI.getUser(userID);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        }
-    }
-    async followUser(userID) {
-        try {
-            let response = await this.spotifyAPI.followUsers([userID]);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        }
-    }
-    async unfollowUser() {
-        try {
-            let response = await this.spotifyAPI.unfollowUsers([userID]);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        }
-    }
-    async checkFollowingUser() {
-        try {
-            let response = await this.spotifyAPI.isFollowingUsers([userID]);
             return response.body;
         } catch (error) {
             console.log(error);
@@ -288,24 +341,6 @@ class MelomaniacProcessor {
             return 1;
         }
     }
-    async addToSavedTracks(trackIDs) {
-        try {
-            let response = await this.spotifyAPI.addToMySavedTracks(trackIDs);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        }
-    }
-    async removeSavedTrack(trackIDs) {
-        try {
-            let response = await this.spotifyAPI.removeFromMySavedTracks(trackIDs);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        }
-    }
     async checkSavedTracks(trackIDs) {
         try {
             let response = await this.spotifyAPI.containsMySavedTracks(trackIDs);
@@ -363,33 +398,6 @@ class MelomaniacProcessor {
             return 1;
         }  
     }
-    async followArtist(artistIDs) {
-        try {
-            let response = await this.spotifyAPI.followArtists(artistIDs);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
-    async unfollowArtist(artistIDs) {
-        try {
-            let response = await this.spotifyAPI.unfollowArtists(artistIDs);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
-    async checkFollowingArtist(artistIDs) {
-        try {
-            let response = await this.spotifyAPI.isFollowingArtists(artistIDs);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
     async getFollowingArtists(artistID) {
         try {
             let response = await this.spotifyAPI.getFollowedArtists({limit: 50, after: artistID});
@@ -436,55 +444,24 @@ class MelomaniacProcessor {
             return 1;
         } 
     }
-    async addToSavedAlbums(albumIDs) {
-        try {
-            let response = await this.spotifyAPI.addToMySavedAlbums(albumIDs);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
-    async removedSavedAlbum() {
-        try {
-            let response = await this.spotifyAPI.removeFromMySavedAlbums(albumIDs);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
-    async checkSavedAlbums() {
-        try {
-            let response = await this.spotifyAPI.containsMySavedAlbums(albumIDs);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
-    async getNewReleases(offset) {
-        try {
-            let response = await this.spotifyAPI.getNewReleases({limit: 50, offset: offset});
-            return response.body.albums;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
     // CHARTS
-    async getTopArtists(offset) {
+    async getTopArtists(time_range, offset) {
         try {
-            let response = await this.spotifyAPI.getMyTopArtists({limit: 50, offset: offset});
+            let time_ranges = ["short_term", "medium_term", "long_term"];
+            let adjusted_time_range = time_ranges[time_range];
+            let response = await this.spotifyAPI.getMyTopArtists({time_range: adjusted_time_range, limit: 50, offset: offset});
             return response.body.items;
         } catch (error) {
             console.log(error);
             return 1;
         } 
     }
-    async getTopTracks(offset) {
+
+    async getTopTracks(time_range, offset) {
         try {
-            let response = await this.spotifyAPI.getMyTopTracks({limit: 50, offset: offset});
+            let time_ranges = ["short_term", "medium_term", "long_term"];
+            let adjusted_time_range = time_ranges[time_range];
+            let response = await this.spotifyAPI.getMyTopTracks({time_range: adjusted_time_range, limit: 50, offset: offset});
             return response.body.items;
         } catch (error) {
             console.log(error);
@@ -528,63 +505,9 @@ class MelomaniacProcessor {
             return 1;
         }  
     }
-    async createPlaylist(userID, name, publicBool, description) {
-        try {
-            let response = await this.spotifyAPI.createPlaylist(userID, {name: name, public: publicBool, description: description});
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        }  
-    }
-    async addTrackToPlaylist(playlistID, trackIDs) {
-        try {
-            let response = await this.spotifyAPI.addTracksToPlaylist(playlistID, trackIDs);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
-    async replaceTracksFromPlaylist(playlistID, trackIDs) {
-        try {
-            let response = await this.spotifyAPI.replaceTracksInPlaylist(playlistID, trackIDs);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
-    async removeTracksFromPlaylist(playlistID, trackIDs) {
-        try {
-            let response = await this.spotifyAPI.removeTracksFromPlaylist(playlistID, trackIDs);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
-    async uploadCustomPlaylistCoverImage(playlistID, imageData) {
-        try {
-            let response = await this.spotifyAPI.uploadCustomPlaylistCoverImage(playlistID, imageData);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
     async followPlaylist(playlistID) {
         try {
             let response = await this.spotifyAPI.followPlaylist(playlistID);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
-    async unfollowPlaylist(playlistID) {
-        try {
-            let response = await this.spotifyAPI.unfollowPlaylist(playlistID);
             return response.body;
         } catch (error) {
             console.log(error);
@@ -600,73 +523,9 @@ class MelomaniacProcessor {
             return 1;
         } 
     }
-    // MISC 
-    async search(query, offset) {
-        try {
-            let response = await this.spotifyAPI.search(query, ['album', 'artist', 'playlist', 'track'], {limit: 50, offset: offset});
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
-    async getRecommendations(seed_artists, seed_genres, seed_tracks) {
-        try {
-            let options = {
-                limit: 50,
-                seed_artists: seed_artists,
-                seed_genres: seed_genres,
-                seed_tracks: seed_tracks, // Max 5 Total
-                // max_*
-                // min_*
-                // target_*
-            };
-            let response = await this.spotifyAPI.getRecommendations(options);
-            return response.body.tracks;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
     async getAvailableGenreSeeds() {
         try {
             let response = await this.spotifyAPI.getAvailableGenreSeeds(options);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
-    async getMyCurrentPlayingTrack() {
-        try {
-            let response = await this.spotifyAPI.getMyCurrentPlayingTrack();
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
-    async play(uris) {
-        try {
-            let response = await this.spotifyAPI.play({uris: uris});
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
-    async skipToNext() {
-        try {
-            let response = await this.spotifyAPI.skipToNext({uris: uris});
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
-    async pause() {
-        try {
-            let response = await this.spotifyAPI.pause();
             return response.body;
         } catch (error) {
             console.log(error);

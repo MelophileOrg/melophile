@@ -34,6 +34,11 @@ const trackSchema = new mongoose.Schema({
     username: String,
     images: Array,
     tracks: Array,
+    topPlayed: {
+      tracks: Array,
+      artists: Array,
+    },
+    privacy: Object,
   });
   const User = mongoose.model('User', userSchema);
   
