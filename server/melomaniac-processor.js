@@ -66,7 +66,20 @@ class MelomaniacProcessor {
                             acousticness: false,
                             liveness: false,
                         },
-
+                        history: {
+                            added: false,
+                            months: false,
+                            years: false,
+                            valence: false,
+                            danceability: false,
+                            energy: false,
+                            tempo: false,
+                            loudness: false,
+                            speechiness: false,
+                            instrumentalness: false,
+                            acousticness: false,
+                            liveness: false,
+                        },
                     },
                 });
                 user.save();
@@ -137,6 +150,53 @@ class MelomaniacProcessor {
         }
     }
 
+    async saveTracks(tracks) {
+        let unsaved = [];
+        let artists = [];
+        for (let i = 0; i < tracks.length; i++) {
+            if ((await Track.find({_id: tracks[i].id})).length == 0) {
+                unsaved.push(tracks[i]);
+            }
+        }
+        let trackData = tracks;
+        if (tracks[0].artists == null || tracks[0].name == null || tracks[0].album == null) trackData = await this.getTracks(unsaved.map(track => track.id));
+        let audioFeatures = await this.getAudioFeaturesForTracks(tracks.map(track => track.id));
+        for (let i = 0; i < trackData.length; i++) {
+            for (let j = 0; j < trackData[i].artists.length; j++) {
+                artists = this.concatUnique(artists, trackData[i].artists.map(artist => artist.id));
+            }
+            let image;
+            if (trackData[i].album.images.length == 0) 
+                image = "Undefined";
+            else    
+                image = trackData[i].album.images[0].url;
+            let track = new Track({
+                _id: trackData[i].id,
+                name: trackData[i].name,
+                artists: trackData[i].artists.map(artist => artist.id),
+                image: image,
+                key: audioFeatures[i].key,
+                mode: audioFeatures[i].mode,
+                tempo: audioFeatures[i].tempo,
+                valence: audioFeatures[i].valence,
+                danceability: audioFeatures[i].danceability,
+                energy: audioFeatures[i].energy,
+                acousticness: audioFeatures[i].acousticness,
+                instrumentalness: audioFeatures[i].instrumentalness,
+                liveness: audioFeatures[i].liveness,
+                loudness: audioFeatures[i].loudness,
+                speechiness: audioFeatures[i].speechiness,
+            });
+            await track.save();
+        }
+        this.savedArtists(artists);
+        return tracks.map(track => track.id);
+    }
+
+    async saveArtists(artists) {
+
+    }
+
     async retrieveSavedArtists() {
         console.log("RUNNING ARTIST");
         let artists = Object.keys(this.savedArtists);
@@ -191,15 +251,36 @@ class MelomaniacProcessor {
     }
 
     async processTopCharts() {
+        let newArtists = await this.retrieveTopTracks();
+        await this.retrieveTopArtists(newArtists);
+    }
+
+    async retrieveTopTracks() {
         let newTracks = [];
+        let newArtists = [];
         for (let i = 0; i < 3; i++) {
             let tracks = await this.getTopTracks(i, 0);
             let trackIDs = [];
             for (let j = 0; j < tracks.length; j++) {
                 trackIDs.push(tracks[j].id);
                 try {
-                    if ((await Track.find({_id: tracks[j].id})).length == 0 && !((newTracks.map(track => track.id)).includes(tracks[j].id))) 
-                        newTracks.push(tracks[j]);
+                    if ((await Track.find({_id: tracks[j].id})).length == 0) {
+                        if (!((newTracks.map(track => track.id)).includes(tracks[j].id))) {
+                            newTracks.push(tracks[j]);
+                            newArtists = newArtists.concat(tracks[j].artists.map(artist => artist.id));
+                        }
+                        
+                    }
+                    else {
+                        await Artist.updateOne({
+                            _id: artists[i],
+                        },
+                        {
+                            $set: {
+                                "tracks": this.concatUnique(existingArtist[0].tracks, this.savedArtists[artists[i]]),
+                            }
+                        });
+                    }
                 } catch(error) {
                     console.log(error);
                 }
@@ -210,10 +291,8 @@ class MelomaniacProcessor {
         for (let i = 0; i < newTracks.length; i++) {
             try {
                 let image;
-                if (newTracks[i].album.images.length == 0) 
-                    image = "Undefined";
-                else    
-                    image = newTracks[i].album.images[0].url;
+                if (newTracks[i].album.images.length == 0) image = "Undefined";
+                else image = newTracks[i].album.images[0].url;
                 let track = new Track({
                     _id: newTracks[i].id,
                     name: newTracks[i].name,
@@ -236,8 +315,47 @@ class MelomaniacProcessor {
                 console.log(error);
             }
         }
+        newArtists = newArtists.filter(this.notSavedArtist);
+        let artistData = await this.getArtists(newArtists.map(artist => artist.id));
+        for (let i = 0; i < artistData.length; i++) {
+            try {
+                
+            } catch(error) {
+                console.log(error);
+            }
+        }
+        return newArtists;
+    }
 
+    async notSavedArtist(artist) {
+        try {
+            return (await Artist.find({_id: artist.id})).length == 0;
+        } catch(error) {
+            console.log(error);
+            return true;
+        }
+    }
 
+    async retrieveTopArtists(newArtists) {
+        let verifiedNewArtists = [];
+        for (let i = 0; i < newArtists.length; i++) {
+            if ((await Artist.find({_id: artists[j].id})).length == 0 && !((newArtists.map(artist => artist.id)).includes(artists[j].id)))
+                verifiedNewArtists.push(newArtists);
+        }
+        for (let i = 0; i < 3; i++) {
+            let artists = await this.getTopArtists(i, 0);
+            let artistIDs = [];
+            for (let j = 0; j < artists.length; j++) {
+                artistIDs.push(artists[j].id);
+                try {
+                    if ((await Artist.find({_id: artists[j].id})).length == 0 && !((newArtists.map(artist => artist.id)).includes(artists[j].id)))
+                        verifiedNewArtists.push(artist[j]);
+                } catch(error) {
+                    console.log(error);
+                }
+            }
+            this.getTopArtists.push(artistIDs);
+        }
     }
 
     async processUserPlaylists() {
@@ -322,15 +440,6 @@ class MelomaniacProcessor {
             return 1;
         }  
     }
-    async getAudioAnalysisForTrack(trackID) {
-        try {
-            let response = await this.spotifyAPI.getAudioAnalysisForTrack(trackID);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        }    
-    }
     async getAudioFeaturesForTracks(trackIDs) {
         try {
             let response = await this.spotifyAPI.getAudioFeaturesForTracks(trackIDs);
@@ -341,15 +450,7 @@ class MelomaniacProcessor {
             return 1;
         }
     }
-    async checkSavedTracks(trackIDs) {
-        try {
-            let response = await this.spotifyAPI.containsMySavedTracks(trackIDs);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
+
     // ARTIST
     async getArtist(artistID) {
         try {
@@ -364,81 +465,6 @@ class MelomaniacProcessor {
         try {
             let response = await this.spotifyAPI.getArtists(artistIDs);
             return response.body.artists;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
-    async getArtistAlbums(artistID, offset) {
-        try {
-            let response = await this.spotifyAPI.getArtistAlbums(artistID, {limit: 50, offset: offset});
-            return response.body.items;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
-    async getArtistTopTracks(artistID) {
-        try {
-            let response = await this.spotifyAPI.getArtistTopTracks(artistID);
-            console.log(response.tracks);
-            return response.body.tracks;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        }  
-    }
-    async getArtistsRelatedArtists(artistID) {
-        try {
-            let response = await this.spotifyAPI.getArtistRelatedArtists(artistID);
-            console.log(response.artists);
-            return response.body.artists;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        }  
-    }
-    async getFollowingArtists(artistID) {
-        try {
-            let response = await this.spotifyAPI.getFollowedArtists({limit: 50, after: artistID});
-            return response.body.artists;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
-    // ALBUMS
-    async getAlbum(albumID) {
-        try {
-            let response = await this.spotifyAPI.getAlbum(albumID);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
-    async getAlbums(albumIDs) {
-        try {
-            let response = await this.spotifyAPI.getAlbums(albumIDs);
-            return response.body.albums;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        }  
-    }
-    async getAlbumTracks(albumID, offset) {
-        try {
-            let response = await this.spotifyAPI.getAlbumTracks(albumID, {limit: 50, offset: offset});
-            return response.body.items;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
-    async getSavedAlbums(offset) {
-        try {
-            let response = await this.spotifyAPI.getMySavedAlbums({limit: 50, offset: offset});
-            return response.body.items;
         } catch (error) {
             console.log(error);
             return 1;
@@ -462,15 +488,6 @@ class MelomaniacProcessor {
             let time_ranges = ["short_term", "medium_term", "long_term"];
             let adjusted_time_range = time_ranges[time_range];
             let response = await this.spotifyAPI.getMyTopTracks({time_range: adjusted_time_range, limit: 50, offset: offset});
-            return response.body.items;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        }  
-    }
-    async getRecentlyPlayed(offset) {
-        try {
-            let response = await this.spotifyAPI.getMyRecentlyPlayedTracks({limit: 50, offset: offset});
             return response.body.items;
         } catch (error) {
             console.log(error);
@@ -505,33 +522,7 @@ class MelomaniacProcessor {
             return 1;
         }  
     }
-    async followPlaylist(playlistID) {
-        try {
-            let response = await this.spotifyAPI.followPlaylist(playlistID);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
-    async checkFollowingPlaylist(playlistID, userIDs) {
-        try {
-            let response = await this.spotifyAPI.areFollowingPlaylist(playlistID, userIDs);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
-    async getAvailableGenreSeeds() {
-        try {
-            let response = await this.spotifyAPI.getAvailableGenreSeeds(options);
-            return response.body;
-        } catch (error) {
-            console.log(error);
-            return 1;
-        } 
-    }
+
 }
 
 module.exports = {
