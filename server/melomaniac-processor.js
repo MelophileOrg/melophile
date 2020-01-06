@@ -95,146 +95,110 @@ class MelomaniacProcessor {
         this.savedTracks = {};
         this.savedArtists = {};
         await this.retrieveSavedTracks(0);
-        await this.retrieveSavedArtists();
     }
 
     async retrieveSavedTracks(offset) {
-        let tracks = await this.getSavedTracks(offset);
-        let audioFeatures = await this.getAudioFeaturesForTracks(tracks.map(track => track.track.id));
+        try {
+            let tracks = await this.getSavedTracks(offset);
+        } catch(error) {
+            console.log(error);
+            res.sendStatus(500);
+        }
+        await this.saveTracks(tracks.map(track => track.track));
         for (let i = 0; i < tracks.length; i++) {
-            if (this.savedTracks[tracks[i].track.id] != null)
-                continue;
             try {
-                let date = new Date(tracks[i].added_at);
-                this.savedTracks[tracks[i].track.id] = date.getTime();
-                if ((await Track.find({_id: tracks[i].track.id})).length == 0) {
-                    let image;
-                    if (tracks[i].track.album.images.length == 0) 
-                        image = "Undefined";
-                    else    
-                        image = tracks[i].track.album.images[0].url;
-                    let track = new Track({
-                        _id: tracks[i].track.id,
-                        name: tracks[i].track.name,
-                        artists: tracks[i].track.artists.map(artist => artist.id),
-                        image: image,
-                        key: audioFeatures[i].key,
-                        mode: audioFeatures[i].mode,
-                        tempo: audioFeatures[i].tempo,
-                        valence: audioFeatures[i].valence,
-                        danceability: audioFeatures[i].danceability,
-                        energy: audioFeatures[i].energy,
-                        acousticness: audioFeatures[i].acousticness,
-                        instrumentalness: audioFeatures[i].instrumentalness,
-                        liveness: audioFeatures[i].liveness,
-                        loudness: audioFeatures[i].loudness,
-                        speechiness: audioFeatures[i].speechiness,
-                    });
-                    await track.save();
-                }
-            } catch (error) {
+                this.savedTracks[tracks[i].track.id] = (await new Date(tracks[i].added_at)).getTime();
+            } catch(error) {
                 console.log(error);
-                console.log(tracks[i].track);
-            }
-            for (let j = 0; j < tracks[i].track.artists.length; j++) {
-                if (this.savedArtists[tracks[i].track.artists[j].id] != null) {
-                    this.savedArtists[tracks[i].track.artists[j].id].push(tracks[i].track.id);
-                }
-                else {
-                    this.savedArtists[tracks[i].track.artists[j].id] = [tracks[i].track.id];
-                }
             }
         }
-        if (!(tracks.length < 50)) {
+        if (!(tracks.length < 50))
             await this.retrieveSavedTracks(offset + 50);
-        }
     }
 
     async saveTracks(tracks) {
         let unsaved = [];
         let artists = [];
         for (let i = 0; i < tracks.length; i++) {
-            if ((await Track.find({_id: tracks[i].id})).length == 0) {
-                unsaved.push(tracks[i]);
+            try {
+                if ((await Track.find({_id: tracks[i].id})).length == 0 && this.savedTracks[tracks[i].id] == null) 
+                    unsaved.push(tracks[i]);
+            } catch(error) {
+                console.log(error);
+                unsaved.push(artists[i]);
             }
         }
-        let trackData = tracks;
-        if (tracks[0].artists == null || tracks[0].name == null || tracks[0].album == null) trackData = await this.getTracks(unsaved.map(track => track.id));
-        let audioFeatures = await this.getAudioFeaturesForTracks(tracks.map(track => track.id));
+        let trackData = unsaved;
+        if (trackData[0].artists == null || trackData[0].name == null || trackData[0].album == null) trackData = await this.getTracks(unsaved.map(track => track.id));
+        let audioFeatures
+        try {
+            audioFeatures = await this.getAudioFeaturesForTracks(trackData.map(track => track.id));
+        } catch(error) {
+            console.log(error);
+            return;
+        }
         for (let i = 0; i < trackData.length; i++) {
-            for (let j = 0; j < trackData[i].artists.length; j++) {
+            for (let j = 0; j < trackData[i].artists.length; j++)
                 artists = this.concatUnique(artists, trackData[i].artists.map(artist => artist.id));
+            try {
+                let image;
+                if (trackData[i].album.images.length == 0) 
+                    image = "Undefined";
+                else    
+                    image = trackData[i].album.images[0].url;
+                let track = new Track({
+                    _id: trackData[i].id,
+                    name: trackData[i].name,
+                    artists: trackData[i].artists.map(artist => artist.id),
+                    image: image,
+                    key: audioFeatures[i].key,
+                    mode: audioFeatures[i].mode,
+                    tempo: audioFeatures[i].tempo,
+                    valence: audioFeatures[i].valence,
+                    danceability: audioFeatures[i].danceability,
+                    energy: audioFeatures[i].energy,
+                    acousticness: audioFeatures[i].acousticness,
+                    instrumentalness: audioFeatures[i].instrumentalness,
+                    liveness: audioFeatures[i].liveness,
+                    loudness: audioFeatures[i].loudness,
+                    speechiness: audioFeatures[i].speechiness,
+                });
+                await track.save();
+            } catch(error) {
+                console.log(error);
+                console.log(trackData[i]);
             }
-            let image;
-            if (trackData[i].album.images.length == 0) 
-                image = "Undefined";
-            else    
-                image = trackData[i].album.images[0].url;
-            let track = new Track({
-                _id: trackData[i].id,
-                name: trackData[i].name,
-                artists: trackData[i].artists.map(artist => artist.id),
-                image: image,
-                key: audioFeatures[i].key,
-                mode: audioFeatures[i].mode,
-                tempo: audioFeatures[i].tempo,
-                valence: audioFeatures[i].valence,
-                danceability: audioFeatures[i].danceability,
-                energy: audioFeatures[i].energy,
-                acousticness: audioFeatures[i].acousticness,
-                instrumentalness: audioFeatures[i].instrumentalness,
-                liveness: audioFeatures[i].liveness,
-                loudness: audioFeatures[i].loudness,
-                speechiness: audioFeatures[i].speechiness,
-            });
-            await track.save();
         }
-        this.savedArtists(artists);
+        await this.saveArtists(artists);
         return tracks.map(track => track.id);
     }
 
     async saveArtists(artists) {
-
-    }
-
-    async retrieveSavedArtists() {
-        console.log("RUNNING ARTIST");
-        let artists = Object.keys(this.savedArtists);
-        let newArtists = {};
+        let unsaved = [];
         for (let i = 0; i < artists.length; i++) {
-            let existingArtist = await Artist.find({_id: artists[i]});
-            if (existingArtist.length == 0) {
-                newArtists[artists[i]] = this.savedArtists[artists[i]];
-            }
-            else {
-                try {
-                    await Artist.updateOne({
-                        _id: artists[i],
-                    },
-                    {
-                        $set: {
-                            "tracks": this.concatUnique(existingArtist[0].tracks, this.savedArtists[artists[i]]),
-                        }
-                    });
-                } catch(error) {
-                    console.log(error);
-                }
+            try {
+                if ((await Artist.find({_id: artists[i].id})).length == 0 && this.savedArtists[artists[i].id] == null)
+                    unsaved.push(artists[i]);
+            } catch(error) {
+                console.log(error);
+                unsaved.push(artists[i]);
             }
         }
-        let artistsData = [];
-        let artistIDs = Object.keys(newArtists);
-        while (artistIDs.length > 0) {
-            let artistIDsSegment = artistIDs.splice(0, 50);
-            let newArtistData = await this.getArtists(artistIDsSegment);
-            artistsData = artistsData.concat(newArtistData);
+        let artistData = unsaved;
+        try {
+            if (artistData[0].name == null || artistData[0].genres == null)
+                artistData = await this.getArtists(artistData.map(artist => artist.id));
+        } catch(error) {
+            console.log(error);
+            return;
         }
         for (let i = 0; i < artistsData.length; i++) {
             try {
                 let image;
-                if (artistsData[i].images.length == 0) 
+                if (artistData[i].images.length == 0) 
                     image = "Undefined";
                 else    
-                    image = artistsData[i].images[0].url;
+                    image = artistData[i].images[0].url;
                 let artist = new Artist({
                     _id: artistsData[i].id,
                     name: artistsData[i].name,
@@ -245,9 +209,10 @@ class MelomaniacProcessor {
                 await artist.save();
             } catch(error) {
                 console.log(error);
-                console.log(artistsData[i]);
+                console.log(artistData[i]);
             }
         }
+        return artists.map(artist => artist.id);
     }
 
     async processTopCharts() {

@@ -25,7 +25,6 @@ const trackSchema = new mongoose.Schema({
     name: String, 
     image: Array,
     genres: Array,
-    tracks: Array,
   });
   const Artist = mongoose.model('Artist', artistSchema);
   
