@@ -127,7 +127,7 @@ const processAudioFeatures = async (context, payload) => {
     for (let i = 0; i < keys.length; i++) {
         let index = context.state.audioFeatures[keys[i]].minchart.length - 1;
         if (index < 0) 
-            index = 0;
+            index = 0
         if (context.state.audioFeatures[keys[i]].minchart.length < 25 || payload[keys[i]] < context.state.audioFeatures[keys[i]].minchart[index].value) {                
             while (index > 0 && payload[keys[i]] < context.state.audioFeatures[keys[i]].minchart[index].value) {
                 index -= 1;
