@@ -1,9 +1,9 @@
 import axios from 'axios'
 
+
 const login = async () => {
-    let response = await axios.get('/api/auth/login');
-    console.log(response.data);
-    window.location = response.data;
+    this.$socket.auth.emit('login');
+    //window.location = response.data;
 };
 
 const inicialize = async(context, payload) => {

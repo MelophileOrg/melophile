@@ -33,6 +33,7 @@ router.get('/login', function(req, res) {
         'user-read-email',
         'playlist-read-private',
     ];
+    console.log(spotifyId);
     return res.send('https://accounts.spotify.com/authorize?' +
       querystring.stringify({
           response_type: 'code',

@@ -23,9 +23,6 @@ mongoose.connect('mongodb://localhost:27017/melomaniac', {
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
-let SpotifyWebApi = require('spotify-web-api-js');
-let spotifyApi = new SpotifyWebApi();
-
 const auth = require("./auth.js");
 app.use("/api/auth", auth.routes);
 
