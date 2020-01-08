@@ -1,5 +1,5 @@
 const SOCKET_CONSOLELOG = (state, data) => {
-    console.log('%c' + data.message, 'background: #4a86e8; color: white;');
+    console.log(data.message);
 };
 
 const SOCKET_AUTHSTATE = (state, data) => {

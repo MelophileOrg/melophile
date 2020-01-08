@@ -28,6 +28,7 @@ class MelomaniacProcessor {
             await this.updateUser();
             this.socket.emit('ProcessMessage', {message: "Finished"});
         } catch(error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
         }
     }
@@ -101,6 +102,7 @@ class MelomaniacProcessor {
             }
             this.userID = userData.id;
         } catch (error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
             res.sendStatus(500);
         }
@@ -112,6 +114,7 @@ class MelomaniacProcessor {
             this.savedArtists = {};
             await this.retrieveSavedTracks(0);
         } catch(error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
         }
     }
@@ -130,6 +133,7 @@ class MelomaniacProcessor {
                 this.socket.emit('DoneTracks');
             }
         } catch(error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
         }
     }
@@ -141,6 +145,7 @@ class MelomaniacProcessor {
             await this.retrieveTopTracks();
             await this.retrieveTopArtists();
         } catch(error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
         }
     }
@@ -152,6 +157,7 @@ class MelomaniacProcessor {
                 this.topTracks.push(trackIDs);
             }
         } catch(error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
         }
     }
@@ -163,6 +169,7 @@ class MelomaniacProcessor {
                 this.topArtists.push(artistIDs);
             }
         } catch(error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
         }
     }
@@ -186,7 +193,7 @@ class MelomaniacProcessor {
                     image = "Undefined";
                 else    
                     image = playlists[i].images[0].url;
-                if (!(await this.playlistInDatabase(playlists[i].id))) {
+                if ((await this.playlistInDatabase(playlists[i].id))) {
                     await Playlist.updateOne({
                         _id: playlists[i].id,
                     }, {
@@ -209,7 +216,6 @@ class MelomaniacProcessor {
                         public: playlists[i].public,
                         tracks: playlistTracks,
                     });
-                    console.log(playlist);
                     await playlist.save();
                 }
                await this.saveTracks(tracks);
@@ -217,6 +223,7 @@ class MelomaniacProcessor {
             if (!(playlists.length < 50)) 
                 await this.processUserPlaylists(offset + 50);
         } catch(error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
         }
     }
@@ -235,6 +242,7 @@ class MelomaniacProcessor {
                 }
             });
         } catch(error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
         }
     }
@@ -244,45 +252,50 @@ class MelomaniacProcessor {
             let unsaved = [];
             let artists = [];
             for (let i = 0; i < tracks.length; i++) {
-                if (this.savedTracks[tracks[i].id] == null && !(await this.trackInDatabase(tracks[i].id))) 
-                    unsaved.push(tracks[i]);
+                if (this.savedTracks[tracks[i].id] == null) {
+                    if (!(await this.trackInDatabase(tracks[i].id))) {
+                        unsaved.push(tracks[i]);
+                    }
+                }     
             }
             if (unsaved.length > 0) {
+                console.log(unsaved.length);
                 let trackData = unsaved;
-                if (trackData[0].artists == null || trackData[0].name == null || trackData[0].album == null) trackData = await this.getTracks(unsaved.map(track => track.id));
-                let audioFeatures = await this.getAudioFeaturesForTracks(trackData.map(track => track.id));
+                if (trackData[0].artists == null || trackData[0].name == null || trackData[0].album == null) 
+                    trackData = await this.getTracks(unsaved.map(track => track.id));
+                let audioFeatures = await this.getAudioFeaturesForTracks(unsaved.map(track => track.id));
                 for (let i = 0; i < trackData.length; i++) {
                     for (let j = 0; j < trackData[i].artists.length; j++)
                         artists = this.concatUnique(artists, trackData[i].artists.map(artist => artist.id));
-                        let image;
-                        if (trackData[i].album.images.length == 0) 
-                            image = "Undefined";
-                        else    
-                            image = trackData[i].album.images[0].url;
-                        console.log("Saving Track");
-                        let track = new Track({
-                            _id: trackData[i].id,
-                            name: trackData[i].name,
-                            artists: trackData[i].artists.map(artist => artist.id),
-                            image: image,
-                            key: audioFeatures[i].key,
-                            mode: audioFeatures[i].mode,
-                            tempo: audioFeatures[i].tempo,
-                            valence: audioFeatures[i].valence,
-                            danceability: audioFeatures[i].danceability,
-                            energy: audioFeatures[i].energy,
-                            acousticness: audioFeatures[i].acousticness,
-                            instrumentalness: audioFeatures[i].instrumentalness,
-                            liveness: audioFeatures[i].liveness,
-                            loudness: audioFeatures[i].loudness,
-                            speechiness: audioFeatures[i].speechiness,
-                        });
-                        await track.save();
+                    let image;
+                    if (trackData[i].album.images.length == 0) 
+                        image = "Undefined";
+                    else    
+                        image = trackData[i].album.images[0].url;
+                    let track = new Track({
+                        _id: trackData[i].id,
+                        name: trackData[i].name,
+                        artists: trackData[i].artists.map(artist => artist.id),
+                        image: image,
+                        key: audioFeatures[i].key,
+                        mode: audioFeatures[i].mode,
+                        tempo: audioFeatures[i].tempo,
+                        valence: audioFeatures[i].valence,
+                        danceability: audioFeatures[i].danceability,
+                        energy: audioFeatures[i].energy,
+                        acousticness: audioFeatures[i].acousticness,
+                        instrumentalness: audioFeatures[i].instrumentalness,
+                        liveness: audioFeatures[i].liveness,
+                        loudness: audioFeatures[i].loudness,
+                        speechiness: audioFeatures[i].speechiness,
+                    });
+                    await track.save();
                 }
                 await this.saveArtists(artists);
             }
             return tracks.map(track => track.id);
         } catch(error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
         }
     }
@@ -295,11 +308,16 @@ class MelomaniacProcessor {
                     unsaved.push(artists[i]);
             }
             if (unsaved.length > 0) {
+                console.log("Artist: ", unsaved.length);
                 let artistData;
                 if (unsaved[0].name == null || unsaved[0].genres == null) {
                     artistData = [];
                     while (unsaved.length > 0) {
-                        let ids = (unsaved.splice(0, 50)).map(artist => artist.id);
+                        let max = 50;
+                        if (unsaved.length < 50) 
+                            max = unsaved.length;
+                        let ids = (unsaved.splice(0, max)).map(artist => artist.id);
+                        console.log(ids);
                         artistData = this.concatUnique(artistData, await this.getArtists(ids));
                     }
                 }
@@ -324,14 +342,16 @@ class MelomaniacProcessor {
             }
             return artists.map(artist => artist.id);
         } catch(error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
         }
     }
 
     async trackInDatabase(trackID) {
         try {
-            return (await Track.find({_id: trackID})).length == 0;
+            return (await Track.find({_id: trackID})).length != 0;
         } catch(error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
             return false;
         }
@@ -339,8 +359,9 @@ class MelomaniacProcessor {
 
     async artistInDatabase(artistID) {
         try {
-            return (await Artist.find({_id: artistID})).length == 0;
+            return (await Artist.find({_id: artistID})).length != 0;
         } catch(error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
             return false;
         }
@@ -348,8 +369,9 @@ class MelomaniacProcessor {
 
     async playlistInDatabase(playlistID) {
         try {
-            return (await Playlist.find({_id: playlistID})).length == 0;
+            return (await Playlist.find({_id: playlistID})).length != 0;
         } catch(error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
             return false;
         }
@@ -377,6 +399,7 @@ class MelomaniacProcessor {
             let response = await this.spotifyAPI.getMe();
             return response.body;
         } catch (error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
             return 1;
         }
@@ -388,6 +411,7 @@ class MelomaniacProcessor {
             let response = await this.spotifyAPI.getTrack(trackID);
             return response.body;
         } catch (error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
             return 1;
         }
@@ -398,6 +422,7 @@ class MelomaniacProcessor {
             let response = await this.spotifyAPI.getTracks(trackIDs);
             return response.body.tracks;
         } catch (error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
             return 1;
         }
@@ -412,6 +437,7 @@ class MelomaniacProcessor {
             
             return response.body.items;
         } catch (error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
             return 1;
         }  
@@ -422,6 +448,7 @@ class MelomaniacProcessor {
             let response = await this.spotifyAPI.getAudioFeaturesForTrack(trackID);
             return response.body;
         } catch (error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
             return 1;
         }  
@@ -432,6 +459,7 @@ class MelomaniacProcessor {
             let response = await this.spotifyAPI.getAudioFeaturesForTracks(trackIDs);
             return response.body.audio_features;
         } catch (error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
             return 1;
         }
@@ -443,6 +471,7 @@ class MelomaniacProcessor {
             let response = await this.spotifyAPI.getArtist(artistID);
             return response.body;
         } catch (error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
             return 1;
         } 
@@ -453,6 +482,7 @@ class MelomaniacProcessor {
             let response = await this.spotifyAPI.getArtists(artistIDs);
             return response.body.artists;
         } catch (error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
             return 1;
         } 
@@ -466,6 +496,7 @@ class MelomaniacProcessor {
             let response = await this.spotifyAPI.getMyTopArtists({time_range: adjusted_time_range, limit: 50, offset: offset});
             return response.body.items;
         } catch (error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
             return 1;
         } 
@@ -478,6 +509,7 @@ class MelomaniacProcessor {
             let response = await this.spotifyAPI.getMyTopTracks({time_range: adjusted_time_range, limit: 50, offset: offset});
             return response.body.items;
         } catch (error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
             return 1;
         }  
@@ -489,6 +521,7 @@ class MelomaniacProcessor {
             let response = await this.spotifyAPI.getPlaylist(playlistID);
             return response.body;
         } catch (error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
             return 1;
         }  
@@ -499,6 +532,7 @@ class MelomaniacProcessor {
             let response = await this.spotifyAPI.getUserPlaylists({limit: 50, offset: offset});
             return response.body.items;
         } catch (error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
             return 1;
         }  
@@ -509,6 +543,7 @@ class MelomaniacProcessor {
             let response = await this.spotifyAPI.getPlaylistTracks(playlistID, {limit: 50, offset: offset});
             return response.body.items;
         } catch (error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
             return 1;
         }  
