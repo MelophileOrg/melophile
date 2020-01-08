@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 
-mongoose.connect('mongodb://localhost:27017/melomaniac', {
+mongoose.connect('mongodb://localhost:27017/melomaniac2', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -35,17 +35,26 @@ var server = app.listen(3002, function(){
 
 var io = socket(server);
 
-let test = require("./test.js")(io);
+let clients = [];
 
-let auth = require("./auth.js")(io);
+io.on('connection', function(socket) {
+  console.log("Client Connected:", socket.id);
+  clients.push(socket.id);
 
+  require('./auth.js')(socket);
 
-// const auth = require("./auth.js");
-// const auth_route = io.of('/auth').on('connection', auth.connect(socket));
+  require('./process.js')(socket);
 
-// const process = require("./process.js");
-// const process_route = io.of('/process').on('connection', process.connect(socket));
+  require('./analysis.js')(socket);
 
-// const analysis = require("./analysis.js");
-// const analysis_route = io.of('/analysis').on('connection', analysis.connect(socket));
+  socket.on('getClientNum', function() {
+    socket.emit('ConsoleLog', {message: clients.length});
+  });
+  
+  socket.on('disconnect', function() {
+    console.log("Client Disconnected:", socket.id);
+    clients.splice(clients.indexOf(socket.id), 1);
+  });
+});
+
 

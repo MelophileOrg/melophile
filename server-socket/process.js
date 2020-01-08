@@ -1,8 +1,12 @@
-let connect = async (socket) => {
-    console.log("Process Connected:", socket.id);
-    socket.emit('consolelog', {message: "Process Connected"});
-};
+let melomaniac_processor = require('./melomaniac-processor.js');
+let MelomaniacProcessor = melomaniac_processor.processor;
 
-module.exports = {
-    connect: connect,
+let process = function(socket) {
+    socket.on('process', async function(data) {
+        let processor = await new MelomaniacProcessor(data.accessToken, socket);
+        await processor.start();
+        socket.emit('ConsoleLog', {message: "Done"});
+    })
 }
+  
+module.exports = process;

@@ -3,41 +3,15 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify';
-import VueSocketIO from 'vue-socket.io'
+
+import VueSocketIOExt from 'vue-socket.io-extended';
+import io from 'socket.io-client';
 
 Vue.config.productionTip = false
 
-Vue.use(new VueSocketIO({
-  debug: true,
-  connection: 'http://localhost:3002',
-  vuex: {
-      store,
-      actionPrefix: "server_",
-      mutationPrefix: "server_",
-      options: {
-        useConnectionNamespace: true
-      }
-  },
-  options: { path: "" }
-}))
+const socket = io('http://localhost:3002');
 
-Vue.use(new VueSocketIO({
-  debug: true,
-  connection: 'http://localhost:3002/auth',
-  vuex: {
-      store,
-      actionPrefix: "server_auth_",
-      mutationPrefix: "server_auth_",
-      options: {
-        useConnectionNamespace: true
-      }
-  },
-  options: { path: "" }
-}))
-
-
-
-//Vue.$socket.mynamespace.emit('emit_method', data)
+Vue.use(VueSocketIOExt, socket, { store });
 
 new Vue({
   router,

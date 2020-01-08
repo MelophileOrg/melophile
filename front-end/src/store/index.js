@@ -9,11 +9,29 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    accessToken: null,
+    authentication: {
+      accessToken: null,
+      refreshToken: null,
+      state: null,
+    },
 
     progress: {
-      total: 0,
-      processed: 0,
+      message: "MESSAGE",
+      tracks: {
+        total: 0,
+        processed: 0,
+        done: false,
+      },
+      charts: {
+        processed: 0,
+        done: false,
+      },
+      playlists: {
+        total: 0,
+        processed: 0,
+        done: false
+      }
+
     },
 
   },
