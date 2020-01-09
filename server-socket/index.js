@@ -38,7 +38,7 @@ var io = socket(server);
 let clients = [];
 
 io.on('connection', function(socket) {
-  console.log("Client Connected:", socket.id);
+  console.log("Clients:", clients.length);
   clients.push(socket.id);
 
   require('./auth.js')(socket);
@@ -52,7 +52,7 @@ io.on('connection', function(socket) {
   });
   
   socket.on('disconnect', function() {
-    console.log("Client Disconnected:", socket.id);
+    console.log("Clients:", clients.length);
     clients.splice(clients.indexOf(socket.id), 1);
   });
 });

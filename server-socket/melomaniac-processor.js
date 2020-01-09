@@ -10,12 +10,16 @@ const User = Items.user;
 
 class MelomaniacProcessor {
     constructor(accessToken, socket) {
+        this.tokenSet = false;
         this.setupSpotifyAPI(accessToken);
         this.socket = socket;
     }
 
     async start() {
         try {
+            this.artistNum = 0;
+            if (!this.tokenSet) 
+                return;
             this.socket.emit('ProcessMessage', {message: "Creating User"});
             await this.createUser();
             this.socket.emit('ProcessMessage', {message: "Processing Liked Tracks"});
@@ -24,10 +28,11 @@ class MelomaniacProcessor {
             await this.processTopCharts();
             this.socket.emit('ProcessMessage', {message: "Processing Playlists"});
             this.totalSent = false;
-            await this.processUserPlaylists(0);
+            await this.processUserPlaylists();
             this.socket.emit('ProcessMessage', {message: "Saving Data"});
             await this.updateUser();
             this.socket.emit('ProcessMessage', {message: "Finished"});
+            console.log(this.artistNum);
         } catch(error) {
             this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
@@ -38,6 +43,7 @@ class MelomaniacProcessor {
         this.totalSent = false;
         this.spotifyAPI = new SpotifyWebApi();
         this.spotifyAPI.setAccessToken(accessToken);
+        this.tokenSet = true;
     }
 
     async createUser() {
@@ -174,18 +180,28 @@ class MelomaniacProcessor {
         }
     }
 
-    async processUserPlaylists(offset) {
+    async processUserPlaylists() {
+        try {
+            this.playlists = [];
+            await this.retrieveUserPlaylists(0);
+        } catch(error) {
+            this.socket.emit('ConsoleLog', {message: error}); 
+            console.log(error);
+        }
+            
+    }
+
+    async retrieveUserPlaylists(offset) {
         try {
             this.socket.emit('ProcessedTracks', {processed: offset});
             let playlists = await this.getUserPlaylists(offset);
-            let playlistNum = playlists.length;
-            this.playlists = playlists.map(playlist => playlist.id);
+            this.playlists = this.playlists.concat(playlists.map(playlist => playlist.id));
             for (let i = 0; i < playlists.length; i++) {
                 let tracks = [];
                 let playlistTracks = {};
                 for (let j = 0; j < Math.ceil(playlists[i].tracks.total / 50); j++) {
                     let trackData = await this.getPlaylistTracks(playlists[i].id, (j * 50));
-                    tracks = await this.concatUnique(tracks, trackData.map(track => track.track));
+                    tracks = await this.concatUnique(tracks, await trackData.map(track => track.track));
                     for (let k = 0; k < trackData.length; k++) {
                         playlistTracks[trackData[k].track.id] = (await new Date(trackData[k].added_at)).getTime();
                     }
@@ -222,12 +238,13 @@ class MelomaniacProcessor {
                 }
                await this.saveTracks(tracks);
             }
-            if (!(playlistNum < 50)) 
-                await this.processUserPlaylists(offset + 50);
+            if (!(playlists.length < 50)) 
+                await this.retrieveUserPlaylists(offset + 50);
         } catch(error) {
             this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
         }
+        
     }
 
     async updateUser() {
@@ -251,61 +268,68 @@ class MelomaniacProcessor {
 
     async saveTracks(tracks) {
         try {
-            let unsaved = [];
-            let artists = [];
+            let unsaved = {};
+            let newArtists = {};
             for (let i = 0; i < tracks.length; i++) {
-                if (this.savedTracks[tracks[i].id] == null) {
-                    if (!(await this.trackInDatabase(tracks[i].id))) {
-                        unsaved.push(tracks[i]);
-                    }
+                if (!(tracks[i].id in this.savedTracks) && !(tracks[i].id in unsaved) && !(await this.trackInDatabase(tracks[i].id))) {
+                    unsaved[tracks[i].id] = {track: tracks[i]};
                 }     
             }
-            if (unsaved.length > 0) {
-                console.log("UNSAVED");
-                let invalid = (unsaved[0].artists == null || unsaved[0].name == null || unsaved[0].album == null)
-                let trackData = unsaved;
-                if (invalid)
-                    trackData = [];
-                let audioFeatures = [];
-                while (unsaved.length > 0) {
+            let ids = Object.keys(unsaved);
+            if (ids.length > 0) {
+                let invalid = (!('artists' in unsaved[ids[0]]) || !('name' in unsaved[ids[0]]) || !('album' in unsaved[ids[0]]))
+                let parsedIDS = Object.keys(unsaved);
+                while (parsedIDS.length > 0) {
                     let max = 50;
-                    if (unsaved.length < 50) 
-                        max = unsaved.length;
-                    let cutTracks = unsaved.splice(0, max);
-                    let ids = cutTracks.map(track => track.id);
-                    if (invalid)
-                        trackData = this.concatUnique(trackData, await this.getTracks(ids));
-                    audioFeatures = this.concatUnique(audioFeatures,  await this.getAudioFeaturesForTracks(ids));
+                    if (parsedIDS.length < 50) 
+                        max = parsedIDS.length;
+                    let cutIds = parsedIDS.splice(0, max);
+                    if (invalid) {
+                        let trackData = await this.getTracks(cutIds);
+                        for (let i = 0; i < trackData.length; i++) {
+                            unsaved[trackData[i].id].track = trackData[i];
+                        }
+                    }
+                    let audioFeatures = await this.getAudioFeaturesForTracks(cutIds);
+                    for (let i = 0; i < audioFeatures.length; i++) {
+                        unsaved[audioFeatures[i].id].audioFeatures = audioFeatures[i];
+                    }
                 }
-                for (let i = 0; i < trackData.length; i++) {
-                    for (let j = 0; j < trackData[i].artists.length; j++)
-                        artists = this.concatUnique(artists, trackData[i].artists.map(artist => artist.id));
+                console.log(unsaved);
+                for (let i = 0; i < ids.length; i++) {
+                    if (!('audioFeatures' in unsaved[ids[i]]) || unsaved[ids[i]] == null) {
+                        console.log("AUDIO FEATURES MISSING");
+                        continue;
+                    }
+                    for (let j = 0; j < unsaved[ids[i]].track.artists.length; j++) {
+                        if (!(unsaved[ids[i]].track.artists[j].id in newArtists))
+                            newArtists[unsaved[ids[i]].track.artists[j].id] = unsaved[ids[i]].track.artists[j];
+                    }
                     let image;
-                    if (trackData[i].album.images.length == 0) 
+                    if (unsaved[ids[i]].track.album.images.length == 0) 
                         image = "Undefined";
                     else    
-                        image = trackData[i].album.images[0].url;
+                        image = unsaved[ids[i]].track.album.images[0].url;
                     let track = new Track({
-                        _id: trackData[i].id,
-                        name: trackData[i].name,
-                        artists: trackData[i].artists.map(artist => artist.id),
+                        _id: ids[i] 
+                        name: unsaved[ids[i]].track.name,
+                        artists: unsaved[ids[i]].track.artists.map(artist => artist.id),
                         image: image,
-                        key: audioFeatures[i].key,
-                        mode: audioFeatures[i].mode,
-                        tempo: audioFeatures[i].tempo,
-                        valence: audioFeatures[i].valence,
-                        danceability: audioFeatures[i].danceability,
-                        energy: audioFeatures[i].energy,
-                        acousticness: audioFeatures[i].acousticness,
-                        instrumentalness: audioFeatures[i].instrumentalness,
-                        liveness: audioFeatures[i].liveness,
-                        loudness: audioFeatures[i].loudness,
-                        speechiness: audioFeatures[i].speechiness,
+                        key: unsaved[ids[i]].audioFeatures.key,
+                        mode: unsaved[ids[i]].audioFeatures.mode,
+                        tempo: unsaved[ids[i]].audioFeatures.tempo,
+                        valence: unsaved[ids[i]].audioFeatures.valence,
+                        danceability: unsaved[ids[i]].audioFeatures.danceability,
+                        energy: unsaved[ids[i]].audioFeatures.energy,
+                        acousticness: unsaved[ids[i]].audioFeatures.acousticness,
+                        instrumentalness: unsaved[ids[i]].audioFeatures.instrumentalness,
+                        liveness: unsaved[ids[i]].audioFeatures.liveness,
+                        loudness: unsaved[ids[i]].audioFeatures.loudness,
+                        speechiness: unsaved[ids[i]].audioFeatures.speechiness,
                     });
-                    console.log(track);
                     await track.save();
                 }
-                await this.saveArtists(artists);
+                await this.saveArtists(Object.values(newArtists));
             }
             return tracks.map(track => track.id);
         } catch(error) {
@@ -318,12 +342,13 @@ class MelomaniacProcessor {
         try {
             let unsaved = [];
             for (let i = 0; i < artists.length; i++) {
-                if (this.savedArtists[artists[i].id] == null && !(await this.artistInDatabase(artists[i].id)))
+                this.artistNum += 1;
+                if (!(artists[i].id in this.savedArtists) && !(await this.artistInDatabase(artists[i].id)))
                     unsaved.push(artists[i]);
             }
             if (unsaved.length > 0) {
                 let artistData;
-                if (unsaved[0].name == null || unsaved[0].genres == null) {
+                if (!('name' in unsaved[0]) || !('genres' in unsaved[0])) {
                     artistData = [];
                     while (unsaved.length > 0) {
                         let max = 50;
