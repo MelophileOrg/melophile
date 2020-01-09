@@ -23,6 +23,7 @@ class MelomaniacProcessor {
             this.socket.emit('ProcessMessage', {message: "Processing Top Charts"});
             await this.processTopCharts();
             this.socket.emit('ProcessMessage', {message: "Processing Playlists"});
+            this.totalSent = false;
             await this.processUserPlaylists(0);
             this.socket.emit('ProcessMessage', {message: "Saving Data"});
             await this.updateUser();
@@ -122,8 +123,7 @@ class MelomaniacProcessor {
     async retrieveSavedTracks(offset) {
         try {
             this.socket.emit('ProcessedTracks', {processed: offset});
-            let tracks;
-            tracks = await this.getSavedTracks(offset);
+            let tracks = await this.getSavedTracks(offset);
             await this.saveTracks(tracks.map(track => track.track));
             for (let i = 0; i < tracks.length; i++)
                 this.savedTracks[tracks[i].track.id] = (await new Date(tracks[i].added_at)).getTime();
@@ -176,7 +176,9 @@ class MelomaniacProcessor {
 
     async processUserPlaylists(offset) {
         try {
+            this.socket.emit('ProcessedTracks', {processed: offset});
             let playlists = await this.getUserPlaylists(offset);
+            let playlistNum = playlists.length;
             this.playlists = playlists.map(playlist => playlist.id);
             for (let i = 0; i < playlists.length; i++) {
                 let tracks = [];
@@ -220,7 +222,7 @@ class MelomaniacProcessor {
                 }
                await this.saveTracks(tracks);
             }
-            if (!(playlists.length < 50)) 
+            if (!(playlistNum < 50)) 
                 await this.processUserPlaylists(offset + 50);
         } catch(error) {
             this.socket.emit('ConsoleLog', {message: error}); 
@@ -259,11 +261,22 @@ class MelomaniacProcessor {
                 }     
             }
             if (unsaved.length > 0) {
-                console.log(unsaved.length);
+                console.log("UNSAVED");
+                let invalid = (unsaved[0].artists == null || unsaved[0].name == null || unsaved[0].album == null)
                 let trackData = unsaved;
-                if (trackData[0].artists == null || trackData[0].name == null || trackData[0].album == null) 
-                    trackData = await this.getTracks(unsaved.map(track => track.id));
-                let audioFeatures = await this.getAudioFeaturesForTracks(unsaved.map(track => track.id));
+                if (invalid)
+                    trackData = [];
+                let audioFeatures = [];
+                while (unsaved.length > 0) {
+                    let max = 50;
+                    if (unsaved.length < 50) 
+                        max = unsaved.length;
+                    let cutTracks = unsaved.splice(0, max);
+                    let ids = cutTracks.map(track => track.id);
+                    if (invalid)
+                        trackData = this.concatUnique(trackData, await this.getTracks(ids));
+                    audioFeatures = this.concatUnique(audioFeatures,  await this.getAudioFeaturesForTracks(ids));
+                }
                 for (let i = 0; i < trackData.length; i++) {
                     for (let j = 0; j < trackData[i].artists.length; j++)
                         artists = this.concatUnique(artists, trackData[i].artists.map(artist => artist.id));
@@ -289,6 +302,7 @@ class MelomaniacProcessor {
                         loudness: audioFeatures[i].loudness,
                         speechiness: audioFeatures[i].speechiness,
                     });
+                    console.log(track);
                     await track.save();
                 }
                 await this.saveArtists(artists);
@@ -308,7 +322,6 @@ class MelomaniacProcessor {
                     unsaved.push(artists[i]);
             }
             if (unsaved.length > 0) {
-                console.log("Artist: ", unsaved.length);
                 let artistData;
                 if (unsaved[0].name == null || unsaved[0].genres == null) {
                     artistData = [];
@@ -316,8 +329,8 @@ class MelomaniacProcessor {
                         let max = 50;
                         if (unsaved.length < 50) 
                             max = unsaved.length;
-                        let ids = (unsaved.splice(0, max)).map(artist => artist.id);
-                        console.log(ids);
+                        let cutArtists = unsaved.splice(0, max);
+                        let ids = cutArtists.map(artist => artist.id);
                         artistData = this.concatUnique(artistData, await this.getArtists(ids));
                     }
                 }
@@ -330,7 +343,6 @@ class MelomaniacProcessor {
                         image = "Undefined";
                     else    
                         image = artistData[i].images[0].url;
-                    console.log("Saving Artist");
                     let artist = new Artist({
                         _id: artistData[i].id,
                         name: artistData[i].name,
@@ -530,6 +542,9 @@ class MelomaniacProcessor {
     async getUserPlaylists(offset) {
         try {
             let response = await this.spotifyAPI.getUserPlaylists({limit: 50, offset: offset});
+            if (!this.totalSent) 
+                this.socket.emit('TotalTracks', {total: response.body.total});
+            this.totalSent = true;
             return response.body.items;
         } catch (error) {
             this.socket.emit('ConsoleLog', {message: error}); 
