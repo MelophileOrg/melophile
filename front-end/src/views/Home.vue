@@ -36,7 +36,10 @@ export default {
     },
     progressMessage() {
       return this.$store.state.progress.message;
-    }
+    },
+  },
+  created() {
+    
   }
 }
 </script>

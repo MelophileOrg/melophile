@@ -38,7 +38,6 @@ var io = socket(server);
 let clients = [];
 
 io.on('connection', function(socket) {
-  console.log("Clients:", clients.length);
   clients.push(socket.id);
 
   require('./auth.js')(socket);
@@ -49,10 +48,10 @@ io.on('connection', function(socket) {
 
   socket.on('getClientNum', function() {
     socket.emit('ConsoleLog', {message: clients.length});
+    socket.emit('TEST', {message: "TEST"});
   });
   
   socket.on('disconnect', function() {
-    console.log("Clients:", clients.length);
     clients.splice(clients.indexOf(socket.id), 1);
   });
 });

@@ -5,6 +5,9 @@ import Vuex from 'vuex'
 import actions from './actions.js';
 import mutations from './mutations.js';
 
+let data_collector = require('./data_collector.js');
+let DataCollector = data_collector.class;
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -14,7 +17,6 @@ export default new Vuex.Store({
       refreshToken: null,
       state: null,
     },
-
     progress: {
       message: "MESSAGE",
       tracks: {
@@ -31,8 +33,9 @@ export default new Vuex.Store({
         processed: 0,
         done: false
       }
-
     },
+    
+    data: new DataCollector(),
 
   },
   mutations,

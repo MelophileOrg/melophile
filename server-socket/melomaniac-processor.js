@@ -17,7 +17,9 @@ class MelomaniacProcessor {
 
     async start() {
         try {
-            this.artistNum = 0;
+            console.log("Processing Library:", this.socket.id);
+            this.newTrackNum = 0;
+            this.newArtistNum = 0;
             if (!this.tokenSet) 
                 return;
             this.socket.emit('ProcessMessage', {message: "Creating User"});
@@ -32,7 +34,9 @@ class MelomaniacProcessor {
             this.socket.emit('ProcessMessage', {message: "Saving Data"});
             await this.updateUser();
             this.socket.emit('ProcessMessage', {message: "Finished"});
-            console.log(this.artistNum);
+            console.log("Processing Finished:", this.socket.id);
+            console.log('New Tracks:', this.newTrackNum);
+            console.log('New Artists:', this.newArtistNum);
         } catch(error) {
             this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
@@ -65,10 +69,31 @@ class MelomaniacProcessor {
                         public: false,
                         protected: true,
                         values: false, // saved songs, artists, genres,
-                        audioFeatures: {
-                            characteristics: false, // valence, danceability, energy
-                            averages: false, // tempo, mode, loudness, key
-                            probabilities: false, // speechiness, instrumentalness, acousticness, liveness
+                        average: {
+                            valence: false,
+                            danceability: false,
+                            energy: false,
+                            tempo: false,
+                            mode: false,
+                            loudness: false,
+                            key: false,
+                            speechiness: false,
+                            instrumentalness: false,
+                            acousticness: false,
+                            liveness: false,
+                        },
+                        distribution: {
+                            valence: false,
+                            danceability: false,
+                            energy: false,
+                            tempo: false,
+                            mode: false,
+                            loudness: false,
+                            key: false,
+                            speechiness: false,
+                            instrumentalness: false,
+                            acousticness: false,
+                            liveness: false,
                         },
                         topPlayed: {
                             tracks: false,
@@ -89,19 +114,23 @@ class MelomaniacProcessor {
                             acousticness: false,
                             liveness: false,
                         },
-                        history: {
+                        timeline: {
                             added: false,
                             months: false,
                             years: false,
-                            valence: false,
-                            danceability: false,
-                            energy: false,
-                            tempo: false,
-                            loudness: false,
-                            speechiness: false,
-                            instrumentalness: false,
-                            acousticness: false,
-                            liveness: false,
+                            features: {
+                                valence: false,
+                                danceability: false,
+                                energy: false,
+                                tempo: false,
+                                loudness: false,
+                                speechiness: false,
+                                instrumentalness: false,
+                                acousticness: false,
+                                liveness: false,
+                            },
+                            artists: false,
+                            genres: false,
                         },
                     },
                 });
@@ -203,7 +232,11 @@ class MelomaniacProcessor {
                     let trackData = await this.getPlaylistTracks(playlists[i].id, (j * 50));
                     tracks = await this.concatUnique(tracks, await trackData.map(track => track.track));
                     for (let k = 0; k < trackData.length; k++) {
-                        playlistTracks[trackData[k].track.id] = (await new Date(trackData[k].added_at)).getTime();
+                        if (trackData[k] == null || trackData[k].track == null) {
+                            continue;
+                        } else {
+                            playlistTracks[trackData[k].track.id] = (await new Date(trackData[k].added_at)).getTime();
+                        }
                     }
                 }
                 let image;
@@ -272,6 +305,9 @@ class MelomaniacProcessor {
             let newArtists = {};
             for (let i = 0; i < tracks.length; i++) {
                 if (!(tracks[i].id in this.savedTracks) && !(tracks[i].id in unsaved) && !(await this.trackInDatabase(tracks[i].id))) {
+                    if (tracks[i] == null)
+                        continue;
+                    this.newTrackNum += 1;
                     unsaved[tracks[i].id] = {track: tracks[i]};
                 }     
             }
@@ -287,18 +323,24 @@ class MelomaniacProcessor {
                     if (invalid) {
                         let trackData = await this.getTracks(cutIds);
                         for (let i = 0; i < trackData.length; i++) {
-                            unsaved[trackData[i].id].track = trackData[i];
+                            if (trackData[i] == null) {
+                                continue;
+                            } else {
+                                unsaved[trackData[i].id].track = trackData[i];
+                            }
                         }
                     }
                     let audioFeatures = await this.getAudioFeaturesForTracks(cutIds);
                     for (let i = 0; i < audioFeatures.length; i++) {
-                        unsaved[audioFeatures[i].id].audioFeatures = audioFeatures[i];
+                        if (audioFeatures[i] != null && audioFeatures[i].id in unsaved) {
+                            unsaved[audioFeatures[i].id].audioFeatures = audioFeatures[i];
+                        } else {
+                            continue;
+                        }
                     }
                 }
-                console.log(unsaved);
                 for (let i = 0; i < ids.length; i++) {
-                    if (!('audioFeatures' in unsaved[ids[i]]) || unsaved[ids[i]] == null) {
-                        console.log("AUDIO FEATURES MISSING");
+                    if (unsaved[ids[i]] == null || !('audioFeatures' in unsaved[ids[i]])) {
                         continue;
                     }
                     for (let j = 0; j < unsaved[ids[i]].track.artists.length; j++) {
@@ -311,7 +353,7 @@ class MelomaniacProcessor {
                     else    
                         image = unsaved[ids[i]].track.album.images[0].url;
                     let track = new Track({
-                        _id: ids[i] 
+                        _id: ids[i],
                         name: unsaved[ids[i]].track.name,
                         artists: unsaved[ids[i]].track.artists.map(artist => artist.id),
                         image: image,
@@ -342,9 +384,10 @@ class MelomaniacProcessor {
         try {
             let unsaved = [];
             for (let i = 0; i < artists.length; i++) {
-                this.artistNum += 1;
-                if (!(artists[i].id in this.savedArtists) && !(await this.artistInDatabase(artists[i].id)))
+                if (!(artists[i].id in this.savedArtists) && !(await this.artistInDatabase(artists[i].id))) {
+                    this.newArtistNum += 1;
                     unsaved.push(artists[i]);
+                }
             }
             if (unsaved.length > 0) {
                 let artistData;

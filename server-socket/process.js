@@ -6,7 +6,7 @@ let process = function(socket) {
         let processor = await new MelomaniacProcessor(data.accessToken, socket);
         await processor.start();
         socket.emit('ConsoleLog', {message: "Done"});
-    })
+    });
 }
   
 module.exports = process;
