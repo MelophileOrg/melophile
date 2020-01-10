@@ -38,11 +38,7 @@ Track = {
     danceability: Number,
   },
   genre: Array,
-
 }
-
-
-
 */
 
 export default {
