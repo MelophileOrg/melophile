@@ -194,7 +194,7 @@ let analysis = function(socket) {
         }
     });
 
-    // {id: String}
+    // {trackID: String}
     /*
         Track = {
         name: String,
@@ -231,8 +231,8 @@ let analysis = function(socket) {
 */
     socket.on('track', async function(data) { 
         try {
-            let track = await Track.find({_id: data.id});
-            track.analysis = await getTrackAudioAnalysis(data.id, spotifyAPI);
+            let track = await Track.find({_id: data.trackID});
+            track.analysis = await getTrackAudioAnalysis(data.trackID, spotifyAPI);
             track.artists = await getTrackArtists(track.artists, spotifyAPI);
         } catch(error) {
             console.log(error);

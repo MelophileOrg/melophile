@@ -59,7 +59,9 @@ class MelomaniacProcessor {
                     _id: userData.id,
                     username: userData.display_name,
                     images: userData.images,
-                    tracks: [],
+                    tracks: {},
+                    artists: {},
+                    genres: {},
                     topPlayed: {
                         tracks: [],
                         artists: [],
@@ -147,6 +149,7 @@ class MelomaniacProcessor {
     async processSavedTracks() {
         try {
             this.savedTracks = {};
+            this.savedGenres = {};
             this.savedArtists = {};
             await this.retrieveSavedTracks(0);
         } catch(error) {
@@ -159,7 +162,7 @@ class MelomaniacProcessor {
         try {
             this.socket.emit('ProcessedTracks', {processed: offset});
             let tracks = await this.getSavedTracks(offset);
-            await this.saveTracks(tracks.map(track => track.track));
+            await this.saveTracks(tracks.map(track => track.track), true);
             for (let i = 0; i < tracks.length; i++)
                 this.savedTracks[tracks[i].track.id] = (await new Date(tracks[i].added_at)).getTime();
             if (!(tracks.length < 50))
@@ -188,7 +191,7 @@ class MelomaniacProcessor {
     async retrieveTopTracks() {
         try {
             for (let i = 0; i < 3; i++) {
-                let trackIDs = await this.saveTracks(await this.getTopTracks(i, 0));
+                let trackIDs = await this.saveTracks(await this.getTopTracks(i, 0), false);
                 this.topTracks.push(trackIDs);
             }
         } catch(error) {
@@ -200,7 +203,7 @@ class MelomaniacProcessor {
     async retrieveTopArtists() {
         try {
             for (let i = 0; i < 3; i++) {
-                let artistIDs = await this.saveArtists(await this.getTopArtists(i, 0));
+                let artistIDs = await this.saveArtists(await this.getTopArtists(i, 0), false);
                 this.topArtists.push(artistIDs);
             }
         } catch(error) {
@@ -269,7 +272,7 @@ class MelomaniacProcessor {
                     });
                     await playlist.save();
                 }
-               await this.saveTracks(tracks);
+               await this.saveTracks(tracks, false);
             }
             if (!(playlists.length < 50)) 
                 await this.retrieveUserPlaylists(offset + 50);
@@ -288,6 +291,8 @@ class MelomaniacProcessor {
             {
                 $set: {
                     "tracks": this.savedTracks,
+                    "artists": this.savedArtists,
+                    "genres": this.savedGenres,
                     "topPlayed.tracks": this.topTracks, 
                     "topPlayed.artists": this.topArtists,
                     "playlists": this.playlists,
@@ -299,7 +304,7 @@ class MelomaniacProcessor {
         }
     }
 
-    async saveTracks(tracks) {
+    async saveTracks(tracks, liked) {
         try {
             let unsaved = {};
             let newArtists = {};
@@ -345,7 +350,9 @@ class MelomaniacProcessor {
                     }
                     for (let j = 0; j < unsaved[ids[i]].track.artists.length; j++) {
                         if (!(unsaved[ids[i]].track.artists[j].id in newArtists))
-                            newArtists[unsaved[ids[i]].track.artists[j].id] = unsaved[ids[i]].track.artists[j];
+                            newArtists[unsaved[ids[i]].track.artists[j].id] = {artist: unsaved[ids[i]].track.artists[j], tracks: [unsaved[ids[i]].track.id]};
+                        else 
+                            newArtists[unsaved[ids[i]].track.artists[j].id].tracks.push(unsaved[ids[i]].track.id);
                     }
                     let image;
                     if (unsaved[ids[i]].track.album.images.length == 0) 
@@ -371,7 +378,7 @@ class MelomaniacProcessor {
                     });
                     await track.save();
                 }
-                await this.saveArtists(Object.values(newArtists));
+                await this.saveArtists(Object.values(newArtists), liked);
             }
             return tracks.map(track => track.id);
         } catch(error) {
@@ -380,13 +387,19 @@ class MelomaniacProcessor {
         }
     }
 
-    async saveArtists(artists) {
+    async saveArtists(artists, liked) {
         try {
             let unsaved = [];
             for (let i = 0; i < artists.length; i++) {
-                if (!(artists[i].id in this.savedArtists) && !(await this.artistInDatabase(artists[i].id))) {
-                    this.newArtistNum += 1;
-                    unsaved.push(artists[i]);
+                if (!(artists[i].artist.id in this.savedArtists)) {
+                    if (liked)
+                        this.saveArtists[artists[i].artist.id] = artists[i].tracks;
+                    if (!(await this.artistInDatabase(artists[i].artist.id))) {
+                        this.newArtistNum += 1;
+                        unsaved.push(artists[i].artist);
+                    }
+                } else if (liked) {
+                    this.saveArtists[artists[i].artist.id] = this.saveArtists[artists[i].artist.id].concat(artist[i].tracks);
                 }
             }
             if (unsaved.length > 0) {
@@ -406,6 +419,14 @@ class MelomaniacProcessor {
                     artistData = unsaved;
                 }
                 for (let i = 0; i < artistData.length; i++) {
+                    if (liked) {
+                        for (let j = 0; j < artistData[i].genres.length; j++) {
+                            if (artistData[i].genres[j] in this.savedGenres)
+                                this.savedGenres[artistData[i].genres[j]].push(artistData[i].id);
+                            else 
+                                this.savedGenres[artistData[i].genres[j]] = [artistData[i].id];
+                        }
+                    }
                     let image;
                     if (artistData[i].images.length == 0) 
                         image = "Undefined";
@@ -420,7 +441,7 @@ class MelomaniacProcessor {
                     await artist.save();
                 }
             }
-            return artists.map(artist => artist.id);
+            return artists.map(artist => artist.artist.id);
         } catch(error) {
             this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
