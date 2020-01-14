@@ -1,740 +1,460 @@
 const mongoose = require('mongoose');
-const express = require("express");
-const router = express.Router();
 
 let SpotifyWebApi = require('spotify-web-api-node');
 
 const Items = require("./items.js");
 const Track = Items.track;
 const Artist = Items.artist;
+const Playlist = Items.playlist;
 const User = Items.user;
 
-// INDIVIDUAL ITEMS
-router.get("/album/:id", async (req, res) => {
-    
-});
-
-router.get("/artist/:id", async (req, res) => {
-
-});
-
-router.get("/genre/:id", async (req, res) => {
-    
-});
-
-router.get("/playlist/:id", async (req, res) => {
-    
-});
-
-router.get("/track/:id", async (req, res) => {
-
-});
-
-// LIBRARY ANALYSIS
-
-router.get("/library/:user/average/all", async (req, res) => {
+async function authorize(userID, fields) {
     try {
-        let results = {};
-        let tracks =  await retrieveUserTracks(await getUserData(req.params.user));
-        let audioFeatures = ["valence", "danceability", "energy", "acousticness", "instrumentalness", "liveness", "loudness", "speechiness", "key", "mode", "tempo"];
-        for (let i = 0; i < audioFeatures.length; i++) 
-            results[audioFeatures[i]] = await getAudioFeatureAverage(audioFeatures[i], tracks);
-        res.send(results);
+        let user = await getUserData(userID);
+        if (user == null) return false;
+        if (user.privacy.protected) return false;
+        let transverse = user;
+        for (let i = 0; i < fields.length; i++) {
+            if (i < (fields.length - 1)) transverse = transverse[fields[i]];
+            else {
+                if (fields[i] == 'all') {
+                    let keys = Object.keys(transverse);
+                    for (let j = 0; j < keys.length; j++)
+                        if (!transverse[keys[j]]) return false;
+                    return true;
+                } else {
+                    return transverse[fields[i]];
+                }
+            }
+        }
     } catch(error) {
         console.log(error);
-        res.sendStatus(500);
     }
-});
+};
 
-router.get("/library/:user/average/:audioFeature", async (req, res) => {
-    try {
-        res.send({average: (await getAudioFeatureAverage(req.params.audioFeature,  await retrieveUserTracks(await getUserData(req.params.user))))});
-    } catch(error) {
-        console.log(error);
-        res.sendStatus(500);
-    }
-});
-
-router.get("/library/:user/distribution/all", async (req, res) => {
-    try {
-        let results = {};
-        let tracks =  await retrieveUserTracks(await getUserData(req.params.user));
-        let audioFeatures = ["valence", "danceability", "energy", "acousticness", "instrumentalness", "liveness", "loudness", "speechiness", "key", "mode", "tempo"];
-        for (let i = 0; i < audioFeatures.length; i++) 
-            results[audioFeatures[i]] = await getAudioFeatureDistribution(audioFeatures[i], tracks);
-        res.send(results);
-    } catch(error) {
-        console.log(error);
-        res.sendStatus(500);
-    }
-});
-
-router.get("/library/:user/distribution/:audioFeature", async (req, res) => {
-    try {
-        ;
-        res.send({distribtion: (await getAudioFeatureDistribution(req.params.audioFeature, await retrieveUserTracks(await getUserData(req.params.user))))});
-    } catch(error) {
-        console.log(error);
-        res.sendStatus(500);
-    }
-});
-
-// HISTORY
-
-router.get("/history/:user/timeline/added", async (req, res) => {
-    
-});
-
-router.get("/history/:user/timeline/:audioFeature", async (req, res) => {
-    
-});
-
-router.get("/history/:user/:month/:year", async (req, res) => {
-    
-});
-
-router.get("/history/:user/:year", async (req, res) => {
-    
-});
-
-// CHARTS
-
-router.get("/charts/:user/played/tracks/:offset", async (req, res) => {
-    
-});
-
-router.get("/charts/:user/played/artists/:offset", async (req, res) => {
-
-});
-
-router.get("/charts/:user/saved/artists/:offset", async (req, res) => {
-
-});
-
-router.get("/charts/:user/saved/genres/:offset", async (req, res) => {
-
-});
-
-// EXTREMES
-
-router.get("/extemes/:user/min/:audioFeature/:offset", async (req, res) => {
-
-});
-
-router.get("/extemes/:user/max/:audioFeature/:offset", async (req, res) => {
-
-});
-
-// SEARCH
-
-router.get("/search/:query/:offset", async (req, res) => {
-    
-});
-
-router.get("/recommend/:offset", async (req, res) => {
-    
-});
-
-async function getUserData(id) {
-    let user = await User.findById(id);
-    if (user == null) res.sendStatus(500);
-    return user;
-}
+async function getUserData(userID) {
+    return await User.findOne({_id: userID});
+};
 
 async function retrieveUserTracks(user) {
-    return await Track.find({"_id": {$in: user.tracks}});
-}
+    try {
+        return await Track.find({"_id": {$in: user.tracks}});
+    } catch(error) {
+        console.log(error);
+    }
+};
 
 async function retrieveUserTrackFields(user, projection) {
-    return await Track.find({"_id": {$in: user.tracks}}, projection);
-}
+    try {
+        return await Track.find({"_id": {$in: user.tracks}}, projection);
+    } catch(error) {
+        console.log(error);
+    }
+};
 
 function getAudioFeatureAverage(audioFeature, tracks) {
-    const REDUCER = (accumulator, currentValue) => accumulator + currentValue[audioFeature];
-    let total = tracks.reduce(REDUCER);
-    return (total / tracks.length);
+    try {
+        const REDUCER = (accumulator, currentValue) => accumulator + currentValue[audioFeature];
+        let total = tracks.reduce(REDUCER);
+        return (total / tracks.length);
+    } catch(error) {
+        console.log(error);
+    }
 }
 
 function getAudioFeatureDistribution(audioFeature, tracks) {
-    let distribution = [];
-    for (let i = 0; i < 21; i++) 
-        distribution.push(0);
-    for (let i = 0; i < tracks.length; i++)
-        distribution[Math.round(tracks[i][audioFeature] * 20)] += 1;
-    return distribution;
+    try {
+        let distribution = [];
+        for (let i = 0; i < 21; i++) 
+            distribution.push(0);
+        for (let i = 0; i < tracks.length; i++)
+            distribution[Math.round(tracks[i][audioFeature] * 20)] += 1;
+        return distribution;
+    } catch(error) {
+        console.log(error);
+    }
+};
+
+async function getTrackAudioAnalysis(trackID, spotifyAPI) {
+    try {
+        let segmentNum = 80;
+        let audioAnalysis = await spotifyAPI.getAudioAnalysisForTrack(trackID);
+        if (audioAnalysis.segments.length < segmentNum) segmentNum = audioAnalysis.segments.length;
+        let width = Math.round(audioAnalysis.segments.length / segmentNum);
+        let newSegments = [];
+        for (var i = 0; i < segmentNum; i++) {
+            let itemIndex = Math.round(width * i);
+            if (itemIndex > audioAnalysis.segments.length - 1)
+                itemIndex = audioAnalysis.segments.length - 2;
+            let sum = 0;
+            for (var j = 0; j < audioAnalysis.segments[itemIndex].pitches.length; j++)
+                sum += audioAnalysis.segments[itemIndex].pitches[j];
+            let averagePitch = sum / audioAnalysis.segments[itemIndex].pitches.length; 
+            let color = await HSVtoRGB({hue: (((1 - averagePitch) * 229 + -50) / 360), saturation: 0.51, value: 0.89});
+            let loudness = (Math.round(((audioAnalysis.segments[itemIndex].loudness_max / 60) + 1) * 100) / 100);
+            newSegments.push({
+                start: Math.round(audioAnalysis.segments[itemIndex].start),
+                loudness_max: loudness, 
+                red: color.r,
+                green: color.g,
+                blue: color.b,
+            });
+        }
+        return newSegments;
+    } catch(error) {
+        console.log(error);
+    }
+};
+
+function HSVtoRGB(payload) {
+    var r, g, b, i, f, p, q, t;
+    i = Math.floor(payload.hue * 6);
+    f = payload.hue * 6 - i;
+    p = payload.value * (1 - payload.saturation);
+    q = payload.value * (1 - f * payload.saturation);
+    t = payload.value * (1 - (1 - f) * payload.saturation);
+    switch (i % 6) {
+        case 0: r = payload.value, g = t, b = p; break;
+        case 1: r = q, g = payload.value, b = p; break;
+        case 2: r = p, g = payload.value, b = t; break;
+        case 3: r = p, g = q, b = payload.value; break;
+        case 4: r = t, g = p, b = payload.value; break;
+        case 5: r = payload.value, g = p, b = q; break;
+    }
+    return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255)
+    };
+};
+
+async function getTrackArtists(artistIDs, spotifyAPI) {
+    
 }
 
+let analysis = function(socket) {
+    let spotifyAPI = new SpotifyWebApi();
+    let userID = null;
 
-// const express = require('express');
-// const axios = require('axios');
-// const router = express.Router();
+    // {accessToken: String}
+    socket.on('inicialize_analysis', async function(data) {
+        try {
+            await spotifyAPI.setAccessToken(data.accessToken);
+            let user = await spotifyAPI.getMe();
+            userID = user.id;
+            this.socket.emit('AnalysisReady');
+        } catch(error) {
+            console.log(error);
+        }
+    });
 
-// const dotenv = require('dotenv');
-// dotenv.config();
+    socket.on('values', async function(data) { 
+        try {
+            if (data.userID == userID || authorize(userID, ['privacy', 'values'])) {
 
-// const discogsKey = process.env.discogsKey;
-// const discogsSecret = process.env.discogsSecret;
+            }
+        } catch(error) {
+            console.log(error);
+        }
+    });
+    
+    // {id: String}
+    socket.on('album', async function(data) { 
+        try {
 
-// router.get("/artist/:id", async (req, res) => { 
-//     try {
-//         let response = await axios.get('https://api.discogs.com/database/search?q=' + req.params.id + '&type=artist&key=' + discogsKey + '&secret=' + discogsSecret);
-//         let artist_id;
-//         for (let i = 0; i < response.data.results.length; i++) {
-//             if (response.data.results[i].type == 'artist') {
-//                 artist_id = response.data.results[i].id;
-//                 break;
-//             }
-//         }
-//         let artist = await axios.get('https://api.discogs.com/artists/' + artist_id + '?key=' + discogsKey + '&secret=' + discogsSecret);
-//         res.send(artist.data);
-//     } catch (error) {
-//         console.log(error);
-//         return res.sendStatus(500);
-//     }
-// });
+        } catch(error) {
+            console.log(error);
+        }
+    });
 
-////////////////////////////////////////////////////////////////////////////////////////////
-// SPOTIFY API REQUESTS ////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////
-// USERS
-const getMe = async (spotifyAPI) => {
-    try {
-        let response = await spotifyAPI.getMe();
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    }
-};
-const getUser = async (spotifyAPI, userID) => {
-    try {
-        let response = await spotifyAPI.getUser(userID);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    }
-};
-const followUser = async (spotifyAPI, userID) => {
-    try {
-        let response = await spotifyAPI.followUsers([userID]);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    }
-};
-const unfollowUser = async (spotifyAPI) => {
-    try {
-        let response = await spotifyAPI.unfollowUsers([userID]);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    }
-};
-const checkFollowingUser = async (spotifyAPI) => {
-    try {
-        let response = await spotifyAPI.isFollowingUsers([userID]);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    }
-};
-// TRACKS
-const getTrack = async (spotifyAPI, trackID) => {
-    try {
-        let response = await spotifyAPI.getTrack(trackID);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    }
-};
-const getTracks = async (spotifyAPI, trackIDs) => {
-    try {
-        let response = await spotifyAPI.getTracks(trackIDs);
-        console.log(response.tracks);
-        return response.tracks;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    }
-};
-const getSavedTracks = async (spotifyAPI, offset) => {
-    try {
-        let response = await spotifyAPI.getMySavedTracks({limit: 50, offset: offset});
-        console.log(response.items);
-        return response.items;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    }  
-};
-const getAudioFeaturesForTrack = async (spotifyAPI, trackID) => {
-    try {
-        let response = await spotifyAPI.getAudioFeaturesForTrack(trackID);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    }  
-};
-const getAudioAnalysisForTrack = async (spotifyAPI, trackID) => {
-    try {
-        let response = await spotifyAPI.getAudioAnalysisForTrack(trackID);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    }    
-};
-const getAudioFeaturesForTracks = async (spotifyAPI, trackIDs) => {
-    try {
-        let response = await spotifyAPI.getAudioFeaturesForTracks(trackIDs);
-        console.log(response.audio_features);
-        return response.audio_features;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    }
-};
-const addToSavedTracks = async (spotifyAPI, trackIDs) => {
-    try {
-        let response = await spotifyAPI.addToMySavedTracks(trackIDs);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    }
-};
-const removeSavedTrack = async (spotifyAPI, trackIDs) => {
-    try {
-        let response = await spotifyAPI.removeFromMySavedTracks(trackIDs);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    }
-};
-const checkSavedTracks = async (spotifyAPI, trackIDs) => {
-    try {
-        let response = await spotifyAPI.containsMySavedTracks(trackIDs);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-// ARTIST
-const getArtist = async (spotifyAPI, artistID) => {
-    try {
-        let response = await spotifyAPI.getArtist(artistID);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const getArtists = async (spotifyAPI, artistIDs) => {
-    try {
-        let response = await spotifyAPI.getArtists(artistIDs);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const getArtistAlbums = async (spotifyAPI, artistID, offset) => {
-    try {
-        let response = await spotifyAPI.getArtistAlbums(artistID, {limit: 50, offset: offset});
-        console.log(response.items);
-        return response.items;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const getArtistTopTracks = async (spotifyAPI, artistID) => {
-    try {
-        let response = await spotifyAPI.getArtistTopTracks(artistID);
-        console.log(response.tracks);
-        return response.tracks;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    }  
-};
-const getArtistsRelatedArtists = async (spotifyAPI, artistID) => {
-    try {
-        let response = await spotifyAPI.getArtistRelatedArtists(artistID);
-        console.log(response.artists);
-        return response.artists;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    }  
-};
-const followArtist = async (spotifyAPI, artistIDs) => {
-    try {
-        let response = await spotifyAPI.followArtists(artistIDs);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const unfollowArtist = async (spotifyAPI, artistIDs) => {
-    try {
-        let response = await spotifyAPI.unfollowArtists(artistIDs);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const checkFollowingArtist = async (spotifyAPI, artistIDs) => {
-    try {
-        let response = await spotifyAPI.isFollowingArtists(artistIDs);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const getFollowingArtists = async (spotifyAPI, artistID) => {
-    try {
-        let response = await spotifyAPI.getFollowedArtists({limit: 50, after: artistID});
-        console.log(response.artists);
-        return response.artists;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-// ALBUMS
-const getAlbum = async (spotifyAPI, albumID) => {
-    try {
-        let response = await spotifyAPI.getAlbum(albumID);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-}; 
-const getAlbums = async (spotifyAPI, albumIDs) => {
-    try {
-        let response = await spotifyAPI.getAlbums(albumIDs);
-        console.log(response.albums);
-        return response.albums;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    }  
-}; 
-const getAlbumTracks = async (spotifyAPI, albumID, offset) => {
-    try {
-        let response = await spotifyAPI.getAlbumTracks(albumID, {limit: 50, offset: offset});
-        console.log(response.items);
-        return response.items;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-}; 
-const getSavedAlbums = async (spotifyAPI, offset) => {
-    try {
-        let response = await spotifyAPI.getMySavedAlbums({limit: 50, offset: offset});
-        console.log(response.items);
-        return response.items;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const addToSavedAlbums = async (spotifyAPI, albumIDs) => {
-    try {
-        let response = await spotifyAPI.addToMySavedAlbums(albumIDs);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const removedSavedAlbum = async (spotifyAPI) => {
-    try {
-        let response = await spotifyAPI.removeFromMySavedAlbums(albumIDs);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const checkSavedAlbums = async (spotifyAPI) => {
-    try {
-        let response = await spotifyAPI.containsMySavedAlbums(albumIDs);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const getNewReleases = async (spotifyAPI, offset) => {
-    try {
-        let response = await spotifyAPI.getNewReleases({limit: 50, offset: offset});
-        console.log(response.albums);
-        return response.albums;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-// CHARTS
-const getTopArtists = async (spotifyAPI, offset) => {
-    try {
-        let response = await spotifyAPI.getMyTopArtists({limit: 50, offset: offset});
-        console.log(response.items);
-        return response.items;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const getTopTracks = async (spotifyAPI, offset) => {
-    try {
-        let response = await spotifyAPI.getMyTopTracks({limit: 50, offset: offset});
-        console.log(response.items);
-        return response.items;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    }  
-};
-const getRecentlyPlayed = async (spotifyAPI, offset) => {
-    try {
-        let response = await spotifyAPI.getMyRecentlyPlayedTracks({limit: 50, offset: offset});
-        console.log(response.items);
-        return response.items;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    }  
-};
-// PLAYLIST
-const getPlaylist = async (spotifyAPI, playlistID) => {
-    try {
-        let response = await spotifyAPI.getPlaylist(playlistID);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    }  
-};
-const getUserPlaylists = async (spotifyAPI, userID) => {
-    try {
-        let response = await spotifyAPI.getUserPlaylists(userID, {limit: 50, offset: offset});
-        console.log(response.items);
-        return response.items;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    }  
-};
-const getPlaylistTracks = async (spotifyAPI, playlistID, offset) => {
-    try {
-        let response = await spotifyAPI.getPlaylistTracks(playlistID, {limit: 50, offset: offset});
-        console.log(response.items);
-        return response.items;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    }  
-};
-const createPlaylist = async (spotifyAPI, userID, name, publicBool, description) => {
-    try {
-        let response = await spotifyAPI.createPlaylist(userID, {name: name, public: publicBool, description: description});
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    }  
-};
-const addTrackToPlaylist = async (spotifyAPI, playlistID, trackIDs) => {
-    try {
-        let response = await spotifyAPI.addTracksToPlaylist(playlistID, trackIDs);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const replaceTracksFromPlaylist = async (spotifyAPI, playlistID, trackIDs) => {
-    try {
-        let response = await spotifyAPI.replaceTracksInPlaylist(playlistID, trackIDs);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const removeTracksFromPlaylist = async (spotifyAPI, playlistID, trackIDs) => {
-    try {
-        let response = await spotifyAPI.removeTracksFromPlaylist(playlistID, trackIDs);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const uploadCustomPlaylistCoverImage = async (spotifyAPI, playlistID, imageData) => {
-    try {
-        let response = await spotifyAPI.uploadCustomPlaylistCoverImage(playlistID, imageData);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const followPlaylist = async (spotifyAPI, playlistID) => {
-    try {
-        let response = await spotifyAPI.followPlaylist(playlistID);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const unfollowPlaylist = async (spotifyAPI, playlistID) => {
-    try {
-        let response = await spotifyAPI.unfollowPlaylist(playlistID);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const checkFollowingPlaylist = async (spotifyAPI, playlistID, userIDs) => {
-    try {
-        let response = await spotifyAPI.areFollowingPlaylist(playlistID, userIDs);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-// MISC 
-const search = async (spotifyAPI, query, offset) => {
-    try {
-        let response = await spotifyAPI.search(query, ['album', 'artist', 'playlist', 'track'], {limit: 50, offset: offset});
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const getRecommendations = async (spotifyAPI, seed_artists, seed_genres, seed_tracks) => {
-    try {
-        let options = {
-            limit: 50,
-            seed_artists: seed_artists,
-            seed_genres: seed_genres,
-            seed_tracks: seed_tracks, // Max 5 Total
-            // max_*
-            // min_*
-            // target_*
-        };
-        let response = await spotifyAPI.getRecommendations(options);
-        console.log(response.tracks);
-        return response.tracks;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const getAvailableGenreSeeds = async (spotifyAPI) => {
-    try {
-        let response = await spotifyAPI.getAvailableGenreSeeds(options);
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const getMyCurrentPlayingTrack = async (spotifyAPI) => {
-    try {
-        let response = await spotifyAPI.getMyCurrentPlayingTrack();
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const play = async (spotifyAPI, uris) => {
-    try {
-        let response = await spotifyAPI.play({uris: uris});
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const skipToNext = async (spotifyAPI) => {
-    try {
-        let response = await spotifyAPI.skipToNext({uris: uris});
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
-const pause = async (spotifyAPI) => {
-    try {
-        let response = await spotifyAPI.pause();
-        console.log(response);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return 1;
-    } 
-};
+    // {id: String}
+    socket.on('artist', async function(data) { 
+        try {
 
+        } catch(error) {
+            console.log(error);
+        }
+    });
 
+    // {id: String}
+    socket.on('genre', async function(data) { 
+        try {
 
-module.exports = {
-    routes: router,
+        } catch(error) {
+            console.log(error);
+        }
+    });
+
+    // {id: String}
+    socket.on('playlist', async function(data) { 
+        try {
+
+        } catch(error) {
+            console.log(error);
+        }
+    });
+
+    // {trackID: String}
+    /*
+        Track = {
+        name: String,
+        album: {
+            name: String,
+            image: String,
+            relatedTracks: Array
+        },
+        artist: {
+            name: String,
+            followers: Number,
+            likedTracks: Number
+        },
+        audioAnalysis: Array,
+        audioFeatures: {
+            valence: Number,
+            energy: Number,
+            danceability: Number,
+            popularity: Number,
+            +.3
+            banger: Number,
+            key: Number,
+            mode: Number,
+            tempo: Number,
+            duration: Number,
+        },
+        percentile: {
+            valence: Number,
+            energy: Number,
+            danceability: Number,
+        },
+        genre: Array,
+        }
+*/
+    socket.on('track', async function(data) { 
+        try {
+            let track = await Track.find({_id: data.trackID});
+            track.analysis = await getTrackAudioAnalysis(data.trackID, spotifyAPI);
+            track.artists = await getTrackArtists(track.artists, spotifyAPI);
+        } catch(error) {
+            console.log(error);
+        }
+    });
+
+    // {userID: String, audioFeature: String}
+    socket.on('feature_average_single', async function(data) { 
+        try {
+            if (data.userID == userID || authorize(userID, ['privacy', 'average', data.audioFeature])) {
+                let projection = {};
+                projection[data.audioFeature] = 1;
+                let tracks = await retrieveUserTrackFields(await getUserData(userID), projection);
+                let average = await getAudioFeatureAverage(data.audioFeature, tracks);
+                socket.emit('FeatureAverage_' + data.audioFeature, {average: average});
+            }
+        } catch(error) {
+            console.log(error);
+        }
+    });
+
+    // {userID: String}
+    socket.on('feature_average_all', async function(data) { 
+        try {
+            if (data.userID == userID || authorize(userID, ['privacy', 'average', 'all'])) {
+                let tracks = await retrieveUserTracks(await getUserData(userID));
+                let audioFeatures = ["valence", "danceability", "energy", "acousticness", "instrumentalness", "liveness", "loudness", "speechiness", "key", "mode", "tempo"];
+                let averages = {};
+                for (let i = 0; i < audioFeatures.length; i++) {
+                    averages[audioFeatures[i]] = await getAudioFeatureAverage(audioFeatures[i], tracks);
+                }
+                socket.emit('FeatureAverage_All' + data.audioFeature, {average: averages});
+            }
+        } catch(error) {
+            console.log(error);
+        }
+    });
+
+    // {userID: String, audioFeature: String}
+    socket.on('feature_distribution_single', async function(data) { 
+        try {
+            if (data.userID == userID || authorize(userID, ['privacy', 'distribution', data.audioFeature])) {
+                let projection = {};
+                projection[data.audioFeature] = 1;
+                let tracks = await retrieveUserTrackFields(await getUserData(userID), projection);
+                let distribution = await getAudioFeatureDistribution(data.audioFeature, tracks);
+                socket.emit('FeatureDistribution_' + data.audioFeature, {distribution: distribution});
+            }
+        } catch(error) {
+            console.log(error);
+        }
+    });
+
+    // {userID: String}
+    socket.on('feature_distribution_all', async function(data) { 
+        try {
+            if (data.userID == userID || authorize(userID, ['privacy', 'distribution', 'all'])) {
+                let tracks = await retrieveUserTracks(await getUserData(userID));
+                let audioFeatures = ["valence", "danceability", "energy", "acousticness", "instrumentalness", "liveness", "loudness", "speechiness", "key", "mode", "tempo"];
+                let distributions = {};
+                for (let i = 0; i < audioFeatures.length; i++) {
+                    distributions[audioFeatures[i]] = await getAudioFeatureDistribution(audioFeatures[i], tracks);
+                }
+                socket.emit('FeatureDistribution_All' + data.audioFeature, {distributions: distributions});
+            }
+        } catch(error) {
+            console.log(error);
+        }
+    });
+
+    // {userID: String}
+    socket.on('timeline_added', async function(data) { 
+        try {
+            if (data.userID == userID || authorize(userID, ['privacy', 'timeline', 'added'])) {
+
+            }
+        } catch(error) {
+            console.log(error);
+        }
+    });
+
+    // {userID: String, audioFeature: String}
+    socket.on('timeline_feature_single', async function(data) { 
+        try {
+            if (data.userID == userID || authorize(userID, ['privacy', 'timeline', 'features', data.audioFeature])) {
+
+            }
+        } catch(error) {
+            console.log(error);
+        }
+    });
+
+    // {userID: String}
+    socket.on('timeline_feature_all', async function(data) { 
+        try {
+            if (data.userID == userID || authorize(userID, ['privacy', 'timeline', 'features', 'all'])) {
+
+            }
+        } catch(error) {
+            console.log(error);
+        }
+    });
+
+    // {userID: String, month: Number, year: Number}
+    socket.on('timeline_month', async function(data) { 
+        try {
+            if (data.userID == userID || authorize(userID, ['privacy', 'timeline', 'months'])) {
+
+            }
+        } catch(error) {
+            console.log(error);
+        }
+    });
+
+    // {userID: String, year: Number}
+    socket.on('timeline_year', async function(data) { 
+        try {
+            if (data.userID == userID || authorize(userID, ['privacy', 'timeline', 'years'])) {
+
+            }
+        } catch(error) {
+            console.log(error);
+        }
+    });
+
+    // {userID: String}
+    socket.on('timeline_artists', async function(data) { 
+        try {
+            if (data.userID == userID || authorize(userID, ['privacy', 'timeline', 'artists'])) {
+
+            }
+        } catch(error) {
+            console.log(error);
+        }
+    });
+
+    // {userID: String}
+    socket.on('timeline_genres', async function(data) { 
+        try {
+            if (data.userID == userID || authorize(userID, ['privacy', 'timeline', 'genres'])) {
+
+            }
+        } catch(error) {
+            console.log(error);
+        }
+    });
+
+    // {userID: String, offset: Number}
+    socket.on('chart_played_tracks', async function(data) { 
+        try {
+            if (data.userID == userID || authorize(userID, ['privacy', 'topPlayed', 'tracks'])) {
+
+            }
+        } catch(error) {
+            console.log(error);
+        }
+    });
+
+    // {userID: String, offset: Number}
+    socket.on('chart_played_artists', async function(data) { 
+        try {
+            if (data.userID == userID || authorize(userID, ['privacy', 'topPlayed', 'artists'])) {
+
+            }
+        } catch(error) {
+            console.log(error);
+        }
+    });
+
+    // {userID: String, offset: Number}
+    socket.on('chart_saved_artists', async function(data) { 
+        try {
+            if (data.userID == userID || authorize(userID, ['privacy', 'topSaved', 'artists'])) {
+
+            }
+        } catch(error) {
+            console.log(error);
+        }
+    });
+
+    // {userID: String, offset: Number}
+    socket.on('chart_saved_genres', async function(data) { 
+        try {
+            if (data.userID == userID || authorize(userID, ['privacy', 'topSaved', 'genres'])) {
+
+            }
+        } catch(error) {
+            console.log(error);
+        }
+    });
+
+    // {userID: String, audioFeature: Number, offset: Number}
+    socket.on('chart_extremes_max', async function(data) { 
+        try {
+            if (data.userID == userID || authorize(userID, ['privacy', 'extremes', data.audioFeature])) {
+
+            }
+        } catch(error) {
+            console.log(error);
+        }
+    });
+
+    // {userID: String, audioFeature: Number, offset: Number}
+    socket.on('chart_extremes_min', async function(data) { 
+        try {
+            if (data.userID == userID || authorize(userID, ['privacy', 'extremes', data.audioFeature])) {
+
+            }
+        } catch(error) {
+            console.log(error);
+        }
+    });
+
+    // {query: String, offset: Number}
+    socket.on('search', async function(data) { 
+
+    });
+
+    // {query: Object, offset: Number}
+    socket.on('recommend', async function(data) { 
+
+    });
 }
+  
+module.exports = analysis;

@@ -1,21 +1,19 @@
-//server-spotify-3002
-const express = require('express');
+var express = require('express');
 // const fs = require('fs');
 // const https = require('https');
 const bodyParser = require("body-parser");
 
 const mongoose = require('mongoose');
 
-var cors = require('cors');
+var socket = require('socket.io');
 
 const app = express();
 app.use(bodyParser.json());
-app.use(cors());
 app.use(bodyParser.urlencoded({
   extended: false
 }));
 
-mongoose.connect('mongodb://localhost:27017/melomaniac', {
+mongoose.connect('mongodb://localhost:27017/melomaniac5', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -23,15 +21,39 @@ mongoose.connect('mongodb://localhost:27017/melomaniac', {
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
-const auth = require("./auth.js");
-app.use("/api/auth", auth.routes);
-
-const process = require("./process.js");
-app.use("/api/process", process.routes);
-
-
-app.listen(3002, () => console.log('Server listening on port 3002!'));
+var server = app.listen(3002, function(){
+    console.log("Listening on 3002");
+});
 // https.createServer({
 //   key: fs.readFileSync('server.key'),
 //   cert: fs.readFileSync('server.cert')
 // }, app).listen(3002, () => console.log('Listening on port 3002. Go to https://localhost:3002/'));
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+var io = socket(server);
+
+let clients = [];
+
+io.on('connection', function(socket) {
+  clients.push(socket.id);
+
+  require('./auth.js')(socket);
+
+  require('./process.js')(socket);
+
+  require('./analysis.js')(socket);
+
+  socket.on('getClientNum', function() {
+    socket.emit('ConsoleLog', {message: clients.length});
+    socket.emit('TEST', {message: "TEST"});
+  });
+  
+  socket.on('disconnect', function() {
+    clients.splice(clients.indexOf(socket.id), 1);
+  });
+});
+
+
