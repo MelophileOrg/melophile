@@ -1,19 +1,14 @@
 <template>
   <v-app v-resize="onResize" id="app">
-    <v-app-bar v-if="windowSize.x < 1264" app clipped-left color="rgba(0,0,0,0)" dense>
+    <v-app-bar app clipped-left color="rgba(0,0,0,0)">
       <img src="./assets/logo.svg">
       <v-toolbar-title class="mr-12 align-center">
-        <span class="title">Melomaniac</span>
+        <h1 class="title">Melophile</h1>
       </v-toolbar-title>
       <v-spacer />
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
     </v-app-bar>
     <v-navigation-drawer class="nav-bar" app clipped v-model="drawer" color="rgb(255,255,255)" >
-      <div v-if="windowSize.x > 1264" class="flex flex-align-center nav-drawer-title">
-        <img src="./assets/logo.svg"/>
-        <h1>Melomaniac</h1>
-      </div>
-      <div class="spacer" v-if="windowSize.x <= 1264">Menu</div>
       <v-tabs v-model="tab" @change="route" vertical background-color="rgba(0,0,0,0)" :grow="true">
         <div v-for="(tab, index) in tabs" :key="'nav-bar-tab-' + tab.title + index">
           <v-tab v-if="tab.type == 'link'">
@@ -44,7 +39,7 @@
   export default {
     name: "app",
     data: () => ({
-      drawer: null,
+      drawer: false,
       tab: 0,
       tabs: [
         {type: 'link', title: 'Home', img: 'home', path: '/'},
@@ -78,6 +73,7 @@
           top: 0,
           behavior: 'auto'
         });
+        this.drawer = false;
       },
       onResize() {
         this.windowSize = {x: window.innerWidth, y: window.innerHeight};
@@ -140,7 +136,11 @@ html {
 body {
   margin: 0;
   overflow-x: hidden;
+}
 
+.title {
+  color: rgba(251, 251, 251, 0.966);
+  font-weight: lighter;
 }
 
 #app {
@@ -257,10 +257,11 @@ html::-webkit-scrollbar-thumb
   --size: 50;
   width: calc(var(--size) * 1px);
   height: calc(var(--size) * 1px);
+  margin-right: 10px;
 }
 
 .v-toolbar__content img {
-  --size: 40;
+  --size: 35;
   width: calc(var(--size) * 1px);
   height: calc(var(--size) * 1px);
   margin-right: 2px;
@@ -298,23 +299,25 @@ div.v-tab {
 
 .v-tabs-bar {
   width: 100%;
+  margin-top: 20px;
 }
 
 .nav-icon {
-  --size: 24;
+  --size: 20;
   width: calc(var(--size) * 1px);
   height: calc(var(--size) * 1px);
-  margin-right: 24px;
+  margin-right: 15px;
   margin-left: 10px;
 }
 
 .v-application .v-subheader.mt-4 {
-  opacity: .7;
+  opacity: .3;
   margin-top: 20px !important;
-  color:#b4bdff !important;
+  margin-left: 10px;
+  color:#ffffff !important;
   text-transform: uppercase;
   font-size: 12px;
-  font-family: Avenir,Helvetica,Arial,sans-serif;
+  font-weight: bolder !important;
   height: 20px !important;
 }
 
