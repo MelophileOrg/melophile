@@ -11,8 +11,6 @@ const SOCKET_AUTHLOGINLINK = (state, data) => {
 };
 
 const SOCKET_AUTHGRANTED = (state, data) => {
-    console.log(data.access_token);
-    console.log(data.refresh_token);
     state.authentication.accessToken = data.access_token;
     state.authentication.refreshToken = data.refresh_token;
 };
