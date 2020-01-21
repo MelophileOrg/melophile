@@ -23,6 +23,7 @@ const SOCKET_CONSOLELOG = (state, data) => {
 };
 // { message: String, percent: Number}
 const SOCKET_PROCESSMESSAGE = (state, data) => {
+    console.log(data.message);
     state.progress.message = data.message;
     state.progress.percent = data.percent;
 };
@@ -44,10 +45,11 @@ const SOCKET_USERID = (state, data) => {
 const SOCKET_AUDIOFEATUREAVERAGE = (state, data) => {
     state.data.audioFeatures[data.feature].average = data.average;
 };
-// { averages: Array }
+// { feature: Val }
 const SOCKET_AUDIOFEATUREAVERAGES = (state, data) => {
-    for (let i = 0; i < data.averages.length; i++) 
-        state.data.audioFeatures[data.averages[i].feature].average = data.averages[i].average;
+    let keys = Object.keys(data);
+    for (let i = 0; i < keys.length; i++) 
+        state.data.audioFeatures[keys[i]].average = data[keys[i]];
 };
 // { feature: String, distribution: Number }
 const SOCKET_AUDIOFEATUREDISTRIBUTION = (state, data) => {
@@ -55,8 +57,10 @@ const SOCKET_AUDIOFEATUREDISTRIBUTION = (state, data) => {
 };
 // { distributions: Array }
 const SOCKET_AUDIOFEATUREDISTRIBUTIONS = (state, data) => {
-    for (let i = 0; i < data.distributions.length; i++) 
-        state.data.audioFeatures[data.distributions[i].feature].distribution = data.distributions[i].distribution;
+    let keys = Object.keys(data);
+    for (let i = 0; i < keys.length; i++) 
+        state.data.audioFeatures[keys[i]].distribution = data[keys[i]];
+    console.log(state.data.audioFeatures);
 };
 // { feature: String, history: Number }
 const SOCKET_AUDIOFEATUREHISTORY = (state, data) => {
@@ -93,9 +97,30 @@ const SOCKET_ANALYSIS = (state, data) => {
 //     // for (let i = 0; i < data.items.length; i++)
 //     //     state.data.list.items[data.items[i]._id] = data.items[i];
 // };
+///////////////////////////////////////////////////////////////////////////////
+// SEARCH /////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+const SOCKET_LISTSTART = (state, data) => {
+    state.data.list.list = data.list;   
+};
 
+const SOCKET_LISTADD = (state, data) => {
+    state.data.list.list = state.data.list.list.concat(data.list);
+};
 
+const SOCKET_LISTTRACK = (state, data) => {
+    if (data._id in state.data.list.resolutions)
+        state.data.list.resolutions[data] = true;
+    state.data.list.tracks[data._id] = data.track;
+}
 
+const createNewRequest = (state, data) => {
+    state.data.list.resolutions[data] = false;
+}
+
+const deleteRequest = (state, data) => {
+    delete state.data.list.resolutions[data];
+}
 
 
 export default {
@@ -118,6 +143,13 @@ export default {
     SOCKET_AUDIOFEATUREMIN,
     SOCKET_AUDIOFEATUREMAX,
     SOCKET_ANALYSIS,
+
+    SOCKET_LISTSTART,
+    SOCKET_LISTADD,
+    SOCKET_LISTTRACK,
+
+    createNewRequest,
+    deleteRequest,
 
 
 

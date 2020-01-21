@@ -7,6 +7,14 @@ const process = (context, payload) => {
     payload.instance.$socket.client.emit('process', {accessToken: context.state.authentication.accessToken});
 };
 
+const createListRequest = (context, payload) => {
+    context.commit('createNewRequest', payload._id);
+}
+
+const deleteListRequest = (context, payload) => {
+    context.commit('deleteRequest', payload._id);
+}
+
 
 
 
@@ -15,5 +23,8 @@ const process = (context, payload) => {
 export default {
     login,
     process,
+
+    createListRequest,
+    deleteListRequest
 
 };

@@ -4,7 +4,7 @@ const trackSchema = new mongoose.Schema({
   _id: String,
   name: String,
   artists: Array, 
-  album: String,  
+  album: Object,  
   image: String,
   key: Number,
   mode: Number,
@@ -52,6 +52,8 @@ const userSchema = new mongoose.Schema({
   },
   playlists: Array, // [playlistIDs]
   privacy: Object,
+  averages: Object,
+  distributions: Object,
 });
 const User = mongoose.model('User', userSchema);
 

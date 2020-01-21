@@ -16,33 +16,6 @@ class MelomaniacProcessor {
         this.topTracks = [];
         this.topArtists = [];
         this.playlists = [];
-        this.averages = {
-            valence: 0, 
-            danceability: 0, 
-            energy: 0, 
-            acousticness: 0, 
-            instrumentalness: 0, 
-            liveness: 0, 
-            loudness: 0, 
-            speechiness: 0, 
-            key: 0, 
-            mode: 0, 
-            tempo: 0, 
-            banger: 0,
-        }
-        this.distributions = {
-            valence: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
-            danceability: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
-            energy: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
-            acousticness: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
-            instrumentalness: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
-            liveness: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
-            loudness: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
-            speechiness: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
-            key: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
-            mode: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
-            tempo: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
-        }
         this.spotifyAPI = spotifyAPI;
         this.socket = socket;
         this.userID = userID;
@@ -110,7 +83,14 @@ class MelomaniacProcessor {
     async retrieveTopArtists() {
         try {
             for (let i = 0; i < 3; i++) {
-                let artistIDs = await this.saveArtists((await this.getTopArtists(i, 0)).map(artist => {artist: artist}), false);
+                let artists = await this.getTopArtists(i, 0);
+                let formatedArtists = await (artists).map(function(artist) { 
+                    let newArtistObject = {
+                        artist: artist,
+                    };
+                    return newArtistObject;
+                });
+                let artistIDs = await this.saveArtists(formatedArtists, false);
                 this.topArtists.push(artistIDs);
             }
         } catch(error) {
@@ -139,7 +119,7 @@ class MelomaniacProcessor {
                     let trackData = await this.getPlaylistTracks(playlists[i].id, (j * 50));
                     tracks = await this.concatUnique(tracks, await trackData.map(track => track.track));
                     for (let k = 0; k < trackData.length; k++) {
-                        if (trackData[k] == null || tr-ackData[k].track == null) {
+                        if (trackData[k] == null || trackData[k].track == null) {
                             continue;
                         } else {
                             playlistTracks[trackData[k].track.id] = (await new Date(trackData[k].added_at)).getTime();
@@ -243,8 +223,6 @@ class MelomaniacProcessor {
                     for (let i = 0; i < audioFeatures.length; i++) {
                         if (audioFeatures[i] != null && audioFeatures[i].id in unsaved) {
                             unsaved[audioFeatures[i].id].audioFeatures = audioFeatures[i];
-                            if (liked) 
-                                this.audioFeatureCalculation(audioFeatures[i]);
                         } else {
                             continue;
                         }
@@ -268,7 +246,13 @@ class MelomaniacProcessor {
                     let track = new Track({
                         _id: ids[i],
                         name: unsaved[ids[i]].track.name,
-                        artists: unsaved[ids[i]].track.artists.map(artist => artist.id),
+                        artists: unsaved[ids[i]].track.artists.map( function(artist) {
+                            return {name: artist.name, _id: artist.id};
+                        }),
+                        album: {
+                            name: unsaved[ids[i]].track.album.name, 
+                            _id: unsaved[ids[i]].track.album.id
+                        },
                         image: image,
                         key: unsaved[ids[i]].audioFeatures.key,
                         mode: unsaved[ids[i]].audioFeatures.mode,
@@ -290,15 +274,6 @@ class MelomaniacProcessor {
         } catch(error) {
             this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);
-        }
-    }
-
-    audioFeatureCalculation(audioFeatureData) {
-        let audioFeatures = ["valence", "danceability", "energy", "acousticness", "instrumentalness", "liveness", "loudness", "speechiness", "key", "mode", "tempo"];
-        this.averages.total += 1;
-        for (let i = 0; i < audioFeatures.length; i++) {
-            this.averages[audioFeatures[i]] += audioFeatureData[audioFeatures[i]];
-            this.distributions[audioFeatures[i]][ Math.round(audioFeatures[audioFeatures[i]] * 20) ] += 1;
         }
     }
   

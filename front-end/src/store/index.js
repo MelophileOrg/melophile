@@ -1,15 +1,11 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-//import axios from 'axios'
 
 import actions from './actions.js';
 import mutations from './mutations.js';
 
 let constants = require('./constants.js');
 let audioFeaturesData = constants.audioFeatures;
-
-// let data_collector = require('./data_collector.js');
-// let DataCollector = data_collector.class;
 
 Vue.use(Vuex)
 
@@ -128,9 +124,13 @@ export default new Vuex.Store({
         },
       },
       list: {
-        type: null,
-        requestID: null,
-        items: {},
+        type: 0,
+        list: [],
+        tracks: {},
+        albums: {},
+        artists: {},
+        playlists: {},
+        resolutions: {},
       },
     }
     

@@ -63,9 +63,15 @@ io.on('connection', function(socket) {
     //////////////////////////////////////////////////////////////////////////////////
     let accessToken = null;
     let spotifyAPI = new SpotifyWebApi();
+    let tokenSet = false;
     let userID = null;
     let user = null;
     let processed = false;
+
+    let tracks = [];
+    let artists = [];
+    let playlists = [];
+    let albums = [];
     
     //////////////////////////////////////////////////////////////////////////////////
     // AUTHORIZATION /////////////////////////////////////////////////////////////////
@@ -167,6 +173,8 @@ io.on('connection', function(socket) {
                         genres: false,
                     },
                 },
+                averages: null,
+                distributions: null,
             });
             await user.save();
             process();
@@ -179,10 +187,11 @@ io.on('connection', function(socket) {
         try {
             accessToken = access_token;
             await spotifyAPI.setAccessToken(accessToken);
+            tokenSet = true;
             let userData = await spotifyAPI.getMe();
             userID = userData.body.id;
             let savedUser = await User.findOne({ _id: userID });
-            if (user == null) {
+            if (savedUser == null) {
                 createUser(userData.body);
             } else {
                 user = savedUser;
@@ -254,6 +263,7 @@ io.on('connection', function(socket) {
         await processor.start();
         socket.emit('ProcessDone');
         processed = true;
+        generalData();
     }
 
     socket.on('process', function(data) {
@@ -263,6 +273,147 @@ io.on('connection', function(socket) {
     ////////////////////////////////////////////////////////////////////////////
     // ANALYSIS ////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
+    let collectUserTracks = async function() {
+        try {
+            let tracks = await Track.find({"_id": {$in: Object.keys(user.tracks)}});
+            return tracks;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    let generalData = async function() {
+        try {
+            let tracks = await collectUserTracks();
+            let averages = {
+                valence: 0, 
+                danceability: 0, 
+                energy: 0, 
+                acousticness: 0, 
+                instrumentalness: 0, 
+                liveness: 0, 
+                loudness: 0, 
+                speechiness: 0, 
+                key: 0, 
+                mode: 0, 
+                tempo: 0, 
+            };
+            let distributions = {
+                valence: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                danceability: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                energy: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                acousticness: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                instrumentalness: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                liveness: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+            };
+            let keys = Object.keys(averages);
+            let altKeys = Object.keys(distributions);
+            for (let i = 0; i < tracks.length; i++) {
+                for (let j = 0; j < keys.length; j++) {
+                    averages[keys[j]] += tracks[i][keys[j]];
+                    if (altKeys.includes(keys[j])) {
+                        distributions[keys[j]][ Math.round(tracks[i][keys[j]] * 20) ] += 1;
+                    }
+                }
+            }
+            for (let i = 0; i < keys.length; i++) {
+                averages[keys[i]] /= tracks.length;
+            }
+            socket.emit('AudioFeatureAverages', averages);
+            socket.emit('AudioFeatureDistributions', distributions);
+            await User.updateOne({
+                _id: userID
+            }, {
+                $set: {
+                    'averages': averages,
+                    'distributions': distributions,
+                }
+            });
+            
+        } catch(error) {
+            console.log(error);
+        }
+    }
+
+    // { query: String, type: Number, offset: Number }
+    socket.on('search', async function(data) {
+        try {
+            let items;
+            let key;
+            if (data.type == 0) {
+                items = await spotifyAPI.search(data.query, ['track'], {limit: 50, offset: data.offset});
+                key = "tracks";
+            } else if (data.type == 1) {
+                items = await spotifyAPI.search(data.query, ['artist'], {limit: 50, offset: data.offset});
+                key = "artists";
+            } else if (data.type == 2) {
+                items = await spotifyAPI.search(data.query, ['album'], {limit: 50, offset: data.offset});
+                key = "albums";
+            } else if (data.type == 3) {
+                items = await spotifyAPI.search(data.query, ['playlist'], {limit: 50, offset: data.offset});
+                key = "playlists";
+            } else {
+                console.log("error");
+                return;
+            }
+            if (data.offset == 0)
+                socket.emit('ListStart', {list: items.body[key].items.map(item => item.id)});
+            else 
+                socket.emit('ListAdd', {list: items.body[key].items.map(item => item.id)});
+        } catch(error) {
+            console.log(error);
+        }
+    });
+/*
+  _id: String,
+  name: String,
+  artists: Array, 
+  album: String,  
+  image: String,
+  key: Number,
+  mode: Number,
+  tempo: Number,
+  valence: Number,
+  danceability: Number,
+  energy: Number,
+  acousticness: Number,
+  instrumentalness: Number,
+  liveness: Number,
+  loudness: Number,
+  speechiness: Number,
+*/
+    socket.on('requestListTrack', async function(data) {
+        try {
+            let track = await Track.findOne({ _id: data._id });
+            if (track == null) {
+                track = await spotifyAPI.getTrack(data._id);
+                let image;
+                if (track.body.album.images.length == 0) 
+                    image = "Undefined";
+                else    
+                    image = track.body.album.images[0].url;
+                let newTrack = {
+                    _id: track.body.id,
+                    name: track.body.name,
+                    artists: track.body.artists.map( function(artist) {
+                        return {name: artist.name, _id: artist.id};
+                    }),
+                    album: {
+                        name: track.body.album.name,
+                        _id: track.body.album.id,
+                    },
+                    image: image,
+                };
+                socket.emit('ListTrack', {_id: data._id, track: newTrack});
+            } else {
+                socket.emit('ListTrack', {_id: data._id, track: track});
+            }
+            
+        } catch(error) {
+            console.log(error);
+        }
+    });
+
 
 
     socket.on('disconnect', function() {

@@ -38,7 +38,7 @@ export default {
   },
   computed: {
     progressMessage() {
-      return this.$store.state.progress.message;
+      return this.$store.state.progress.message + " " + Math.round(this.$store.state.progress.percent * 100) + "%";
     },
   },
   created() {
