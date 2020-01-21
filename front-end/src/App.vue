@@ -9,7 +9,7 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
     </v-app-bar>
     <v-navigation-drawer class="nav-bar" app clipped v-model="drawer" color="rgb(255,255,255)" >
-      <v-tabs v-model="tab" @change="route" vertical background-color="rgba(0,0,0,0)" :grow="true">
+      <v-tabs v-model="tab" @change="route" vertical background-color="rgba(0,0,0,0)" :grow="true" class="extra-margin">
         <div v-for="(tab, index) in tabs" :key="'nav-bar-tab-' + tab.title + index">
           <v-tab v-if="tab.type == 'link'">
             <img class="nav-icon" :src="getImgUrl(tab.img)"/>
@@ -63,8 +63,10 @@
       },
       route(index) {
         let routes = this.tabs.filter(tab => tab.type == 'link').map(tab => tab.path);
-        if (routes[index] == this.$route.fullPath)
+        if (routes[index] == this.$route.fullPath){
+          this.drawer = false;
           return;
+        }
         if (this.first) {
           this.first = false;
         }
@@ -130,7 +132,7 @@ font-family: 'EB Garamond', serif;
 </style>
 <style>/* Base CSS */
 html {
-  background: #0c1528;
+  background: #20284d;
 }
 
 body {
@@ -232,6 +234,10 @@ html::-webkit-scrollbar-thumb
 .flex-align-flex-end {
   align-items: flex-end;
 }
+
+.extra-margin {
+  margin-top: 20px;
+}
 </style>
 <style>
 .nav-drawer-title {
@@ -279,7 +285,7 @@ html::-webkit-scrollbar-thumb
 }
 
 .v-navigation-drawer__content {
-  background-color: rgb(23, 37, 66);
+  background-color: #20284d;
 }
 
 .second-color {
@@ -299,7 +305,6 @@ div.v-tab {
 
 .v-tabs-bar {
   width: 100%;
-  margin-top: 20px;
 }
 
 .nav-icon {
@@ -308,6 +313,15 @@ div.v-tab {
   height: calc(var(--size) * 1px);
   margin-right: 15px;
   margin-left: 10px;
+}
+
+.v-toolbar {
+  -webkit-box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0), 0px 4px 5px 0px rgba(0, 0, 0, 0), 0px 1px 10px 0px rgba(0, 0, 0, 0) !important;
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0), 0px 4px 5px 0px rgba(0, 0, 0, 0), 0px 1px 10px 0px rgba(0, 0, 0, 0) !important;
+}
+
+.v-tabs-bar {
+  margin-top: 0px !important;
 }
 
 .v-application .v-subheader.mt-4 {
@@ -346,11 +360,11 @@ prepend {
 }
 
 .v-app-bar--fixed {
-  background-color: rgb(23, 37, 66) !important;
+  background-color: rgba(30, 89, 206, 0) !important;
 }
 
 .theme--dark.v-tabs-items {
-  background-color: rgb(0,0,0,0) !important;
+  background-color: rgba(0, 0, 0, 0) !important;
 }
 
 /* 1264 */

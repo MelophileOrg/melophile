@@ -2,38 +2,41 @@
   <div class="home">
     <button @click="login">Press Me</button>
     <button @click="process">Process</button>
-    <button @click="clientNum">Connected</button>
-    <h1>{{progressNum}}</h1>
+    <button @click="test">Test</button>
     <h1>{{progressMessage}}</h1>
+    <DistributionGraph title="Happiness Distribution"/>
+    
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-//import HelloWorld from '@/components/HelloWorld.vue'
+import DistributionGraph from '@/components/Graphs/DistributionGraph.vue'
 
 export default {
   name: 'home',
   components: {
+    DistributionGraph,
+  },
+  data() {
+    return {
+      graph_data: {
 
+      }
+    }
   },
   methods: {
     async login() {
-      this.$socket.client.emit('login');
-    },
-    clientNum() {
-      this.$socket.client.emit('getClientNum');
+      this.$store.dispatch('login', {instance: this});
     },
     process() {
-      this.$socket.client.emit('process', {accessToken: this.$store.state.authentication.accessToken});
+      this.$store.dispatch('process', {instance: this});
+    },
+    test() {
+      this.$socket.client.emit('test');
     }
   },
   computed: {
-    progressNum() {
-      if (this.$store.state.progress.tracks.total != 0)
-        return this.$store.state.progress.tracks.processed + " / " + this.$store.state.progress.tracks.total;
-      return "Not Started";
-    },
     progressMessage() {
       return this.$store.state.progress.message;
     },

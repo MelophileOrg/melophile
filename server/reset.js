@@ -6,7 +6,7 @@ const Artist = Items.artist;
 const Playlist = Items.playlist;
 const User = Items.user;
 
-mongoose.connect('mongodb://localhost:27017/melomaniac4', {
+mongoose.connect('mongodb://localhost:27017/melomaniac5', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

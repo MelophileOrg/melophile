@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema({
   _id: String,
   username: String,
   images: Array,
-  tracks: Object, // id: date_added
+  tracks: Object, // id: {dateAdded: Number}
   artist: Object, // id: [trackIDs]
   genres: Object, // id: [artistIDs]
   topPlayed: {
