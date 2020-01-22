@@ -4,7 +4,6 @@
       <ListArtist :id="id" v-if="type == 1"/>
       <ListAlbum :id="id" v-if="type == 2"/>
       <ListPlaylist :id="id" v-if="type == 3"/>
-        
   </div>
 </template>
 

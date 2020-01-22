@@ -1,10 +1,9 @@
 <template>
   <div class="ListTrack">
-        <div v-if="dataRecieved">
-            <div class="img" :style="{backgroundImage: 'url(' + trackData.image + ')'}"/>
-            <h1>{{trackData.name}}</h1>
+        <div>
+            <div class="img" :style="{backgroundImage: 'url(' + tracks[id].image + ')'}"/>
+            <h1>{{tracks[id].name}}</h1>
         </div>
-        <h1 v-else>{{id}}</h1>
   </div>
 </template>
 
@@ -16,36 +15,16 @@ export default {
         id: String,
     },
     data: () => ({
-        dataRecieved: false,
-        interval: null,
     }),
     methods: {
-        checkRequest() {
-            if (this.$store.state.data.list.tracks[this.id] != null) {
-                clearInterval(this.interval);
-                this.dataRecieved = true;
-            }
-        }
     },
     computed: {
         tracks() {
-            return this.$store.getters.tracks;
-        },
-        trackData() {
-            return this.tracks[this.id];
+            return this.$store.state.data.list.tracks;
         },
     },
     async created() {
-        try {
-            if (!(this.id in this.tracks)) {
-                this.$socket.client.emit('requestListTrack', {_id: this.id});
-                this.interval = setInterval(this.checkRequest, 100);
-            } else {
-                this.dataRecieved = true;
-            }
-        } catch(error) {
-            console.log(error);
-        }
+        console.log(this.tracks);
     }
 };
 </script>

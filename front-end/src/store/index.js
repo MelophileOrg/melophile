@@ -7,8 +7,8 @@ import mutations from './mutations.js';
 let constants = require('./constants.js');
 let audioFeaturesData = constants.audioFeatures;
 
-let jimmy = require('./jimmy.js');
-let Jimmy = jimmy.import;
+// let jimmy = require('./jimmy.js');
+// let Jimmy = jimmy.import;
 
 Vue.use(Vuex)
 
@@ -28,7 +28,7 @@ export default new Vuex.Store({
       audioFeaturesData: audioFeaturesData,
     },
     
-    jimmy: new Jimmy(),
+    //jimmy: new Jimmy(),
 
     data: {
       userID: null,
@@ -130,12 +130,13 @@ export default new Vuex.Store({
         },
       },
       list: {
-        type: 0,
+        type: 0, // 0: Tracks, 1: Artists, 2: Albums, 3: Playlists
         list: [],
         tracks: {},
         albums: {},
         artists: {},
         playlists: {},
+        request: [],
       },
     }
     

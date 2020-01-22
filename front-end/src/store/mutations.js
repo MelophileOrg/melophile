@@ -100,8 +100,10 @@ const SOCKET_ANALYSIS = (state, data) => {
 ///////////////////////////////////////////////////////////////////////////////
 // SEARCH /////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+// { list: [id], type: Number }
 const SOCKET_LISTSTART = (state, data) => {
-    state.data.list.list = data.list;   
+    state.data.list.type = data.type;
+    state.data.list.list = data.list;
 };
 
 const SOCKET_LISTADD = (state, data) => {
@@ -111,9 +113,23 @@ const SOCKET_LISTADD = (state, data) => {
 const SOCKET_LISTCLEAR = (state) => {
     state.data.list.list = [];
 };
+// { items: [], type: Number }
+const SOCKET_REQUESTEDLIST = (state, data) => {
+    if (data.type != state.data.list.type) {
+        return;
+    }
+    for (let i = 0; i < data.items.length; i++) {
+        if (state.data.items.type == 0) {
+            state.data.list.tracks[data.items[i]._id] = state.data.list.tracks[data.items[i]];
+        } else if (state.data.items.type == 1) {
+            state.data.list.artists[data.items[i]._id] = state.data.list.tracks[data.items[i]];
+        } else if (state.data.items.type == 2) {
+            state.data.list.albums[data.items[i]._id] = state.data.list.tracks[data.items[i]];
+        } else if (state.data.items.type == 3) {
+            state.data.list.playlists[data.items[i]._id] = state.data.list.tracks[data.items[i]];
+        }
+    }
 
-const SOCKET_LISTTRACK = (state, data) => {
-    state.data.list.tracks[data._id] = data.track;
 }
 
 
@@ -141,7 +157,7 @@ export default {
     SOCKET_LISTSTART,
     SOCKET_LISTADD,
     SOCKET_LISTCLEAR,
-    SOCKET_LISTTRACK,
+    SOCKET_REQUESTEDLIST
 
 
 

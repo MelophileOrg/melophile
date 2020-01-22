@@ -386,15 +386,70 @@ io.on('connection', function(socket) {
   speechiness: Number,
 */
     
-
-    socket.on('requestListTrack', async function(data) {
+    // { list: [], type: Number }
+    socket.on('requestListTracks', async function(data) {
         try {
             currSearchID += 1;
             let searchID = currSearchID;
-            let track = await Track.findOne({ _id: data._id });
-            if (searchID != currSearchID)
+
+            let requiredItems = data.list;
+            let items = [];
+
+            if (data.type == 0) {
+                items = await Track.find({"_id": {$in: requiredItems}});
+            } else if (data.type == 1) {
+                items = await Artist.find({"_id": {$in: requiredItems}});
+            } else if (data.type == 2) {
+                items = await Artist.find({"_id": {$in: requiredItems}});
+            } else if (data.type == 3) {
+                items = await Artist.find({"_id": {$in: requiredItems}});
+            } 
+            if (searchID != currSearchID) {
                 return;
-            socket.emit('ListTrack', {_id: data._id, track: track});
+            } else {
+                for (let i = 0; i < items.length; i++) {
+                    requiredItems.splice(requiredItems.indexOf(items[i]._id), 1);
+                }
+                for (let i = 0; i < Math.ceil(requiredItems.length / 50); i++) {
+                    let ids = await requiredItems.slice(i * 50, (i * 50 + 50));
+                    let newTracks = await spotifyAPI.getTracks(ids);
+                    console.log(newTracks);
+                    for (let j = 0; j < newTracks.body.tracks.length; j++) {
+                        let image;
+                        if (newTracks.body.tracks[j].album.images.length == 0) 
+                            image = "Undefined";
+                        else    
+                            image = newTracks.body.tracks[j].album.images[0].url;
+                        let track = new Track({
+                            _id: newTracks.body.tracks[j]._id,
+                            name: newTracks.body.tracks[j].name,
+                            artists: newTracks.body.tracks[j].artists.map( function(artist) {
+                                return {name: artist.name, _id: artist.id};
+                            }),
+                            album: {
+                                name: newTracks.body.tracks[j].album.name, 
+                                _id: newTracks.body.tracks[j].album.id
+                            },
+                            image: image,
+                            // key: unsaved[ids[i]].audioFeatures.key,
+                            // mode: unsaved[ids[i]].audioFeatures.mode,
+                            // tempo: unsaved[ids[i]].audioFeatures.tempo,
+                            // valence: unsaved[ids[i]].audioFeatures.valence,
+                            // danceability: unsaved[ids[i]].audioFeatures.danceability,
+                            // energy: unsaved[ids[i]].audioFeatures.energy,
+                            // acousticness: unsaved[ids[i]].audioFeatures.acousticness,
+                            // instrumentalness: unsaved[ids[i]].audioFeatures.instrumentalness,
+                            // liveness: unsaved[ids[i]].audioFeatures.liveness,
+                            // loudness: unsaved[ids[i]].audioFeatures.loudness,
+                            // speechiness: unsaved[ids[i]].audioFeatures.speechiness,
+                        });
+                        items.push(track);
+                    }
+                }
+     
+                socket.emit('SOCKET_REQUESTEDLIST', {items: items, type: data.type});
+            }
+            
         } catch(error) {
             console.log(error);
         }
