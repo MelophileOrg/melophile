@@ -1,9 +1,10 @@
 <template>
   <div class="ListTrack">
-        <div v-if="loaded">
-            <div class="img" :style="{backgroundImage: 'url(' + tracks[id].image + ')'}"/>
-            <h1>{{tracks[id].name}}</h1>
+        <div v-if="dataRecieved">
+            <div class="img" :style="{backgroundImage: 'url(' + trackData.image + ')'}"/>
+            <h1>{{trackData.name}}</h1>
         </div>
+        <h1 v-else>{{id}}</h1>
   </div>
 </template>
 
@@ -15,44 +16,36 @@ export default {
         id: String,
     },
     data: () => ({
-       requested: false,
+        dataRecieved: false,
+        interval: null,
     }),
     methods: {
-
+        checkRequest() {
+            if (this.$store.state.data.list.tracks[this.id] != null) {
+                clearInterval(this.interval);
+                this.dataRecieved = true;
+            }
+        }
     },
     computed: {
         tracks() {
-            return this.$store.state.data.list.tracks;
+            return this.$store.getters.tracks;
         },
-        requests() {
-            return this.$store.state.data.list.resolutions;
+        trackData() {
+            return this.tracks[this.id];
         },
-        loaded() {
-            if (!this.requested) {
-                if (this.id in this.tracks)
-                    return true;
-            } else {
-                if (this.requests[this.id]) {
-                    this.$store.dispatch('deleteListRequest', {_id: "track-" + this.id});
-                    return true;
-                }
-            }   
-            return false;
-        }
-    },
-    watch: {
     },
     async created() {
         try {
             if (!(this.id in this.tracks)) {
-                await this.$store.dispatch('createListRequest', {_id: "track-" + this.id});
-                this.requested = true;
                 this.$socket.client.emit('requestListTrack', {_id: this.id});
+                this.interval = setInterval(this.checkRequest, 100);
+            } else {
+                this.dataRecieved = true;
             }
         } catch(error) {
             console.log(error);
         }
-
     }
 };
 </script>

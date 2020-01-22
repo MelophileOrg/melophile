@@ -38,7 +38,10 @@ export default {
   watch: {
     searchInput: function() {
       if (this.searchInput.length > 0) {
+        console.log("SEARCHING");
         this.$socket.client.emit('search', {query: this.searchInput, offset: 0, type: this.type});
+      } else {
+        this.$store.dispatch('SOCKET_LISTCLEAR');
       }
     }
   }, 

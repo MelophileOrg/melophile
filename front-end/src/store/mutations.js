@@ -108,18 +108,12 @@ const SOCKET_LISTADD = (state, data) => {
     state.data.list.list = state.data.list.list.concat(data.list);
 };
 
+const SOCKET_LISTCLEAR = (state) => {
+    state.data.list.list = [];
+};
+
 const SOCKET_LISTTRACK = (state, data) => {
-    if (data._id in state.data.list.resolutions)
-        state.data.list.resolutions[data] = true;
     state.data.list.tracks[data._id] = data.track;
-}
-
-const createNewRequest = (state, data) => {
-    state.data.list.resolutions[data] = false;
-}
-
-const deleteRequest = (state, data) => {
-    delete state.data.list.resolutions[data];
 }
 
 
@@ -146,10 +140,8 @@ export default {
 
     SOCKET_LISTSTART,
     SOCKET_LISTADD,
+    SOCKET_LISTCLEAR,
     SOCKET_LISTTRACK,
-
-    createNewRequest,
-    deleteRequest,
 
 
 

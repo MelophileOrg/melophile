@@ -24,11 +24,11 @@
       <div id="alerts">
         <v-alert :width="alertWidth()" border="left" dense dismissible :elevation="5" 
         type="info" transition="scale-transition" :icon="false"
-        :value="progress.total != 0 && progress.processed < progress.total && !progress.tracks && !progress.artists && !progress.genres && !progress.charts && !progress.timelines">
-          <v-progress-circular color="rgb(255,255,255)" :size="20" :value="(progress.processed / progress.total) * 100" />
-          Loading Your Library
+        :value="progress.percent != 0 && progress.percent != 1">
+          <v-progress-circular color="rgb(255,255,255)" :size="20" :value="progress.percent * 100" />
+          {{progress.message}}
         </v-alert>
-        <v-alert :width="alertWidth()" border="left" dense dismissible :elevation="5" type="success" transition="scale-transition" :value="progress.total != 0 && progress.processed >= progress.total && progress.tracks && progress.artists && progress.genres && progress.charts && progress.timelines">Finished Analysizing Library</v-alert>
+        <v-alert :width="alertWidth()" border="left" dense dismissible :elevation="5" type="success" transition="scale-transition" :value="progress.percent == 1">Finished Analysizing Library</v-alert>
         <v-alert :width="alertWidth()" border="left" dense dismissible :elevation="5" type="error" transition="scale-transition" :value="false">Error with Loading Library</v-alert>
       </div>
     </v-content>

@@ -72,6 +72,8 @@ io.on('connection', function(socket) {
     let artists = [];
     let playlists = [];
     let albums = [];
+
+    let currSearchID = 0;
     
     //////////////////////////////////////////////////////////////////////////////////
     // AUTHORIZATION /////////////////////////////////////////////////////////////////
@@ -262,6 +264,7 @@ io.on('connection', function(socket) {
         let processor = new Process.MelomaniacProcessor(accessToken, socket, spotifyAPI, userID);
         await processor.start();
         socket.emit('ProcessDone');
+        let user = await User.findOne({ _id: userID });
         processed = true;
         generalData();
     }
@@ -382,33 +385,16 @@ io.on('connection', function(socket) {
   loudness: Number,
   speechiness: Number,
 */
+    
+
     socket.on('requestListTrack', async function(data) {
         try {
+            currSearchID += 1;
+            let searchID = currSearchID;
             let track = await Track.findOne({ _id: data._id });
-            if (track == null) {
-                track = await spotifyAPI.getTrack(data._id);
-                let image;
-                if (track.body.album.images.length == 0) 
-                    image = "Undefined";
-                else    
-                    image = track.body.album.images[0].url;
-                let newTrack = {
-                    _id: track.body.id,
-                    name: track.body.name,
-                    artists: track.body.artists.map( function(artist) {
-                        return {name: artist.name, _id: artist.id};
-                    }),
-                    album: {
-                        name: track.body.album.name,
-                        _id: track.body.album.id,
-                    },
-                    image: image,
-                };
-                socket.emit('ListTrack', {_id: data._id, track: newTrack});
-            } else {
-                socket.emit('ListTrack', {_id: data._id, track: track});
-            }
-            
+            if (searchID != currSearchID)
+                return;
+            socket.emit('ListTrack', {_id: data._id, track: track});
         } catch(error) {
             console.log(error);
         }
