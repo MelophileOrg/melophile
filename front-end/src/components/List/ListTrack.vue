@@ -17,12 +17,13 @@ export default {
         id: String,
     },
     data: () => ({
+
     }),
     methods: {
     },
     computed: {
         track() {
-            return this.$store.state.list.tracks[this.id];
+            return this.$store.state.jimmy.getItem(this.id);
         },
     },
     created() {

@@ -27,8 +27,9 @@ let Playlist = Items.playlist;
 
 
 // { ids: [] }
-app.get("/api/tracks", async (req, res) => {
+app.put("/api/tracks", async (req, res) => {
   try {
+    console.log(req.body);
     let tracks = {};
     for (let i = 0; i < req.body.ids.length; i++) 
       tracks[req.body.ids[i]] = await Track.findOne({ _id: req.body.ids[i] });
@@ -39,7 +40,7 @@ app.get("/api/tracks", async (req, res) => {
   }
 });
 
-app.get("/api/tracks/:id", async (req, res) => {
+app.put("/api/tracks/:id", async (req, res) => {
   try {
     let track = await Track.findOne({ _id: req.params.id });
     return res.send({ track: track });
@@ -50,7 +51,7 @@ app.get("/api/tracks/:id", async (req, res) => {
 });
 
 // { ids: [] }
-app.get("/api/artists", async (req, res) => {
+app.put("/api/artists", async (req, res) => {
   try {
     let artists = {};
     for (let i = 0; i < req.body.ids.length; i++) 
@@ -62,7 +63,7 @@ app.get("/api/artists", async (req, res) => {
   }
 });
 
-app.get("/api/artists/:id", async (req, res) => {
+app.put("/api/artists/:id", async (req, res) => {
   try {
     let artist = await Artist.findOne({ _id: req.params.id });
     return res.send({ artist: artist });
@@ -73,7 +74,7 @@ app.get("/api/artists/:id", async (req, res) => {
 });
 
 // { ids: [] }
-app.get("/api/playlists", async (req, res) => {
+app.put("/api/playlists", async (req, res) => {
   try {
     let playlists = {};
     for (let i = 0; i < req.body.ids.length; i++) 
@@ -85,7 +86,7 @@ app.get("/api/playlists", async (req, res) => {
   }
 });
 
-app.get("/api/playlists/:id", async (req, res) => {
+app.put("/api/playlists/:id", async (req, res) => {
   try {
     let playlist = await Playlist.findOne({ _id: req.params.id });
     return res.send({ playlist: playlist });

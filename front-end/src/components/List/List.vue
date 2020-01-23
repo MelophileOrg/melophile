@@ -20,34 +20,21 @@ export default {
     data() {
         return {
             display: false,
+            items: [],
         }
     },
     computed: {
         list() {
             return this.$store.state.list.list;
         },
-        tracks() {
-            return this.$store.state.list.tracks;
-        },
-        artists() {
-            return this.$store.state.list.artists;
-        },
-        albums() {
-            return this.$store.state.list.albums;
-        },
-        playlists() {
-            return this.$store.state.list.playlists;
-        },
+        jimmy() {
+            return this.$store.state.jimmy;
+        }
     },
     async created() {
-        let missing = [];
-        for (let i = 0; i < this.list.length; i++) {
-            if ((this.type == 0 && !(this.list[i] in this.tracks)) || (this.type == 1 && !(this.list[i] in this.artists)) || (this.type == 2 && !(this.list[i] in this.album)) || (this.type == 3 && !(this.list[i] in this.playlists))) {
-                await this.$store.dispatch('createListObject', {id: this.list[i], type: this.type});
-                missing.push(this.list[i]);
-            }
-        }
-        this.$socket.client.emit('requestListTracks', {list: missing, type: this.type});
+        console.log("hey jimmy...");
+        this.items = await this.jimmy.getTracks(this.list, false);
+        console.log(this.items);
         this.display = true;
     }
 };

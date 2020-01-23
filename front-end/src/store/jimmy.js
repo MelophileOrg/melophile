@@ -32,13 +32,15 @@ class Jimmy {
             if (!this.ready)
                 return null;
             this.clearCache(0, concat);
-            let response = await axios.get('/api/tracks', { ids: ids });
-            let tracks = response.body.tracks;
+            let response = await axios.put('/api/tracks', { ids: ids });
+            let tracks = response.data.tracks;
             let missing = [];
             let key;
             for (key in tracks) 
                 if (tracks[key] == null) 
                     missing.push(key);
+            console.log(tracks);
+            console.log(missing);
             if (missing.length > 0) {
                 let newTracks = [];
                 for (let i = 0; i < Math.ceil(missing / 50); i++) 
@@ -51,7 +53,6 @@ class Jimmy {
                     }
                 }
             }
-            console.log(tracks);
             return tracks;
         } catch(error) {
             console.log(error);
@@ -63,8 +64,8 @@ class Jimmy {
             if (!this.ready)
                 return null;
             this.clearCache(1, concat);
-            let response = await axios.get('/api/artists', { ids: ids });
-            let artists = response.body.artists;
+            let response = await axios.put('/api/artists', { ids: ids });
+            let artists = response.data.artists;
             let missing = [];
             let key;
             for (key in artists) 
@@ -118,8 +119,8 @@ class Jimmy {
             if (!this.ready)
                 return null;
             this.clearCache(3, concat);
-            let response = await axios.get('/api/playlists', { ids: ids });
-            let playlists = response.body.playlists;
+            let response = await axios.put('/api/playlists', { ids: ids });
+            let playlists = response.data.playlists;
             let missing = [];
             let key;
             for (key in playlists) 
@@ -141,6 +142,20 @@ class Jimmy {
             return playlists;
         } catch(error) {
             console.log(error);
+        }
+    }
+
+    getItem(id) {
+        if (this.type == 0) {
+            return this.tracks[id];
+        } else if (this.type == 1) {
+            return this.artists[id];
+        } else if (this.type == 2) {
+            return this.albums[id];
+        } else if (this.type == 3) {
+            return this.playlists[id];
+        } else {
+            return null;
         }
     }
 

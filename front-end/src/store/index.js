@@ -133,12 +133,6 @@ export default new Vuex.Store({
     list: {
       type: 0, // 0: Tracks, 1: Artists, 2: Albums, 3: Playlists
       list: [],
-      tracks: {
-        Penis: "fuck"
-      },
-      albums: {},
-      artists: {},
-      playlists: {},
     },
   },
   mutations,

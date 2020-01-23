@@ -98,39 +98,9 @@ const SOCKET_LISTADD = (state, data) => {
     state.list.list = state.list.list.concat(data.list);
 };
 
-const addListObject = (state, data) => {
-    if (state.list.type == 0) {
-        state.list.tracks[data.id] = null;
-    } else if (state.list.type == 1) {
-        state.list.artists[data.id] = null;
-    } else if (state.list.type == 2) {
-        state.list.albums[data.id] = null;
-    } else if (state.list.type == 3) {
-        state.list.playlists[data.id] = null;
-    }
-}
-
 const SOCKET_LISTCLEAR = (state) => {
     state.list.list = [];
 };
-// { items: [], type: Number }
-const SOCKET_REQUESTEDLIST = (state, data) => {
-    if (data.type != state.list.type) {
-        return;
-    }
-    for (let i = 0; i < data.items.length; i++) {
-        if (state.list.type == 0) {
-            state.list.tracks[data.items[i]._id] = data.items[i];
-        } else if (state.list.type == 1) {
-            state.list.artists[data.items[i]._id] = data.items[i];
-        } else if (state.list.type == 2) {
-            state.list.albums[data.items[i]._id] = data.items[i];
-        } else if (state.list.type == 3) {
-            state.list.playlists[data.items[i]._id] = data.items[i];
-        }
-    }
-
-}
 
 
 export default {
@@ -156,10 +126,5 @@ export default {
 
     SOCKET_LISTSTART,
     SOCKET_LISTADD,
-    addListObject,
     SOCKET_LISTCLEAR,
-    SOCKET_REQUESTEDLIST
-
-
-
 };
