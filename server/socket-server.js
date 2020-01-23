@@ -13,7 +13,7 @@ let Items = require("./items.js");
 let Process = require("./process.js");
 
 // Connect Mongoose
-mongoose.connect('mongodb://localhost:27017/melomaniac5', {
+mongoose.connect('mongodb://localhost:27017/melophile', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -359,32 +359,33 @@ io.on('connection', function(socket) {
                 console.log("error");
                 return;
             }
-            if (data.offset == 0)
-                socket.emit('ListStart', {list: items.body[key].items.map(item => item.id)});
-            else 
-                socket.emit('ListAdd', {list: items.body[key].items.map(item => item.id)});
+            if (data.offset == 0) {
+                socket.emit('ListStart', {list: items.body[key].items.map(item => item.id), type: data.type});
+            } else {
+                socket.emit('ListAdd', {list: items.body[key].items.map(item => item.id), type: data.type});
+            }
         } catch(error) {
             console.log(error);
         }
     });
-/*
-  _id: String,
-  name: String,
-  artists: Array, 
-  album: String,  
-  image: String,
-  key: Number,
-  mode: Number,
-  tempo: Number,
-  valence: Number,
-  danceability: Number,
-  energy: Number,
-  acousticness: Number,
-  instrumentalness: Number,
-  liveness: Number,
-  loudness: Number,
-  speechiness: Number,
-*/
+    /*
+    _id: String,
+    name: String,
+    artists: Array, 
+    album: String,  
+    image: String,
+    key: Number,
+    mode: Number,
+    tempo: Number,
+    valence: Number,
+    danceability: Number,
+    energy: Number,
+    acousticness: Number,
+    instrumentalness: Number,
+    liveness: Number,
+    loudness: Number,
+    speechiness: Number,
+    */
     
     // { list: [], type: Number }
     socket.on('requestListTracks', async function(data) {
@@ -413,15 +414,14 @@ io.on('connection', function(socket) {
                 for (let i = 0; i < Math.ceil(requiredItems.length / 50); i++) {
                     let ids = await requiredItems.slice(i * 50, (i * 50 + 50));
                     let newTracks = await spotifyAPI.getTracks(ids);
-                    console.log(newTracks);
                     for (let j = 0; j < newTracks.body.tracks.length; j++) {
                         let image;
                         if (newTracks.body.tracks[j].album.images.length == 0) 
                             image = "Undefined";
                         else    
                             image = newTracks.body.tracks[j].album.images[0].url;
-                        let track = new Track({
-                            _id: newTracks.body.tracks[j]._id,
+                        let track = {
+                            _id: newTracks.body.tracks[j].id,
                             name: newTracks.body.tracks[j].name,
                             artists: newTracks.body.tracks[j].artists.map( function(artist) {
                                 return {name: artist.name, _id: artist.id};
@@ -442,12 +442,11 @@ io.on('connection', function(socket) {
                             // liveness: unsaved[ids[i]].audioFeatures.liveness,
                             // loudness: unsaved[ids[i]].audioFeatures.loudness,
                             // speechiness: unsaved[ids[i]].audioFeatures.speechiness,
-                        });
+                        };
                         items.push(track);
                     }
                 }
-     
-                socket.emit('SOCKET_REQUESTEDLIST', {items: items, type: data.type});
+                socket.emit('RequestedList', {items: items, type: data.type});
             }
             
         } catch(error) {

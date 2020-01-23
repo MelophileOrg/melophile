@@ -25,6 +25,20 @@ export default {
         id: String,
         type: Number,
     },
+    computed: {
+        tracks() {
+            return this.$store.state.list.tracks;
+        },
+        artists() {
+            return this.$store.state.list.artists;
+        },
+        albums() {
+            return this.$store.state.list.albums;
+        },
+        playlists() {
+            return this.$store.state.list.playlists;
+        },
+    }
 };
 </script>
 

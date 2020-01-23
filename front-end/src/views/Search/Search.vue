@@ -17,7 +17,7 @@
     </v-tabs>
     <v-text-field class="input" prepend-icon="fa-search" v-model="searchInput" :autofocus="true" :dark="true"  background-color="rgba(100,100,100,.15)" solo placeholder="Search..."></v-text-field>
     </div>
-    <List :type="type"/>
+    <List :type="type" v-if="list.length > 0"/>
   </div>
 </template>
 
@@ -41,12 +41,14 @@ export default {
         console.log("SEARCHING");
         this.$socket.client.emit('search', {query: this.searchInput, offset: 0, type: this.type});
       } else {
-        this.$store.dispatch('SOCKET_LISTCLEAR');
+        this.$store.dispatch('clearList');
       }
     }
   }, 
   computed: {
-
+    list() {
+      return this.$store.state.list.list;
+    }
   }
 }
 </script>

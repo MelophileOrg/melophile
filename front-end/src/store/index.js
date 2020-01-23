@@ -4,11 +4,10 @@ import Vuex from 'vuex'
 import actions from './actions.js';
 import mutations from './mutations.js';
 
+import Jimmy from './jimmy.js';
+
 let constants = require('./constants.js');
 let audioFeaturesData = constants.audioFeatures;
-
-// let jimmy = require('./jimmy.js');
-// let Jimmy = jimmy.import;
 
 Vue.use(Vuex)
 
@@ -28,7 +27,7 @@ export default new Vuex.Store({
       audioFeaturesData: audioFeaturesData,
     },
     
-    //jimmy: new Jimmy(),
+    jimmy: new Jimmy(),
 
     data: {
       userID: null,
@@ -129,26 +128,18 @@ export default new Vuex.Store({
           artists: [[],[],[]],
         },
       },
-      list: {
-        type: 0, // 0: Tracks, 1: Artists, 2: Albums, 3: Playlists
-        list: [],
-        tracks: {},
-        albums: {},
-        artists: {},
-        playlists: {},
-        request: [],
-      },
-    }
-    
-    
-    
+    },
 
-  },
-  getters: {
-    tracks: state => state.data.list.tracks,
-    albums: state => state.data.list.albums,
-    artists: state => state.data.list.artists,
-    playlists: state => state.data.list.playlists,
+    list: {
+      type: 0, // 0: Tracks, 1: Artists, 2: Albums, 3: Playlists
+      list: [],
+      tracks: {
+        Penis: "fuck"
+      },
+      albums: {},
+      artists: {},
+      playlists: {},
+    },
   },
   mutations,
   actions,

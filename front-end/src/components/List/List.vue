@@ -1,7 +1,7 @@
 <template>
     <div class="List">
         <div v-for="item in list" :key="type + item">
-            <ListItem :id="item" :type="type" />
+            <ListItem :id="item" :type="type" v-if="display"/>
         </div>
     </div>
 </template>
@@ -17,33 +17,38 @@ export default {
     components: {
         ListItem
     },
+    data() {
+        return {
+            display: false,
+        }
+    },
     computed: {
         list() {
-            return this.$store.state.data.list.list;
+            return this.$store.state.list.list;
         },
         tracks() {
-            return this.$store.state.data.list.tracks;
+            return this.$store.state.list.tracks;
         },
         artists() {
-            return this.$store.state.data.list.artists;
+            return this.$store.state.list.artists;
         },
         albums() {
-            return this.$store.state.data.list.albums;
+            return this.$store.state.list.albums;
         },
         playlists() {
-            return this.$store.state.data.list.playlists;
+            return this.$store.state.list.playlists;
         },
-
     },
-    created() {
+    async created() {
         let missing = [];
-        console.log(this.list);
         for (let i = 0; i < this.list.length; i++) {
             if ((this.type == 0 && !(this.list[i] in this.tracks)) || (this.type == 1 && !(this.list[i] in this.artists)) || (this.type == 2 && !(this.list[i] in this.album)) || (this.type == 3 && !(this.list[i] in this.playlists))) {
+                await this.$store.dispatch('createListObject', {id: this.list[i], type: this.type});
                 missing.push(this.list[i]);
             }
         }
         this.$socket.client.emit('requestListTracks', {list: missing, type: this.type});
+        this.display = true;
     }
 };
 </script>

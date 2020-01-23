@@ -1,10 +1,12 @@
 <template>
-  <div class="ListTrack">
-        <div>
-            <div class="img" :style="{backgroundImage: 'url(' + tracks[id].image + ')'}"/>
-            <h1>{{tracks[id].name}}</h1>
+    <div class="ListTrack">
+        <div v-if="track == null">
         </div>
-  </div>
+        <div v-else class="flex">
+            <div class="img" :style="{backgroundImage: 'url(' + track.image + ')'}"/>
+            <h1>{{track.name}}</h1>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -19,12 +21,12 @@ export default {
     methods: {
     },
     computed: {
-        tracks() {
-            return this.$store.state.data.list.tracks;
+        track() {
+            return this.$store.state.list.tracks[this.id];
         },
     },
-    async created() {
-        console.log(this.tracks);
+    created() {
+        console.log(this.track);
     }
 };
 </script>
@@ -33,16 +35,25 @@ export default {
 <style scoped>
 .ListTrack {
     display: flex;
+
     width: 100%;
-    padding: 10px;
-    background-color: rgb(255,255,255,.2);
+    padding: 2px;
+    background-color: rgba(255, 255, 255, 0.068);
+    margin: 5px auto;
+    width: 80%;
 }
 
 .img {
     display: block;
-    width: 30px;
-    height: 30px;
+    width: 50px;
+    height: 50px;
     background-size: 100% 100%;
     background-position: center center;
+    margin-right: 10px;
+}
+
+h1 {
+   display: inline-block;
+   font-size: 1em; 
 }
 </style>

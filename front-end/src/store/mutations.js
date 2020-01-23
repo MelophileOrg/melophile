@@ -12,6 +12,7 @@ const SOCKET_AUTHLOGINLINK = (state, data) => {
 // { access_token: String, refresh_token: String }
 const SOCKET_AUTHGRANTED = (state, data) => {
     state.authentication.accessToken = data.access_token;
+    state.jimmy.inicialize(data.access_token);
     state.authentication.refreshToken = data.refresh_token;
 };
 ///////////////////////////////////////////////////////////////////////////////
@@ -83,50 +84,49 @@ const SOCKET_AUDIOFEATUREMAX = (state, data) => {
 const SOCKET_ANALYSIS = (state, data) => {
     state.data.analysis = data;
 };
-// { type: String, time: Number, offset: Number, items: Array} IDS ONLY
-// const SOCKET_TOPPLAYED = (state, data) => {
-//     // if (state.data.list.type != data.type)
-//     //     state.data.list.items = {};
-//     // if (state.data.charts.topPlayed[data.type][data.time].length <= data.offset) {
-//     //     for (let i = 0; i < data.items.length; i++) {
 
-//     //     }
-//     // }
-//     //     state.data.charts.topPlayed[data.type][data.time] = state.data.charts.topPlayed[data.type][data.time].concat(data.items.map(item => item._id));
-    
-//     // for (let i = 0; i < data.items.length; i++)
-//     //     state.data.list.items[data.items[i]._id] = data.items[i];
-// };
 ///////////////////////////////////////////////////////////////////////////////
 // SEARCH /////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 // { list: [id], type: Number }
 const SOCKET_LISTSTART = (state, data) => {
-    state.data.list.type = data.type;
-    state.data.list.list = data.list;
+    state.list.type = data.type;
+    state.list.list = data.list;
 };
 
 const SOCKET_LISTADD = (state, data) => {
-    state.data.list.list = state.data.list.list.concat(data.list);
+    state.list.list = state.list.list.concat(data.list);
 };
 
+const addListObject = (state, data) => {
+    if (state.list.type == 0) {
+        state.list.tracks[data.id] = null;
+    } else if (state.list.type == 1) {
+        state.list.artists[data.id] = null;
+    } else if (state.list.type == 2) {
+        state.list.albums[data.id] = null;
+    } else if (state.list.type == 3) {
+        state.list.playlists[data.id] = null;
+    }
+}
+
 const SOCKET_LISTCLEAR = (state) => {
-    state.data.list.list = [];
+    state.list.list = [];
 };
 // { items: [], type: Number }
 const SOCKET_REQUESTEDLIST = (state, data) => {
-    if (data.type != state.data.list.type) {
+    if (data.type != state.list.type) {
         return;
     }
     for (let i = 0; i < data.items.length; i++) {
-        if (state.data.items.type == 0) {
-            state.data.list.tracks[data.items[i]._id] = state.data.list.tracks[data.items[i]];
-        } else if (state.data.items.type == 1) {
-            state.data.list.artists[data.items[i]._id] = state.data.list.tracks[data.items[i]];
-        } else if (state.data.items.type == 2) {
-            state.data.list.albums[data.items[i]._id] = state.data.list.tracks[data.items[i]];
-        } else if (state.data.items.type == 3) {
-            state.data.list.playlists[data.items[i]._id] = state.data.list.tracks[data.items[i]];
+        if (state.list.type == 0) {
+            state.list.tracks[data.items[i]._id] = data.items[i];
+        } else if (state.list.type == 1) {
+            state.list.artists[data.items[i]._id] = data.items[i];
+        } else if (state.list.type == 2) {
+            state.list.albums[data.items[i]._id] = data.items[i];
+        } else if (state.list.type == 3) {
+            state.list.playlists[data.items[i]._id] = data.items[i];
         }
     }
 
@@ -156,6 +156,7 @@ export default {
 
     SOCKET_LISTSTART,
     SOCKET_LISTADD,
+    addListObject,
     SOCKET_LISTCLEAR,
     SOCKET_REQUESTEDLIST
 
