@@ -39,7 +39,7 @@ let server = app.listen(3002, function(){
 
 // Secret and IDs
 dotenv.config();
-let DEV = true;
+let DEV = false;
 let spotifyId = process.env.spotifyId;
 let spotifySecret = process.env.spotifySecret;
 

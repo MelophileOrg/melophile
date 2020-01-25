@@ -9,7 +9,11 @@ import io from 'socket.io-client';
 
 Vue.config.productionTip = false
 
-const socket = io('http://localhost:3002');
+const DEV = false;
+let SOCKETURI = "http://melophile.org/socket"
+if (DEV) SOCKETURI = "http://localhost:3002";
+
+const socket = io(SOCKETURI);
 
 Vue.use(VueSocketIOExt, socket, { store });
 
