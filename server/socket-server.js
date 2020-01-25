@@ -341,6 +341,7 @@ io.on('connection', function(socket) {
     // { query: String, type: Number, offset: Number }
     socket.on('search', async function(data) {
         try {
+            socket.emit('ListClear');
             let items;
             let key;
             if (data.type == 0) {

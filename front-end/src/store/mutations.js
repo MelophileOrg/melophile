@@ -1,3 +1,7 @@
+const setRoute = (state, route) => {
+    state.route = route;
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 // AUTHENTICATION /////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -20,11 +24,10 @@ const SOCKET_AUTHGRANTED = (state, data) => {
 ///////////////////////////////////////////////////////////////////////////////
 // { message: String }
 const SOCKET_CONSOLELOG = (state, data) => {
-    console.log(data.message);
+    let message = data.message;
 };
 // { message: String, percent: Number}
 const SOCKET_PROCESSMESSAGE = (state, data) => {
-    console.log(data.message);
     state.progress.message = data.message;
     state.progress.percent = data.percent;
 };
@@ -61,7 +64,6 @@ const SOCKET_AUDIOFEATUREDISTRIBUTIONS = (state, data) => {
     let keys = Object.keys(data);
     for (let i = 0; i < keys.length; i++) 
         state.data.audioFeatures[keys[i]].distribution = data[keys[i]];
-    console.log(state.data.audioFeatures);
 };
 // { feature: String, history: Number }
 const SOCKET_AUDIOFEATUREHISTORY = (state, data) => {
@@ -104,6 +106,8 @@ const SOCKET_LISTCLEAR = (state) => {
 
 
 export default {
+    setRoute,
+    
     SOCKET_CONSOLELOG,
     SOCKET_AUTHSTATE,
     SOCKET_AUTHLOGINLINK,

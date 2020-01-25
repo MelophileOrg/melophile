@@ -1,10 +1,10 @@
 <template>
     <div class="ListTrack">
-        <div v-if="track == null">
-        </div>
-        <div v-else class="flex">
-            <div class="img" :style="{backgroundImage: 'url(' + track.image + ')'}"/>
-            <h1>{{track.name}}</h1>
+        <div v-if="track != null">
+            <h1 @click="routeTrack()">{{track.name}}</h1>
+            <div class="flex sub-flex">
+                <h2 @click="routeArtist(index)" v-for="(artist, index) in track.artists" :key="track._id + '-' + artist._id">{{artist.name + comma(index, track.artists.length)}}</h2>
+            </div>
         </div>
     </div>
 </template>
@@ -14,47 +14,62 @@
 export default {
     name: 'ListTrack',
     props: {
-        id: String,
+        track: Object,
     },
-    data: () => ({
-
-    }),
     methods: {
-    },
-    computed: {
-        track() {
-            return this.$store.state.jimmy.getItem(this.id);
+        routeTrack() {
+            this.$router.push('/track/' + this.track._id);
         },
-    },
-    created() {
-        console.log(this.track);
+        routeArtist(index) {
+            this.$router.push('/artist/' + this.track.artists[index]._id);
+        },
+        comma(index, total) {
+            if (index < total - 1)
+                return ',';
+            return '';
+        }
     }
 };
 </script>
 
 
 <style scoped>
-.ListTrack {
-    display: flex;
-
-    width: 100%;
-    padding: 2px;
-    background-color: rgba(255, 255, 255, 0.068);
-    margin: 5px auto;
-    width: 80%;
-}
-
-.img {
-    display: block;
-    width: 50px;
-    height: 50px;
-    background-size: 100% 100%;
-    background-position: center center;
-    margin-right: 10px;
-}
-
 h1 {
-   display: inline-block;
-   font-size: 1em; 
+    margin: 0 0;
+    display: block;
+    text-align: left;
+    max-width: calc(100%);
+    font-size: 1.1em; 
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+h1:hover {
+    text-decoration: underline;
+}
+
+h2 {
+    display: block;
+    color: hsla(0,0%,100%,.514)!important;
+    font-weight: lighter;
+    text-transform: capitalize;
+    font-size: 15px;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    margin-right: 10px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+h2:hover {
+    text-decoration: underline;
+}
+
+.sub-flex {
+  max-width: 100%;
+  overflow: hidden;
 }
 </style>

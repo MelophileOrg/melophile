@@ -1,7 +1,7 @@
 <template>
     <div class="List">
-        <div v-for="item in list" :key="type + item">
-            <ListItem :id="item" :type="type" v-if="display"/>
+        <div v-if="display">
+            <ListItem :delay="delay" :index="index" :item="item" :type="type" v-for="(item, index) in items" :key="type + item._id"/>
         </div>
     </div>
 </template>
@@ -12,7 +12,9 @@ import ListItem from '@/components/List/ListItem.vue'
 export default {
     name: 'List',
     props: {
+        items: Array,
         type: Number,
+        delay: Number,
     },
     components: {
         ListItem
@@ -20,21 +22,11 @@ export default {
     data() {
         return {
             display: false,
-            items: [],
         }
     },
     computed: {
-        list() {
-            return this.$store.state.list.list;
-        },
-        jimmy() {
-            return this.$store.state.jimmy;
-        }
     },
     async created() {
-        console.log("hey jimmy...");
-        this.items = await this.jimmy.getTracks(this.list, false);
-        console.log(this.items);
         this.display = true;
     }
 };

@@ -12,10 +12,11 @@ class Jimmy {
         this.artists = {};
         this.albums = {};
         this.playlists = {};
+        this.requestNum = 0;
     }
 
     sayHello() {
-        console.log("I'm-a chewin' on a honeysuckle vine.");
+        return "I'm-a chewin' on a honeysuckle vine.";
     }
 
     async inicialize(accessToken) {
@@ -23,7 +24,63 @@ class Jimmy {
             await this.spotifyAPI.setAccessToken(accessToken);
             this.ready = true;
         } catch(error) {
-            console.log(error);
+            return;
+        }
+    }
+
+    async search(query, offset, type) {
+        try {
+            let localRequestNum = this.requestNum + 1;
+            this.requestNum += 1;
+
+            if (!this.ready) 
+                return null;
+            let response;
+            let key;
+            switch(type) {
+                case 0: 
+                    response = await this.spotifyAPI.searchTracks(query, {limit: 50, offset: offset});
+                    key = "tracks";
+                    break;
+                case 1:
+                    response = await this.spotifyAPI.searchArtists(query, {limit: 50, offset: offset});
+                    key = "artists";
+                    break;
+                case 2:
+                    response = await this.spotifyAPI.searchAlbums(query, {limit: 50, offset: offset});
+                    key = "albums";
+                    break;
+                case 3:
+                    response = await this.spotifyAPI.searchPlaylists(query, {limit: 50, offset: offset});
+                    key = "playlists";
+                    break;
+                default:
+                    return null;
+            }
+            let items = response.body[key].items;
+            let convertedItems = [];
+            for (let i = 0; i < items.length; i++) {
+                switch(type) {
+                    case 0:
+                        convertedItems.push(this.convertTrack(items[i]));
+                        break;
+                    case 1:
+                        convertedItems.push(this.convertArtist(items[i]));
+                        break;
+                    case 2: 
+                        convertedItems.push(this.convertAlbum(items[i]));
+                        break;
+                    case 3: 
+                        convertedItems.push(this.convertPlaylist(items[i]));
+                        break;
+                }
+            }
+            if (this.requestNum != localRequestNum) {
+                return null;
+            }
+            return convertedItems;
+        } catch(error) {
+            return;
         }
     }
 
@@ -34,17 +91,18 @@ class Jimmy {
             this.clearCache(0, concat);
             let response = await axios.put('/api/tracks', { ids: ids });
             let tracks = response.data.tracks;
+            let keys = Object.keys(tracks);
             let missing = [];
-            let key;
-            for (key in tracks) 
-                if (tracks[key] == null) 
-                    missing.push(key);
-            console.log(tracks);
-            console.log(missing);
+            for (let i = 0; i < keys.length; i++) {
+                if (tracks[keys[i]] == null) {
+                    missing.push(keys[i]);
+                }
+            }
             if (missing.length > 0) {
                 let newTracks = [];
-                for (let i = 0; i < Math.ceil(missing / 50); i++) 
+                for (let i = 0; i < Math.ceil(missing.length / 50); i++) {
                     newTracks = newTracks.concat((await this.spotifyAPI.getTracks(missing.slice(i * 50, i * 50 + 50))).body.tracks);
+                }
                 for (let i = 0; i < newTracks.length; i++) {
                     if (newTracks[i] != null) {
                         tracks[newTracks[i].id] = await this.convertTrack(newTracks[i]);
@@ -55,7 +113,7 @@ class Jimmy {
             }
             return tracks;
         } catch(error) {
-            console.log(error);
+            return;
         }
     }
 
@@ -63,18 +121,21 @@ class Jimmy {
         try {
             if (!this.ready)
                 return null;
-            this.clearCache(1, concat);
+            this.clearCache(0, concat);
             let response = await axios.put('/api/artists', { ids: ids });
             let artists = response.data.artists;
+            let keys = Object.keys(artists);
             let missing = [];
-            let key;
-            for (key in artists) 
-                if (artists[key] == null) 
-                    missing.push(key);
+            for (let i = 0; i < keys.length; i++) {
+                if (artists[keys[i]] == null) {
+                    missing.push(keys[i]);
+                }
+            }
             if (missing.length > 0) {
                 let newArtists = [];
-                for (let i = 0; i < Math.ceil(missing / 50); i++) 
+                for (let i = 0; i < Math.ceil(missing.length / 50); i++) {
                     newArtists = newArtists.concat((await this.spotifyAPI.getArtists(missing.slice(i * 50, i * 50 + 50))).body.artists);
+                }
                 for (let i = 0; i < newArtists.length; i++) {
                     if (newArtists[i] != null) {
                         artists[newArtists[i].id] = await this.convertArtist(newArtists[i]);
@@ -83,10 +144,9 @@ class Jimmy {
                     }
                 }
             }
-            console.log(artists);
             return artists;
         } catch(error) {
-            console.log(error);
+            return;
         }
     }
 
@@ -106,10 +166,9 @@ class Jimmy {
                     albums[newAlbums[i].id] = null;
                 }
             }
-            console.log(albums);
             return albums;
         } catch(error) {
-            console.log(error);
+            return;
         }
         
     }
@@ -118,18 +177,21 @@ class Jimmy {
         try {
             if (!this.ready)
                 return null;
-            this.clearCache(3, concat);
+            this.clearCache(0, concat);
             let response = await axios.put('/api/playlists', { ids: ids });
             let playlists = response.data.playlists;
+            let keys = Object.keys(playlists);
             let missing = [];
-            let key;
-            for (key in playlists) 
-                if (playlists[key] == null) 
-                    missing.push(key);
+            for (let i = 0; i < keys.length; i++) {
+                if (playlists[keys[i]] == null) {
+                    missing.push(keys[i]);
+                }
+            }
             if (missing.length > 0) {
                 let newPlaylists = [];
-                for (let i = 0; i < Math.ceil(missing / 50); i++) 
+                for (let i = 0; i < Math.ceil(missing.length / 50); i++) {
                     newPlaylists = newPlaylists.concat((await this.spotifyAPI.getPlaylists(missing.slice(i * 50, i * 50 + 50))).body.playlists);
+                }
                 for (let i = 0; i < newPlaylists.length; i++) {
                     if (newPlaylists[i] != null) {
                         playlists[newPlaylists[i].id] = await this.convertPlaylist(newPlaylists[i]);
@@ -138,10 +200,9 @@ class Jimmy {
                     }
                 }
             }
-            console.log(playlists);
             return playlists;
         } catch(error) {
-            console.log(error);
+            return;
         }
     }
 
@@ -201,7 +262,7 @@ class Jimmy {
         return {
             _id: album.id,
             name: album.name,
-            artists: album.genres,
+            genres: album.genres,
             image: image,
         };
     }
@@ -219,7 +280,7 @@ class Jimmy {
                 return {name: artist.name, _id: artist.id};
             }),
             image: image,
-            trackNum: album.tracks.total,
+            total_tracks: album.total_tracks,
         };
     }
 
@@ -232,9 +293,10 @@ class Jimmy {
         return {
             _id: playlist.id,
             name: playlist.name,
-            owner: playlist.owner,
+            owner: playlist.owner.display_name,
             image: image,
             public: playlist.public,
+            total_tracks: playlist.tracks.total,
         };
     }
 }

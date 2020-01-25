@@ -13,6 +13,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    route: "home",
+    
     authentication: {
       accessToken: null,
       refreshToken: null,
@@ -132,6 +134,7 @@ export default new Vuex.Store({
 
     list: {
       type: 0, // 0: Tracks, 1: Artists, 2: Albums, 3: Playlists
+      id: 0,
       list: [],
     },
   },

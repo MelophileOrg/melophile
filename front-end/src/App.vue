@@ -1,17 +1,18 @@
 <template>
   <v-app v-resize="onResize" id="app">
-    <v-app-bar app clipped-left color="rgba(0,0,0,0)">
-      <img src="./assets/logo.svg">
+    <v-app-bar app clipped-left hide-on-scroll v-if="windowSize.x < 1264">
       <v-toolbar-title class="mr-12 align-center">
-        <h1 class="title">Melophile</h1>
+        <h1 id="title">melophile</h1>
       </v-toolbar-title>
       <v-spacer />
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer" v-if="windowSize.x < 1264"/>
     </v-app-bar>
-    <v-navigation-drawer class="nav-bar" app clipped v-model="drawer" color="rgb(255,255,255)" >
+    <v-navigation-drawer fixed class="nav-bar" app floating clipped v-model="drawer" :width="200" color="rgb(255,255,255)" >
+      <h1 id="title" class="large" v-if="windowSize.x > 1264">melophile</h1>
+      <h1 id="title" class="large" v-else>menu</h1>
       <v-tabs v-model="tab" @change="route" vertical background-color="rgba(0,0,0,0)" :grow="true" class="extra-margin">
         <div v-for="(tab, index) in tabs" :key="'nav-bar-tab-' + tab.title + index">
-          <v-tab v-if="tab.type == 'link'">
+          <v-tab class="lowercase" v-if="tab.type == 'link'">
             <img class="nav-icon" :src="getImgUrl(tab.img)"/>
             {{tab.title}}
           </v-tab>
@@ -39,7 +40,7 @@
   export default {
     name: "app",
     data: () => ({
-      drawer: false,
+      drawer: true,
       tab: 0,
       tabs: [
         {type: 'link', title: 'Home', img: 'home', path: '/'},
@@ -64,7 +65,8 @@
       route(index) {
         let routes = this.tabs.filter(tab => tab.type == 'link').map(tab => tab.path);
         if (routes[index] == this.$route.fullPath){
-          this.drawer = false;
+          if (this.windowSize.x < 1264)
+            this.drawer = false;
           return;
         }
         if (this.first) {
@@ -75,7 +77,8 @@
           top: 0,
           behavior: 'auto'
         });
-        this.drawer = false;
+        if (this.windowSize.x < 1264)
+          this.drawer = false;
       },
       onResize() {
         this.windowSize = {x: window.innerWidth, y: window.innerHeight};
@@ -91,14 +94,52 @@
         if (w > 400)
           return 400;
         return w;
-      }
+      },
     },
     computed: {
       progress() {
         return this.$store.state.progress;
+      },
+      storeRoute() {
+        return this.$store.state.route;
       }
     },
-    created () {
+    watch: {
+      storeRoute: function() {
+        switch(this.storeRoute) {
+          case "home":
+            this.tab = 0;
+            break;
+          case "search":
+            this.tab = 1;
+            break;
+          case "discover":
+            this.tab = 2;
+            break;
+          case "library":
+            this.tab = 4;
+            break;
+          case "history":
+            this.tab = 5;
+            break;
+          case "charts":
+            this.tab = 6;
+            break;
+          case "myprofile":
+            this.tab = 8;
+            break;
+          case "publicprofiles":
+            this.tab = 9;
+            break;
+          default: 
+            this.tab = 0;
+            break;
+        }
+      },
+    },
+    async created () {
+      await this.onResize();
+
       this.$vuetify.theme.dark = true;
       let tabs = ["home", "discover", "search", "bigpicture", "topcharts", "library", "myprofile", "publicprofiles"];
       if (this.$route.name == "profile")
@@ -110,7 +151,6 @@
         else 
           this.tab = tabFound;
       }
-      
     },
     mounted() {
       this.onResize();
@@ -119,30 +159,20 @@
 </script>
 
 <style>/* Fonts */
-@import url('https://fonts.googleapis.com/css?family=Acme|EB+Garamond|Monoton|Patua+One|Roboto|Staatliches&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
-/*
-font-family: 'Roboto', sans-serif;
-font-family: 'Acme', sans-serif;
-font-family: 'Monoton', cursive;
-font-family: 'Patua One', cursive;
-font-family: 'Staatliches', cursive;
-font-family: 'EB Garamond', serif;
-*/
+@import url('https://fonts.googleapis.com/css?family=Roboto:100&display=swap');
 </style>
 <style>/* Base CSS */
+.lowercase {
+  text-transform: lowercase !important;
+}
 html {
-  background: #20284d;
+  background: #32323e;
 }
 
 body {
   margin: 0;
   overflow-x: hidden;
-}
-
-.title {
-  color: rgba(251, 251, 251, 0.966);
-  font-weight: lighter;
 }
 
 #app {
@@ -161,7 +191,7 @@ body {
 html::-webkit-scrollbar-track
 {
     -webkit-box-shadow: inset 0 0 6px rgba(124, 102, 102, 0.3);
-    background-color: rgba(6, 6, 6, 0)
+    background-color: #32323e;
 }
 
 html::-webkit-scrollbar
@@ -175,71 +205,32 @@ html::-webkit-scrollbar-thumb
     -webkit-box-shadow: inset 0 0 6px rgba(255, 255, 255, 0);
     background-color: rgba(255, 255, 255, 0.288);
 }
-</style>
-<style>/* Animations */
-@keyframes hide {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 0;
-  }
-}
-@keyframes slide-up {
-  from {
-    opacity: 0;
-    transform: translateY(100px);
-  }
+
+.v-content__wrap {
+  padding-left: 16px;
+  padding-right: 16px;
 }
 
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
+.pop-small {
+    -webkit-box-shadow: 0 4px 15px rgba(40,40,51,.6);
+    box-shadow: 0 4px 15px rgba(40,40,51,.6);
 }
 </style>
-<style>/* Flex */
-.flex {
-  display: flex;
+<style> /* Fixes */
+#title {
+  font-family: 'Roboto', sans-serif !important;
+  color: rgb(251, 251, 251);
+  font-size: 1.4em !important;
+  font-weight: lighter !important;
 }
 
-.flex-center {
-  justify-content: center;
-}
-
-.flex-left {
-  justify-content: left;
-}
-
-.flex-wrap {
-  flex-wrap: wrap;
-}
-
-.flex-space-around {
-  justify-content: space-around;
-}
-
-.flex-space-between {
-  justify-content: space-between;
-}
-
-.flex-align-center {
-  align-items: center;
-}
-
-.flex-align-top {
-  align-items: top;
-}
-
-.flex-align-flex-end {
-  align-items: flex-end;
-}
-
-.extra-margin {
+#title.large{
+  font-size: 1.9em !important;
+  text-align: left;
+  margin-left: 26px;
   margin-top: 20px;
 }
-</style>
-<style>
+
 .nav-drawer-title {
   padding: 0px 12px;
   margin-top: 6px;
@@ -285,11 +276,20 @@ html::-webkit-scrollbar-thumb
 }
 
 .v-navigation-drawer__content {
-  background-color: #20284d;
+  background-color: #32323e;
+}
+
+.small-elevation {
+  box-shadow: 0 4px 15px rgba(40,40,51,.6) !important;
+}
+
+.v-navigation-drawer__border {
+  background-color: rgba(0, 0, 0, 0) !important;
+  width: 0px !important;
 }
 
 .second-color {
-  background-color: rgb(23, 37, 66);
+  background-color: #32323e;
 }
 
 div.v-tab {
@@ -299,7 +299,7 @@ div.v-tab {
 }
 
 .v-tabs--vertical .v-tabs-slider-wrapper .v-tabs-slider {
-  background-color: rgb(228, 93, 94) !important;
+  background-color: #52e3c2 !important;
   width: 4px !important;
 }
 
@@ -360,17 +360,30 @@ prepend {
 }
 
 .v-app-bar--fixed {
-  background-color: rgba(30, 89, 206, 0) !important;
+  background-color: rgba(50, 50, 62, .9) !important;
 }
 
 .theme--dark.v-tabs-items {
   background-color: rgba(0, 0, 0, 0) !important;
 }
 
+.extra-margin {
+  margin-top: 10px;
+}
+
+@media only screen and (min-width: 1264px) {
+  .extra-margin {
+    margin-top: 10px;
+  }
+
+  .v-content__wrap {
+    padding-left: 0px!important;
+  }
+}
+
 /* 1264 */
 </style>
-
-<style>
+<style> /* Old WINDOWS */
 #page-title {
   display: flex;
   padding: 24px 42px;
@@ -422,8 +435,7 @@ prepend {
 }
 
 </style>
-
-<style>
+<style> /* Images */
 #big-picture {
   background-image: url('./assets/nav-bar-icons/bigpicture.svg');
 }
@@ -435,4 +447,82 @@ prepend {
 #library {
   background-image: url('./assets/nav-bar-icons/library.svg');
 }
+</style>
+<style>/* Animations */
+@keyframes hide {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(100px);
+  }
+}
+
+@keyframes emptylist {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.slide-up {
+  --delay: 0;
+  --speed: .3;
+  animation: hide calc(var(--delay) * .1s), slide-up .3s ease calc(var(--delay) * .1s);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+</style>
+<style>/* Flex */
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  justify-content: center;
+}
+
+.flex-left {
+  justify-content: left;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-space-around {
+  justify-content: space-around;
+}
+
+.flex-space-between {
+  justify-content: space-between;
+}
+
+.flex-align-center {
+  align-items: center;
+}
+
+.flex-align-top {
+  align-items: top;
+}
+
+.flex-align-flex-end {
+  align-items: flex-end;
+}
+
 </style>

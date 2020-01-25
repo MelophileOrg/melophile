@@ -91,7 +91,7 @@ class DataCollector {
                 this.instance.$socket.emit('feature_average_single', {userID: this.userID, audioFeature: "valence"});
             return this.audioFeatureAverages.valence;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -101,7 +101,7 @@ class DataCollector {
                 this.instance.$socket.emit('feature_average_single', {userID: this.userID, audioFeature: "danceability"});
             return this.audioFeatureAverages.danceability;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -111,7 +111,7 @@ class DataCollector {
                 this.instance.$socket.emit('feature_average_single', {userID: this.userID, audioFeature: "energy"});
             return this.audioFeatureAverages.energy;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -121,7 +121,7 @@ class DataCollector {
                 this.instance.$socket.emit('feature_average_single', {userID: this.userID, audioFeature: "acousticness"});
             return this.audioFeatureAverages.acousticness;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -131,7 +131,7 @@ class DataCollector {
                 this.instance.$socket.emit('feature_average_single', {userID: this.userID, audioFeature: "instrumentalness"});
             return this.audioFeatureAverages.instrumentalness;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -141,7 +141,7 @@ class DataCollector {
                 this.instance.$socket.emit('feature_average_single', {userID: this.userID, audioFeature: "liveness"});
             return this.audioFeatureAverages.liveness;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -151,7 +151,7 @@ class DataCollector {
                 this.instance.$socket.emit('feature_average_single', {userID: this.userID, audioFeature: "loudness"});
             return this.audioFeatureAverages.loudness;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -161,7 +161,7 @@ class DataCollector {
                 this.instance.$socket.emit('feature_average_single', {userID: this.userID, audioFeature: "speechiness"});
             return this.audioFeatureAverages.speechiness;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -171,7 +171,7 @@ class DataCollector {
                 this.instance.$socket.emit('feature_average_single', {userID: this.userID, audioFeature: "key"});
             return this.audioFeatureAverages.key;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -181,7 +181,7 @@ class DataCollector {
                 this.instance.$socket.emit('feature_average_single', {userID: this.userID, audioFeature: "mode"});
             return this.audioFeatureAverages.mode;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -191,7 +191,7 @@ class DataCollector {
                 this.instance.$socket.emit('feature_average_single', {userID: this.userID, audioFeature: "tempo"});
             return this.audioFeatureAverages.tempo;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -213,7 +213,7 @@ class DataCollector {
             }
             return this.audioFeatureAverages;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -223,7 +223,7 @@ class DataCollector {
                 this.instance.$socket.emit('feature_distribution_single', {userID: this.userID, audioFeature: "valence"});
             return this.audioFeatureDistributions.valence;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -233,7 +233,7 @@ class DataCollector {
                 this.instance.$socket.emit('feature_distribution_single', {userID: this.userID, audioFeature: "danceability"});
             return this.audioFeatureDistributions.danceability;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -243,7 +243,7 @@ class DataCollector {
                 this.instance.$socket.emit('feature_distribution_single', {userID: this.userID, audioFeature: "energy"});
             return this.audioFeatureDistributions.energy;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -253,7 +253,7 @@ class DataCollector {
                 this.instance.$socket.emit('feature_distribution_single', {userID: this.userID, audioFeature: "acousticness"});
             return this.audioFeatureDistributions.acousticness;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -263,7 +263,7 @@ class DataCollector {
                 this.instance.$socket.emit('feature_distribution_single', {userID: this.userID, audioFeature: "instrumentalness"});
             return this.audioFeatureDistributions.instrumentalness;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -273,7 +273,7 @@ class DataCollector {
                 this.instance.$socket.emit('feature_distribution_single', {userID: this.userID, audioFeature: "liveness"});
             return this.audioFeatureDistributions.liveness;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -283,7 +283,7 @@ class DataCollector {
                 this.instance.$socket.emit('feature_distribution_single', {userID: this.userID, audioFeature: "loudness"});
             return this.audioFeatureDistributions.loudness;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -293,7 +293,7 @@ class DataCollector {
                 this.instance.$socket.emit('feature_distribution_single', {userID: this.userID, audioFeature: "speechiness"});
             return this.audioFeatureDistributions.speechiness;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -303,7 +303,7 @@ class DataCollector {
                 this.instance.$socket.emit('feature_distribution_single', {userID: this.userID, audioFeature: "key"});
             return this.audioFeatureDistributions.key;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -313,7 +313,7 @@ class DataCollector {
                 this.instance.$socket.emit('feature_distribution_single', {userID: this.userID, audioFeature: "mode"});
             return this.audioFeatureDistributions.mode;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -323,7 +323,7 @@ class DataCollector {
                 this.instance.$socket.emit('feature_distribution_single', {userID: this.userID, audioFeature: "tempo"});
             return this.audioFeatureDistributions.tempo;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -345,7 +345,7 @@ class DataCollector {
             }
             return this.audioFeatureDistributions;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -355,7 +355,7 @@ class DataCollector {
                 this.instance.$socket.emit('timeline_added', {userID: this.userID});
             return this.history.added;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -365,7 +365,7 @@ class DataCollector {
                 this.instance.$socket.emit('timeline_genres', {userID: this.userID});
             return this.history.genres;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -375,7 +375,7 @@ class DataCollector {
                 this.instance.$socket.emit('timeline_artists', {userID: this.userID});
             return this.history.artists;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -385,7 +385,7 @@ class DataCollector {
                 this.instance.$socket.emit('timeline_feature_single', {userID: this.userID, audioFeature: "valence"});
             return this.history.valence;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -395,7 +395,7 @@ class DataCollector {
                 this.instance.$socket.emit('timeline_feature_single', {userID: this.userID, audioFeature: "danceability"});
             return this.history.danceability;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -405,7 +405,7 @@ class DataCollector {
                 this.instance.$socket.emit('timeline_feature_single', {userID: this.userID, audioFeature: "energy"});
             return this.history.energy;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -415,7 +415,7 @@ class DataCollector {
                 this.instance.$socket.emit('timeline_feature_single', {userID: this.userID, audioFeature: "acousticness"});
             return this.history.acousticness;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -425,7 +425,7 @@ class DataCollector {
                 this.instance.$socket.emit('timeline_feature_single', {userID: this.userID, audioFeature: "instrumentalness"});
             return this.history.instrumentalness;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -435,7 +435,7 @@ class DataCollector {
                 this.instance.$socket.emit('timeline_feature_single', {userID: this.userID, audioFeature: "liveness"});
             return this.history.liveness;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -445,7 +445,7 @@ class DataCollector {
                 this.instance.$socket.emit('timeline_feature_single', {userID: this.userID, audioFeature: "loudness"});
             return this.history.loudness;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -455,7 +455,7 @@ class DataCollector {
                 this.instance.$socket.emit('timeline_feature_single', {userID: this.userID, audioFeature: "speechiness"});
             return this.history.speechiness;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -465,7 +465,7 @@ class DataCollector {
                 this.instance.$socket.emit('timeline_feature_single', {userID: this.userID, audioFeature: "key"});
             return this.history.key;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -475,7 +475,7 @@ class DataCollector {
                 this.instance.$socket.emit('timeline_feature_single', {userID: this.userID, audioFeature: "mode"});
             return this.history.mode;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -485,7 +485,7 @@ class DataCollector {
                 this.instance.$socket.emit('timeline_feature_single', {userID: this.userID, audioFeature: "tempo"});
             return this.history.tempo;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -507,7 +507,7 @@ class DataCollector {
             }
             return this.history;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -517,7 +517,7 @@ class DataCollector {
                 this.instance.$socket.emit('timeline_year', {userID: this.userID, year: year});
             return this.yearAnalysis;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -527,7 +527,7 @@ class DataCollector {
                 this.instance.$socket.emit('timeline_month', {userID: this.userID, month: month, year: year});
             return this.monthAnalysis;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -537,7 +537,7 @@ class DataCollector {
                 this.instance.$socket.emit('track', {trackID: trackID});
             return this.trackAnalysis;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -547,7 +547,7 @@ class DataCollector {
                 this.instance.$socket.emit('album', {albumID: albumID});
             return this.albumAnalysis;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -557,7 +557,7 @@ class DataCollector {
                 this.instance.$socket.emit('artist', {artistID: artistID});
             return this.artistAnalysis;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -567,7 +567,7 @@ class DataCollector {
                 this.instance.$socket.emit('genre', {genreID: genreID});
             return this.genreAnalysis;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -577,7 +577,7 @@ class DataCollector {
                 this.instance.$socket.emit('playlist', {userID: this.userID, playlistID: playlistID});
             return this.playlistAnalysis;
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -587,7 +587,7 @@ class DataCollector {
                 this.instance.$socket.emit('chart_played_tracks', {userID: this.userID, offset: 0});
             return this.topPlayed.tracks[time];
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -597,7 +597,7 @@ class DataCollector {
                 this.instance.$socket.emit('chart_played_artists', {userID: this.userID, offset: 0});
             return this.topPlayed.artists[time];
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -607,7 +607,7 @@ class DataCollector {
                 this.instance.$socket.emit('chart_saved_artists', {userID: this.userID, offset: 0});
             return this.topSaved.artists[time];
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -617,7 +617,7 @@ class DataCollector {
                 this.instance.$socket.emit('chart_saved_genres', {userID: this.userID, offset: 0});
             return this.topSaved.genres[time];
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
@@ -630,7 +630,7 @@ class DataCollector {
                 this.instance.$socket.emit('chart_saved_genres', {userID: this.userID, offset: 0});
             return this.topSaved.genres[time];
         } catch(error) {
-            console.log(error);
+            let error = error;
         }
     }
 
