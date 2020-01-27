@@ -1,6 +1,7 @@
 <template>
   <div class="Library">
-    <v-tabs dark background-color="rgba(240,240,240,.1)" v-model="tab">
+    <h1  class="library-title slide-up" :style="{'--delay': + 0}">your library</h1>
+    <v-tabs dark background-color="#32323e" v-model="tab">
       <v-tab>
         Tracks
       </v-tab>
@@ -11,9 +12,8 @@
         Playlists
       </v-tab>
     </v-tabs>
-    <h1 class="type slide-up" :style="{'--delay': + 0}">{{typeText}}</h1>
-    <List :delay="1" :items="list" :type="type" v-if="list.length > 0"/>
-    <EmptyList :delay="1" :num="8" v-else/>
+    <List class="transform-left" :delay="1" :items="list" :type="type" v-if="list.length > 0"/>
+    <EmptyList class="transform-left" :delay="1" :num="8" v-else/>
   </div>
 </template>
 
@@ -45,22 +45,31 @@ export default {
     }
   },
   computed: {
-    typeText() {
-      let text = ["Tracks", "Artists", "Playlists"];
-      return text[this.tab];
-    }
   }
 }
 </script>
 
 <style scoped>
-.type {
-  margin: 5px 0px;
-  color: #f7f7f746;
-  font-size: 1.5em;
+.library-title {
+  color: #52e3c2;
+  font-size: 2.5em;
   font-family: 'Roboto', sans-serif;
   font-weight: lighter;
   text-align: left;
   opacity: 1;
+  margin: 0px;
+  margin-top: 15px;
+}
+div.v-tab {
+  margin: 5px 0px;
+  color: #f7f7f746;
+  font-size: 1em;
+  font-family: 'Roboto', sans-serif;
+  font-weight: lighter;
+  text-align: left;
+  opacity: 1;
+}
+.transform-left {
+  transform: translateX(-6px);
 }
 </style>

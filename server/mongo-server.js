@@ -25,6 +25,18 @@ let Track = Items.track;
 let Artist = Items.artist;
 let Playlist = Items.playlist;
 
+app.put("/api/images", async (req, res) => {
+  try {
+    let tracks = await Tracks.aggregate([ { $sample: { size: 30 } } ]);
+    console.log(tracks);
+    let images = tracks.map(track => track.image);
+    return res.send({ images: images });
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
 
 // { ids: [] }
 app.put("/api/tracks", async (req, res) => {
