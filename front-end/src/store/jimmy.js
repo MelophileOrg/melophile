@@ -21,7 +21,11 @@ class Jimmy {
 
     async inicialize(accessToken) {
         try {
-            await this.spotifyAPI.setAccessToken(accessToken);
+            this.axios = axios.create({
+                headers: {'Authorization': 'Bearer ' + accessToken}
+            });
+            this.token = accessToken;
+            await this.spotifyAPI.setAccessToken(this.token);
             this.ready = true;
         } catch(error) {
             return;
@@ -86,8 +90,43 @@ class Jimmy {
 
     async getRecommends(options) {
         try {
-            let response = await this.spotifyAPI.getRecommendations(options);
-            let tracks = response.body.tracks;
+            if (!this.ready) {
+                return null;
+            }
+            let keys = Object.keys(options);
+            let optionStrings = [];
+            for (let i = 0; i < keys.length; i++) {
+                if (keys[i] == 'seed_tracks') {
+                    let seed_tracks = "seed_tracks=";
+                    for (let i = 0; i < options.seed_tracks.length; i++) {
+                        seed_tracks += options.seed_tracks[i];
+                        if (i < options.seed_tracks.length - 1) {
+                            seed_tracks += "%2C%20";
+                        }
+                    }
+                    optionStrings.push(seed_tracks);
+                } else if (keys[i] == 'seed_artists') {
+                    let seed_artists = "seed_artists=";
+                    for (let i = 0; i < options.seed_artists.length; i++) {
+                        seed_artists += options.seed_artists[i];
+                        if (i < options.seed_artists.length - 1) {
+                            seed_artists += "%2C%20";
+                        }
+                    }
+                    optionStrings.push(seed_artists);
+                } else {
+                    optionStrings.push(keys[i] + "=" + options[keys[i]]);
+                }
+            }
+            let parameters = "";
+            for (let i = 0; i < optionStrings.length; i++) {
+                parameters += optionStrings[i];
+                if (i < optionStrings.length - 1) {
+                    parameters += '&';
+                }
+            }
+            let response = await this.axios.get('https://api.spotify.com/v1/recommendations?' + parameters);
+            let tracks = response.data.tracks;
             let list = [];
             for (let i = 0; i < tracks.length; i++) {
                 list.push(await this.convertTrack(tracks[i]));

@@ -36,7 +36,7 @@ export default {
           return this.item.image;
         return "https://i.ibb.co/m6qD5cD/undefined-image.png";
       }
-    }
+    }, 
 };
 </script>
 

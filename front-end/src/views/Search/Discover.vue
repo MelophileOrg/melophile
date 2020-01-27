@@ -300,15 +300,25 @@ export default {
       for (let i = 0; i < this.sliders.length; i++) {
         if (this.sliders[i].targetToggle) {
           let key = "target_" + this.sliders[i].type;
-          options[key] = this.sliders[i].target;
+          if (this.sliders[i].type == 'tempo') {
+            options[key] = this.sliders[i].target;
+          } else {
+            options[key] = this.sliders[i].target / 100;
+          }
         }
         if (this.sliders[i].rangeToggle) {
           let minKey = "min_" + this.sliders[i].type;
           let maxKey = "max_" + this.sliders[i].type;
-          options[minKey] = this.sliders[i].range[0];
-          options[maxKey] = this.sliders[i].range[1];
+          if (this.sliders[i].type == 'tempo') {
+            options[minKey] = this.sliders[i].range[0];
+            options[maxKey] = this.sliders[i].range[1];
+          } else {
+            options[minKey] = this.sliders[i].range[0] / 100;
+            options[maxKey] = this.sliders[i].range[1] / 100;
+          }
         }
       }
+      options.limit = 20;
       this.recommends = await this.jimmy.getRecommends(options);
       if (this.recommends.length == 0) {
         this.noRecommends = true;
