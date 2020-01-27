@@ -5,7 +5,7 @@
       <v-select v-if="searchInput.length > 0" class="selector slide-up" color="#52e3c2" :style="{'--delay': + 1}" dense :default="0" @mousedown="clearList()"  :items="types" v-model="type"/>
     </div>
     <List :delay="2" :items="list" :type="type" v-if="list.length > 0"/>
-    <EmptyList :delay="2" :num="10" v-else/>
+    <EmptyList :delay="2" :num="8" v-else/>
   </div>
 </template>
 

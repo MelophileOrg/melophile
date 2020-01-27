@@ -46,11 +46,20 @@ export default {
     --index: 0;
     display: flex;
     width: calc(100% - 12px);
-    padding: 10px;
-    background-color: rgba(255, 255, 255, 0.068);
+    padding: 15px 10px;
+    background-color: rgba(255, 255, 255, 0.018);
     margin: 5px auto;
     border-radius: 3px;
     animation: hide calc(var(--index) * .1s) linear, slide-up .3s ease calc(var(--index) * .1s);
+    transition: all .1s ease-in-out;
+}
+
+.ListItem:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.ListItem:hover .img {
+  transform: scale(1.1, 1.1);
 }
 
 .img {

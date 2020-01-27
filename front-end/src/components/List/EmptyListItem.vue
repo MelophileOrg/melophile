@@ -1,7 +1,7 @@
 <template>
-  <div class="EmptyListItem pop-small" :style="{'--index': + (index - 1 + delay)}">
-      <div class="img"/>
-  </div>
+    <div class="EmptyListItem pop-small" :style="{'--index': + (index - 1 + delay)}">
+        <div class="img"/>
+    </div>
 </template>
 
 <script>
@@ -22,7 +22,7 @@ export default {
     --index: 0;
     display: flex;
     width: calc(100% - 12px);
-    padding: 10px;
+    padding: 15px 10px;
     background-color: rgba(255, 255, 255, 0.068);
     margin: 5px auto;
     border-radius: 3px;

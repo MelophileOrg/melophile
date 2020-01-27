@@ -84,6 +84,20 @@ class Jimmy {
         }
     }
 
+    async getRecommends(options) {
+        try {
+            let response = await this.spotifyAPI.getRecommendations(options);
+            let tracks = response.body.tracks;
+            let list = [];
+            for (let i = 0; i < tracks.length; i++) {
+                list.push(await this.convertTrack(tracks[i]));
+            }
+            return list;
+        } catch(error) {
+            return [];
+        }
+    }
+
     async getTracks(ids, concat) {
         try {
             if (!this.ready)

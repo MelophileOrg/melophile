@@ -24,7 +24,7 @@ const SOCKET_AUTHGRANTED = (state, data) => {
 ///////////////////////////////////////////////////////////////////////////////
 // { message: String }
 const SOCKET_CONSOLELOG = (state, data) => {
-    let message = data.message;
+    console.log(data.message);
 };
 // { message: String, percent: Number}
 const SOCKET_PROCESSMESSAGE = (state, data) => {

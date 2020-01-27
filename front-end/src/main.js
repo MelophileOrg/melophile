@@ -7,9 +7,9 @@ import vuetify from './plugins/vuetify';
 import VueSocketIOExt from 'vue-socket.io-extended';
 import io from 'socket.io-client';
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
-const DEV = false;
+const DEV = true;
 let SOCKETURI = "http://melophile.org/socket"
 if (DEV) SOCKETURI = "http://localhost:3002";
 

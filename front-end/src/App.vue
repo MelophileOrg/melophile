@@ -7,7 +7,7 @@
       <v-spacer />
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" v-if="windowSize.x < 1264"/>
     </v-app-bar>
-    <v-navigation-drawer fixed class="nav-bar" app floating clipped v-model="drawer" :width="200" color="rgb(255,255,255)" >
+    <v-navigation-drawer fixed class="nav-bar" app floating clipped v-model="drawer" :width="210" color="rgb(255,255,255)" >
       <h1 id="title" class="large" v-if="windowSize.x > 1264">melophile</h1>
       <h1 id="title" class="large" v-else>menu</h1>
       <v-tabs v-model="tab" @change="route" vertical background-color="rgba(0,0,0,0)" :grow="true" class="extra-margin">
@@ -32,7 +32,15 @@
         <v-alert :width="alertWidth()" border="left" dense dismissible :elevation="5" type="success" transition="scale-transition" :value="progress.percent == 1">Finished Analysizing Library</v-alert>
         <v-alert :width="alertWidth()" border="left" dense dismissible :elevation="5" type="error" transition="scale-transition" :value="false">Error with Loading Library</v-alert>
       </div>
+      <div class="footer flex flex-space-between" style="margin: 0 10px">
+        <p>@2020 Andrew Young</p>
+        <div class="flex flex-right">
+          <a >Upcoming Features</a>
+          <a href="https://www.patreon.com/andrewyoung">Support on Patreon</a>
+        </div>
+      </div>
     </v-content>
+    
   </v-app>
 </template>
 
@@ -209,6 +217,9 @@ html::-webkit-scrollbar-thumb
 .v-content__wrap {
   padding-left: 16px;
   padding-right: 16px;
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: 150px;
 }
 
 .pop-small {
@@ -377,7 +388,7 @@ prepend {
   }
 
   .v-content__wrap {
-    padding-left: 0px!important;
+    padding-left: 15px !important;
   }
 }
 
@@ -482,6 +493,11 @@ prepend {
   animation: hide calc(var(--delay) * .1s), slide-up .3s ease calc(var(--delay) * .1s);
 }
 
+.fade-in {
+  --delay: 0;
+  animation: hide calc(var(--delay) * .1s), fade-in .3s ease calc(var(--delay) * .1s);
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -489,6 +505,13 @@ prepend {
 }
 </style>
 <style>/* Flex */
+.footer {
+  display: block;
+  width: 95%;
+  margin: 0 auto;
+  position: absolute;
+  bottom: 20px;
+}
 .flex {
   display: flex;
 }
@@ -499,6 +522,21 @@ prepend {
 
 .flex-left {
   justify-content: left;
+}
+
+.flex-right {
+  justify-content: flex-end;
+}
+
+p {
+  color: rgba(204, 204, 204, 0.267);
+  margin: 0 10px;
+}
+
+.v-application a {
+  text-transform: none;
+  color: rgba(204, 204, 204, 0.267) !important;
+  margin: 0 10px;
 }
 
 .flex-wrap {

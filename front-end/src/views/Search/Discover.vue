@@ -1,21 +1,116 @@
 <template>
   <div class="Discover">
-    <h1 class="discover-title slide-up" :style="{'--delay': + 0}">a powerful tool for music recommendations.</h1>
-    <div class="flex flex-align-center slide-up" :style="{'--delay': + 1}" v-if="seeds.length < 5">
-      <h2>Recommends based on</h2>
+    <h1  class="discover-title slide-up" :style="{'--delay': + 0}">a powerful tool for music recommendations.</h1>
+    <div class="flex flex-align-center">
+      <h1 class="instruction slide-up" :style="{'--delay': + 1}">select up to 5 artist or tracks.</h1>
+    </div>
+    <div class="flex flex-align-center slide-up" :style="{'--delay': + 2}" v-if="seeds.length < 5">
         <v-select color="#52e3c2" class="selector" @mousedown="clearList()" :items="searchTypes" dense v-model="searchType"/>
     </div>
     <div class="relative" v-if="seeds.length < 5">
-      <v-text-field class="input slide-up" :style="{'--delay': + 2}" clearable v-model="searchInput" @click:clear="clearList" :autofocus="true" :dark="true" background-color="rgba(100,100,100,.15)" solo :placeholder="searchPlaceholder"></v-text-field>
+      <v-text-field class="input slide-up " :style="{'--delay': + 3}" clearable v-model="searchInput" @click:clear="clearList" :autofocus="true" :dark="true" background-color="rgba(100,100,100,.15)" solo :placeholder="searchPlaceholder"></v-text-field>
       <MenuList @addItem="addSeed" id="menu-list" :delay="2" :items="list" :type="searchType" v-if="list.length > 0"/>
     </div>
-    <div id="seeds" class="flex flex-wrap">
-      <div class="seed flex flex-align-center small-elevation" v-for="(item, index) in seeds" :key="'seed-'+item._id">
+    <div id="seeds">
+      <div class="seed flex flex-align-center small-elevation fade-in" :class="{noleftmargin: index == 0}" :style="{'--delay': + 1}" v-for="(item, index) in seeds" :key="'seed-'+item._id">
         <div class="seed-img" :style="{backgroundImage: 'url(' + findImage(item.image) +')'}"/>
         <p class="seed-title">{{item.name}}</p>
         <v-btn @click="removeSeed(index)" text icon color="rgba(255,255,255,.8)" class="seed-cancel"><v-icon>mdi-close</v-icon></v-btn>
       </div>
-      <div class="dead-seed small-elevation" v-for="i in 5 - seeds.length" :key="'deadseed-'+i">
+    </div>
+    <div class="results " v-if="recommends.length > 0 || noRecommends">
+      <div class="recommends">
+        <div class="flex flex-left space-below flex-align-center">
+          <h1 class="instructions slide-up" :style="{'--delay': + 0}" v-if="recommends.length > 0">Recommends</h1>
+          <v-btn @click="getRecommends" v-if="!noRecommends && recommends.length > 0" class="refresh" text icon color="white">
+            <v-icon>mdi-cached</v-icon>
+          </v-btn>
+          <h1 class="instructions slide-up" :style="{'--delay': + 0}" v-if="noRecommends">no recommends...</h1>
+        </div>
+        <div class="adv-controls-small" v-if="(recommends.length > 0 || noRecommends) && audioFeaturesData != null">
+          <v-expansion-panels  accordion tile>
+            <v-expansion-panel>
+              <v-expansion-panel-header>Advanced Controls</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-expansion-panels accordion focusable tile multiple>
+                  <v-expansion-panel v-for="(slide, index) in sliders" :key="'slider-'+ slide.type">
+                    <v-expansion-panel-header>{{audioFeaturesData[slide.type].title}}</v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                      <v-expansion-panels class="description-panel">
+                        <v-expansion-panel>
+                          <v-expansion-panel-header>Description</v-expansion-panel-header>
+                          <v-expansion-panel-content>
+                            <p class="description">{{audioFeaturesData[slide.type].description}}</p>
+                          </v-expansion-panel-content>
+                        </v-expansion-panel>
+                      </v-expansion-panels>
+                      <v-switch :color="getColorString(audioFeaturesData[slide.type].color)" v-model="slide.targetToggle" @mouseup="toggleTargetSlider(index)" label="Target Value."/>
+                      <div v-if="slide.targetToggle">
+                        <v-slider hide-details :disabled="!slide.targetToggle" :color="getColorString(audioFeaturesData[slide.type].color)" thumb-label v-model="slide.target" :max="slide.maxValue" :min="slide.minValue"/>
+                        <div class="flex flex-space-between labels" :style="{'--red': + audioFeaturesData[slide.type].color.red, '--green': + audioFeaturesData[slide.type].color.green, '--blue': + audioFeaturesData[slide.type].color.blue}">
+                          <p class="label">{{audioFeaturesData[slide.type].minTag}}</p>
+                          <p class="label">{{audioFeaturesData[slide.type].maxTag}}</p>
+                        </div>
+                      </div>
+                      <v-switch :color="getColorString(audioFeaturesData[slide.type].color)" v-model="slide.rangeToggle" @mouseup="toggleRangeSlider(index)" label="Max and Min Value"/>
+                      <div v-if="slide.rangeToggle">  
+                        <v-range-slider dense :disabled="!slide.rangeToggle" :color="getColorString(audioFeaturesData[slide.type].color)" thumb-label v-model="slide.range" :max="slide.maxValue" :min="slide.minValue"/>
+                        <div class="flex flex-space-between labels raise" :style="{'--red': + audioFeaturesData[slide.type].color.red, '--green': + audioFeaturesData[slide.type].color.green, '--blue': + audioFeaturesData[slide.type].color.blue}">
+                          <p class="label">{{audioFeaturesData[slide.type].minTag}}</p>
+                          <p class="label">{{audioFeaturesData[slide.type].maxTag}}</p>
+                        </div>
+                      </div>
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                  <v-btn color="rgba(177, 176, 176, 0.062)" class="slide-up small-apply" dense @click="getRecommends">Apply Filters</v-btn>
+                  <v-btn class="reset" color="rgba(177, 176, 176, 0.062)" @click="resetSettings">Reset Settings</v-btn>
+                </v-expansion-panels>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </div>
+        <List class="recommend-list" v-if="!noRecommends" :delay="0" :items="recommends" :type="0"/>
+      </div>
+      <div class="adv-controls-big">
+        <div class="flex flex-space-between flex-align-center space-below">
+          <h1 class="instructions slide-up" :style="{'--delay': + 0}" v-if="recommends.length > 0 || noRecommends">Advanced Controls</h1>
+          <v-btn color="rgba(177, 176, 176, 0.062)" class="slide-up" dense @click="getRecommends">Apply Filters</v-btn>
+        </div>
+        <div class="adv-controls-big-content slide-up"  :style="{'--delay': + 1, opacity: .9}">
+          <v-expansion-panels accordion focusable tile multiple>
+            <v-expansion-panel v-for="(slide, index) in sliders" :key="'slider-'+ slide.type">
+              <v-expansion-panel-header>{{audioFeaturesData[slide.type].title}}</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-expansion-panels class="description-panel">
+                  <v-expansion-panel>
+                    <v-expansion-panel-header>Description</v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                      <p class="description">{{audioFeaturesData[slide.type].description}}</p>
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                </v-expansion-panels>
+                <v-switch :color="getColorString(audioFeaturesData[slide.type].color)" v-model="slide.targetToggle" @mouseup="toggleTargetSlider(index)" label="Target Value."/>
+                <div v-if="slide.targetToggle">
+                  <v-slider hide-details :disabled="!slide.targetToggle" :color="getColorString(audioFeaturesData[slide.type].color)" thumb-label v-model="slide.target" :max="slide.maxValue" :min="slide.minValue"/>
+                  <div class="flex flex-space-between labels" :style="{'--red': + audioFeaturesData[slide.type].color.red, '--green': + audioFeaturesData[slide.type].color.green, '--blue': + audioFeaturesData[slide.type].color.blue}">
+                    <p class="label">{{audioFeaturesData[slide.type].minTag}}</p>
+                    <p class="label">{{audioFeaturesData[slide.type].maxTag}}</p>
+                  </div>
+                </div>
+                <v-switch :color="getColorString(audioFeaturesData[slide.type].color)" v-model="slide.rangeToggle" @mouseup="toggleRangeSlider(index)" label="Max and Min Value"/>
+                <div v-if="slide.rangeToggle">  
+                  <v-range-slider dense :disabled="!slide.rangeToggle" :color="getColorString(audioFeaturesData[slide.type].color)" thumb-label v-model="slide.range" :max="slide.maxValue" :min="slide.minValue"/>
+                  <div class="flex flex-space-between labels raise" :style="{'--red': + audioFeaturesData[slide.type].color.red, '--green': + audioFeaturesData[slide.type].color.green, '--blue': + audioFeaturesData[slide.type].color.blue}">
+                    <p class="label">{{audioFeaturesData[slide.type].minTag}}</p>
+                    <p class="label">{{audioFeaturesData[slide.type].maxTag}}</p>
+                  </div>
+                </div>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+            <v-btn class="reset" color="rgba(177, 176, 176, 0.062)" @click="resetSettings">Reset Settings</v-btn>
+          </v-expansion-panels>
+  
+        </div>
       </div>
     </div>
   </div>
@@ -23,11 +118,16 @@
 
 <script>
 import MenuList from '@/components/List/MenuList.vue'
+import List from '@/components/List/List.vue'
+
+let constants = require('../../store/constants.js');
+let audioFeaturesData = constants.audioFeatures;
 
 export default {
   name: 'Discover',
   components: {
-    MenuList
+    MenuList,
+    List,
   },
   data() {
     return {
@@ -39,24 +139,180 @@ export default {
       list: [],
 
       seeds: [],
+
+      selectRangeorTarget: [
+        {text: "Target", value: 0},
+        {text: "Range", value: 1}
+      ],
+
+      audioFeaturesData: null,
+
+      recommends: [],
+
+      sliders: [
+        {
+          type: "valence",
+          minValue: 0,
+          maxValue: 100,
+          targetToggle: false,
+          rangeToggle: false,
+          range: [0, 100],
+          target: 50,
+        },
+        {
+          type: "danceability",
+          minValue: 0,
+          maxValue: 100,
+          targetToggle: false,
+          rangeToggle: false,
+          range: [0, 100],
+          target: 50,
+        },
+        {
+          type: "energy",
+          minValue: 0,
+          maxValue: 100,
+          targetToggle: false,
+          rangeToggle: false,
+          range: [0, 100],
+          target: 50,
+        },
+        {
+          type: "instrumentalness",
+          minValue: 0,
+          maxValue: 100,
+          targetToggle: false,
+          rangeToggle: false,
+          range: [0, 100],
+          target: 50,
+        },
+        {
+          type: "liveness",
+          minValue: 0,
+          maxValue: 100,
+          targetToggle: false,
+          rangeToggle: false,
+          range: [0, 100],
+          target: 50,
+        },
+        {
+          type: "tempo",
+          minValue: 0,
+          maxValue: 300,
+          targetToggle: false,
+          rangeToggle: false,
+          range: [0, 300],
+          target: 118,
+        },
+        {
+          type: "acousticness",
+          minValue: 0,
+          maxValue: 100,
+          targetToggle: false,
+          rangeToggle: false,
+          range: [0, 100],
+          target: 50,
+        },
+      ],
+      noRecommends: false,
+      
     }
   },
   methods: {
+    resetSettings() {
+      for (let i = 0; i < this.sliders.length;i++) {
+        this.sliders[i].targetToggle = false;
+        this.sliders[i].rangeToggle = false;
+        this.sliders[i].range[0] = this.sliders[i].minValue;
+        this.sliders[i].range[0] = this.sliders[i].maxValue;
+        if (this.sliders[i].type == 'tempo') {
+          this.sliders[i].target = 118;
+        } else {
+          this.sliders[i].target = this.sliders[i].maxValue / 2;
+        }
+      }
+      if (this.seeds.length > 0) {
+        this.getRecommends();
+      }
+    },
+    toggleTargetSlider(index) {
+      this.sliders[index].targetToggle = !this.sliders[index].targetToggle;
+    },
+    toggleRangeSlider(index) {
+      this.sliders[index].rangeToggle = !this.sliders[index].rangeToggle;
+    },
     clearList() {
       this.list.splice(0, this.list.length);
     },
+    clearRecommends() {
+      this.recommends.splice(0, this.recommends.length);
+    },
+    getColorString(color) {
+      return "rgba(" + color.red + "," + color.green + "," + color.blue + ", 1)";
+    },
     addSeed(index) {
+      this.clearRecommends();
+      for (let i = 0; i < this.seeds.length; i++) 
+        if (this.seeds[i]._id == this.list[index]._id) return;
       this.seeds.push(this.list[index]);
       this.clearList();
       this.searchInput = "";
+      this.getRecommends();
     },
     removeSeed(index) {
       this.seeds.splice(index, 1);
+      this.clearRecommends();
+      if (this.seeds.length != 0) {
+        this.getRecommends();
+      }
     },
     findImage(image) {
       if (image != "Undefined")
         return image;
       return "https://i.ibb.co/m6qD5cD/undefined-image.png";
+    },
+    seedSize() {
+      if (this.seeds.length < 5) {
+        return true;
+      } else {
+        this.selectionPhase = false;
+        return false;
+      }
+    },
+    async getRecommends() {
+      this.noRecommends = false;
+      let seed_artists = [];
+      let seed_tracks = [];
+      for (let i = 0; i < this.seeds.length; i++) {
+        if ('album' in this.seeds[i]) {
+          seed_tracks.push(this.seeds[i]._id);
+        } else {
+          seed_artists.push(this.seeds[i]._id);
+        }
+      }
+      let options = {};
+      if (seed_artists.length > 0) {
+        options.seed_artists = seed_artists;
+      }
+      if (seed_tracks.length > 0) {
+        options.seed_tracks = seed_tracks;
+      }
+      for (let i = 0; i < this.sliders.length; i++) {
+        if (this.sliders[i].targetToggle) {
+          let key = "target_" + this.sliders[i].type;
+          options[key] = this.sliders[i].target;
+        }
+        if (this.sliders[i].rangeToggle) {
+          let minKey = "min_" + this.sliders[i].type;
+          let maxKey = "max_" + this.sliders[i].type;
+          options[minKey] = this.sliders[i].range[0];
+          options[maxKey] = this.sliders[i].range[1];
+        }
+      }
+      this.recommends = await this.jimmy.getRecommends(options);
+      if (this.recommends.length == 0) {
+        this.noRecommends = true;
+      }
     }
   },
   computed: {
@@ -85,11 +341,189 @@ export default {
         this.clearList();
       }
     }
+  },
+  created() {
+    this.audioFeaturesData = audioFeaturesData;
   }
 }
 </script>
 
 <style scoped>
+.refresh {
+  margin-left: 10px;
+}
+.small-apply {
+  margin-top: 20px;
+}
+.reset {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+.description-panel
+{
+  margin-top: 10px;
+}
+.big-slide {
+  display: block;
+  min-height: 20px;
+  width: 100%;
+  padding: 10px 0px;
+  border-bottom: 1px solid #52e3c2;
+}
+.results {
+  display: flex;
+  justify-content: space-between;
+  
+  flex-wrap: nowrap;
+}
+
+.recommends {
+  width: 65%;
+}
+
+.recommend-list {
+  transform: translateX(-6px);
+}
+
+.adv-controls-big {
+  display: block;
+  width: 30%;
+  margin-right: 30px;
+}
+
+.adv-controls-big-content {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  min-width: 340px;
+  background-color: rgba(177, 176, 176, 0.032);
+}
+
+.adv-controls-small {
+  display: none;
+}
+
+@media only screen and (max-width: 1050px) {
+  .adv-controls-big {
+    display: none;
+  }
+
+  .adv-controls-small {
+    display: block;
+  }
+
+  .recommends {
+    width: 100%;
+  }
+  .recommend-list {
+    transform: translateX(0px) !important;
+  }
+}
+
+@media only screen and (max-width: 465px) {
+  .discover-title {
+    font-size: 1.8em;
+    margin: 0px 0px;
+    margin-bottom: 10px;
+  }
+
+  h2 {
+    font-size: 1em;
+  }
+  .selector {
+    font-size: 1em;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  #seeds {
+    justify-content: center !important;
+  }
+}
+
+@media only screen and (min-width: 1264px) {
+  .discover-title {
+    font-size: 3em !important;
+    margin: 20px 0px !important;
+  }
+}
+
+.continue {
+  margin-left: 20px;
+}
+.selector {
+  margin-left: 0px !important;
+}
+.theme--dark.v-expansion-panels .v-expansion-panel {
+  background-color: rgba(100, 100, 100, 0.116);
+}
+
+.raise {
+  transform: translateY(-15px);
+}
+
+.labels {
+  --red: 255;
+  --green: 255;
+  --blue: 255;
+  width: 98%;
+  margin: 0 auto;
+}
+
+p.label {
+  color: rgb(var(--red), var(--green), var(--blue));
+  font-weight: normal;
+}
+
+p.description {
+  margin-top: 20px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: lighter;
+  font-size: 1.2em;
+  text-align: left;
+  color: rgb(177, 176, 176);
+}
+
+h4 {
+  font-family: 'Roboto', sans-serif;
+  font-weight: normal;
+  text-align: left;
+}
+
+.title-flex 
+{
+  justify-content: space-between;
+  padding: 5px;
+}
+
+h3 {
+  font-size: 1.3em;
+  font-family: 'Roboto', sans-serif;
+  font-weight: lighter;
+  margin: 0;
+  margin-bottom: 5px;
+  text-align: left;
+  margin-right: 15px;
+}
+
+#adv-controls {
+  margin-top: 5px;
+}
+
+.slider-control {
+  width: 180px;
+  padding: 10px;
+  background-color: rgba(255, 254, 254, 0.021);
+  margin: 10px;
+}
+
+#continue {
+  display: block;
+  margin-left: 0px;
+  margin-top: 20px;
+}
+
 .seed.flex.flex-align-center {
   width: 260px;
   background-color: #dddddd1a;
@@ -100,6 +534,10 @@ export default {
   overflow: hidden;
   margin: 10px;
   position:relative;
+}
+
+.seed.flex.flex-align-center.noleftmargin {
+  margin-left: 0px;
 }
 
 .dead-seed {
@@ -129,8 +567,32 @@ export default {
 }
 
 #seeds {
+  display: flex;
   justify-content: left;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow: auto;
+  flex: 1 1 100%;
+  background-color: rgba(247, 243, 243, 0);
+  border-radius: 10px;
+  transform: translateY(-20px);
+}
+
+#seeds::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(124, 102, 102, 0.3);
+    background-color: #32323e;
+}
+
+#seeds::-webkit-scrollbar
+{
+    height: 5px;
+    background-color: rgba(6, 6, 6, 0.007)
+}
+
+#seeds::-webkit-scrollbar-thumb
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(255, 255, 255, 0);
+    background-color: rgba(255, 255, 255, 0.11);
 }
 
 .seed-title {
@@ -146,12 +608,38 @@ export default {
 
 
 .discover-title {
-  margin: 5px 0px;
   color: #52e3c2;
   font-size: 2.5em;
   font-family: 'Roboto', sans-serif;
   font-weight: lighter;
   text-align: left;
+  opacity: 1;
+  margin: 0px;
+}
+
+.instructions {
+  margin: 5px 0px;
+  color: #f7f7f746;
+  font-size: 1.5em;
+  font-family: 'Roboto', sans-serif;
+  font-weight: lighter;
+  text-align: left;
+  opacity: 1;
+}
+
+.instruction {
+  margin: 10px 0px;
+  color: #f7f7f746;
+  font-size: 2em;
+  font-family: 'Roboto', sans-serif;
+  font-weight: lighter;
+  text-align: left;
+  opacity: 1;
+}
+
+.space-below {
+  min-height: 50px;
+  margin-bottom: 10px !important;
 }
 
 .selector {
@@ -173,9 +661,7 @@ h2 {
   text-align: left;
 }
 
-.theme--dark.v-expansion-panels .v-expansion-panel {
-  background-color: #32323e;
-}
+
 
 .v-expansion-panel::before {
   box-shadow: none;
@@ -191,31 +677,5 @@ h2 {
   z-index: 100;
 }
 
-@media only screen and (max-width: 465px) {
-  .discover-title {
-    font-size: 1.8em;
-    margin: 0px 0px;
-    margin-bottom: 10px;
-  }
 
-  h2 {
-    font-size: 1em;
-  }
-  .selector {
-    font-size: 1em;
-  }
-}
-
-@media only screen and (max-width: 600px) {
-  #seeds {
-    justify-content: center !important;
-  }
-}
-
-@media only screen and (min-width: 1264px) {
-  .discover-title {
-    font-size: 3em;
-    margin: 20px 0px;
-  }
-}
 </style>
