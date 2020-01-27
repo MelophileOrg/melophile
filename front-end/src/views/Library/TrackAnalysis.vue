@@ -5,7 +5,7 @@
 </template>
 
 <script>
-//import HelloWorld from '@/components/HelloWorld.vue'
+//import TrackHeader from '@/components/TrackAnalysis/TrackHeader.vue'
 /*
 Track = {
   name: String,
@@ -44,13 +44,18 @@ Track = {
 export default {
   name: 'TrackAnalysis',
   components: {
-
+    //TrackHeader
   },
   data() {
       return {
           trackId: null,
       }
   }, 
+  computed: {
+    jimmy() {
+      return this.$store.state.jimmy;
+    }
+  },
   created() {
       this.trackId = this.$router.currentRoute.params.id;
   }
