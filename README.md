@@ -6,6 +6,14 @@ NO CURRENT BUILD AVAILABLE. WILL BE AVAILABLE HERE:
 
 [http://melophile.org](http://melophile.org)
 
+[New Build Image 1](./newest-build-1.PNG)
+
+[New Build Image 2](./newest-build-2.PNG)
+
+[Old Build Image 2](./older-build-1.PNG)
+
+[Old Build Image 2](./older-build-2.JPG)
+
 ## Summary
 
 Melophile is a web app that uses Spotify's API to anyalyze your music taste and generate graphs and data. Think "Spotify Wrapped". Although Spotify's API doesn't allow viewing of minutes spent listening, other statistics can be drawn from tracks you've saved. This project aims to use all data available to allow you to view your library in a whole new way, and make discoveries about your music taste that were otherwise impossible.
