@@ -1,5 +1,5 @@
 <template>
-  <div class="Discover">
+  <div class="Discover content-padding">
     <h1  class="discover-title slide-up" :style="{'--delay': + 0}">a powerful tool for music recommendations.</h1>
     <div class="flex flex-align-center">
       <h1 class="instruction slide-up" :style="{'--delay': + 1}">select up to 5 artist or tracks.</h1>

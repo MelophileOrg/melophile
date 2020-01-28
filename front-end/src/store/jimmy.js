@@ -19,6 +19,12 @@ class Jimmy {
         return "I'm-a chewin' on a honeysuckle vine.";
     }
 
+    async checkServer() {
+        console.log("Hello, this is JIMMY?");
+        let response = await axios.get('/api/');
+        console.log(response.data.message);
+    }
+
     async inicialize(accessToken) {
         try {
             this.axios = axios.create({
@@ -137,127 +143,118 @@ class Jimmy {
         }
     }
 
-    async getTracks(ids, concat) {
-        try {
-            if (!this.ready)
-                return null;
-            this.clearCache(0, concat);
-            let response = await axios.put('/api/tracks', { ids: ids });
-            let tracks = response.data.tracks;
-            let keys = Object.keys(tracks);
-            let missing = [];
-            for (let i = 0; i < keys.length; i++) {
-                if (tracks[keys[i]] == null) {
-                    missing.push(keys[i]);
-                }
-            }
-            if (missing.length > 0) {
-                let newTracks = [];
-                for (let i = 0; i < Math.ceil(missing.length / 50); i++) {
-                    newTracks = newTracks.concat((await this.spotifyAPI.getTracks(missing.slice(i * 50, i * 50 + 50))).body.tracks);
-                }
-                for (let i = 0; i < newTracks.length; i++) {
-                    if (newTracks[i] != null) {
-                        tracks[newTracks[i].id] = await this.convertTrack(newTracks[i]);
-                    } else {
-                        tracks[newTracks[i].id] = null;
-                    }
-                }
-            }
-            return tracks;
-        } catch(error) {
-            return;
-        }
+    async playTrack(id) {
+        this.spotifyAPI.play({uris: ["spotify:track:" + id]});
     }
 
-    async getArtists(ids, concat) {
-        try {
-            if (!this.ready)
-                return null;
-            this.clearCache(0, concat);
-            let response = await axios.put('/api/artists', { ids: ids });
-            let artists = response.data.artists;
-            let keys = Object.keys(artists);
-            let missing = [];
-            for (let i = 0; i < keys.length; i++) {
-                if (artists[keys[i]] == null) {
-                    missing.push(keys[i]);
-                }
-            }
-            if (missing.length > 0) {
-                let newArtists = [];
-                for (let i = 0; i < Math.ceil(missing.length / 50); i++) {
-                    newArtists = newArtists.concat((await this.spotifyAPI.getArtists(missing.slice(i * 50, i * 50 + 50))).body.artists);
-                }
-                for (let i = 0; i < newArtists.length; i++) {
-                    if (newArtists[i] != null) {
-                        artists[newArtists[i].id] = await this.convertArtist(newArtists[i]);
-                    } else {
-                        artists[newArtists[i].id] = null;
-                    }
-                }
-            }
-            return artists;
-        } catch(error) {
-            return;
-        }
+    async playTracks(ids) {
+        let uris = [];
+        for (let i = 0; i < ids.length; i++) 
+            uris.push("spotify:track:" + ids[i]);
+        this.spotifyAPI.play({uris: uris});
     }
 
-    async getAlbums(ids, concat) {
-        try {
-            if (!this.ready)
-                return null;
-            this.clearCache(2, concat);
-            let albums = {};
-            let newAlbums = [];
-            for (let i = 0; i < Math.ceil(ids / 50); i++) 
-                newAlbums = newAlbums.concat((await this.spotifyAPI.getAlbums(ids.slice(i * 50, i * 50 + 50))).body.albums);
-            for (let i = 0; i < newAlbums.length; i++) {
-                if (newAlbums[i] != null) {
-                    albums[newAlbums[i].id] = await this.convertAlbum(newAlbums[i]);
-                } else {
-                    albums[newAlbums[i].id] = null;
-                }
-            }
-            return albums;
-        } catch(error) {
-            return;
-        }
-        
+    async playArtist(id) {
+        this.spotifyAPI.play({context_uri: "spotify:artist:" + id});
     }
 
-    async getPlaylists(ids, concat) {
-        try {
-            if (!this.ready)
-                return null;
-            this.clearCache(0, concat);
-            let response = await axios.put('/api/playlists', { ids: ids });
-            let playlists = response.data.playlists;
-            let keys = Object.keys(playlists);
-            let missing = [];
-            for (let i = 0; i < keys.length; i++) {
-                if (playlists[keys[i]] == null) {
-                    missing.push(keys[i]);
-                }
-            }
-            if (missing.length > 0) {
-                let newPlaylists = [];
-                for (let i = 0; i < Math.ceil(missing.length / 50); i++) {
-                    newPlaylists = newPlaylists.concat((await this.spotifyAPI.getPlaylists(missing.slice(i * 50, i * 50 + 50))).body.playlists);
-                }
-                for (let i = 0; i < newPlaylists.length; i++) {
-                    if (newPlaylists[i] != null) {
-                        playlists[newPlaylists[i].id] = await this.convertPlaylist(newPlaylists[i]);
-                    } else {
-                        playlists[newPlaylists[i].id] = null;
-                    }
-                }
-            }
-            return playlists;
-        } catch(error) {
-            return;
-        }
+    async playAlbum(id) {
+        this.spotifyAPI.play({context_uri: "spotify:album:" + id});
     }
+
+    async playPlaylist(id) {
+        this.spotifyAPI.play({context_uri: "spotify:playlist:" + id});
+    }
+
+    async getTrackAnalysis(id) {
+        let response = await this.spotifyAPI.getTrack(id);
+        let track = await this.convertTrack(response.body);
+        response = await this.spotifyAPI.getAudioFeaturesForTrack(id); 
+        track.duration_ms = response.body.duration_ms;
+        track.key = response.body.key;
+        track.mode = response.body.mode;
+        track.time_signature = response.body.time_signature;
+        track.acousticness = response.body.acousticness;
+        track.danceability = response.body.danceability;
+        track.energy = response.body.energy;
+        track.instrumentalness = response.body.instrumentalness;
+        track.liveness = response.body.liveness;
+        track.loudness = response.body.loudness;
+        track.speechiness = response.body.speechiness;
+        track.valence = response.body.valence;
+        track.tempo = response.body.tempo;
+        response = await this.spotifyAPI.getAudioAnalysisForTrack(id); 
+        track.audioAnalysis = await this.processAudioAnalysis(response.body);
+        return track;
+    }
+
+    async processAudioAnalysis(apiReturn) {
+        let audioAnalysisSegments = 80;
+        let newSegments = [];
+        if (apiReturn.segments.length < audioAnalysisSegments)
+            audioAnalysisSegments = apiReturn.segments.length;
+        let width = Math.round(apiReturn.segments.length / audioAnalysisSegments);
+          
+        for (var i = 0; i < audioAnalysisSegments; i++)
+        {
+            let itemIndex = Math.round(width * i);
+            if (itemIndex > apiReturn.segments.length - 1)
+            {
+                itemIndex = apiReturn.segments.length - 2;
+            }
+            let sum = 0;
+            for (var j = 0; j < apiReturn.segments[itemIndex].pitches.length; j++)
+            {
+                sum += apiReturn.segments[itemIndex].pitches[j];
+            }
+            let averagePitch = sum / apiReturn.segments[itemIndex].pitches.length; 
+            let color = await this.HSVtoRGB({hue: (((1 - averagePitch) * 229 + -50) / 360), saturation: 0.51, value: 0.89});
+            let loudness = (Math.round(((apiReturn.segments[itemIndex].loudness_max / 60) + 1) * 100) / 100);
+
+            newSegments.push({
+                start: Math.round(apiReturn.segments[itemIndex].start),
+                loudness_max: loudness, 
+                red: color.r,
+                green: color.g,
+                blue: color.b,
+            });
+        }
+        return newSegments;
+    }
+
+    async HSVtoRGB(payload) {
+        var r, g, b, i, f, p, q, t;
+        i = Math.floor(payload.hue * 6);
+        f = payload.hue * 6 - i;
+        p = payload.value * (1 - payload.saturation);
+        q = payload.value * (1 - f * payload.saturation);
+        t = payload.value * (1 - (1 - f) * payload.saturation);
+        switch (i % 6) {
+            case 0: r = payload.value, g = t, b = p; break;
+            case 1: r = q, g = payload.value, b = p; break;
+            case 2: r = p, g = payload.value, b = t; break;
+            case 3: r = p, g = q, b = payload.value; break;
+            case 4: r = t, g = p, b = payload.value; break;
+            case 5: r = payload.value, g = p, b = q; break;
+        }
+        return {
+            r: Math.round(r * 255),
+            g: Math.round(g * 255),
+            b: Math.round(b * 255)
+        };
+    }
+
+    // async getSavedTracks(options) {
+    //     //let response = await axios.get('/api/')
+    // }
+
+    // async getSavedArtists(options) {
+    //     //let response = await axios.get('/api/')
+    // }
+
+    // async getSavedPlaylists(options) {
+    //     //let response = await axios.get('/api/')
+    // }
 
     getItem(id) {
         if (this.type == 0) {
@@ -355,3 +352,126 @@ class Jimmy {
 }
 
 export default Jimmy;
+
+
+// async getTracks(ids, concat) {
+//     try {
+//         if (!this.ready)
+//             return null;
+//         this.clearCache(0, concat);
+//         let response = await axios.put('/api/tracks', { ids: ids });
+//         let tracks = response.data.tracks;
+//         let keys = Object.keys(tracks);
+//         let missing = [];
+//         for (let i = 0; i < keys.length; i++) {
+//             if (tracks[keys[i]] == null) {
+//                 missing.push(keys[i]);
+//             }
+//         }
+//         if (missing.length > 0) {
+//             let newTracks = [];
+//             for (let i = 0; i < Math.ceil(missing.length / 50); i++) {
+//                 newTracks = newTracks.concat((await this.spotifyAPI.getTracks(missing.slice(i * 50, i * 50 + 50))).body.tracks);
+//             }
+//             for (let i = 0; i < newTracks.length; i++) {
+//                 if (newTracks[i] != null) {
+//                     tracks[newTracks[i].id] = await this.convertTrack(newTracks[i]);
+//                 } else {
+//                     tracks[newTracks[i].id] = null;
+//                 }
+//             }
+//         }
+//         return tracks;
+//     } catch(error) {
+//         return;
+//     }
+// }
+
+// async getArtists(ids, concat) {
+//     try {
+//         if (!this.ready)
+//             return null;
+//         this.clearCache(0, concat);
+//         let response = await axios.put('/api/artists', { ids: ids });
+//         let artists = response.data.artists;
+//         let keys = Object.keys(artists);
+//         let missing = [];
+//         for (let i = 0; i < keys.length; i++) {
+//             if (artists[keys[i]] == null) {
+//                 missing.push(keys[i]);
+//             }
+//         }
+//         if (missing.length > 0) {
+//             let newArtists = [];
+//             for (let i = 0; i < Math.ceil(missing.length / 50); i++) {
+//                 newArtists = newArtists.concat((await this.spotifyAPI.getArtists(missing.slice(i * 50, i * 50 + 50))).body.artists);
+//             }
+//             for (let i = 0; i < newArtists.length; i++) {
+//                 if (newArtists[i] != null) {
+//                     artists[newArtists[i].id] = await this.convertArtist(newArtists[i]);
+//                 } else {
+//                     artists[newArtists[i].id] = null;
+//                 }
+//             }
+//         }
+//         return artists;
+//     } catch(error) {
+//         return;
+//     }
+// }
+
+// async getAlbums(ids, concat) {
+//     try {
+//         if (!this.ready)
+//             return null;
+//         this.clearCache(2, concat);
+//         let albums = {};
+//         let newAlbums = [];
+//         for (let i = 0; i < Math.ceil(ids / 50); i++) 
+//             newAlbums = newAlbums.concat((await this.spotifyAPI.getAlbums(ids.slice(i * 50, i * 50 + 50))).body.albums);
+//         for (let i = 0; i < newAlbums.length; i++) {
+//             if (newAlbums[i] != null) {
+//                 albums[newAlbums[i].id] = await this.convertAlbum(newAlbums[i]);
+//             } else {
+//                 albums[newAlbums[i].id] = null;
+//             }
+//         }
+//         return albums;
+//     } catch(error) {
+//         return;
+//     }
+    
+// }
+
+// async getPlaylists(ids, concat) {
+//     try {
+//         if (!this.ready)
+//             return null;
+//         this.clearCache(0, concat);
+//         let response = await axios.put('/api/playlists', { ids: ids });
+//         let playlists = response.data.playlists;
+//         let keys = Object.keys(playlists);
+//         let missing = [];
+//         for (let i = 0; i < keys.length; i++) {
+//             if (playlists[keys[i]] == null) {
+//                 missing.push(keys[i]);
+//             }
+//         }
+//         if (missing.length > 0) {
+//             let newPlaylists = [];
+//             for (let i = 0; i < Math.ceil(missing.length / 50); i++) {
+//                 newPlaylists = newPlaylists.concat((await this.spotifyAPI.getPlaylists(missing.slice(i * 50, i * 50 + 50))).body.playlists);
+//             }
+//             for (let i = 0; i < newPlaylists.length; i++) {
+//                 if (newPlaylists[i] != null) {
+//                     playlists[newPlaylists[i].id] = await this.convertPlaylist(newPlaylists[i]);
+//                 } else {
+//                     playlists[newPlaylists[i].id] = null;
+//                 }
+//             }
+//         }
+//         return playlists;
+//     } catch(error) {
+//         return;
+//     }
+// }

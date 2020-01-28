@@ -15,7 +15,7 @@
 export default {
     name: 'ListAlbum',
     props: {
-        album: String,
+        album: Object,
     },
       methods: {
         routeAlbum() {

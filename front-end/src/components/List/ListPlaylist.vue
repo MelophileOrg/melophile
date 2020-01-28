@@ -15,7 +15,7 @@
 export default {
     name: 'ListPlaylist',
     props: {
-        playlist: String,
+        playlist: Object,
     },
     methods: {
       routePlaylist() {

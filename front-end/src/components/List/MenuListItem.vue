@@ -1,7 +1,10 @@
 <template>
   <div class="MenuListItem flex flex-align-center" @click="addItem(index)">
       <div class="img" :style="{backgroundImage: 'url(' + image + ')'}"/>
-      <h1 class="limit">{{item.name}}</h1>
+      <div class="flex limit">
+      <h1>{{item.name}}</h1>
+      <h1 class="artist"> - {{item.artists[0].name}}</h1>
+      </div>
   </div>
 </template>
 
@@ -58,12 +61,18 @@ export default {
 }
 
 h1 {
-    font-size: 1em;
-    font-weight: lighter;
-    width: calc(100% - 45px);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: left;
+  display: inline-block;
+  font-size: 1em;
+  font-weight: lighter;
+  max-width: calc(100% - 45px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+
+h1.artist {
+  color: rgba(255, 255, 255, 0.26);
+  margin-left: 10px;
 }
 </style>

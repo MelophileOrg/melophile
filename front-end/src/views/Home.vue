@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="Home content-padding">
     <button @click="login">Press Me</button>
     <button @click="process">Process</button>
     <button @click="test">Test</button>
@@ -10,11 +10,12 @@
 </template>
 
 <script>
-// @ is an alias to /src
 import DistributionGraph from '@/components/Graphs/DistributionGraph.vue'
 
+//import axios from 'axios';
+
 export default {
-  name: 'home',
+  name: 'Home',
   components: {
     DistributionGraph,
   },
@@ -33,16 +34,19 @@ export default {
       this.$store.dispatch('process', {instance: this});
     },
     test() {
-      this.$socket.client.emit('test');
+      this.jimmy.checkServer();
     }
   },
   computed: {
     progressMessage() {
       return this.$store.state.progress.message + " " + Math.round(this.$store.state.progress.percent * 100) + "%";
     },
+    jimmy() {
+      return this.$store.state.jimmy;
+    }
   },
-  created() {
-    
+  async created() {
+    this.test();
   }
 }
 </script>

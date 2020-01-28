@@ -80,7 +80,7 @@ io.on('connection', function(socket) {
     //////////////////////////////////////////////////////////////////////////////////
     socket.on('login', function() {
         socket.emit('AuthState', {state: state});
-        const scopes = ['user-read-recently-played','user-top-read','user-library-read','user-read-email','playlist-read-private',];
+        const scopes = ['user-read-recently-played','user-top-read','user-library-read','user-read-email','playlist-read-private','playlist-modify-public','user-library-modify', 'user-modify-playback-state'];
         socket.emit('AuthLoginLink', {link: 'https://accounts.spotify.com/authorize?' +
           querystring.stringify({
             response_type: 'code',

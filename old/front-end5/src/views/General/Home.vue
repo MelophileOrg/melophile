@@ -14,10 +14,11 @@
 </template>
 
 <script>
-// @ is an alias to /src
 import NavBar from '@/components/Navigation/NavBar.vue'
 import Progress from '@/components/General/Progress.vue'
 import FeatureGraph from '@/components/Graphs/FeatureGraph.vue'
+
+import axios from 'axios';
 
 export default {
   name: 'home',
@@ -77,6 +78,8 @@ export default {
       behavior: 'auto'
     });
     this.makeGraphs();
+    let response = await axios.get('/api/');
+    console.log(response);
   }
 }
 </script>

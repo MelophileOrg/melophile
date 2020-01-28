@@ -12,7 +12,7 @@
         Playlists
       </v-tab>
     </v-tabs>
-    <List class="transform-left" :delay="1" :items="list" :type="type" v-if="list.length > 0"/>
+    <List @listEnd="getTracks" class="transform-left" :delay="1" :items="list" :type="type" v-if="list.length > 0"/>
     <EmptyList class="transform-left" :delay="1" :num="8" v-else/>
   </div>
 </template>
@@ -31,20 +31,32 @@ export default {
     return {
       tab: 0,
       list: [],
-      type: "track",
     }
   },
   methods: {
     clearList() {
       this.list.splice(0, this.list.length);
     },
-  },
-  watch: {
-    tab: async function() {
+    getTracks(offset) {
+      if (offset == 0) this.clearList();
+      console.log(offset);
+    },
+    getArtists() {
+
+    },
+    getPlaylists() {
 
     }
   },
+  watch: {
+    tab: async function() {
+ 
+    }
+  },
   computed: {
+    jimmy() {
+      return this.$store.state.jimmy;
+    }
   }
 }
 </script>

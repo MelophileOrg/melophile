@@ -1,11 +1,13 @@
 <template>
   <div class="TrackAnalysis">
-
+    <TrackHeader :track="track"/>
+    <AudioAnalysisGraph v-if="track != null" :width="200" :height="100" :audioAnalysis="track.audioAnalysis"/>
   </div>
 </template>
 
 <script>
-//import TrackHeader from '@/components/TrackAnalysis/TrackHeader.vue'
+import TrackHeader from '@/components/TrackAnalysis/TrackHeader.vue'
+import AudioAnalysisGraph from '@/components/Graphs/AudioAnalysisGraph.vue'
 /*
 Track = {
   name: String,
@@ -44,11 +46,13 @@ Track = {
 export default {
   name: 'TrackAnalysis',
   components: {
-    //TrackHeader
+    TrackHeader,
+    AudioAnalysisGraph
   },
   data() {
       return {
-          trackId: null,
+          trackID: null,
+          track: null,
       }
   }, 
   computed: {
@@ -56,8 +60,10 @@ export default {
       return this.$store.state.jimmy;
     }
   },
-  created() {
-      this.trackId = this.$router.currentRoute.params.id;
+  async created() {
+    this.trackID = this.$router.currentRoute.params.id;
+    this.track = await this.jimmy.getTrackAnalysis(this.trackID);
+    console.log(this.track);
   }
 }
 </script>

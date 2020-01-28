@@ -1,5 +1,5 @@
 <template>
-  <div class="Search">
+  <div class="Search content-padding">
     <div class="spacing">
       <v-text-field class="input slide-up" :style="{'--delay': + 0}" clearable v-model="searchInput" @click:clear="clearList" :autofocus="true" :dark="true" background-color="rgba(100,100,100,.15)" solo placeholder="Search..."></v-text-field>
       <v-select v-if="searchInput.length > 0" class="selector slide-up" color="#52e3c2" :style="{'--delay': + 1}" dense :default="0" @mousedown="clearList()"  :items="types" v-model="type"/>
@@ -68,6 +68,7 @@ export default {
 </script>
 
 <style scoped>
+
 .spacing {
   width: 100%;
   height: 100%;

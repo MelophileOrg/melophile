@@ -11,7 +11,7 @@
       <h1 id="title" class="large" v-if="windowSize.x > 1264">melophile</h1>
       <h1 id="title" class="large" v-else>menu</h1>
       <v-tabs v-model="tab" @change="route" vertical background-color="rgba(0,0,0,0)" :grow="true" class="extra-margin">
-        <div v-for="(tab, index) in tabs" :key="'nav-bar-tab-' + tab.title + index">
+        <div class="nav-tabs" v-for="(tab, index) in tabs" :key="'nav-bar-tab-' + tab.title + index">
           <v-tab class="lowercase" v-if="tab.type == 'link'">
             <img class="nav-icon" :src="getImgUrl(tab.img)"/>
             {{tab.title}}
@@ -55,9 +55,10 @@
         {type: 'link', title: 'Search', img: 'search', path: '/search'},
         {type: 'link', title: 'Discover', img: 'discover', path: '/discover'},
         {type: 'subheader', title: 'Your Library'},
-        {type: 'link', title: 'Library', img: 'library', path: '/library'},
-        {type: 'link', title: 'History', img: 'history', path: '/history'},
+        {type: 'link', title: 'Overview', img: 'bigpicture', path: '/library/analysis'},
         {type: 'link', title: 'Charts', img: 'chart', path: '/charts'},
+        {type: 'link', title: 'History', img: 'history', path: '/history'},
+        {type: 'link', title: 'Library', img: 'library', path: '/library'},
         {type: 'subheader', title: 'Social'},
         {type: 'link', title: 'My Profile', img: 'profile', path: '/social'},
         {type: 'link', title: 'Public Profiles', img: 'public', path: '/social'},
@@ -124,20 +125,23 @@
           case "discover":
             this.tab = 2;
             break;
-          case "library":
+          case "analysis":
             this.tab = 4;
             break;
-          case "history":
+          case "charts":
             this.tab = 5;
             break;
-          case "charts":
+          case "history":
             this.tab = 6;
             break;
+          case "library":
+            this.tab = 7;
+            break;
           case "myprofile":
-            this.tab = 8;
+            this.tab = 9;
             break;
           case "publicprofiles":
-            this.tab = 9;
+            this.tab = 10;
             break;
           default: 
             this.tab = 0;
@@ -215,11 +219,14 @@ html::-webkit-scrollbar-thumb
 }
 
 .v-content__wrap {
-  padding-left: 16px;
-  padding-right: 16px;
   position: relative;
   min-height: 100vh;
   padding-bottom: 150px;
+}
+
+.content-padding {
+  padding-left: 16px;
+  padding-right: 16px;
 }
 
 .pop-small {
@@ -303,20 +310,6 @@ html::-webkit-scrollbar-thumb
   background-color: #32323e;
 }
 
-div.v-tab {
-  width: 100% !important;
-  justify-content: left;
-  text-transform: capitalize;
-}
-
-.v-tabs--vertical .v-tabs-slider-wrapper .v-tabs-slider {
-  background-color: #52e3c2 !important;
-  width: 4px !important;
-}
-
-.v-tabs-bar {
-  width: 100%;
-}
 
 .nav-icon {
   --size: 20;
@@ -331,9 +324,7 @@ div.v-tab {
   box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0), 0px 4px 5px 0px rgba(0, 0, 0, 0), 0px 1px 10px 0px rgba(0, 0, 0, 0) !important;
 }
 
-.v-tabs-bar {
-  margin-top: 0px !important;
-}
+
 
 .v-application .v-subheader.mt-4 {
   opacity: .3;
@@ -365,11 +356,6 @@ div.v-alert__content {
   margin-right: 20px;
 }
 
-prepend {
-  display: flex;
-  align-items: center;
-}
-
 .v-app-bar--fixed {
   background-color: rgba(50, 50, 62, .9) !important;
 }
@@ -392,7 +378,29 @@ prepend {
   }
 }
 
+.v-tabs--vertical div.v-tab {
+  width: 100% !important;
+  justify-content: left;
+  text-transform: capitalize;
+}
+
+.v-tabs--vertical .v-tabs-slider-wrapper .v-tabs-slider {
+  background-color: #52e3c2 !important;
+  width: 4px !important;
+}
+
+.v-tabs--vertical .v-tabs-bar {
+  width: 100%;
+}
+.v-tabs--vertical .v-tabs-bar {
+  margin-top: 0px !important;
+}
+
+
 /* 1264 */
+</style>
+<style scoped>
+
 </style>
 <style> /* Old WINDOWS */
 #page-title {
@@ -484,6 +492,15 @@ prepend {
   }
   100% {
     opacity: 1;
+  }
+}
+
+@keyframes background-cycle {
+  0% {
+    background-position: -100% -100% !important;
+  }
+  100% {
+    background-position: 100% 100% !important;
   }
 }
 

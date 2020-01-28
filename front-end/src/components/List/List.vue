@@ -1,7 +1,7 @@
 <template>
     <div class="List">
         <div v-if="display">
-            <ListItem :delay="delay" :index="index" :item="item" :type="type" v-for="(item, index) in items" :key="type + item._id"/>
+            <ListItem v-intersect.once="onIntersect" :delay="delay" :index="index" :item="item" :type="type" v-for="(item, index) in items" :key="type + item._id"/>
         </div>
     </div>
 </template>
@@ -24,7 +24,11 @@ export default {
             display: false,
         }
     },
-    computed: {
+    methods: {
+        onIntersect(index) {
+            if (index != this.items.length - 1) return;
+            this.$emit('listEnd', this.items.length);
+        }
     },
     async created() {
         this.display = true;
@@ -34,8 +38,5 @@ export default {
 
 
 <style scoped>
-.List {
-    
 
-}
 </style>
