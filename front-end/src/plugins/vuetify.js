@@ -1,4 +1,3 @@
-import '@fortawesome/fontawesome-free/css/all.css'
 import Vue from 'vue';
 import Vuetify from 'vuetify/lib';
 
@@ -14,8 +13,5 @@ export default new Vuetify({
           error: '#b71c1c',
         }
       }
-    },
-    icons: {
-      iconfont: 'fa',
     },
 });
