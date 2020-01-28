@@ -4,13 +4,15 @@
     <div class="flex flex-align-center">
       <h1 class="instruction slide-up" :style="{'--delay': + 1}">select up to 5 artist or tracks.</h1>
     </div>
-    <div class="flex flex-align-center slide-up" :style="{'--delay': + 2}" v-if="seeds.length < 5">
-        <v-select color="#52e3c2" class="selector" @mousedown="clearList()" :items="searchTypes" dense v-model="searchType"/>
+
+    <div class="flex flex-align-center flex-center slide-up seed-search" :style="{'--delay': + 2}" v-if="seeds.length < 5">
+        <div class="relative input" v-if="seeds.length < 5">
+          <v-text-field class="slide-up " :style="{'--delay': + 3}" clearable v-model="searchInput" @click:clear="clearList" :autofocus="true" :dark="true" background-color="rgba(100,100,100,.15)" solo :placeholder="searchPlaceholder"></v-text-field>
+          <MenuList @addItem="addSeed" id="menu-list" :delay="2" :items="list" :type="searchType" v-if="list.length > 0"/>
+        </div>
+        <v-select solo background-color="rgba(100,100,100,.15)" class="selector" @mousedown="clearList()" :items="searchTypes" v-model="searchType"/>
     </div>
-    <div class="relative" v-if="seeds.length < 5">
-      <v-text-field class="input slide-up " :style="{'--delay': + 3}" clearable v-model="searchInput" @click:clear="clearList" :autofocus="true" :dark="true" background-color="rgba(100,100,100,.15)" solo :placeholder="searchPlaceholder"></v-text-field>
-      <MenuList @addItem="addSeed" id="menu-list" :delay="2" :items="list" :type="searchType" v-if="list.length > 0"/>
-    </div>
+    
     <div id="seeds">
       <div class="seed flex flex-align-center small-elevation fade-in" :class="{noleftmargin: index == 0}" :style="{'--delay': + 1}" v-for="(item, index) in seeds" :key="'seed-'+item._id">
         <div class="seed-img" :style="{backgroundImage: 'url(' + findImage(item.image) +')'}"/>
@@ -20,17 +22,26 @@
     </div>
     <div class="results " v-if="recommends.length > 0 || noRecommends">
       <div class="recommends">
-        <div class="flex flex-left space-below flex-align-center">
-          <h1 class="instructions slide-up" :style="{'--delay': + 0}" v-if="recommends.length > 0">Recommends</h1>
-          <v-btn @click="getRecommends" v-if="!noRecommends && recommends.length > 0" class="refresh" text icon color="white">
-            <v-icon>mdi-cached</v-icon>
-          </v-btn>
-          <h1 class="instructions slide-up" :style="{'--delay': + 0}" v-if="noRecommends">no recommends...</h1>
-        </div>
+        <v-toolbar class="tool-bar" dense flat color="rgba(100,100,100,.0)">
+          <v-toolbar-title>
+            <h1 class="instructions slide-up" :style="{'--delay': + 0}" v-if="recommends.length > 0">Recommends</h1>
+            <h1 class="instructions slide-up" :style="{'--delay': + 0}" v-if="noRecommends">No Recommends...</h1>
+          </v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-tooltip bottom color="#3d3d4b">
+            <template v-slot:activator="{ on }">  
+              <v-btn @click="getRecommends" v-on="on" v-if="!noRecommends && recommends.length > 0" class="refresh button-icon" text icon color="white">
+                <v-icon>mdi-cached</v-icon>
+              </v-btn>
+            </template>
+            <span>Refresh</span>
+          </v-tooltip>
+        </v-toolbar>
+
         <div class="adv-controls-small" v-if="(recommends.length > 0 || noRecommends) && audioFeaturesData != null">
           <v-expansion-panels  accordion tile>
             <v-expansion-panel>
-              <v-expansion-panel-header>Advanced Controls</v-expansion-panel-header>
+              <v-expansion-panel-header>Filters</v-expansion-panel-header>
               <v-expansion-panel-content>
                 <v-expansion-panels accordion focusable tile multiple>
                   <v-expansion-panel v-for="(slide, index) in sliders" :key="'slider-'+ slide.type">
@@ -72,10 +83,29 @@
         <List class="recommend-list" v-if="!noRecommends" :delay="0" :items="recommends" :type="0"/>
       </div>
       <div class="adv-controls-big">
-        <div class="flex flex-space-between flex-align-center space-below">
-          <h1 class="instructions slide-up" :style="{'--delay': + 0}" v-if="recommends.length > 0 || noRecommends">Advanced Controls</h1>
-          <v-btn color="rgba(177, 176, 176, 0.062)" class="slide-up" dense @click="getRecommends">Apply Filters</v-btn>
-        </div>
+        <v-toolbar class="tool-bar" dense flat color="rgba(100,100,100,.0)">
+          <v-toolbar-title>
+            <h1 class="instructions slide-up" :style="{'--delay': + 0}" v-if="recommends.length > 0 || noRecommends">Filters</h1>
+          </v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-tooltip bottom color="#3d3d4b">
+            <template v-slot:activator="{ on }">  
+              <v-btn class="button-icon slide-up" v-on="on" text icon color="white" @click="resetSettings">
+                <v-icon>mdi-undo</v-icon>
+              </v-btn>
+            </template>
+            <span>Reset Filters</span>
+          </v-tooltip>
+          <v-tooltip bottom color="#3d3d4b">
+            <template v-slot:activator="{ on }">  
+              <v-btn class="button-icon slide-up" v-on="on" text icon color="white" @click="getRecommends">
+                <v-icon>mdi-cached</v-icon>
+              </v-btn>
+            </template>
+            <span>Apply Filters</span>
+          </v-tooltip>
+          
+        </v-toolbar>
         <div class="adv-controls-big-content slide-up"  :style="{'--delay': + 1, opacity: .9}">
           <v-expansion-panels accordion focusable tile multiple>
             <v-expansion-panel v-for="(slide, index) in sliders" :key="'slider-'+ slide.type">
@@ -107,7 +137,7 @@
                 </div>
               </v-expansion-panel-content>
             </v-expansion-panel>
-            <v-btn class="reset" color="rgba(177, 176, 176, 0.062)" @click="resetSettings">Reset Settings</v-btn>
+
           </v-expansion-panels>
   
         </div>
@@ -359,6 +389,27 @@ export default {
 </script>
 
 <style scoped>
+.button-icon {
+  transform: translateX(8px);
+}
+.tool-bar{
+  margin-bottom: 15px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #52e3c171 !important;
+}
+
+.v-toolbar__title {
+  transform: translateX(-16px);
+}
+
+.seed-search{
+  margin-top: 10px;
+}
+.input {
+  min-width: 200px;
+  width: calc(100% - 160px);
+  margin-right: 10px;
+}
 .refresh {
   margin-left: 10px;
 }
@@ -383,7 +434,7 @@ export default {
 .results {
   display: flex;
   justify-content: space-between;
-  
+  margin-top: 20px;
   flex-wrap: nowrap;
 }
 
@@ -433,16 +484,16 @@ export default {
 
 @media only screen and (max-width: 465px) {
   .discover-title {
-    font-size: 1.8em;
+    font-size: 1.8rem;
     margin: 0px 0px;
     margin-bottom: 10px;
   }
 
   h2 {
-    font-size: 1em;
+    font-size: 1rem;
   }
   .selector {
-    font-size: 1em;
+    font-size: 1rem;
   }
 }
 
@@ -454,7 +505,7 @@ export default {
 
 @media only screen and (min-width: 1264px) {
   .discover-title {
-    font-size: 3em !important;
+    font-size: 3rem !important;
     margin: 20px 0px !important;
   }
 }
@@ -490,7 +541,7 @@ p.description {
   margin-top: 20px;
   font-family: 'Roboto', sans-serif;
   font-weight: lighter;
-  font-size: 1.2em;
+  font-size: 1.2rem;
   text-align: left;
   color: rgb(177, 176, 176);
 }
@@ -508,7 +559,7 @@ h4 {
 }
 
 h3 {
-  font-size: 1.3em;
+  font-size: 1.3rem;
   font-family: 'Roboto', sans-serif;
   font-weight: lighter;
   margin: 0;
@@ -619,7 +670,7 @@ h3 {
 
 .discover-title {
   color: #52e3c2;
-  font-size: 2.5em;
+  font-size: 2.5rem;
   font-family: 'Roboto', sans-serif;
   font-weight: lighter;
   text-align: left;
@@ -630,7 +681,7 @@ h3 {
 .instructions {
   margin: 5px 0px;
   color: #f7f7f746;
-  font-size: 1.5em;
+  font-size: 1.5rem;
   font-family: 'Roboto', sans-serif;
   font-weight: lighter;
   text-align: left;
@@ -656,16 +707,16 @@ h3 {
   max-width: 150px;
   min-width: 120px;
   max-height: 48px !important;
-  margin-bottom: 0px;
+  margin-bottom: 30px;
   margin-left: 12px;
   margin-right: 12px;
-  font-size: 1.2em;
+  font-size: 1.2rem;
 }
 
 h2 {
   color: #ffffffdc;
   margin-bottom: 12px;
-  font-size: 1.5em;
+  font-size: 1.5rem;
   font-family: 'Roboto', sans-serif;
   font-weight: lighter;
   text-align: left;

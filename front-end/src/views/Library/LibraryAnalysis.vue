@@ -1,5 +1,6 @@
 <template>
   <div class="LibraryAnalysis">
+    <h1>Your Library</h1>
   </div>
 </template>
 

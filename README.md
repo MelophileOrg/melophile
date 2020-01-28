@@ -1,5 +1,9 @@
 # Melophile
 
+**STILL A WORK IN PROGRESS**
+
+NO CURRENT BUILD AVAILABLE. WILL BE AVAILABLE HERE:
+
 [http://melophile.org](http://melophile.org)
 
 ## Summary
@@ -10,9 +14,15 @@ Project by Andrew Young.
 
 ## Features
 
+*Well Complete Upon Completion of Project*
+
 ## Structure
 
+*Well Complete Upon Completion of Project*
+
 ## Development
+
+*Well Complete Upon Completion of Project*
 
 ## The Whole Story
 
