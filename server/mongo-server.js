@@ -26,7 +26,7 @@ let Artist = Items.artist;
 let Playlist = Items.playlist;
 
 app.get("/api/", async (req, res) => {
-    return res.send({message: "HELLO, THIS IS SERVER"});
+    return res.send({message: "Connection Made"});
 });
 
 app.put("/api/images", async (req, res) => {
@@ -41,7 +41,68 @@ app.put("/api/images", async (req, res) => {
     return res.sendStatus(500);
   }
 });
+///////////////////////////////////////////////////////////////
+// ANALYSIS ///////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+app.put("/api/user/stats", async (req, res) => {
+  try {
+    console.log("Hello");
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
 
+app.put("/api/distribution/:feature", async (req, res) => {
+  try {
+    console.log("Hello");
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+app.put("/api/timeline/added", async (req, res) => {
+  try {
+    console.log("Hello");
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+app.put("/api/history/:year", async (req, res) => {
+  try {
+    console.log("Hello");
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+app.put("/api/history/:year/:month", async (req, res) => {
+  try {
+    console.log("Hello");
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+app.put("/api/timeline/:feature", async (req, res) => {
+  try {
+    console.log("Hello");
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+
+
+///////////////////////////////////////////////////////////////
+// KNOWN LISTS ////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
 
 // { ids: [] }
 app.put("/api/tracks", async (req, res) => {
@@ -112,6 +173,8 @@ app.put("/api/playlists/:id", async (req, res) => {
     return res.sendStatus(500);
   }
 });
+
+
 
 var server = app.listen(3003, function(){
     console.log("Listening on 3003");
