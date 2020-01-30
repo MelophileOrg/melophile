@@ -24,6 +24,7 @@ let Items = require("./items.js");
 let Track = Items.track;
 let Artist = Items.artist;
 let Playlist = Items.playlist;
+let User = Items.user;
 
 app.get("/api/", async (req, res) => {
     return res.send({message: "Connection Made"});
@@ -41,9 +42,40 @@ app.put("/api/images", async (req, res) => {
     return res.sendStatus(500);
   }
 });
+
 ///////////////////////////////////////////////////////////////
 // ANALYSIS ///////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
+
+
+app.put("/api/top/saved/:type/:offset", async (req, res) => {
+  try {
+    let user = await User.findOne({ _id: req.body._id });
+
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+app.put("/api/top/played/:type/:offset", async (req, res) => {
+  try {
+    console.log("Hello");
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+app.put("/api/timeline/:feature", async (req, res) => {
+  try {
+    console.log("Hello");
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
 app.put("/api/user/stats", async (req, res) => {
   try {
     console.log("Hello");

@@ -22,7 +22,7 @@ const Track = mongoose.model('Track', trackSchema);
 
 const artistSchema = new mongoose.Schema({
   _id: String,
-  name: String, 
+  name: String,
   image: Array,
   genres: Array,
 });
