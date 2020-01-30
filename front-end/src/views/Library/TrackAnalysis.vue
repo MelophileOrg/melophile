@@ -1,5 +1,5 @@
 <template>
-  <div class="TrackAnalysis">
+  <div class="TrackAnalysis content-padding-hori">
     <TrackHeader :track="track"/>
     <AudioAnalysisGraph v-if="track != null" :width="200" :height="100" :audioAnalysis="track.audioAnalysis"/>
   </div>

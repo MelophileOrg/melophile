@@ -47,10 +47,11 @@ app.put("/api/images", async (req, res) => {
 // ANALYSIS ///////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 
-
+// { _id: id }
 app.put("/api/top/saved/:type/:offset", async (req, res) => {
   try {
     let user = await User.findOne({ _id: req.body._id });
+    console.log(user);
 
   } catch (error) {
     console.log(error);

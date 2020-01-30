@@ -21,8 +21,8 @@ class Jimmy {
 
     async checkServer() {
         console.log("Hello, this is JIMMY?");
-        let response = await axios.get('/api/');
-        console.log(response.data.message);
+        //let response = await axios.get('/api/top/saved/' + 'artists' + '/' + 0, { _id: });
+        //console.log(response.data);
     }
 
     async inicialize(accessToken) {
@@ -70,18 +70,21 @@ class Jimmy {
             let items = response.body[key].items;
             let convertedItems = [];
             for (let i = 0; i < items.length; i++) {
+                if (this.requestNum != localRequestNum) {
+                    return null;
+                }
                 switch(type) {
                     case 0:
-                        convertedItems.push(this.convertTrack(items[i]));
+                        convertedItems.push(await this.convertTrack(items[i]));
                         break;
                     case 1:
-                        convertedItems.push(this.convertArtist(items[i]));
+                        convertedItems.push(await this.convertArtist(items[i]));
                         break;
                     case 2: 
-                        convertedItems.push(this.convertAlbum(items[i]));
+                        convertedItems.push(await this.convertAlbum(items[i]));
                         break;
                     case 3: 
-                        convertedItems.push(this.convertPlaylist(items[i]));
+                        convertedItems.push(await this.convertPlaylist(items[i]));
                         break;
                 }
             }
@@ -303,16 +306,16 @@ class Jimmy {
         };
     }
 
-    convertArtist(album) {
+    convertArtist(artist) {
         let image;
-        if (album.images.length == 0) 
+        if (artist.images.length == 0) 
             image = "Undefined";
         else    
-            image = album.images[0].url;
+            image = artist.images[0].url;
         return {
-            _id: album.id,
-            name: album.name,
-            genres: album.genres,
+            _id: artist.id,
+            name: artist.name,
+            genres: artist.genres,
             image: image,
         };
     }

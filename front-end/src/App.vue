@@ -175,6 +175,52 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:100&display=swap');
 </style>
 <style>/* Base CSS */
+
+.page-title {
+  color: white;
+  font-size: 2rem;
+  font-family: 'Roboto', sans-serif;
+  font-weight: lighter;
+  text-align: left;
+  opacity: 1;
+  margin: 0px;
+  background-color: #393945;
+  margin-bottom: 15px;
+  margin-top: 10px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+  -webkit-box-shadow: 0 4px 15px rgba(40,40,51,.6);
+    box-shadow: 0 4px 15px rgba(40,40,51,.6);
+    padding: 1rem 2.5rem;
+  border-radius: 3px;
+}
+
+.page-bar {
+  
+  background-color: #393945;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+  border-radius: 3px;
+  
+  -webkit-box-shadow: 0 4px 15px rgba(40,40,51,.6);
+    box-shadow: 0 4px 15px rgba(40,40,51,.6);
+}
+
+.window {
+  margin-bottom: 15px;
+  margin-top: 10px;
+  background-color: #393945;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding: 1rem 2.5rem;
+  border-radius: 3px;
+  -webkit-box-shadow: 0 4px 15px rgba(40,40,51,.6);
+    box-shadow: 0 4px 15px rgba(40,40,51,.6);
+}
+
 .lowercase {
   text-transform: lowercase !important;
 }
@@ -224,9 +270,13 @@ html::-webkit-scrollbar-thumb
   padding-bottom: 150px;
 }
 
-.content-padding {
+.content-padding-hori {
   padding-left: 16px;
   padding-right: 16px;
+}
+
+.content-padding-vert {
+  padding-top: 16px;
 }
 
 .pop-small {

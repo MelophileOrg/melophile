@@ -1,7 +1,8 @@
 <template>
   <div class="Library">
-    <h1  class="library-title slide-up" :style="{'--delay': + 0}">your library</h1>
-    <v-tabs dark background-color="#32323e" v-model="tab">
+    <h1 class="library-title slide-up" :style="{'--delay': + 0}">Your Library</h1>
+    <div class="page-bar">
+    <v-tabs background-color="#393945" color="#52e3c2" v-model="tab">
       <v-tab>
         Tracks
       </v-tab>
@@ -12,6 +13,7 @@
         Playlists
       </v-tab>
     </v-tabs>
+    </div>
     <List @listEnd="getTracks" class="transform-left" :delay="1" :items="list" :type="type" v-if="list.length > 0"/>
     <EmptyList class="transform-left" :delay="1" :num="8" v-else/>
   </div>
@@ -64,7 +66,7 @@ export default {
 <style scoped>
 .library-title {
   color: #52e3c2;
-  font-size: 2.5em;
+  font-size: 2em;
   font-family: 'Roboto', sans-serif;
   font-weight: lighter;
   text-align: left;
@@ -72,16 +74,5 @@ export default {
   margin: 0px;
   margin-top: 15px;
 }
-div.v-tab {
-  margin: 5px 0px;
-  color: #f7f7f746;
-  font-size: 1em;
-  font-family: 'Roboto', sans-serif;
-  font-weight: lighter;
-  text-align: left;
-  opacity: 1;
-}
-.transform-left {
-  transform: translateX(-6px);
-}
+
 </style>

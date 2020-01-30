@@ -1,7 +1,7 @@
 <template>
     <div class="MenuList pop-up">
         <div v-if="display">
-            <MenuListItem @addItem="addItem" :index="index" :item="item" v-for="(item, index) in items" :key="type + item._id"/>
+            <MenuListItem :type="type" @addItem="addItem" :index="index" :item="item" v-for="(item, index) in items" :key="type + item._id"/>
         </div>
     </div>
 </template>

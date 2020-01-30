@@ -1,5 +1,5 @@
 <template>
-  <div class="Discover content-padding">
+  <div class="Discover content-padding-hori">
     <h1  class="discover-title slide-up" :style="{'--delay': + 0}">a powerful tool for music recommendations.</h1>
     <div class="flex flex-align-center">
       <h1 class="instruction slide-up" :style="{'--delay': + 1}">select up to 5 artist or tracks.</h1>
@@ -366,6 +366,7 @@ export default {
         await this.clearList();
         let response = await this.jimmy.search(this.searchInput, 0, this.searchType);
         if (response == null) return;
+        console.log(response);
         this.list = response.splice(0, 10);
       } else {
         this.clearList();
@@ -507,6 +508,7 @@ export default {
   .discover-title {
     font-size: 3rem !important;
     margin: 20px 0px !important;
+    margin-top: 5px !important;
   }
 }
 

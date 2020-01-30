@@ -3,7 +3,7 @@
       <div class="img" :style="{backgroundImage: 'url(' + image + ')'}"/>
       <div class="flex limit">
       <h1>{{item.name}}</h1>
-      <h1 class="artist"> - {{item.artists[0].name}}</h1>
+      <h1 v-if="type == 0" class="artist"> - {{item.artists[0].name}}</h1>
       </div>
   </div>
 </template>
@@ -15,6 +15,7 @@ export default {
     props: {
         index: Number,
         item: Object,
+        type: Number,
     },
     methods: {
         addItem(index) {
