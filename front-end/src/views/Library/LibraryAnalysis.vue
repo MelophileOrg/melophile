@@ -10,7 +10,6 @@
         <h1 v-if="userStats != null">{{userStats.track_num}} Tracks</h1>
       </div>
     </div>
-      
   </div>
 </template>
 
