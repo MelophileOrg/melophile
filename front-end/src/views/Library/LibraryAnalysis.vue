@@ -1,22 +1,16 @@
 <template>
-  <div class="LibraryAnalysis">
+  <div class="LibraryAnalysis content-padding-hori">
     <div class="page-title-bar slide-up elevation-3" :style="{'--delay': + 0}">
       <div class="page-title-icon overview-icon"/>
       <h1 class="page-title">Your Overview</h1>
     </div>
-    <div class="page-bar slide-up" :style="{'--delay': + 1}">
-      <v-tabs background-color="#393945" color="#52e3c2">
-        <v-tab> 
-          Top Played
-        </v-tab>
-        <v-tab> 
-          Top Saved
-        </v-tab>
-        <v-tab> 
-          Extremes
-        </v-tab>
-      </v-tabs>
+
+    <div class="flex flex-wrap">
+      <div class="window">
+        <h1 v-if="userStats != null">{{userStats.track_num}} Tracks</h1>
+      </div>
     </div>
+      
   </div>
 </template>
 
@@ -28,6 +22,25 @@ export default {
   components: {
 
   },
+  data() {
+    return {
+      userStats: null,
+    }
+  },
+  methods: {
+    formatNumber(val) {
+      if (val == null) return "0";
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+  },
+  computed: {
+    jimmy() {
+      return this.$store.state.jimmy;
+    },
+  },
+  created() {
+    this.userStats = this.jimmy.getStats();
+  }
 }
 </script>
 

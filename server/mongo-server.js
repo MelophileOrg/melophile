@@ -99,8 +99,6 @@ app.put("/api/top/saved/:type", async (req, res) => {
 
 app.put("/api/extreme/:feature/:sort", async (req, res) => {
   try {
-    console.log(req.params.feature);
-    console.log(req.params.sort);
     let user = await requestUser(req.body.token);
     let userData = await User.findOne({ _id: user.id });
     if (userData == null) return res.send(null);
@@ -117,16 +115,24 @@ app.put("/api/extreme/:feature/:sort", async (req, res) => {
   }
 });
 
-app.put("/api/timeline/:feature", async (req, res) => {
+app.put("/api/user/stats", async (req, res) => {
   try {
-    console.log("Hello");
+    let user = await requestUser(req.body.token);
+    let userData = await User.findOne({ _id: user.id });
+    if (userData == null) return res.send(null);
+    let stats = {
+      track_num: Object.keys(userData.tracks).length,
+      artist_num: Object.keys(userData.artists).length,
+      genre_num: Object.keys(userData.genres).length,
+    }
+    return res.send(stats)
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
   }
 });
 
-app.put("/api/user/stats", async (req, res) => {
+app.put("/api/timeline/:feature", async (req, res) => {
   try {
     console.log("Hello");
   } catch (error) {

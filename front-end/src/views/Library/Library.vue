@@ -1,5 +1,5 @@
 <template>
-  <div class="Library">
+  <div class="Library content-padding-hori">
     <div class="page-title-bar slide-up elevation-3" :style="{'--delay': + 0}">
       <div class="page-title-icon library-icon"/>
       <h1 class="page-title">Your Library</h1>

@@ -1,5 +1,5 @@
 <template>
-  <div class="MonthAnalysis">
+  <div class="MonthAnalysis content-padding-hori">
     <div class="page-title-bar slide-up elevation-3" :style="{'--delay': + 0}">
       <h1 class="page-title">Month Analysis</h1>
     </div>

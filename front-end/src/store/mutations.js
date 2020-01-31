@@ -74,37 +74,11 @@ const SOCKET_AUDIOFEATUREHISTORYS = (state, data) => {
     for (let i = 0; i < data.historys.length; i++) 
         state.data.audioFeatures[data.historys[i].feature].history = data.historys[i].history;
 };
-// { feature: String, min: Array }
-const SOCKET_AUDIOFEATUREMIN = (state, data) => {
-    state.data.audioFeatures[data.feature].min = data.min;
-};
-// { feature: String, max: Array }
-const SOCKET_AUDIOFEATUREMAX = (state, data) => {
-    state.data.audioFeatures[data.feature].max = data.max;
-};
-// Object
-const SOCKET_ANALYSIS = (state, data) => {
-    state.data.analysis = data;
-};
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // SEARCH /////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-// { list: [id], type: Number }
-const SOCKET_LISTSTART = (state, data) => {
-    state.list.type = data.type;
-    state.list.list = data.list;
-};
-
-const SOCKET_LISTADD = (state, data) => {
-    state.list.list = state.list.list.concat(data.list);
-};
-
-const SOCKET_LISTCLEAR = (state) => {
-    state.list.list = [];
-};
-
-
 export default {
     setRoute,
     
@@ -124,11 +98,4 @@ export default {
     SOCKET_AUDIOFEATUREDISTRIBUTIONS,
     SOCKET_AUDIOFEATUREHISTORY,
     SOCKET_AUDIOFEATUREHISTORYS,
-    SOCKET_AUDIOFEATUREMIN,
-    SOCKET_AUDIOFEATUREMAX,
-    SOCKET_ANALYSIS,
-
-    SOCKET_LISTSTART,
-    SOCKET_LISTADD,
-    SOCKET_LISTCLEAR,
 };

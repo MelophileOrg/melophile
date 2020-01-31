@@ -7,12 +7,8 @@ class Jimmy {
     constructor() {
         this.spotifyAPI =  new SpotifyWebApi();
         this.ready = false;
-        this.type = 0;
-        this.tracks = {};
-        this.artists = {};
-        this.albums = {};
-        this.playlists = {};
         this.requestNum = 0;
+        this.userStats = null;
     }
 
     sayHello() {
@@ -21,8 +17,6 @@ class Jimmy {
 
     async checkServer() {
         console.log("Hello, this is JIMMY?");
-        //let response = await axios.get('/api/top/saved/' + 'artists' + '/' + 0, { _id: });
-        //console.log(response.data);
     }
 
     async inicialize(accessToken) {
@@ -214,6 +208,18 @@ class Jimmy {
         }
     }
 
+    async getStats() {
+        try {
+            if (this.userStats != null) return this.userStats;
+            let response = await axios.put('/api/user/stats', {token: this.token});
+            this.userStats = response.data;
+            console.log(this.userStats);
+            return this.userStats;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async playTrack(id) {
         this.spotifyAPI.play({uris: ["spotify:track:" + id]});
     }
@@ -326,33 +332,6 @@ class Jimmy {
     // async getSavedPlaylists(options) {
     //     //let response = await axios.get('/api/')
     // }
-
-    getItem(id) {
-        if (this.type == 0) {
-            return this.tracks[id];
-        } else if (this.type == 1) {
-            return this.artists[id];
-        } else if (this.type == 2) {
-            return this.albums[id];
-        } else if (this.type == 3) {
-            return this.playlists[id];
-        } else {
-            return null;
-        }
-    }
-
-    clearCache(newType, concat) {
-        if (newType != 0 || !concat) {
-            for (let member in this.tracks) delete this.tracks[member];
-        } else if (newType != 1 || !concat) {
-            for (let member in this.artists) delete this.artists[member];
-        } else if (newType != 2 || !concat) {
-            for (let member in this.albums) delete this.albums[member];
-        } else if (newType != 3 || !concat) {
-            for (let member in this.playlists) delete this.playlists[member];
-        }
-        this.type = newType;
-    }
 
     convertTrack(track) {
         let image;
