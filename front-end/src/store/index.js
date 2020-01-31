@@ -33,68 +33,7 @@ export default new Vuex.Store({
 
     data: {
       userID: null,
-      audioFeatures: {
-        valence: {
-          average: null,
-          distribution: null, 
-          history: null,
-        },
-        danceability: {
-          average: null,
-          distribution: null, 
-          history: null,
-        },
-        energy: {
-          average: null,
-          distribution: null, 
-          history: null,
-        },
-        acousticness: {
-          average: null,
-          distribution: null, 
-          history: null,
-        },
-        instrumentalness: {
-          average: null,
-          distribution: null, 
-          history: null,
-        },
-        liveness: {
-          average: null,
-          distribution: null, 
-          history: null,
-        },
-        loudness: {
-          average: null,
-          distribution: null, 
-          history: null,
-        },
-        speechiness: {
-          average: null,
-          distribution: null, 
-          history: null,
-        },
-        key: {
-          average: null,
-          distribution: null, 
-          history: null,
-        },
-        mode: {
-          average: null,
-          distribution: null, 
-          history: null,
-        },
-        tempo: {
-          average: null,
-          distribution: null, 
-          history: null,
-        },
-        banger: {
-          average: null,
-          distribution: null, 
-          history: null,
-        },
-      },
+      
     },
   },
   mutations,

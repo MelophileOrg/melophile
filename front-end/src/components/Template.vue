@@ -1,12 +1,12 @@
 <template>
-  <div class="HelloWorld">
+  <div class="Template">
 
   </div>
 </template>
 
 <script>
 export default {
-  name: 'HelloWorld',
+  name: 'Template',
 
   data: () => ({
     

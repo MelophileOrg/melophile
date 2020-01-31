@@ -104,6 +104,25 @@ export default {
     position: relative;
 }
 
+
+.ListItem::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(124, 102, 102, 0.3);
+    background-color: #32323e;
+}
+
+.ListItem::-webkit-scrollbar
+{
+    height: 5px;
+    background-color: rgba(6, 6, 6, 0.007)
+}
+
+.ListItem::-webkit-scrollbar-thumb
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(255, 255, 255, 0);
+    background-color: rgba(255, 255, 255, 0.288);
+}
+
 .feature {
     display: block;
     width: 55px;

@@ -170,11 +170,37 @@
   }
 </script>
 
-<style>/* Fonts */
+<style>/* Fonts   #52e3c2 */
 @import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Roboto:100&display=swap');
 </style>
 <style>/* Base CSS */
+.colors {
+    --atom-red: #ff4495;
+    --atom-green: #52e3c2;
+    --atom-blue: #0781ff;
+    --atom-purple: #d211fe;
+    --atom-bright-orange: #ff4b12;
+    --atom-yellow: #ffd900;
+    --atom-orange: #ed8a19;
+    --atom-light-blue: #40c4ff;
+    --atom-gray: #546e7a;
+    --atom-brand-0: #1a1a21;
+    --atom-brand-1: #282833;
+    --atom-brand-2: #32323e;
+    --atom-brand-3: #393945;
+    --atom-brand-4: #40424f;
+    --atom-brand-5: #4d505f;
+    --atom-brand-6: #6e7288;
+    --atom-brand-7: #8f94ab;
+    --atom-brand-8: #b4b8cd;
+    --atom-contrast: #fff;
+}
+
+.theme--dark.v-skeleton-loader .v-skeleton-loader__actions, .theme--dark.v-skeleton-loader .v-skeleton-loader__article, .theme--dark.v-skeleton-loader .v-skeleton-loader__card-heading, .theme--dark.v-skeleton-loader .v-skeleton-loader__card-text, .theme--dark.v-skeleton-loader .v-skeleton-loader__date-picker, .theme--dark.v-skeleton-loader .v-skeleton-loader__list-item, .theme--dark.v-skeleton-loader .v-skeleton-loader__list-item-avatar, .theme--dark.v-skeleton-loader .v-skeleton-loader__list-item-text, .theme--dark.v-skeleton-loader .v-skeleton-loader__list-item-two-line, .theme--dark.v-skeleton-loader .v-skeleton-loader__list-item-avatar-two-line, .theme--dark.v-skeleton-loader .v-skeleton-loader__list-item-three-line, .theme--dark.v-skeleton-loader .v-skeleton-loader__list-item-avatar-three-line, .theme--dark.v-skeleton-loader .v-skeleton-loader__table-heading, .theme--dark.v-skeleton-loader .v-skeleton-loader__table-thead, .theme--dark.v-skeleton-loader .v-skeleton-loader__table-tbody, .theme--dark.v-skeleton-loader .v-skeleton-loader__table-tfoot {
+    background: #434350bd !important;
+}
+
 .tab-icon {
   margin-right: 8px;
   margin-top: 2px;
@@ -229,7 +255,7 @@
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
-  padding: 1rem 2.5rem;
+  padding: 12px 12px;
   border-radius: 3px;
   margin-bottom: 15px;
   margin-top: 10px;
@@ -256,7 +282,8 @@ body {
 }
 
 #app {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Roboto', sans-serif;
+  font-weight: lighter;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -371,12 +398,17 @@ html::-webkit-scrollbar-thumb
 .mr-12.align-center span {
   font-size: 18px !important;
   font-weight: bolder;
-  font-family: Avenir,Helvetica,Arial,sans-serif !important;
+  font-family: 'Roboto', sans-serif;
+  font-weight: lighter;
 }
 
 .theme--dark.v-application {
   background-color: rgb(0,0,0,0) !important;
   background-size: 100% 100%;
+}
+
+.theme--dark.v-sheet {
+  background-color:rgba(124, 102, 102, 0.3);
 }
 
 .v-navigation-drawer__content {
@@ -466,6 +498,7 @@ div.v-alert__content {
   width: 100% !important;
   justify-content: left;
   text-transform: capitalize;
+  font-weight: lighter;
 }
 
 .v-tabs--vertical .v-tabs-slider-wrapper .v-tabs-slider {

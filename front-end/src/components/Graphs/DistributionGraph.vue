@@ -1,7 +1,7 @@
 <template>
-  <div class="DistributionGraph" :style="{'--red': + color.red, '--green': + color.green, '--blue': + color.blue, width: width + 'px'}">
+  <div class="DistributionGraph elevation-1" :style="{'--red': + color.red, '--green': + color.green, '--blue': + color.blue, width: width + 'px'}">
         <h1 class="graph-title">{{title}}</h1>
-        <div class="canvasWrap" :style="{height: height + 'px', width: width + 'px'}">
+        <div class="canvasWrap" :style="{height: height - 8 + 'px', width: width - 8 + 'px'}">
             <canvas :id="'feature-graph-' + title" class="canvas"></canvas>
             <div class="flex flex-space-between labels" :style="{'--red': + color.red,'--green': + color.green,'--blue': + color.blue, }">
                 <h2>{{audioFeaturesData[feature].minTag}}</h2>
@@ -19,13 +19,13 @@ export default {
     props: {
         title: { type: String, default: 'Untitled Graph' },
         feature: { type: String, default: 'valence' },
-        bars: { type: Array, default: () => { return [0, 2, 5, 8, 12, 15, 11, 9, 4, 2, 0] } },
+        bars: { type: Array, default: () => { return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0] } },
         width: { type: Number, default: 500 },
         height: { type: Number, default: 300 },
     },
     data: () => ({
         graph: null,
-        current: this.current,
+        current: null,
         tooltip: null,
     }),
     watch: {
@@ -82,16 +82,16 @@ export default {
         },
         labels() {
             let labels = [];
-            for (let i = 0; i < 11; i++) {
-                labels.push(this.audioFeaturesData[this.feature].title + ": " + (i * 10) + "%");
+            for (let i = 0; i < 21; i++) {
+                labels.push(this.audioFeaturesData[this.feature].title + ": " + (i * 5) + "%");
             }
             return labels;
         },
         //updating chart to new trend
         renderChart() {
             let color1 = "rgba(" + this.color.red + ", " + this.color.green + ", " + this.color.blue + ", " + " 0.2)";
-            let color2 = "rgba(" + this.color.red + ", " + this.color.green + ", " + this.color.blue + ", " + " 0.8)";
-            let color3 = "rgba(" + this.color.red + ", " + this.color.green + ", " + this.color.blue + ", " + " 0.6)";
+            let color2 = "rgba(" + this.color.red + ", " + this.color.green + ", " + this.color.blue + ", " + " 1)";
+            let color3 = "rgba(" + this.color.red + ", " + this.color.green + ", " + this.color.blue + ", " + " 1)";
             var options = {
                 type: "line",
                 data: {
@@ -224,7 +224,7 @@ export default {
     --blue: 255;
     display: block;
     background-color: rgba(226, 226, 226, 0.041);
-    padding-top: 18px;
+    padding-top: 12px;
 
 }
 
@@ -235,6 +235,7 @@ export default {
 
 .canvasWrap {
     display: block;
+    margin: 0 auto;
     padding-bottom: 22px;
     position: relative;
 }
@@ -258,10 +259,12 @@ export default {
 }
 
 h2 {
-    color: rgba(var(--red), var(--green), var(--blue), 0.8);
+    color: rgba(var(--red), var(--green), var(--blue), 1);
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.151);
+    /* color: rgba(255, 255, 255, 0.849); */
     margin: 0;
     font-size: 15px;
-    font-weight: lighter;
+    font-weight: normal;
     cursor: default;
 }
     
@@ -271,7 +274,7 @@ h2 {
     font-weight: lighter;
     width: 100%;
     text-align: left;
-    margin: 0 30px;
-    margin-bottom: 10px;
+    margin: 0 12px;
+    margin-bottom: 8px;
 }
 </style>

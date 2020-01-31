@@ -7,14 +7,14 @@ const AUDIO_FEATURES = {
         description: "Confidence measure of whether the track is accoustic.",
     },
     danceability: {
-        color: {red: 78, green: 121, blue: 167},
+        color: {red: 210, green: 17, blue: 254},
         title: "Danceability",
         minTag: "Couch Potato",
         maxTag: "Let's Dance!",
         description: "Confidence measure of how suitable a track is for dancing. Based on tempo, rhythm stability, beat strength and overall regularity.",
     },
     energy: {
-        color: {red: 89, green: 161, blue: 79},
+        color: {red: 7, green: 129, blue: 255},
         title: "Energy",
         minTag: "Peaceful",
         maxTag: "Hyper",
@@ -49,7 +49,7 @@ const AUDIO_FEATURES = {
         description: "Detects the presence of spoken words in a track. Higher values suggest more speech-like recordings (e.g. talk show, audio book, poetry).",
     },
     valence: {
-        color: {red: 242, green: 142, blue: 43},
+        color: {red: 82, green: 227, blue: 194},
         title: "Happiness",
         minTag: "Depressing",
         maxTag: "Cheerful",

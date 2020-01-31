@@ -9,6 +9,8 @@ class Jimmy {
         this.ready = false;
         this.requestNum = 0;
         this.userStats = null;
+        this.audioFeatures = null;
+        this.spotlight = null;
     }
 
     sayHello() {
@@ -213,10 +215,48 @@ class Jimmy {
             if (this.userStats != null) return this.userStats;
             let response = await axios.put('/api/user/stats', {token: this.token});
             this.userStats = response.data;
-            console.log(this.userStats);
             return this.userStats;
         } catch (error) {
-            console.log(error);
+            return null;
+        }
+    }
+
+    async getAudioFeatureAverage(audioFeature) {
+        try {
+            if (this.audioFeatures[audioFeature].average != null) return this.audioFeatures[audioFeature].average;
+            let response = await axios.put('/api/user/stats', {token: this.token});
+            this.userStats = response.data;
+            return this.userStats;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    async getSpotlights() {
+        try {
+            if (this.spotlight != null) return this.spotlight;
+            let response = await axios.put('/api/user/spotlight', {token: this.token});
+            this.spotlight = response.data;
+            response = await this.spotifyAPI.getMyTopTracks({limit: 5, time_range: 'long_term'});
+            let items = response.body.items;
+            let convertedItems = [];
+            for (let i = 0; i < items.length; i++) 
+                convertedItems.push(await this.convertTrack(items[i]));
+            this.spotlight.tracks = convertedItems;
+            return this.spotlight;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    async getAllAudioFeatureData() {
+        try {
+            if (this.audioFeatures != null) return this.audioFeatures;
+            let response = await axios.put('/api/features/all', {token: this.token});
+            this.audioFeatures = response.data;
+            return this.audioFeatures;
+        } catch (error) {
+            return null;
         }
     }
 

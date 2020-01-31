@@ -10,9 +10,6 @@ import Development from '../views/About/Development.vue'
 import FuturePlans from '../views/About/FuturePlans.vue'
 
 import Charts from '../views/Charts/Charts.vue'
-import Extremes from '../views/Charts/Extremes.vue'
-import TopPlayed from '../views/Charts/TopPlayed.vue'
-import TopSaved from '../views/Charts/TopSaved.vue'
 
 import History from '../views/History/History.vue'
 import MonthAnalysis from '../views/History/MonthAnalysis.vue'
@@ -69,21 +66,6 @@ const routes = [
     path: '/charts',
     name: 'charts',
     component: Charts
-  },
-  {
-    path: '/charts/extremes',
-    name: 'extremes',
-    component: Extremes
-  },
-  {
-    path: '/charts/topplayed',
-    name: 'topplayed',
-    component: TopPlayed
-  },
-  {
-    path: '/charts/topsaved',
-    name: 'topsaved',
-    component: TopSaved
   },
   {
     path: '/history',

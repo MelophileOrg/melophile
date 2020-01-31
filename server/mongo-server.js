@@ -27,22 +27,18 @@ let Artist = Items.artist;
 let Playlist = Items.playlist;
 let User = Items.user;
 
-app.get("/api/", async (req, res) => {
-    return res.send({message: "Connection Made"});
-});
-
-app.put("/api/images", async (req, res) => {
-  try {
-    console.log("Hello");
-    let tracks = await Tracks.aggregate([ { $sample: { size: 30 } } ]);
-    console.log(tracks);
-    let images = tracks.map(track => track.image);
-    return res.send({ images: images });
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(500);
-  }
-});
+// app.put("/api/images", async (req, res) => {
+//   try {
+//     console.log("Hello");
+//     let tracks = await Tracks.aggregate([ { $sample: { size: 30 } } ]);
+//     console.log(tracks);
+//     let images = tracks.map(track => track.image);
+//     return res.send({ images: images });
+//   } catch (error) {
+//     console.log(error);
+//     return res.sendStatus(500);
+//   }
+// });
 
 ///////////////////////////////////////////////////////////////
 // ANALYSIS ///////////////////////////////////////////////////
@@ -55,11 +51,252 @@ let requestUser = async (token) => {
   return (await spotifyAPI.getMe()).body;
 }
 
-let convertGenre = async (genre) => {
-  let randomArtists = await Artist.find({ genres: genre[0] }).limit(4);
-  let newGenre = {name: genre[0], track_num: genre[1].track_num, image: randomArtists.map(artist => artist.image)};
-  return newGenre;
-}
+///////////////////////////////////////////////////////////////////////////////////////
+// Base Data //////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+
+app.put("/api/user/stats", async (req, res) => {
+  try {
+    let user = await requestUser(req.body.token);
+    let userData = await User.findOne({ _id: user.id });
+    if (userData == null) return res.send(null);
+    let stats = {
+      track_num: Object.keys(userData.tracks).length,
+      artist_num: Object.keys(userData.artists).length,
+      genre_num: Object.keys(userData.genres).length,
+    }
+    return res.send(stats)
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+app.put("/api/user/spotlight", async (req, res) => {
+  try {
+    let user = await requestUser(req.body.token);
+    let userData = await User.findOne({ _id: user.id });
+    if (userData == null) return res.send(null);
+    let spotlight = {
+      tracks: [],
+      artists: [],
+      genres: [],
+    }
+    let convertedItems = [];
+    items = await Artist.find({ _id: {$in: await userData.topSaved.artists.map(artist => artist._id).splice(0, 5)}});
+    for (let i = 0; i < items.length; i++)  {
+      let newItem = {};
+      newItem.image = items[i].image;
+      newItem._id = items[i]._id;
+      newItem.name = items[i].name;
+      newItem.genres = items[i].genres;
+      newItem.track_num = await userData.topSaved.artists.find(artist => artist._id == items[i]._id).track_num;
+      convertedItems.push(newItem);
+    }
+    spotlight.artists = await convertedItems.sort((a, b) => b.track_num - a.track_num);
+
+    let genres = [];
+    for (let i = 0; i < userData.topSaved.genres.length; i++) {
+      genres.push(await convertGenre(userData.topSaved.genres[i]));
+    }
+    spotlight.genres = genres;
+
+    return res.send(spotlight);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+///////////////////////////////////////////////////////////////////////////////////////
+// Audio Feature //////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+
+app.put("/api/features/all", async (req, res) => {
+  try {
+    let user = await requestUser(req.body.token);
+    let userData = await User.findOne({ _id: user.id });
+    if (userData == null) return res.send(null);
+    let audioFeatures = {
+      valence: {
+        average: 0,
+        distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+        history: [],
+      },
+      danceability: {
+        average: 0,
+        distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+        history: [],
+      },
+      energy: {
+        average: 0,
+        distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+        history: [],
+      },
+      acousticness: {
+        average: 0,
+        distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+        history: [],
+      },
+      instrumentalness: {
+        average: 0,
+        distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+        history: [],
+      },
+      liveness: {
+        average: 0,
+        distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+        history: [],
+      },
+      loudness: {
+        average: 0,
+        distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+        history: [],
+      },
+      speechiness: {
+        average: 0,
+        distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+        history: [],
+      },
+      key: {
+        average: 0,
+        distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+        history: [],
+      },
+      mode: {
+        average: 0,
+        distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+        history: [],
+      },
+      tempo: {
+        average: 0,
+        distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+        history: [],
+      },
+    };
+    let nowTime = (await new Date()).getTime();
+    const MONTH_MILLI = 2628000000;
+    let keys = Object.keys(audioFeatures);
+    let total = 0;
+    let tracks = await Track.find({ _id: { $in: await Object.keys(userData.tracks) }}).limit(50).skip(0);
+    for (let i = 0; i < tracks.length; i++) {
+      if (tracks[i] == null) continue;
+      total += 1;
+      for (let j = 0; j < keys.length; j++) {
+        audioFeatures[keys[j]].average += tracks[i][keys[j]];
+        audioFeatures[keys[j]].distribution[ Math.round(tracks[i][keys[j]] * 20) ] += 1;
+        let dateTime = (await new Date(userData.tracks[tracks[i]._id].dateAdded)).getTime();
+        let index = Math.floor((nowTime - dateTime) / MONTH_MILLI);
+        while (audioFeatures[keys[j]].history.length <= index) {
+          audioFeatures[keys[j]].history.push({val: 0, total: 0});
+        }
+        audioFeatures[keys[j]].history[index].val += tracks[i][keys[j]];
+        audioFeatures[keys[j]].history[index].total += 1;
+      }
+    }
+    let offset = 50;
+    while (tracks.length == 50) {
+      tracks = await Track.find({ _id: { $in: await Object.keys(userData.tracks) }}).limit(50).skip(offset);
+      for (let i = 0; i < tracks.length; i++) {
+        if (tracks[i] == null) continue;
+        total += 1;
+        for (let j = 0; j < keys.length; j++) {
+          audioFeatures[keys[j]].average += tracks[i][keys[j]];
+          audioFeatures[keys[j]].distribution[ Math.round(tracks[i][keys[j]] * 20) ] += 1;
+          let dateTime = (await new Date(userData.tracks[tracks[i]._id].dateAdded)).getTime();
+          let index = Math.floor((nowTime - dateTime) / MONTH_MILLI);
+          while (audioFeatures[keys[j]].history.length < index) {
+            audioFeatures[keys[j]].history.push({val: 0, total: 0});
+          }
+          audioFeatures[keys[j]].history[index].val += tracks[i][keys[j]];
+          audioFeatures[keys[j]].history[index].total += 1;
+        }
+      }
+      offset += 50;
+    }
+    for (let i = 0; i < keys.length; i++) {
+      audioFeatures[keys[i]].average /= total;
+      for (let j = 0; j < audioFeatures[keys[i]].history.length; j++) {
+        audioFeatures[keys[i]].history[j].val /= audioFeatures[keys[i]].history[j].total;
+      }
+    }
+    return res.send(audioFeatures);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+app.put("/api/average/:feature", async (req, res) => {
+  try {
+    console.log("Hello");
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+app.put("/api/distribution/:feature", async (req, res) => {
+  try {
+    console.log("Hello");
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+///////////////////////////////////////////////////////////////////////////////////////
+// History ////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+
+app.put("/api/timeline/:feature", async (req, res) => {
+  try {
+    console.log("Hello");
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+app.put("/api/timeline/added", async (req, res) => {
+  try {
+    console.log("Hello");
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+app.put("/api/history/:year", async (req, res) => {
+  try {
+    console.log("Hello");
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+app.put("/api/history/:year/:month", async (req, res) => {
+  try {
+    console.log("Hello");
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+app.put("/api/timeline/:feature", async (req, res) => {
+  try {
+    console.log("Hello");
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+///////////////////////////////////////////////////////////////////////////////////////
+// Charts /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
 
 // { token: STRING, }
 app.put("/api/top/saved/:type", async (req, res) => {
@@ -115,82 +352,16 @@ app.put("/api/extreme/:feature/:sort", async (req, res) => {
   }
 });
 
-app.put("/api/user/stats", async (req, res) => {
-  try {
-    let user = await requestUser(req.body.token);
-    let userData = await User.findOne({ _id: user.id });
-    if (userData == null) return res.send(null);
-    let stats = {
-      track_num: Object.keys(userData.tracks).length,
-      artist_num: Object.keys(userData.artists).length,
-      genre_num: Object.keys(userData.genres).length,
-    }
-    return res.send(stats)
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(500);
-  }
-});
-
-app.put("/api/timeline/:feature", async (req, res) => {
-  try {
-    console.log("Hello");
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(500);
-  }
-});
-
-app.put("/api/distribution/:feature", async (req, res) => {
-  try {
-    console.log("Hello");
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(500);
-  }
-});
-
-app.put("/api/timeline/added", async (req, res) => {
-  try {
-    console.log("Hello");
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(500);
-  }
-});
-
-app.put("/api/history/:year", async (req, res) => {
-  try {
-    console.log("Hello");
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(500);
-  }
-});
-
-app.put("/api/history/:year/:month", async (req, res) => {
-  try {
-    console.log("Hello");
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(500);
-  }
-});
-
-app.put("/api/timeline/:feature", async (req, res) => {
-  try {
-    console.log("Hello");
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(500);
-  }
-});
+let convertGenre = async (genre) => {
+  let randomArtists = await Artist.find({ genres: genre[0] }).limit(4);
+  let newGenre = {name: genre[0], track_num: genre[1].track_num, image: randomArtists.map(artist => artist.image)};
+  return newGenre;
+}
 
 
-
-///////////////////////////////////////////////////////////////
-// KNOWN LISTS ////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+// Libary /////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
 
 // { ids: [] }
 app.put("/api/tracks", async (req, res) => {
