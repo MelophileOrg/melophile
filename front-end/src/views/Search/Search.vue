@@ -1,11 +1,13 @@
 <template>
-  <div class="Search content-padding">
+  <div class="Search content-padding-hori">
     <div class="spacing">
       <v-text-field class="input slide-up" :style="{'--delay': + 0}" clearable v-model="searchInput" @click:clear="clearList" :autofocus="true" :dark="true" background-color="rgba(100,100,100,.15)" solo placeholder="Search..."></v-text-field>
       <v-select v-if="searchInput.length > 0" class="selector slide-up" color="#52e3c2" :style="{'--delay': + 1}" dense :default="0" @mousedown="clearList()"  :items="types" v-model="type"/>
     </div>
-    <List :delay="2" :items="list" :type="type" v-if="list.length > 0"/>
-    <EmptyList :delay="2" :num="8" v-if="searchInput.length > 0 && list.length == 0"/>
+    <div style="padding: 0px 5px 0px; width: calc(100% - 5px);">
+      <List :delay="2" :items="list" :type="type" v-if="list.length > 0"/>
+      <EmptyList :delay="2" :num="8" v-if="searchInput.length > 0 && list.length == 0"/>
+    </div>
   </div>
 </template>
 

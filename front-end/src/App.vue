@@ -10,7 +10,7 @@
     <v-navigation-drawer fixed class="nav-bar" app floating clipped v-model="drawer" :width="210" color="rgb(255,255,255)" >
       <h1 id="title" class="large" v-if="windowSize.x > 1264">melophile</h1>
       <h1 id="title" class="large" v-else>menu</h1>
-      <v-tabs v-model="tab" @change="route" vertical background-color="rgba(0,0,0,0)" :grow="true" class="extra-margin">
+      <v-tabs v-model="tab" @change="route" vertical background-color="rgba(0,0,0,0)" :grow="true" class="extra-margin" :show-arrows="false">
         <div class="nav-tabs" v-for="(tab, index) in tabs" :key="'nav-bar-tab-' + tab.title + index">
           <v-tab class="lowercase" v-if="tab.type == 'link'">
             <img class="nav-icon" :src="getImgUrl(tab.img)"/>
@@ -175,6 +175,35 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:100&display=swap');
 </style>
 <style>/* Base CSS */
+.tab-icon {
+  margin-right: 8px;
+  margin-top: 2px;
+}
+
+.relative {
+  position: relative;
+}
+
+.page-title-bar {
+  display: flex;
+  align-items: center;
+  background-color: #393945;
+  margin-bottom: 15px;
+  margin-top: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding: 1rem 2.5rem;
+  padding-left: 1.5rem;
+  border-radius: 3px;
+}
+
+.page-title-icon {
+  display: block;
+  width: 60px;
+  height: 60px;
+  background-size: 100% 100%;
+}
 
 .page-title {
   color: white;
@@ -184,41 +213,34 @@
   text-align: left;
   opacity: 1;
   margin: 0px;
-  background-color: #393945;
-  margin-bottom: 15px;
-  margin-top: 10px;
-  overflow-x: scroll;
-  overflow-y: hidden;
-  white-space: nowrap;
-  -webkit-box-shadow: 0 4px 15px rgba(40,40,51,.6);
-    box-shadow: 0 4px 15px rgba(40,40,51,.6);
-    padding: 1rem 2.5rem;
-  border-radius: 3px;
 }
 
 .page-bar {
-  
   background-color: #393945;
-  overflow-x: scroll;
+  overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
   border-radius: 3px;
-  
-  -webkit-box-shadow: 0 4px 15px rgba(40,40,51,.6);
-    box-shadow: 0 4px 15px rgba(40,40,51,.6);
+  margin-bottom: 10px;
 }
 
 .window {
-  margin-bottom: 15px;
-  margin-top: 10px;
   background-color: #393945;
-  overflow-x: scroll;
+  overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
   padding: 1rem 2.5rem;
   border-radius: 3px;
-  -webkit-box-shadow: 0 4px 15px rgba(40,40,51,.6);
-    box-shadow: 0 4px 15px rgba(40,40,51,.6);
+  margin-bottom: 15px;
+  margin-top: 10px;
+}
+
+.no-margin-bottom {
+  margin-bottom: 5px !important;
+}
+
+.window-margin {
+  
 }
 
 .lowercase {
@@ -264,6 +286,24 @@ html::-webkit-scrollbar-thumb
     background-color: rgba(255, 255, 255, 0.288);
 }
 
+.menuable__content__active::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(124, 102, 102, 0.3);
+    background-color: #32323e;
+}
+
+.menuable__content__active::-webkit-scrollbar
+{
+    width: 5px;
+    background-color: rgba(6, 6, 6, 0.007)
+}
+
+.menuable__content__active::-webkit-scrollbar-thumb
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(255, 255, 255, 0);
+    background-color: rgba(255, 255, 255, 0.288);
+}
+
 .v-content__wrap {
   position: relative;
   min-height: 100vh;
@@ -279,10 +319,6 @@ html::-webkit-scrollbar-thumb
   padding-top: 16px;
 }
 
-.pop-small {
-    -webkit-box-shadow: 0 4px 15px rgba(40,40,51,.6);
-    box-shadow: 0 4px 15px rgba(40,40,51,.6);
-}
 </style>
 <style> /* Fixes */
 #title {
@@ -347,9 +383,7 @@ html::-webkit-scrollbar-thumb
   background-color: #32323e;
 }
 
-.small-elevation {
-  box-shadow: 0 4px 15px rgba(40,40,51,.6) !important;
-}
+
 
 .v-navigation-drawer__border {
   background-color: rgba(0, 0, 0, 0) !important;
@@ -475,34 +509,6 @@ div.v-alert__content {
   background-position: center center;
 }
 
-.windows {
-  display: flex;
-  width: 100%;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: top;
-}
-
-.window {
-  display: block;
-  width: 95%;
-  max-width: 400px;
-  padding: 25px;
-  margin: 20px;
-  background-color: rgb(23, 37, 66);
-}
-
-.window h1 {
-  text-align: left;
-  margin: 0;
-  font-size: 1.5em;
-  padding-bottom: 12px;
-}
-
-.window h1.paddingless {
-  padding-bottom: 0px;
-}
-
 </style>
 <style> /* Images */
 #big-picture {
@@ -554,7 +560,7 @@ div.v-alert__content {
   }
 }
 
-.slide-up {
+/* .slide-up {
   --delay: 0;
   --speed: .3;
   animation: hide calc(var(--delay) * .1s), slide-up .3s ease calc(var(--delay) * .1s);
@@ -563,7 +569,7 @@ div.v-alert__content {
 .fade-in {
   --delay: 0;
   animation: hide calc(var(--delay) * .1s), fade-in .3s ease calc(var(--delay) * .1s);
-}
+} */
 
 @keyframes fade-in {
   from {

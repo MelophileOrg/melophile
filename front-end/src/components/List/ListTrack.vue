@@ -28,7 +28,7 @@ export default {
                 return ',';
             return '';
         }
-    }
+    },
 };
 </script>
 
@@ -44,7 +44,11 @@ h1 {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: lighter;
 }
+
+
 
 h1:hover {
     text-decoration: underline;
@@ -53,8 +57,8 @@ h1:hover {
 h2 {
     display: block;
     color: hsla(0,0%,100%,.514)!important;
+    font-family: 'Open Sans', sans-serif;
     font-weight: lighter;
-    text-transform: capitalize;
     font-size: 15px;
     margin: 0;
     white-space: nowrap;

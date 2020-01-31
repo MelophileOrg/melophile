@@ -106,6 +106,10 @@ io.on('connection', function(socket) {
                     tracks: [],
                     artists: [],
                 },
+                topSaved: {
+                    artists: [],
+                    genres: [],
+                },
                 playlists: [],
                 privacy: {
                     public: false,

@@ -2,6 +2,7 @@ var express = require('express');
 // const fs = require('fs');
 // const https = require('https');
 const bodyParser = require("body-parser");
+let SpotifyWebApi = require('spotify-web-api-node');
 
 const mongoose = require('mongoose');
 
@@ -47,21 +48,69 @@ app.put("/api/images", async (req, res) => {
 // ANALYSIS ///////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 
-// { _id: id }
-app.put("/api/top/saved/:type/:offset", async (req, res) => {
-  try {
-    let user = await User.findOne({ _id: req.body._id });
-    console.log(user);
+let requestUser = async (token) => {
+  if (token == null) return null;
+  let spotifyAPI =  new SpotifyWebApi();
+  spotifyAPI.setAccessToken(token);
+  return (await spotifyAPI.getMe()).body;
+}
 
+let convertGenre = async (genre) => {
+  let randomArtists = await Artist.find({ genres: genre[0] }).limit(4);
+  let newGenre = {name: genre[0], track_num: genre[1].track_num, image: randomArtists.map(artist => artist.image)};
+  return newGenre;
+}
+
+// { token: STRING, }
+app.put("/api/top/saved/:type", async (req, res) => {
+  try {
+    let user = await requestUser(req.body.token);
+    let userData = await User.findOne({ _id: user.id });
+    if (userData == null) return res.send(null);
+    let items;
+    switch(req.params.type) {
+      case 'artists':
+        let convertedItems = [];
+        items = await Artist.find({ _id: {$in: userData.topSaved.artists.map(artist => artist._id)}});
+        for (let i = 0; i < items.length; i++)  {
+          let newItem = {};
+          newItem.image = items[i].image;
+          newItem._id = items[i]._id;
+          newItem.name = items[i].name;
+          newItem.genres = items[i].genres;
+          newItem.track_num = await userData.topSaved.artists.find(artist => artist._id == items[i]._id).track_num;
+          convertedItems.push(newItem);
+        }
+        return res.send(await convertedItems.sort((a, b) => b.track_num - a.track_num));
+      case 'genres':
+        let genres = [];
+        for (let i = 0; i < userData.topSaved.genres.length; i++) {
+          genres.push(await convertGenre(userData.topSaved.genres[i]));
+        }
+        return res.send(genres);
+      default:
+        return res.send(null);
+    }
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
   }
 });
 
-app.put("/api/top/played/:type/:offset", async (req, res) => {
+app.put("/api/extreme/:feature/:sort", async (req, res) => {
   try {
-    console.log("Hello");
+    console.log(req.params.feature);
+    console.log(req.params.sort);
+    let user = await requestUser(req.body.token);
+    let userData = await User.findOne({ _id: user.id });
+    if (userData == null) return res.send(null);
+    let sort = {};
+    let sortTypes = [-1, 1];
+    sort[req.params.feature] = sortTypes[parseInt(req.params.sort, 10)];
+    let items = await Track.find({
+      _id: { $in : await Object.keys(userData.tracks)}
+    }).sort(sort).limit(50);
+    return res.send(items);
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);

@@ -157,6 +157,7 @@ class MelomaniacProcessor {
                     await playlist.save();
                 }
                 await this.saveTracks(tracks, false);
+                this.socket.emit('ProcessMessage', {message: "Processing Playlists: " + playlist[i].name, percent: (offset + 1) / this.total});
             }
             if (!(playlists.length < 50)) 
                 await this.retrieveUserPlaylists(offset + 50);
@@ -180,6 +181,8 @@ class MelomaniacProcessor {
                     "playlists": this.playlists,
                     "topPlayed.tracks": this.topTracks, 
                     "topPlayed.artists": this.topArtists,
+                    "topSaved.artists": (((Object.entries(this.savedArtists)).sort((a, b) =>  b[1].length - a[1].length)).splice(0, 50)).map(this.topSavedArtist),
+                    "topSaved.genres": ((Object.entries(this.savedGenres)).sort((a, b) => b[1].track_num - a[1].track_num)).splice(0, 50),
                 }
             });
         } catch(error) {
@@ -187,19 +190,37 @@ class MelomaniacProcessor {
             console.log(error);
         }
     }
+
+    topSavedArtist(artist) {
+        let newArtist = {
+            _id: artist[0],
+            track_num: artist[1].length
+        }
+        return newArtist;
+    }
   
     async saveTracks(tracks, liked) {
         try {
             let unsaved = {};
             let newArtists = {};
+            let notNewArtists = {};
             for (let i = 0; i < tracks.length; i++) {
                 if (!(tracks[i].id in this.savedTracks) && !(tracks[i].id in unsaved) && !(await this.trackInDatabase(tracks[i].id))) {
                     if (tracks[i] == null)
                         continue;
                     this.newTrackNum += 1;
                     unsaved[tracks[i].id] = {track: tracks[i]};
-                }     
+                } else if (liked && tracks[i] != null) {
+                    for (let j = 0; j < tracks[i].artists.length; j++) {
+                        if (!(tracks[i].artists[j].id in notNewArtists))
+                            notNewArtists[tracks[i].artists[j].id] = {artist: tracks[i].artists[j], tracks: [tracks[i].id]};
+                        else 
+                            notNewArtists[tracks[i].artists[j].id].tracks.push(tracks[i].id);
+                        notNewArtists[tracks[i].artists[j].id]
+                    }
+                }
             }
+            if (liked) await this.saveArtists(Object.values(notNewArtists), liked);
             let ids = Object.keys(unsaved);
             if (ids.length > 0) {
                 let invalid = (!('artists' in unsaved[ids[0]]) || !('name' in unsaved[ids[0]]) || !('album' in unsaved[ids[0]]))
@@ -280,17 +301,35 @@ class MelomaniacProcessor {
     async saveArtists(artists, liked) {
         try {
             let unsaved = [];
+            let addedTracks = {};
             for (let i = 0; i < artists.length; i++) {
                 if (artists[i] != null && artists[i].artist != null) {
                     if (!(artists[i].artist.id in this.savedArtists)) {
-                        if (liked)
+                        if (liked) {
                             this.savedArtists[artists[i].artist.id] = artists[i].tracks;
+                            if (!(artists[i].artist.id in addedTracks))
+                                addedTracks[artists[i].artist.id] = 0;
+                            addedTracks[artists[i].artist.id] += artists[i].tracks.length;
+                        }
                         if (!(await this.artistInDatabase(artists[i].artist.id))) {
                             this.newArtistNum += 1;
                             unsaved.push(artists[i].artist);
+                        } else {
+                            let artistData = await Artist.findOne({ _id: artists[i].artist.id });
+                            for (let j = 0; j < artistData.genres.length; j++) {
+                                if (!(artistData.genres[j] in this.savedGenres))
+                                    this.savedGenres[artistData.genres[j]] = {artists: [artistData.id], track_num: 0};
+                                this.savedGenres[artistData.genres[j]].track_num += artists[i].tracks.length;
+                            }
                         }
                     } else if (liked) {
                         this.savedArtists[artists[i].artist.id] = this.savedArtists[artists[i].artist.id].concat(artists[i].tracks);
+                        let artistData = await Artist.findOne({ _id: artists[i].artist.id });
+                        for (let j = 0; j < artistData.genres.length; j++) {
+                            if (!(artistData.genres[j] in this.savedGenres))
+                                this.savedGenres[artistData.genres[j]] = {artists: [artistData.id], track_num: 0};
+                            this.savedGenres[artistData.genres[j]].track_num += artists[i].tracks.length;
+                        }
                     }
                 }
             }
@@ -313,10 +352,12 @@ class MelomaniacProcessor {
                 for (let i = 0; i < artistData.length; i++) {
                     if (liked) {
                         for (let j = 0; j < artistData[i].genres.length; j++) {
-                            if (artistData[i].genres[j] in this.savedGenres)
-                                this.savedGenres[artistData[i].genres[j]].push(artistData[i].id);
+                            if (artistData[i].genres[j] in this.savedGenres) {
+                                this.savedGenres[artistData[i].genres[j]].artists.push(artistData[i].id);
+                                this.savedGenres[artistData[i].genres[j]].track_num += addedTracks[artistData[i].id];
+                            }
                             else 
-                                this.savedGenres[artistData[i].genres[j]] = [artistData[i].id];
+                                this.savedGenres[artistData[i].genres[j]] = {artists: [artistData[i].id], track_num: addedTracks[artistData[i].id]};
                         }
                     }
                     let image;
@@ -342,7 +383,7 @@ class MelomaniacProcessor {
   
     async trackInDatabase(trackID) {
         try {
-            return (await Track.find({_id: trackID})).length != 0;
+            return (await Track.find({ _id: trackID})).length > 0;
         } catch(error) {
             this.socket.emit('ConsoleLog', {message: error}); 
             console.log(error);

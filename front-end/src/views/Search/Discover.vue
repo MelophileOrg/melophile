@@ -80,7 +80,9 @@
             </v-expansion-panel>
           </v-expansion-panels>
         </div>
+        <div style="padding: 0px 5px 0px;">
         <List class="recommend-list" v-if="!noRecommends" :delay="0" :items="recommends" :type="0"/>
+        </div>
       </div>
       <div class="adv-controls-big">
         <v-toolbar class="tool-bar" dense flat color="rgba(100,100,100,.0)">

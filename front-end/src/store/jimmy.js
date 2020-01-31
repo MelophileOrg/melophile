@@ -97,8 +97,74 @@ class Jimmy {
         }
     }
 
+    async getTopPlayed(type, time_range) {
+        try {
+            let localRequestNum = this.requestNum + 1;
+            this.requestNum += 1;
+
+            let time_ranges = ['short_term', 'medium_term', 'long_term'];
+
+            if (!this.ready) 
+                return null;
+            let response;
+            switch(type) {
+                case 0: 
+                    response = await this.spotifyAPI.getMyTopTracks({limit: 50, time_range: time_ranges[time_range]});
+                    break;
+                case 1:
+                    response = await this.spotifyAPI.getMyTopArtists({limit: 50, time_range: time_ranges[time_range]});
+                    break;
+                default:
+                    return null;
+            }
+            let items = response.body.items;
+            let convertedItems = [];
+            for (let i = 0; i < items.length; i++) {
+                if (this.requestNum != localRequestNum) {
+                    return null;
+                }
+                switch(type) {
+                    case 0:
+                        convertedItems.push(await this.convertTrack(items[i]));
+                        break;
+                    case 1:
+                        convertedItems.push(await this.convertArtist(items[i]));
+                        break;
+                    default: 
+                        continue;
+                }
+            }
+            if (this.requestNum != localRequestNum) {
+                return null;
+            }
+            return convertedItems;
+        } catch(error) {
+            return;
+        }
+    }
+
+    async getTopSaved(type) {
+        let localRequestNum = this.requestNum + 1;
+        this.requestNum += 1;
+        let types = ['artists', 'genres'];
+        let response = await axios.put('/api/top/saved/' + types[type], {token: this.token});
+        if (this.requestNum != localRequestNum) return null;
+        return response.data;
+    }
+
+    async getExtreme(sort, audiofeature) {
+        let localRequestNum = this.requestNum + 1;
+        this.requestNum += 1;
+        let features = ['valence', 'danceability', 'energy', 'tempo', 'acousticness', 'instrumentalness', 'liveness',  'speechiness'];
+        let response = await axios.put('/api/extreme/' + features[audiofeature] + '/' + sort, {token: this.token});
+        if (this.requestNum != localRequestNum) return null;
+        return response.data
+    }
+
     async getRecommends(options) {
         try {
+            let localRequestNum = this.requestNum + 1;
+            this.requestNum += 1;
             if (!this.ready) {
                 return null;
             }
@@ -134,12 +200,14 @@ class Jimmy {
                     parameters += '&';
                 }
             }
+            if (this.requestNum != localRequestNum) return null;
             let response = await this.axios.get('https://api.spotify.com/v1/recommendations?' + parameters);
             let tracks = response.data.tracks;
             let list = [];
             for (let i = 0; i < tracks.length; i++) {
                 list.push(await this.convertTrack(tracks[i]));
             }
+            if (this.requestNum != localRequestNum) return null;
             return list;
         } catch(error) {
             return [];

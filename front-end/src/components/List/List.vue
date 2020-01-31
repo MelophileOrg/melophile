@@ -1,7 +1,7 @@
 <template>
     <div class="List">
         <div v-if="display">
-            <ListItem v-intersect.once="onIntersect" :delay="delay" :index="index" :item="item" :type="type" v-for="(item, index) in items" :key="type + item._id"/>
+            <ListItem :feature="feature" :trackNum="trackNum" v-intersect.once="onIntersect" :number="number" :delay="delay" :index="index" :item="item" :type="type" v-for="(item, index) in items" :key="'list-item' + index"/>
         </div>
     </div>
 </template>
@@ -15,6 +15,9 @@ export default {
         items: Array,
         type: Number,
         delay: Number,
+        number: Boolean,
+        trackNum: Boolean,
+        feature: String,
     },
     components: {
         ListItem
@@ -28,6 +31,10 @@ export default {
         onIntersect(index) {
             if (index != this.items.length - 1) return;
             this.$emit('listEnd', this.items.length);
+        },
+        key(item) {
+            if ('_id' in item) return this.type + item._id;
+            else return this.type + item.name;
         }
     },
     async created() {

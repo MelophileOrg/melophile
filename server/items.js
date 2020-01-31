@@ -44,11 +44,15 @@ const userSchema = new mongoose.Schema({
   username: String,
   images: Array,
   tracks: Object, // id: {dateAdded: Number}
-  artist: Object, // id: [trackIDs]
+  artists: Object, // id: [trackIDs]
   genres: Object, // id: [artistIDs]
   topPlayed: {
     tracks: Array, // [trackIDs]
     artists: Array, // [artistIDs]
+  },
+  topSaved: {
+    artists: Array,
+    genres: Array,
   },
   playlists: Array, // [playlistIDs]
   privacy: Object,

@@ -1,5 +1,9 @@
 <template>
   <div class="History">
+    <div class="page-title-bar slide-up elevation-3" :style="{'--delay': + 0}">
+      <div class="page-title-icon history-icon"/>
+      <h1 class="page-title">Your History</h1>
+    </div>
   </div>
 </template>
 
@@ -13,3 +17,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.history-icon {
+  background-image: url('../../assets/nav-bar-icons/history.svg');
+}
+</style>

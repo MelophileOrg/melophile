@@ -1,33 +1,36 @@
 <template>
   <div class="Library">
-    <h1 class="library-title slide-up" :style="{'--delay': + 0}">Your Library</h1>
-    <div class="page-bar">
-    <v-tabs background-color="#393945" color="#52e3c2" v-model="tab">
-      <v-tab>
-        Tracks
-      </v-tab>
-      <v-tab>
-        Artists
-      </v-tab>
-      <v-tab>
-        Playlists
-      </v-tab>
-    </v-tabs>
+    <div class="page-title-bar slide-up elevation-3" :style="{'--delay': + 0}">
+      <div class="page-title-icon library-icon"/>
+      <h1 class="page-title">Your Library</h1>
     </div>
-    <List @listEnd="getTracks" class="transform-left" :delay="1" :items="list" :type="type" v-if="list.length > 0"/>
-    <EmptyList class="transform-left" :delay="1" :num="8" v-else/>
+    <div class="page-bar slide-up" :style="{'--delay': + 1}">
+      <v-tabs background-color="#393945" color="#52e3c2" v-model="tab" show-arrows>
+        <v-tab>
+          <v-icon class="tab-icon" size="20" :style="{opacity: .3}">mdi-music-box-outline</v-icon>
+          Tracks
+        </v-tab>
+        <v-tab>
+          <v-icon class="tab-icon" size="20" :style="{opacity: .3}">mdi-account-box-outline</v-icon>
+          Artists
+        </v-tab>
+        <v-tab>
+          <v-icon class="tab-icon" size="20" :style="{opacity: .3}">mdi-library-music-outline</v-icon>
+          Playlists
+        </v-tab>
+      </v-tabs>
+    </div>
+    <List class="transform-left" :delay="1" :items="list" :type="type" v-if="list.length > 0"/>
   </div>
 </template>
 
 <script>
 import List from '@/components/List/List.vue'
-import EmptyList from '@/components/List/EmptyList.vue'
 
 export default {
   name: 'Library',
   components: {
     List,
-    EmptyList
   },
   data() {
     return {
@@ -64,15 +67,7 @@ export default {
 </script>
 
 <style scoped>
-.library-title {
-  color: #52e3c2;
-  font-size: 2em;
-  font-family: 'Roboto', sans-serif;
-  font-weight: lighter;
-  text-align: left;
-  opacity: 1;
-  margin: 0px;
-  margin-top: 15px;
+.library-icon {
+  background-image: url('../../assets/nav-bar-icons/library.svg');
 }
-
 </style>
