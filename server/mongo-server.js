@@ -96,7 +96,7 @@ app.put("/api/user/spotlight", async (req, res) => {
     spotlight.artists = await convertedItems.sort((a, b) => b.track_num - a.track_num);
 
     let genres = [];
-    for (let i = 0; i < userData.topSaved.genres.length; i++) {
+    for (let i = 0; i < userData.topSaved.genres.length && i < 5; i++) {
       genres.push(await convertGenre(userData.topSaved.genres[i]));
     }
     spotlight.genres = genres;

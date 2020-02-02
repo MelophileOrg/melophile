@@ -5,20 +5,34 @@
       <h1 class="page-title">Your Overview</h1>
     </div>
     <Stats/>
-    <Spotlights/>
+    <div class="windows">
+      <v-skeleton-loader v-if="audioFeatures == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
+      <Characteristics v-else :valence="audioFeatures.valence.average" :danceability="audioFeatures.danceability.average" :energy="audioFeatures.energy.average"/>
+      <v-skeleton-loader v-if="audioFeatures == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
+      <Probabilities v-else :instrumentalness="audioFeatures.instrumentalness.average" :acousticness="audioFeatures.acousticness.average" :liveness="audioFeatures.liveness.average"/>
+      <v-skeleton-loader v-if="audioFeatures == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
+      <Averages v-else :tempo="audioFeatures.tempo.average" :mode="audioFeatures.mode.average"/>
+
+    </div>
+    
     <div class="distribtions flex flex-wrap flex-space-between">
       <v-skeleton-loader v-if="audioFeatures == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
-      <DistributionGraph class="distribution" :width="graphWidth" v-else :height="200" title="Happiness Distribution" feature="valence" :bars="audioFeatures.valence.distribution"/>
+      <DistributionGraph class="distribution" :width="graphWidth" v-else :height="200" title="Distribution of Happiness" feature="valence" :bars="audioFeatures.valence.distribution"/>
       <v-skeleton-loader v-if="audioFeatures == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
-      <DistributionGraph class="distribution" :width="graphWidth" v-else :height="200" title="Danceability Distribution" feature="danceability" :bars="audioFeatures.danceability.distribution"/>
+      <DistributionGraph class="distribution" :width="graphWidth" v-else :height="200" title="Distribution of Danceability" feature="danceability" :bars="audioFeatures.danceability.distribution"/>
       <v-skeleton-loader v-if="audioFeatures == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
-      <DistributionGraph class="distribution" :width="graphWidth" v-else :height="200" title="Energy Distribution" feature="energy" :bars="audioFeatures.energy.distribution"/>
+      <DistributionGraph class="distribution" :width="graphWidth" v-else :height="200" title="Distribution of Energy" feature="energy" :bars="audioFeatures.energy.distribution"/>
     </div>
+
+    <Spotlights/>
   </div>
 </template>
 
 <script>
 import Stats from '@/components/LibraryAnalysis/Stats.vue'
+import Characteristics from '@/components/LibraryAnalysis/Characteristics.vue'
+import Probabilities from '@/components/LibraryAnalysis/Probabilities.vue'
+import Averages from '@/components/LibraryAnalysis/Averages.vue'
 import Spotlights from '@/components/LibraryAnalysis/Spotlights.vue'
 import DistributionGraph from '@/components/Graphs/DistributionGraph.vue'
 
@@ -27,7 +41,10 @@ export default {
   components: {
     Stats,
     Spotlights,
-    DistributionGraph
+    DistributionGraph,
+    Characteristics,
+    Probabilities,
+    Averages
   },
   data() {
     return {

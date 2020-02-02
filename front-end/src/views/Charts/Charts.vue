@@ -50,7 +50,7 @@ export default {
           {type: "text", text: "top played"},
           {type: "selector", width: 80, value: 0, items: [{text: "tracks", value: 0},{text: "artists", value: 1}]},
           {type: "text", text: "in the last few"},
-          {type: "selector", width: 95,  value: 0, items:  [{text: "weeks", value: 0},{text: "months", value: 1},{text: "years", value: 2}]},
+          {type: "selector", width: 95,  value: 2, items:  [{text: "weeks", value: 0},{text: "months", value: 1},{text: "years", value: 2}]},
         ],
         [
           {type: "text", text: "top liked"},

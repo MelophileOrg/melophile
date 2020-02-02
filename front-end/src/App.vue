@@ -175,26 +175,26 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:100&display=swap');
 </style>
 <style>/* Base CSS */
-.colors {
-    --atom-red: #ff4495;
-    --atom-green: #52e3c2;
-    --atom-blue: #0781ff;
-    --atom-purple: #d211fe;
-    --atom-bright-orange: #ff4b12;
-    --atom-yellow: #ffd900;
-    --atom-orange: #ed8a19;
-    --atom-light-blue: #40c4ff;
-    --atom-gray: #546e7a;
-    --atom-brand-0: #1a1a21;
-    --atom-brand-1: #282833;
-    --atom-brand-2: #32323e;
-    --atom-brand-3: #393945;
-    --atom-brand-4: #40424f;
-    --atom-brand-5: #4d505f;
-    --atom-brand-6: #6e7288;
-    --atom-brand-7: #8f94ab;
-    --atom-brand-8: #b4b8cd;
-    --atom-contrast: #fff;
+:root {
+    --melophile-red: #ff4495;
+    --melophile-green: #52e3c2;
+    --melophile-blue: #0781ff;
+    --melophile-purple: #d211fe;
+    --melophile-bright-orange: #ff4b12;
+    --melophile-yellow: #ffd900;
+    --melophile-orange: #ed8a19;
+    --melophile-light-blue: #40c4ff;
+    --melophile-gray: #546e7a;
+    --melophile-brand-0: #1a1a21;
+    --melophile-brand-1: #282833;
+    --melophile-brand-2: #32323e;
+    --melophile-brand-3: #393945;
+    --melophile-brand-4: #40424f;
+    --melophile-brand-5: #4d505f;
+    --melophile-brand-6: #6e7288;
+    --melophile-brand-7: #8f94ab;
+    --melophile-brand-8: #b4b8cd;
+    --melophile-contrast: #fff;
 }
 
 .theme--dark.v-skeleton-loader .v-skeleton-loader__actions, .theme--dark.v-skeleton-loader .v-skeleton-loader__article, .theme--dark.v-skeleton-loader .v-skeleton-loader__card-heading, .theme--dark.v-skeleton-loader .v-skeleton-loader__card-text, .theme--dark.v-skeleton-loader .v-skeleton-loader__date-picker, .theme--dark.v-skeleton-loader .v-skeleton-loader__list-item, .theme--dark.v-skeleton-loader .v-skeleton-loader__list-item-avatar, .theme--dark.v-skeleton-loader .v-skeleton-loader__list-item-text, .theme--dark.v-skeleton-loader .v-skeleton-loader__list-item-two-line, .theme--dark.v-skeleton-loader .v-skeleton-loader__list-item-avatar-two-line, .theme--dark.v-skeleton-loader .v-skeleton-loader__list-item-three-line, .theme--dark.v-skeleton-loader .v-skeleton-loader__list-item-avatar-three-line, .theme--dark.v-skeleton-loader .v-skeleton-loader__table-heading, .theme--dark.v-skeleton-loader .v-skeleton-loader__table-thead, .theme--dark.v-skeleton-loader .v-skeleton-loader__table-tbody, .theme--dark.v-skeleton-loader .v-skeleton-loader__table-tfoot {
@@ -213,7 +213,7 @@
 .page-title-bar {
   display: flex;
   align-items: center;
-  background-color: #393945;
+  background-color: var(--melophile-brand-3);
   margin-bottom: 15px;
   margin-top: 10px;
   overflow-x: auto;
@@ -242,7 +242,7 @@
 }
 
 .page-bar {
-  background-color: #393945;
+  background-color: var(--melophile-brand-3);
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
@@ -251,7 +251,7 @@
 }
 
 .window {
-  background-color: #393945;
+  background-color: var(--melophile-brand-3);
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
@@ -259,6 +259,27 @@
   border-radius: 3px;
   margin-bottom: 15px;
   margin-top: 10px;
+}
+
+.window-limit {
+  width: 440px;
+}
+
+.windows {
+  display: flex;
+  align-items: top;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.window-title {
+  color: rgba(255, 255, 255, 0.897);
+  font-size: 1.5rem;
+  font-family: 'Roboto', sans-serif;
+  font-weight: lighter;
+  text-align: left;
+  opacity: 1;
+  margin: 0px;
 }
 
 .no-margin-bottom {
@@ -273,7 +294,7 @@
   text-transform: lowercase !important;
 }
 html {
-  background: #32323e;
+  background: var(--melophile-brand-2);
 }
 
 body {
@@ -554,6 +575,27 @@ div.v-alert__content {
 
 #library {
   background-image: url('./assets/nav-bar-icons/library.svg');
+}
+
+.valence-icon {
+  background-image: url('./assets/icons/valence.svg');
+}
+
+.danceability-icon {
+  background-image: url('./assets/icons/danceability.svg');
+}
+
+.energy-icon {
+  background-image: url('./assets/icons/energy.svg');
+}
+
+.icon {
+  --size: 55;
+  display: block;
+  width: calc(var(--size) * 1px);
+  height: calc(var(--size) * 1px);
+  background-size: 100% 100%;
+  background-position: 100% 100%;
 }
 </style>
 <style>/* Animations */

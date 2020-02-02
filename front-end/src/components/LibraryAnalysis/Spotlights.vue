@@ -2,29 +2,36 @@
     <div class="Spotlights">
         <div class="spotlights-div">
             <v-skeleton-loader v-if="spotlights == null" :width="compSize" height="104" style="margin: 10px 0px;" type="image" dark/>
-            <div v-else class="spotlight window width-third elevation-1">
+            <div v-else class="spotlight window-spotlight width-third">
                 <h1 class="spotlight-title">Top Played Tracks</h1>
-
-                
+                <List :items="spotlights.tracks" :type="0" :number="true"/>
             </div>
-            <v-skeleton-loader v-if="spotlights == null" :width="compSize" height="104" style="margin: 10px 0px;" type="image" dark/>
-            <div v-else class="spotlight window width-third elevation-1">
-                 <h1 class="spotlight-title">Top Saved Artists</h1>
 
-                
-            </div>
             <v-skeleton-loader v-if="spotlights == null" :width="compSize" height="104" style="margin: 10px 0px;" type="image" dark/>
-            <div v-else class="spotlight window width-third elevation-1">
-                 <h1 class="spotlight-title">Top Saved Genres</h1>
-                
+            <div v-else class="spotlight window-spotlight width-third">
+                <h1 class="spotlight-title">Top Saved Artists</h1>
+                <List :items="spotlights.artists" :type="1" :number="true"/>
+            
+            </div>
+
+            <v-skeleton-loader v-if="spotlights == null" :width="compSize" height="104" style="margin: 10px 0px;" type="image" dark/>
+            <div v-else class="spotlight window-spotlight width-third">
+                <h1 class="spotlight-title">Top Saved Genres</h1>
+                <List :items="spotlights.genres" :type="4" :number="true"/>
+
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import List from '@/components/List/List.vue'
+
 export default {
     name: 'Spotlights',
+    components: {
+        List
+    },
     data: () => ({
         spotlights: null,
     }),
@@ -54,13 +61,35 @@ export default {
 </script>
 
 <style scoped>
+.Spotlights {
+    margin: 10px 0px;
+}
+.img {
+    --size: 40;
+    display: block;
+    background-size: auto 100%;
+    background-position: center center;
+    width: 20%;
+    min-height: 52px;
+}
+
+.item-title {
+    font-size: 1rem !important;
+}
+
+.top {
+    padding: 5px;
+    background: var(--melophile-brand-2);
+    border-radius: 3px;
+}
+
 .spotlight h1 {
-    color: rgba(255, 255, 255, 0.877);
-    font-size: 22px;
+    color: white;
+    font-size: 28px;
     font-weight: lighter;
     width: 100%;
     text-align: left;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .spotlight {
@@ -76,11 +105,17 @@ export default {
 
 .width-third {
     width: 31%;
-    display: flex;
-    justify-content: center;
 }
 
-
+.window-spotlight {
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding: 12px 12px;
+  border-radius: 3px;
+  margin-bottom: 15px;
+  margin-top: 10px;
+}
 
 @media only screen and (max-width: 875px) {
     .width-third {
