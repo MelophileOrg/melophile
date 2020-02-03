@@ -243,6 +243,12 @@ class Jimmy {
             for (let i = 0; i < items.length; i++) 
                 convertedItems.push(await this.convertTrack(items[i]));
             this.spotlight.tracks = convertedItems;
+            response = await this.spotifyAPI.getMyTopArtists({limit: 5, time_range: 'long_term'});
+            items = response.body.items;
+            convertedItems = [];
+            for (let i = 0; i < items.length; i++) 
+                convertedItems.push(await this.convertArtist(items[i]));
+            this.spotlight.artists = convertedItems;
             return this.spotlight;
         } catch (error) {
             return null;

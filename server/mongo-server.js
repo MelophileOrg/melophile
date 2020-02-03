@@ -82,18 +82,6 @@ app.put("/api/user/spotlight", async (req, res) => {
       artists: [],
       genres: [],
     }
-    let convertedItems = [];
-    items = await Artist.find({ _id: {$in: await userData.topSaved.artists.map(artist => artist._id).splice(0, 5)}});
-    for (let i = 0; i < items.length; i++)  {
-      let newItem = {};
-      newItem.image = items[i].image;
-      newItem._id = items[i]._id;
-      newItem.name = items[i].name;
-      newItem.genres = items[i].genres;
-      newItem.track_num = await userData.topSaved.artists.find(artist => artist._id == items[i]._id).track_num;
-      convertedItems.push(newItem);
-    }
-    spotlight.artists = await convertedItems.sort((a, b) => b.track_num - a.track_num);
 
     let genres = [];
     for (let i = 0; i < userData.topSaved.genres.length && i < 5; i++) {

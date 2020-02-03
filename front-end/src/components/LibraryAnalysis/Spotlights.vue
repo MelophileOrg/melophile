@@ -54,7 +54,7 @@ export default {
         }
     },
     async created() {
-        this.spotlights = await this.jimmy.getSpotlights();
+        
         console.log(this.spotlights);
     }
 };

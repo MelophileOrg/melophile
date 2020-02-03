@@ -9,6 +9,15 @@
       <v-skeleton-loader v-if="audioFeatures == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
       <Characteristics v-else :valence="audioFeatures.valence.average" :danceability="audioFeatures.danceability.average" :energy="audioFeatures.energy.average"/>
 
+      <v-skeleton-loader v-if="spotlights == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
+      <TopTracks v-else :tracks="spotlights.tracks"/>
+
+      <v-skeleton-loader v-if="spotlights == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
+      <TopArtists v-else :artists="spotlights.artists"/>
+      
+    </div>
+
+    <div class="windows-div">
       <v-skeleton-loader v-if="audioFeatures == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
       <Probabilities v-else :instrumentalness="audioFeatures.instrumentalness.average" :acousticness="audioFeatures.acousticness.average" :liveness="audioFeatures.liveness.average"/>
 
@@ -28,31 +37,33 @@
       <DistributionGraph class="distribution" :width="graphWidth" v-else :height="200" title="Distribution of Energy" feature="energy" :bars="audioFeatures.energy.distribution"/>
     </div>
 
-    <Spotlights/>
   </div>
 </template>
 
 <script>
 import Stats from '@/components/LibraryAnalysis/Stats.vue'
 import Characteristics from '@/components/LibraryAnalysis/Characteristics.vue'
+import TopTracks from '@/components/LibraryAnalysis/TopTracks.vue'
+import TopArtists from '@/components/LibraryAnalysis/TopArtists.vue'
 import Probabilities from '@/components/LibraryAnalysis/Probabilities.vue'
 import Averages from '@/components/LibraryAnalysis/Averages.vue'
-import Spotlights from '@/components/LibraryAnalysis/Spotlights.vue'
 import DistributionGraph from '@/components/Graphs/DistributionGraph.vue'
 
 export default {
   name: 'LibraryAnalysis',
   components: {
     Stats,
-    Spotlights,
     DistributionGraph,
     Characteristics,
     Probabilities,
-    Averages
+    Averages,
+    TopTracks,
+    TopArtists
   },
   data() {
     return {
       audioFeatures: null,
+      spotlights: null,
       windowSize: {x: 0, y: 0},
     }
   },
@@ -79,7 +90,9 @@ export default {
   },
   async created() {
     await this.onResize();
+    this.spotlights = await this.jimmy.getSpotlights();
     this.audioFeatures = await this.jimmy.getAllAudioFeatureData();
+    
   }
 }
 </script>

@@ -279,7 +279,7 @@
   padding: 3px 8px;
   background: var(--melophile-brand-1);
   font-weight: lighter;
-  color: rgba(251, 251, 251, 0.39);
+  color: rgba(251, 251, 251, 0.726);
   font-size: 1rem;
   opacity: .6;
 }
@@ -381,7 +381,7 @@ html::-webkit-scrollbar-thumb
 
 .content-padding-hori {
   padding-left: 16px;
-  padding-right: 16px;
+  padding-right: 32px;
 }
 
 .content-padding-vert {
