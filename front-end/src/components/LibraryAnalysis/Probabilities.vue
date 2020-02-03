@@ -1,14 +1,28 @@
 <template>
-    <div class="Probabilities window window-limit elevation-1">
-        <h1 class="window-title">Likelyhood a song is:</h1>
-        <h2>Instrumental</h2>
-        <v-progress-linear height="8" rounded :value="instrumentalnessPercent" :color="instrumentalnessColor"></v-progress-linear>
-        <h2>Acoustic</h2>
-        <v-progress-linear height="8" rounded :value="acousticnessPercent" :color="acousticnessColor"></v-progress-linear>
-        <h2>Live</h2>
-        <v-progress-linear height="8" rounded :value="livenessPercent" :color="livenessColor"></v-progress-linear>
+    <div class="Probabilities window window-limit window-header-active elevation-2">
+        <h1 class="window-header">Likelyhood a song is...</h1>
+        <div class="probability flex flex-space-around flex-align-center">
+            <div :style="{'--size': + 25}" class="icon instrumentalness-icon"/>
+            <h2>Instrumental</h2>
+            <v-progress-linear height="6" rounded :value="instrumentalnessPercent" :color="instrumentalnessColor"></v-progress-linear>
+            <h3 :style="{color: instrumentalnessColor}">{{instrumentalnessPercent}}%</h3>
+        </div>
+        <div class="probability flex flex-space-around flex-align-center">
+            <div :style="{'--size': + 25}" class="icon acousticness-icon"/>
+            <h2>Acoustic</h2>
+            <v-progress-linear height="6" rounded :value="acousticnessPercent" :color="acousticnessColor"></v-progress-linear>
+            <h3 :style="{color: acousticnessColor}">{{acousticnessPercent}}%</h3>
+        </div>
+        <div class="probability flex flex-space-around flex-align-center">
+            <div :style="{'--size': + 25}" class="icon liveness-icon"/>
+            <h2>Live Recording</h2>
+            <v-progress-linear height="6" rounded :value="livenessPercent" :color="livenessColor"></v-progress-linear>
+            <h3 :style="{color: livenessColor}">{{livenessPercent}}%</h3>
+        </div>
     </div>
 </template>
+
+
 
 <script>
 export default {
@@ -54,8 +68,26 @@ export default {
 
 <style scoped>
 .Probabilities {
-    padding: 10px 15px;
-    padding-bottom: 30px;
+    padding: 20px;
+    padding-top: 22px;
+    width: 31%;
+}
+
+@media only screen and (max-width: 875px) {
+    .Probabilities {
+        width: 100%;
+        margin: 15px 0px;
+    }
+}
+
+
+.probability {
+    margin: 24px 0px;
+}
+
+.icon {
+    opacity: .3;
+    margin-right: 10px;
 }
 
 h2 {
@@ -66,8 +98,22 @@ h2 {
     text-align: left;
     opacity: 1;
     margin: 0px;
-    margin-bottom: 5px;
-    margin-top: 15px;
+    margin-right: 12px;
+    min-width: 111px;
+    flex-shrink: 0;
 }
+
+h3 {
+    font-size: 1rem;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    text-align: right;
+    margin: 0px;
+    margin-left: 12px;
+    min-width: 43px;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
 
 </style>

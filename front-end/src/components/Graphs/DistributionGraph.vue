@@ -1,6 +1,6 @@
 <template>
-  <div class="DistributionGraph elevation-1" :style="{'--red': + color.red, '--green': + color.green, '--blue': + color.blue, width: width + 'px'}">
-        <h1 class="graph-title">{{title}}</h1>
+  <div class="DistributionGraph relative window-header-active elevation-2" :style="{'--red': + color.red, '--green': + color.green, '--blue': + color.blue, width: width + 'px'}">
+        <h1 class="window-header">{{title}}</h1>
         <div class="canvasWrap" :style="{height: height - 8 + 'px', width: width - 8 + 'px'}">
             <canvas :id="'feature-graph-' + title" class="canvas"></canvas>
             <div class="flex flex-space-between labels" :style="{'--red': + color.red,'--green': + color.green,'--blue': + color.blue, }">
@@ -224,7 +224,8 @@ export default {
     --blue: 255;
     display: block;
     background-color: rgba(226, 226, 226, 0.041);
-    padding-top: 12px;
+    padding-top: 16px;
+    padding-bottom: 8px;
 
 }
 
@@ -241,7 +242,7 @@ export default {
 }
 
 .canvas{
-    width: 100%;
+    width: 95%;
     margin: auto;
     height: 100%;
     z-index: 100;

@@ -2,17 +2,17 @@
   <div class="Stats">
     <div class="stats-div">
         <v-skeleton-loader v-if="userStats == null" :width="compSize" height="70" style="margin: 10px 0px;" type="image" dark/>
-        <div v-else class="stat window width-third elevation-1">
+        <div v-else class="stat window width-third elevation-2">
             <v-icon color="#52e3c2" size="30" style="marginRight: 10px">mdi-music-box-outline</v-icon>
             <h1>{{formatNumber(userStats.track_num)}} Tracks</h1>
         </div>
         <v-skeleton-loader v-if="userStats == null" :width="compSize" height="70" style="margin: 10px 0px;" type="image" dark/>
-        <div v-else class="stat window width-third elevation-1">
+        <div v-else class="stat window width-third elevation-2">
             <v-icon color="#52e3c2" size="30" style="marginRight: 10px">mdi-account-box-outline</v-icon>
             <h1>{{formatNumber(userStats.artist_num)}} Artists</h1>
         </div>
         <v-skeleton-loader v-if="userStats == null" :width="compSize" height="70" style="margin: 10px 0px;" type="image" dark/>
-        <div v-else class="stat window width-third elevation-1">
+        <div v-else class="stat window width-third elevation-2">
             <v-icon color="#52e3c2" size="30" style="marginRight: 10px">mdi-library-music-outline</v-icon>
             <h1>{{formatNumber(userStats.genre_num)}} Genres</h1>
         </div>

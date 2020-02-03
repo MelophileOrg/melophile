@@ -1,19 +1,23 @@
 <template>
-    <div class="Characteristics window window-limit elevation-1">
+    <div class="Characteristics window window-limit window-header-active elevation-2">
+        <h1 class="window-header">Characteristics</h1>
         <div class="characteristic flex flex-space-around flex-align-center">
-            <div :style="{'--size': + 35}" class="icon valence-icon"/>
+            <div :style="{'--size': + 25}" class="icon valence-icon"/>
             <h2>Happiness</h2>
-            <v-progress-linear height="10" rounded :value="valencePercent" :color="valenceColor"></v-progress-linear>
+            <v-progress-linear height="6" rounded :value="valencePercent" :color="valenceColor"></v-progress-linear>
+            <h3 :style="{color: valenceColor}">{{valencePercent}}%</h3>
         </div>
         <div class="characteristic flex flex-space-around flex-align-center">
-            <div :style="{'--size': + 35}" class="icon danceability-icon"/>
+            <div :style="{'--size': + 25}" class="icon danceability-icon"/>
             <h2>Danceability</h2>
-            <v-progress-linear height="10" rounded :value="danceabilityPercent" :color="danceabilityColor"></v-progress-linear>
+            <v-progress-linear height="6" rounded :value="danceabilityPercent" :color="danceabilityColor"></v-progress-linear>
+            <h3 :style="{color: danceabilityColor}">{{danceabilityPercent}}%</h3>
         </div>
         <div class="characteristic flex flex-space-around flex-align-center">
-            <div :style="{'--size': + 35}" class="icon energy-icon"/>
+            <div :style="{'--size': + 25}" class="icon energy-icon"/>
             <h2>Energy</h2>
-            <v-progress-linear height="10" rounded :value="energyPercent" :color="energyColor"></v-progress-linear>
+            <v-progress-linear height="6" rounded :value="energyPercent" :color="energyColor"></v-progress-linear>
+            <h3 :style="{color: energyColor}">{{energyPercent}}%</h3>
         </div>
     </div>
 </template>
@@ -62,35 +66,51 @@ export default {
 
 <style scoped>
 .Characteristics {
-    padding: 10px 15px;
-    padding-bottom: 30px;
+    padding: 15px 20px;
+    width: 31%;
+}
+
+@media only screen and (max-width: 875px) {
+    .Characteristics {
+        width: 100%;
+        margin: 15px 0px;
+    }
 }
 
 .characteristic {
-    margin-bottom: 10px;
+    margin: 24px 0px;
 }
 
 .icon {
-    opacity: .5;
-    margin-right: 5px;
+    opacity: .3;
+    margin-right: 10px;
 }
 
 h2 {
     color: rgba(255, 255, 255, 0.897);
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-family: 'Roboto', sans-serif;
     font-weight: lighter;
     text-align: left;
     opacity: 1;
     margin: 0px;
     margin-right: 12px;
-    min-width: 110px;
+    min-width: 100px;
     flex-shrink: 0;
 }
 
-.v-progress-bar {
-
+h3 {
+    font-size: 1rem;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    text-align: right;
+    margin: 0px;
+    margin-left: 12px;
+    min-width: 43px;
+    flex-shrink: 0;
+    margin-top: 1px;
 }
+
 
 </style>
 

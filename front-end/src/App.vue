@@ -259,10 +259,34 @@
   border-radius: 3px;
   margin-bottom: 15px;
   margin-top: 10px;
+  position: relative;
 }
 
 .window-limit {
   width: 440px;
+}
+
+
+
+.window-header {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  left: 0px;
+  text-align: left;
+  border-radius: 3px 3px 0px 0px;
+  margin: 0px;
+  padding: 3px 8px;
+  background: var(--melophile-brand-1);
+  font-weight: lighter;
+  color: rgba(251, 251, 251, 0.39);
+  font-size: 1rem;
+  opacity: .6;
+}
+
+.window-header-active {
+  border-radius: 0px 0px 3px 3px;
+  padding-top: 36px !important;
 }
 
 .windows {
@@ -273,7 +297,8 @@
 }
 
 .window-title {
-  color: rgba(255, 255, 255, 0.897);
+  color: rgba(255, 255, 255, 0.288);
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.247);
   font-size: 1.5rem;
   font-family: 'Roboto', sans-serif;
   font-weight: lighter;
@@ -284,10 +309,6 @@
 
 .no-margin-bottom {
   margin-bottom: 5px !important;
-}
-
-.window-margin {
-  
 }
 
 .lowercase {
@@ -589,12 +610,34 @@ div.v-alert__content {
   background-image: url('./assets/icons/energy.svg');
 }
 
+
+.acousticness-icon {
+  background-image: url('./assets/icons/acousticness.svg');
+}
+
+.instrumentalness-icon {
+  background-image: url('./assets/icons/instrumentalness.svg');
+}
+.liveness-icon {
+  background-image: url('./assets/icons/liveness.svg');
+}
+
+.tempo-icon {
+  background-image: url('./assets/icons/tempo.svg');
+}
+.major-icon {
+  background-image: url('./assets/icons/valence.svg');
+}
+.minor-icon {
+  background-image: url('./assets/icons/minor.svg');
+}
 .icon {
-  --size: 55;
+  --size: 20;
   display: block;
   width: calc(var(--size) * 1px);
   height: calc(var(--size) * 1px);
   background-size: 100% 100%;
+  flex-shrink: 0;
   background-position: 100% 100%;
 }
 </style>
