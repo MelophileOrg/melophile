@@ -381,8 +381,10 @@ html::-webkit-scrollbar-thumb
 
 .content-padding-hori {
   padding-left: 16px;
-  padding-right: 32px;
+  padding-right: 16px;
 }
+
+
 
 .content-padding-vert {
   padding-top: 16px;
@@ -533,6 +535,10 @@ div.v-alert__content {
 
   .v-content__wrap {
     padding-left: 15px !important;
+  }
+
+  .content-padding-hori {
+    padding-right: 32px;
   }
 }
 

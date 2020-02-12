@@ -509,8 +509,8 @@ export default {
 @media only screen and (min-width: 1264px) {
   .discover-title {
     font-size: 3rem !important;
-    margin: 20px 0px !important;
-    margin-top: 5px !important;
+    margin: 15px 0px !important;
+    margin-top: 10px !important;
   }
 }
 

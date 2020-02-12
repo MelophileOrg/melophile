@@ -1,6 +1,6 @@
 <template>
     <div class="TrackHeader pop-small" :class="{background: colors}" :style="{'--red': + red, '--green': + green, '--blue': + blue, '--alpha': + alpha}">
-        <div class="track-img" v-if="track != null" :style="{backgroundImage: 'url(\'' + track.image + '\')'}"/>
+        <!-- <div class="track-img" v-if="track != null" :style="{backgroundImage: 'url(\'' + track.image + '\')'}"/>
         <div class="track-img null" v-else/>
         <div class="content">
             <h1 v-if="track != null">{{track.name}}</h1>
@@ -19,16 +19,19 @@
                     Compairson
                 </v-tab>
             </v-tabs>
-        </div>
+        </div> -->
     </div>
 </template>
 
 <script>
 import analyze from 'rgbaster';
+
 export default {
     name: 'TrackHeader',  
     props: {
-        track: Object,
+        title: String,
+        secondary: String,
+        image: String,
     },
     data() {
         return {
