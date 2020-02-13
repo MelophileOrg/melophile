@@ -1,15 +1,16 @@
 <template>
   <div class="ArtistAnalysis">
+    <Header/>
   </div>
 </template>
 
 <script>
-//import HelloWorld from '@/components/HelloWorld.vue'
+import Header from '@/components/Analysis/Header.vue'
 
 export default {
   name: 'ArtistAnalysis',
   components: {
-
+    Header
   },
 }
 </script>

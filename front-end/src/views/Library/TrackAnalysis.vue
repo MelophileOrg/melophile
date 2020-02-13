@@ -1,13 +1,12 @@
 <template>
-  <div class="TrackAnalysis content-padding-hori">
-    <TrackHeader :track="track"/>
-    <AudioAnalysisGraph v-if="track != null" :width="200" :height="100" :audioAnalysis="track.audioAnalysis"/>
+  <div class="TrackAnalysis">
+    <Header type="track" :title="track ? (track.name ? track.name : null) : null" :image="track ? (track.image ? track.image : null) : null" :secondaries="track ? (track.artists ? track.artists : null) : null"/>
   </div>
 </template>
 
 <script>
-import TrackHeader from '@/components/TrackAnalysis/TrackHeader.vue'
-import AudioAnalysisGraph from '@/components/Graphs/AudioAnalysisGraph.vue'
+import Header from '@/components/Analysis/Header.vue'
+//import AudioAnalysisGraph from '@/components/Graphs/AudioAnalysisGraph.vue'
 /*
 Track = {
   name: String,
@@ -46,8 +45,8 @@ Track = {
 export default {
   name: 'TrackAnalysis',
   components: {
-    TrackHeader,
-    AudioAnalysisGraph
+    Header,
+    //AudioAnalysisGraph
   },
   data() {
       return {
@@ -61,9 +60,15 @@ export default {
     }
   },
   async created() {
-    this.trackID = this.$router.currentRoute.params.id;
-    this.track = await this.jimmy.getTrackAnalysis(this.trackID);
+    try {
+      this.trackID = this.$router.currentRoute.params.id;
+      this.track = await this.jimmy.getTrackData(this.trackID);
+      this.track.audioFeatures = this.jimmy.getTrackFeatures(this.trackID);
+      this.track.analysis = this.jimmy.getTrackAnalysis(this.trackID);
     console.log(this.track);
+    } catch(error) {
+      console.log(error);
+    }
   }
 }
 </script>

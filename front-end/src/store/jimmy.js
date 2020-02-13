@@ -289,26 +289,35 @@ class Jimmy {
         this.spotifyAPI.play({context_uri: "spotify:playlist:" + id});
     }
 
-    async getTrackAnalysis(id) {
+    async getTrackData(id) {
         let response = await this.spotifyAPI.getTrack(id);
         let track = await this.convertTrack(response.body);
-        response = await this.spotifyAPI.getAudioFeaturesForTrack(id); 
-        track.duration_ms = response.body.duration_ms;
-        track.key = response.body.key;
-        track.mode = response.body.mode;
-        track.time_signature = response.body.time_signature;
-        track.acousticness = response.body.acousticness;
-        track.danceability = response.body.danceability;
-        track.energy = response.body.energy;
-        track.instrumentalness = response.body.instrumentalness;
-        track.liveness = response.body.liveness;
-        track.loudness = response.body.loudness;
-        track.speechiness = response.body.speechiness;
-        track.valence = response.body.valence;
-        track.tempo = response.body.tempo;
-        response = await this.spotifyAPI.getAudioAnalysisForTrack(id); 
-        track.audioAnalysis = await this.processAudioAnalysis(response.body);
         return track;
+    }
+
+    async getTrackFeatures(id) {
+        let features = {};
+        let response = await this.spotifyAPI.getAudioFeaturesForTrack(id); 
+        features.duration_ms = response.body.duration_ms;
+        features.key = response.body.key;
+        features.mode = response.body.mode;
+        features.time_signature = response.body.time_signature;
+        features.acousticness = response.body.acousticness;
+        features.danceability = response.body.danceability;
+        features.energy = response.body.energy;
+        features.instrumentalness = response.body.instrumentalness;
+        features.liveness = response.body.liveness;
+        features.loudness = response.body.loudness;
+        features.speechiness = response.body.speechiness;
+        features.valence = response.body.valence;
+        features.tempo = response.body.tempo;
+        return features;
+    }
+
+    async getTrackAnalysis(id) {
+        let response = await this.spotifyAPI.getAudioAnalysisForTrack(id); 
+        let audioAnalysis = await this.processAudioAnalysis(response.body);
+        return audioAnalysis;
     }
 
     async processAudioAnalysis(apiReturn) {

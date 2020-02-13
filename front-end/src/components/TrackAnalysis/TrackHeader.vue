@@ -44,7 +44,7 @@ export default {
             this.tab = index;
             this.$emit('changeTab', this.tab);
         },
-        toArtist(id) {
+        toSecondary(id) {
             this.$router.push('/artists/' + id);
         },
         comma(index, length) {
