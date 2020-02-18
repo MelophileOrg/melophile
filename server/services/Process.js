@@ -1,24 +1,91 @@
 let mongoose = require('mongoose');
-let Items = require("./items.js");
 
-let Track = Items.track;
-let Artist = Items.artist;
-let Playlist = Items.playlist;
-let User = Items.user;
+let Track = require("../schemas/TrackSchema.js");
+let Artist = require("../schemas/ArtistSchema.js");
+let Playlist = require("../schemas/PlaylistSchema.js");
+let User = require("../schemas/UserSchema.js");
 
 class MelomaniacProcessor {
-    constructor(accessToken, socket, spotifyAPI, userID) {
-        this.newTrackNum = 0;
-        this.newArtistNum = 0;
-        this.savedTracks = {};
-        this.savedGenres = {};
-        this.savedArtists = {};
-        this.topTracks = [];
-        this.topArtists = [];
-        this.playlists = [];
+    constructor(socket, spotifyAPI, userID) {
         this.spotifyAPI = spotifyAPI;
         this.socket = socket;
         this.userID = userID;
+
+        // Items added to Database.
+        this.newTrackNum = 0;
+        this.newArtistNum = 0;
+
+        this.savedTracks = {};
+        this.savedGenres = {};
+        this.savedArtists = {};
+
+        this.topTracks = [];
+        this.topArtists = [];
+        this.playlists = [];
+
+        this.audioFeatures = {
+            valence: {
+                average: 0,
+                distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                history: [],
+            },
+            danceability: {
+                average: 0,
+                distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                history: [],
+            },
+            energy: {
+                average: 0,
+                distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                history: [],
+            },
+            acousticness: {
+                average: 0,
+                distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                history: [],
+            },
+            instrumentalness: {
+                average: 0,
+                distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                history: [],
+            },
+            liveness: {
+                average: 0,
+                distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                history: [],
+            },
+            loudness: {
+                average: 0,
+                distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                history: [],
+            },
+            speechiness: {
+                average: 0,
+                distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                history: [],
+            },
+            key: {
+                average: 0,
+                distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                history: [],
+            },
+            mode: {
+                average: 0,
+                distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                history: [],
+            },
+            tempo: {
+                average: 0,
+                distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                history: [],
+            },
+        };
+        this.timelines = {
+            added: [],
+            genere: [],
+            artist: []
+        }
+        this.total = 0;
     }
   
     async start() {
@@ -27,9 +94,6 @@ class MelomaniacProcessor {
             await this.processTopCharts();
             await this.processUserPlaylists();
             await this.updateUser();
-            console.log("Processing Finished:", this.socket.id);
-            console.log('New Tracks:', this.newTrackNum);
-            console.log('New Artists:', this.newArtistNum);
         } catch(error) {
             console.log(error);
         }
@@ -47,10 +111,16 @@ class MelomaniacProcessor {
     async retrieveSavedTracks(offset) {
         try {
             let tracks = await this.getSavedTracks(offset);
+
             this.socket.emit('ProcessMessage', {message: "Processing Liked Tracks", percent: offset / this.total});
-            await this.saveTracks(tracks.map(track => track.track), true);
-            for (let i = 0; i < tracks.length; i++)
+
+            for (let i = 0; i < tracks.length; i++) {
+                tracks[i].track.added_at = tracks[i].added_at;
                 this.savedTracks[tracks[i].track.id] = {dateAdded: (await new Date(tracks[i].added_at)).getTime()};
+            }
+
+            await this.saveTracks(tracks.map(track => track.track), true);
+
             if (!(tracks.length < 50))
                 await this.retrieveSavedTracks(offset + 50);
             else 
@@ -110,7 +180,9 @@ class MelomaniacProcessor {
     async retrieveUserPlaylists(offset) {
         try {
             let playlists = await this.getUserPlaylists(offset);
+            
             this.socket.emit('ProcessMessage', {message: "Processing Playlists", percent: offset / this.total});
+
             for (let i = 0; i < playlists.length; i++) {
                 let tracks = [];
                 let playlistTracks = {};

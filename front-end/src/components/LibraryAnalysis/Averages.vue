@@ -71,13 +71,14 @@ export default {
 .Averages {
     padding: 20px;
     padding-top: 22px;
-    width: 31%;
+    width: 100%;
+    margin-top: 35px;
 }
 
 @media only screen and (max-width: 875px) {
     .Averages {
         width: 100%;
-        margin: 15px 0px;
+        margin: 35px 0px;
     }
 }
 

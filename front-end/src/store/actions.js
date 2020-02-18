@@ -2,7 +2,6 @@ const newRoute = (context, payload) => {
     context.commit('setRoute', payload);
 }
 
-
 // { instance: this}
 const login = (context, payload) => {
     payload.instance.$socket.client.emit('login');

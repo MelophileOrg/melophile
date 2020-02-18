@@ -21,7 +21,7 @@
       </v-tabs>
     </v-navigation-drawer>
     <v-content>
-      <router-view/>
+      <router-view></router-view>
       <div id="alerts">
         <v-alert :width="alertWidth()" border="left" dense dismissible :elevation="5" 
         type="info" transition="scale-transition" :icon="false"

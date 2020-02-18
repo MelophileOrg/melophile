@@ -34,181 +34,9 @@ class Jimmy {
         }
     }
 
-    async search(query, offset, type) {
-        try {
-            let localRequestNum = this.requestNum + 1;
-            this.requestNum += 1;
-
-            if (!this.ready) 
-                return null;
-            let response;
-            let key;
-            switch(type) {
-                case 0: 
-                    response = await this.spotifyAPI.searchTracks(query, {limit: 50, offset: offset});
-                    key = "tracks";
-                    break;
-                case 1:
-                    response = await this.spotifyAPI.searchArtists(query, {limit: 50, offset: offset});
-                    key = "artists";
-                    break;
-                case 2:
-                    response = await this.spotifyAPI.searchAlbums(query, {limit: 50, offset: offset});
-                    key = "albums";
-                    break;
-                case 3:
-                    response = await this.spotifyAPI.searchPlaylists(query, {limit: 50, offset: offset});
-                    key = "playlists";
-                    break;
-                default:
-                    return null;
-            }
-            let items = response.body[key].items;
-            let convertedItems = [];
-            for (let i = 0; i < items.length; i++) {
-                if (this.requestNum != localRequestNum) {
-                    return null;
-                }
-                switch(type) {
-                    case 0:
-                        convertedItems.push(await this.convertTrack(items[i]));
-                        break;
-                    case 1:
-                        convertedItems.push(await this.convertArtist(items[i]));
-                        break;
-                    case 2: 
-                        convertedItems.push(await this.convertAlbum(items[i]));
-                        break;
-                    case 3: 
-                        convertedItems.push(await this.convertPlaylist(items[i]));
-                        break;
-                }
-            }
-            if (this.requestNum != localRequestNum) {
-                return null;
-            }
-            return convertedItems;
-        } catch(error) {
-            return;
-        }
-    }
-
-    async getTopPlayed(type, time_range) {
-        try {
-            let localRequestNum = this.requestNum + 1;
-            this.requestNum += 1;
-
-            let time_ranges = ['short_term', 'medium_term', 'long_term'];
-
-            if (!this.ready) 
-                return null;
-            let response;
-            switch(type) {
-                case 0: 
-                    response = await this.spotifyAPI.getMyTopTracks({limit: 50, time_range: time_ranges[time_range]});
-                    break;
-                case 1:
-                    response = await this.spotifyAPI.getMyTopArtists({limit: 50, time_range: time_ranges[time_range]});
-                    break;
-                default:
-                    return null;
-            }
-            let items = response.body.items;
-            let convertedItems = [];
-            for (let i = 0; i < items.length; i++) {
-                if (this.requestNum != localRequestNum) {
-                    return null;
-                }
-                switch(type) {
-                    case 0:
-                        convertedItems.push(await this.convertTrack(items[i]));
-                        break;
-                    case 1:
-                        convertedItems.push(await this.convertArtist(items[i]));
-                        break;
-                    default: 
-                        continue;
-                }
-            }
-            if (this.requestNum != localRequestNum) {
-                return null;
-            }
-            return convertedItems;
-        } catch(error) {
-            return;
-        }
-    }
-
-    async getTopSaved(type) {
-        let localRequestNum = this.requestNum + 1;
-        this.requestNum += 1;
-        let types = ['artists', 'genres'];
-        let response = await axios.put('/api/top/saved/' + types[type], {token: this.token});
-        if (this.requestNum != localRequestNum) return null;
-        return response.data;
-    }
-
-    async getExtreme(sort, audiofeature) {
-        let localRequestNum = this.requestNum + 1;
-        this.requestNum += 1;
-        let features = ['valence', 'danceability', 'energy', 'tempo', 'acousticness', 'instrumentalness', 'liveness',  'speechiness'];
-        let response = await axios.put('/api/extreme/' + features[audiofeature] + '/' + sort, {token: this.token});
-        if (this.requestNum != localRequestNum) return null;
-        return response.data
-    }
-
-    async getRecommends(options) {
-        try {
-            let localRequestNum = this.requestNum + 1;
-            this.requestNum += 1;
-            if (!this.ready) {
-                return null;
-            }
-            let keys = Object.keys(options);
-            let optionStrings = [];
-            for (let i = 0; i < keys.length; i++) {
-                if (keys[i] == 'seed_tracks') {
-                    let seed_tracks = "seed_tracks=";
-                    for (let i = 0; i < options.seed_tracks.length; i++) {
-                        seed_tracks += options.seed_tracks[i];
-                        if (i < options.seed_tracks.length - 1) {
-                            seed_tracks += "%2C%20";
-                        }
-                    }
-                    optionStrings.push(seed_tracks);
-                } else if (keys[i] == 'seed_artists') {
-                    let seed_artists = "seed_artists=";
-                    for (let i = 0; i < options.seed_artists.length; i++) {
-                        seed_artists += options.seed_artists[i];
-                        if (i < options.seed_artists.length - 1) {
-                            seed_artists += "%2C%20";
-                        }
-                    }
-                    optionStrings.push(seed_artists);
-                } else {
-                    optionStrings.push(keys[i] + "=" + options[keys[i]]);
-                }
-            }
-            let parameters = "";
-            for (let i = 0; i < optionStrings.length; i++) {
-                parameters += optionStrings[i];
-                if (i < optionStrings.length - 1) {
-                    parameters += '&';
-                }
-            }
-            if (this.requestNum != localRequestNum) return null;
-            let response = await this.axios.get('https://api.spotify.com/v1/recommendations?' + parameters);
-            let tracks = response.data.tracks;
-            let list = [];
-            for (let i = 0; i < tracks.length; i++) {
-                list.push(await this.convertTrack(tracks[i]));
-            }
-            if (this.requestNum != localRequestNum) return null;
-            return list;
-        } catch(error) {
-            return [];
-        }
-    }
+    ////////////////////////////
+    // OVERVIEW ////////////////
+    ////////////////////////////
 
     async getStats() {
         try {
@@ -266,28 +94,13 @@ class Jimmy {
         }
     }
 
-    async playTrack(id) {
-        this.spotifyAPI.play({uris: ["spotify:track:" + id]});
+    async getAddedTimeline() {
+        
     }
 
-    async playTracks(ids) {
-        let uris = [];
-        for (let i = 0; i < ids.length; i++) 
-            uris.push("spotify:track:" + ids[i]);
-        this.spotifyAPI.play({uris: uris});
-    }
-
-    async playArtist(id) {
-        this.spotifyAPI.play({context_uri: "spotify:artist:" + id});
-    }
-
-    async playAlbum(id) {
-        this.spotifyAPI.play({context_uri: "spotify:album:" + id});
-    }
-
-    async playPlaylist(id) {
-        this.spotifyAPI.play({context_uri: "spotify:playlist:" + id});
-    }
+    ////////////////////////////
+    // TRACK ANALYSIS //////////
+    ////////////////////////////
 
     async getTrackData(id) {
         let response = await this.spotifyAPI.getTrack(id);
@@ -376,6 +189,111 @@ class Jimmy {
         };
     }
 
+    ////////////////////////////
+    // ARTIST ANALYSIS /////////
+    ////////////////////////////
+
+    async getArtistData(id) {
+        let response = await this.spotifyAPI.getArtist(id);
+        return response.body;
+    }
+
+    
+
+    ////////////////////////////
+    // ALBUM ANALYSIS //////////
+    ////////////////////////////
+
+    async getAlbumData(id) {
+        let response = await this.spotifyAPI.getAlbum(id);
+        return response.body;
+    }
+
+    ////////////////////////////
+    // GENRE ANALYSIS //////////
+    ////////////////////////////
+
+    ////////////////////////////
+    // PLAYLIST ANALYSIS ///////
+    ////////////////////////////
+
+    async getPlaylistData(id) {
+        let response = await this.spotifyAPI.getPlaylist(id);
+        return response.body;
+    }
+
+    ////////////////////////////
+    // CHARTS //////////////////
+    ////////////////////////////
+
+    async getTopPlayed(type, time_range) {
+        try {
+            let localRequestNum = this.requestNum + 1;
+            this.requestNum += 1;
+
+            let time_ranges = ['short_term', 'medium_term', 'long_term'];
+
+            if (!this.ready) 
+                return null;
+            let response;
+            switch(type) {
+                case 0: 
+                    response = await this.spotifyAPI.getMyTopTracks({limit: 50, time_range: time_ranges[time_range]});
+                    break;
+                case 1:
+                    response = await this.spotifyAPI.getMyTopArtists({limit: 50, time_range: time_ranges[time_range]});
+                    break;
+                default:
+                    return null;
+            }
+            let items = response.body.items;
+            let convertedItems = [];
+            for (let i = 0; i < items.length; i++) {
+                if (this.requestNum != localRequestNum) {
+                    return null;
+                }
+                switch(type) {
+                    case 0:
+                        convertedItems.push(await this.convertTrack(items[i]));
+                        break;
+                    case 1:
+                        convertedItems.push(await this.convertArtist(items[i]));
+                        break;
+                    default: 
+                        continue;
+                }
+            }
+            if (this.requestNum != localRequestNum) {
+                return null;
+            }
+            return convertedItems;
+        } catch(error) {
+            return;
+        }
+    }
+
+    async getTopSaved(type) {
+        let localRequestNum = this.requestNum + 1;
+        this.requestNum += 1;
+        let types = ['artists', 'genres'];
+        let response = await axios.put('/api/top/saved/' + types[type], {token: this.token});
+        if (this.requestNum != localRequestNum) return null;
+        return response.data;
+    }
+
+    async getExtreme(sort, audiofeature) {
+        let localRequestNum = this.requestNum + 1;
+        this.requestNum += 1;
+        let features = ['valence', 'danceability', 'energy', 'tempo', 'acousticness', 'instrumentalness', 'liveness',  'speechiness'];
+        let response = await axios.put('/api/extreme/' + features[audiofeature] + '/' + sort, {token: this.token});
+        if (this.requestNum != localRequestNum) return null;
+        return response.data
+    }
+
+    ////////////////////////////
+    // LIBRARY /////////////////
+    ////////////////////////////
+
     // async getSavedTracks(options) {
     //     //let response = await axios.get('/api/')
     // }
@@ -387,6 +305,126 @@ class Jimmy {
     // async getSavedPlaylists(options) {
     //     //let response = await axios.get('/api/')
     // }
+
+    ////////////////////////////
+    // SEARCH //////////////////
+    ////////////////////////////
+
+    async search(query, offset, type) {
+        try {
+            let localRequestNum = this.requestNum + 1;
+            this.requestNum += 1;
+
+            if (!this.ready) 
+                return null;
+            let response;
+            let key;
+            switch(type) {
+                case 0: 
+                    response = await this.spotifyAPI.searchTracks(query, {limit: 50, offset: offset});
+                    key = "tracks";
+                    break;
+                case 1:
+                    response = await this.spotifyAPI.searchArtists(query, {limit: 50, offset: offset});
+                    key = "artists";
+                    break;
+                case 2:
+                    response = await this.spotifyAPI.searchAlbums(query, {limit: 50, offset: offset});
+                    key = "albums";
+                    break;
+                case 3:
+                    response = await this.spotifyAPI.searchPlaylists(query, {limit: 50, offset: offset});
+                    key = "playlists";
+                    break;
+                default:
+                    return null;
+            }
+            let items = response.body[key].items;
+            let convertedItems = [];
+            for (let i = 0; i < items.length; i++) {
+                if (this.requestNum != localRequestNum) {
+                    return null;
+                }
+                switch(type) {
+                    case 0:
+                        convertedItems.push(await this.convertTrack(items[i]));
+                        break;
+                    case 1:
+                        convertedItems.push(await this.convertArtist(items[i]));
+                        break;
+                    case 2: 
+                        convertedItems.push(await this.convertAlbum(items[i]));
+                        break;
+                    case 3: 
+                        convertedItems.push(await this.convertPlaylist(items[i]));
+                        break;
+                }
+            }
+            if (this.requestNum != localRequestNum) {
+                return null;
+            }
+            return convertedItems;
+        } catch(error) {
+            return;
+        }
+    }
+
+    async getRecommends(options) {
+        try {
+            let localRequestNum = this.requestNum + 1;
+            this.requestNum += 1;
+            if (!this.ready) {
+                return null;
+            }
+            let keys = Object.keys(options);
+            let optionStrings = [];
+            for (let i = 0; i < keys.length; i++) {
+                if (keys[i] == 'seed_tracks') {
+                    let seed_tracks = "seed_tracks=";
+                    for (let i = 0; i < options.seed_tracks.length; i++) {
+                        seed_tracks += options.seed_tracks[i];
+                        if (i < options.seed_tracks.length - 1) {
+                            seed_tracks += "%2C%20";
+                        }
+                    }
+                    optionStrings.push(seed_tracks);
+                } else if (keys[i] == 'seed_artists') {
+                    let seed_artists = "seed_artists=";
+                    for (let i = 0; i < options.seed_artists.length; i++) {
+                        seed_artists += options.seed_artists[i];
+                        if (i < options.seed_artists.length - 1) {
+                            seed_artists += "%2C%20";
+                        }
+                    }
+                    optionStrings.push(seed_artists);
+                } else {
+                    optionStrings.push(keys[i] + "=" + options[keys[i]]);
+                }
+            }
+            let parameters = "";
+            for (let i = 0; i < optionStrings.length; i++) {
+                parameters += optionStrings[i];
+                if (i < optionStrings.length - 1) {
+                    parameters += '&';
+                }
+            }
+            if (this.requestNum != localRequestNum) return null;
+            let response = await this.axios.get('https://api.spotify.com/v1/recommendations?' + parameters);
+            let tracks = response.data.tracks;
+            let list = [];
+            for (let i = 0; i < tracks.length; i++) {
+                list.push(await this.convertTrack(tracks[i]));
+            }
+            if (this.requestNum != localRequestNum) return null;
+            return list;
+        } catch(error) {
+            return [];
+        }
+    }
+
+    ////////////////////////////
+    // CONVERT /////////////////
+    ////////////////////////////
 
     convertTrack(track) {
         let image;
@@ -454,129 +492,34 @@ class Jimmy {
             total_tracks: playlist.tracks.total,
         };
     }
+
+        ////////////////////////////
+    // PLAY ////////////////////
+    ////////////////////////////
+
+    async playTrack(id) {
+        this.spotifyAPI.play({uris: ["spotify:track:" + id]});
+    }
+
+    async playTracks(ids) {
+        let uris = [];
+        for (let i = 0; i < ids.length; i++) 
+            uris.push("spotify:track:" + ids[i]);
+        this.spotifyAPI.play({uris: uris});
+    }
+
+    async playArtist(id) {
+        this.spotifyAPI.play({context_uri: "spotify:artist:" + id});
+    }
+
+    async playAlbum(id) {
+        this.spotifyAPI.play({context_uri: "spotify:album:" + id});
+    }
+
+    async playPlaylist(id) {
+        this.spotifyAPI.play({context_uri: "spotify:playlist:" + id});
+    }
 }
 
 export default Jimmy;
 
-
-// async getTracks(ids, concat) {
-//     try {
-//         if (!this.ready)
-//             return null;
-//         this.clearCache(0, concat);
-//         let response = await axios.put('/api/tracks', { ids: ids });
-//         let tracks = response.data.tracks;
-//         let keys = Object.keys(tracks);
-//         let missing = [];
-//         for (let i = 0; i < keys.length; i++) {
-//             if (tracks[keys[i]] == null) {
-//                 missing.push(keys[i]);
-//             }
-//         }
-//         if (missing.length > 0) {
-//             let newTracks = [];
-//             for (let i = 0; i < Math.ceil(missing.length / 50); i++) {
-//                 newTracks = newTracks.concat((await this.spotifyAPI.getTracks(missing.slice(i * 50, i * 50 + 50))).body.tracks);
-//             }
-//             for (let i = 0; i < newTracks.length; i++) {
-//                 if (newTracks[i] != null) {
-//                     tracks[newTracks[i].id] = await this.convertTrack(newTracks[i]);
-//                 } else {
-//                     tracks[newTracks[i].id] = null;
-//                 }
-//             }
-//         }
-//         return tracks;
-//     } catch(error) {
-//         return;
-//     }
-// }
-
-// async getArtists(ids, concat) {
-//     try {
-//         if (!this.ready)
-//             return null;
-//         this.clearCache(0, concat);
-//         let response = await axios.put('/api/artists', { ids: ids });
-//         let artists = response.data.artists;
-//         let keys = Object.keys(artists);
-//         let missing = [];
-//         for (let i = 0; i < keys.length; i++) {
-//             if (artists[keys[i]] == null) {
-//                 missing.push(keys[i]);
-//             }
-//         }
-//         if (missing.length > 0) {
-//             let newArtists = [];
-//             for (let i = 0; i < Math.ceil(missing.length / 50); i++) {
-//                 newArtists = newArtists.concat((await this.spotifyAPI.getArtists(missing.slice(i * 50, i * 50 + 50))).body.artists);
-//             }
-//             for (let i = 0; i < newArtists.length; i++) {
-//                 if (newArtists[i] != null) {
-//                     artists[newArtists[i].id] = await this.convertArtist(newArtists[i]);
-//                 } else {
-//                     artists[newArtists[i].id] = null;
-//                 }
-//             }
-//         }
-//         return artists;
-//     } catch(error) {
-//         return;
-//     }
-// }
-
-// async getAlbums(ids, concat) {
-//     try {
-//         if (!this.ready)
-//             return null;
-//         this.clearCache(2, concat);
-//         let albums = {};
-//         let newAlbums = [];
-//         for (let i = 0; i < Math.ceil(ids / 50); i++) 
-//             newAlbums = newAlbums.concat((await this.spotifyAPI.getAlbums(ids.slice(i * 50, i * 50 + 50))).body.albums);
-//         for (let i = 0; i < newAlbums.length; i++) {
-//             if (newAlbums[i] != null) {
-//                 albums[newAlbums[i].id] = await this.convertAlbum(newAlbums[i]);
-//             } else {
-//                 albums[newAlbums[i].id] = null;
-//             }
-//         }
-//         return albums;
-//     } catch(error) {
-//         return;
-//     }
-    
-// }
-
-// async getPlaylists(ids, concat) {
-//     try {
-//         if (!this.ready)
-//             return null;
-//         this.clearCache(0, concat);
-//         let response = await axios.put('/api/playlists', { ids: ids });
-//         let playlists = response.data.playlists;
-//         let keys = Object.keys(playlists);
-//         let missing = [];
-//         for (let i = 0; i < keys.length; i++) {
-//             if (playlists[keys[i]] == null) {
-//                 missing.push(keys[i]);
-//             }
-//         }
-//         if (missing.length > 0) {
-//             let newPlaylists = [];
-//             for (let i = 0; i < Math.ceil(missing.length / 50); i++) {
-//                 newPlaylists = newPlaylists.concat((await this.spotifyAPI.getPlaylists(missing.slice(i * 50, i * 50 + 50))).body.playlists);
-//             }
-//             for (let i = 0; i < newPlaylists.length; i++) {
-//                 if (newPlaylists[i] != null) {
-//                     playlists[newPlaylists[i].id] = await this.convertPlaylist(newPlaylists[i]);
-//                 } else {
-//                     playlists[newPlaylists[i].id] = null;
-//                 }
-//             }
-//         }
-//         return playlists;
-//     } catch(error) {
-//         return;
-//     }
-// }

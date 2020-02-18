@@ -8,7 +8,7 @@
                 <h2 @click="toSecondary(item.id)" v-for="(item, index) in secondaries" :key="item.id">{{item.name + comma(index, secondaries.length)}}</h2>
             </div>
             <h2 v-else @click="toSecondary(item.id)">{{secondary}}</h2>
-            <v-tabs id="bottom" background-color="rgba(0,0,0,0)">
+            <v-tabs height="35" id="bottom" background-color="rgba(0,0,0,0)">
                 <v-tab v-for="tab in tabs" :key="tab.text" @click="changeTab(tab.value)">{{tab.text}}</v-tab>
             </v-tabs>
         </div>
@@ -36,8 +36,9 @@ export default {
     },
     methods: {
         changeTab(index) {
+            console.log(index);
             this.tab = index;
-            this.$emit('changeTab', this.tab);
+            this.$emit('tabChange', this.tab);
         },
         toSecondary(id) {
             if (this.type == "track")

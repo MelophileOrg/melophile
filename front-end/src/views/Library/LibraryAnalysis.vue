@@ -9,21 +9,26 @@
       <v-skeleton-loader v-if="audioFeatures == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
       <Characteristics v-else :valence="audioFeatures.valence.average" :danceability="audioFeatures.danceability.average" :energy="audioFeatures.energy.average"/>
 
+
+      
+    </div>
+
+    <div class="windows-div">
+      <div class="third">
+        <v-skeleton-loader v-if="audioFeatures == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
+        <Probabilities v-else :instrumentalness="audioFeatures.instrumentalness.average" :acousticness="audioFeatures.acousticness.average" :liveness="audioFeatures.liveness.average"/>
+
+        <v-skeleton-loader v-if="audioFeatures == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
+        <Averages v-else :tempo="audioFeatures.tempo.average" :mode="audioFeatures.mode.average"/>
+      </div>
+
       <v-skeleton-loader v-if="spotlights == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
       <TopTracks v-else :tracks="spotlights.tracks"/>
 
       <v-skeleton-loader v-if="spotlights == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
       <TopArtists v-else :artists="spotlights.artists"/>
-      
     </div>
-
-    <div class="windows-div">
-      <v-skeleton-loader v-if="audioFeatures == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
-      <Probabilities v-else :instrumentalness="audioFeatures.instrumentalness.average" :acousticness="audioFeatures.acousticness.average" :liveness="audioFeatures.liveness.average"/>
-
-      <v-skeleton-loader v-if="audioFeatures == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
-      <Averages v-else :tempo="audioFeatures.tempo.average" :mode="audioFeatures.mode.average"/>
-    </div>
+    
 
 
     <div class="windows-div">
@@ -90,9 +95,11 @@ export default {
   },
   async created() {
     await this.onResize();
-    this.spotlights = await this.jimmy.getSpotlights();
     this.audioFeatures = await this.jimmy.getAllAudioFeatureData();
+    console.log(this.audioFeatures);
+    this.spotlights = await this.jimmy.getSpotlights();
     
+    this.timeline = await this.jimmy.getAddedTimeline();
   }
 }
 </script>
@@ -119,6 +126,17 @@ export default {
 @media only screen and (max-width: 875px) {
     .windows-div {
         justify-content: space-around;
+    }
+}
+
+.third {
+    width: 31%;
+}
+
+@media only screen and (max-width: 875px) {
+    .third {
+        width: 100%;
+        margin: 15px 0px;
     }
 }
 </style>

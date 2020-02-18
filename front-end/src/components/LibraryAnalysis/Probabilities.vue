@@ -70,14 +70,7 @@ export default {
 .Probabilities {
     padding: 20px;
     padding-top: 22px;
-    width: 31%;
-}
-
-@media only screen and (max-width: 875px) {
-    .Probabilities {
-        width: 100%;
-        margin: 15px 0px;
-    }
+    width: 100%;
 }
 
 

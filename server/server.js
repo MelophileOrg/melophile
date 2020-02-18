@@ -1,8 +1,8 @@
 var express = require('express');
-// const fs = require('fs');
-// const https = require('https');
 const bodyParser = require("body-parser");
 let SpotifyWebApi = require('spotify-web-api-node');
+// const fs = require('fs');
+// const https = require('https');
 
 const mongoose = require('mongoose');
 
@@ -21,24 +21,10 @@ const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
 // Mongoose Schemas
-let Items = require("./items.js");
-let Track = Items.track;
-let Artist = Items.artist;
-let Playlist = Items.playlist;
-let User = Items.user;
-
-// app.put("/api/images", async (req, res) => {
-//   try {
-//     console.log("Hello");
-//     let tracks = await Tracks.aggregate([ { $sample: { size: 30 } } ]);
-//     console.log(tracks);
-//     let images = tracks.map(track => track.image);
-//     return res.send({ images: images });
-//   } catch (error) {
-//     console.log(error);
-//     return res.sendStatus(500);
-//   }
-// });
+let Track = require("./schemas/TrackSchema.js");
+let Artist = require("./schemas/ArtistSchema.js");
+let Playlist = require("./schemas/PlaylistSchema.js");
+let User = require("./schemas/UserSchema.js");
 
 ///////////////////////////////////////////////////////////////
 // ANALYSIS ///////////////////////////////////////////////////
@@ -104,6 +90,7 @@ app.put("/api/features/all", async (req, res) => {
   try {
     let user = await requestUser(req.body.token);
     let userData = await User.findOne({ _id: user.id });
+    return res.send(userData);
     if (userData == null) return res.send(null);
     let audioFeatures = {
       valence: {

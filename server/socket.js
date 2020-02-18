@@ -1,16 +1,17 @@
 // Required Modules
 let express = require('express');
-let bodyParser = require("body-parser");
-let mongoose = require('mongoose');
 let socket = require('socket.io');
+
+let bodyParser = require("body-parser");
 let cookieParser = require("cookie-parser");
 let querystring = require('querystring');
 let request = require('request');
 let dotenv = require('dotenv');
-let util = require('./helperfunctions.js');
+
+let mongoose = require('mongoose');
+
 let SpotifyWebApi = require('spotify-web-api-node');
-let Items = require("./items.js");
-let Process = require("./process.js");
+let Process = require("./services/Process.js");
 
 // Connect Mongoose
 mongoose.connect('mongodb://localhost:27017/melophile', {
@@ -19,10 +20,10 @@ mongoose.connect('mongodb://localhost:27017/melophile', {
 });
 
 // Mongoose Schemas
-let Track = Items.track;
-let Artist = Items.artist;
-let Playlist = Items.playlist;
-let User = Items.user;
+let Track = require("./schemas/TrackSchema.js");
+let Artist = require("./schemas/ArtistSchema.js");
+let Playlist = require("./schemas/PlaylistSchema.js");
+let User = require("./schemas/UserSchema.js");
 
 // Server Settings
 let app = express();
@@ -43,9 +44,18 @@ let DEV = true;
 let spotifyId = process.env.spotifyId;
 let spotifySecret = process.env.spotifySecret;
 
+var generateRandomString = function(length) {
+    var text = '';
+    var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (var i = 0; i < length; i++) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
+};
+
 // Variables
 let clients = [];
-let state = util.generateRandomString(16);
+let state = generateRandomString(16);
 let redirectUri = "http://melophile.org/redirect/";
 if (DEV) redirectUri = "http://localhost:8080/redirect/";
 
@@ -65,15 +75,7 @@ io.on('connection', function(socket) {
     let spotifyAPI = new SpotifyWebApi();
     let tokenSet = false;
     let userID = null;
-    let user = null;
-    let processed = false;
 
-    let tracks = [];
-    let artists = [];
-    let playlists = [];
-    let albums = [];
-
-    let currSearchID = 0;
     
     //////////////////////////////////////////////////////////////////////////////////
     // AUTHORIZATION /////////////////////////////////////////////////////////////////
@@ -265,201 +267,20 @@ io.on('connection', function(socket) {
     ////////////////////////////////////////////////////////////////////////////
     let process = async function() {
         processed = false;
-        let processor = new Process.MelomaniacProcessor(accessToken, socket, spotifyAPI, userID);
+        let processor = new Process.MelomaniacProcessor(socket, spotifyAPI, userID);
         await processor.start();
         socket.emit('ProcessDone');
-        let user = await User.findOne({ _id: userID });
+        user = await User.findOne({ _id: userID });
         processed = true;
-        generalData();
     }
 
     socket.on('process', function(data) {
         process();
     });
 
-    ////////////////////////////////////////////////////////////////////////////
-    // ANALYSIS ////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-    let collectUserTracks = async function() {
-        try {
-            let tracks = await Track.find({"_id": {$in: Object.keys(user.tracks)}});
-            return tracks;
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    let generalData = async function() {
-        try {
-            let tracks = await collectUserTracks();
-            let averages = {
-                valence: 0, 
-                danceability: 0, 
-                energy: 0, 
-                acousticness: 0, 
-                instrumentalness: 0, 
-                liveness: 0, 
-                loudness: 0, 
-                speechiness: 0, 
-                key: 0, 
-                mode: 0, 
-                tempo: 0, 
-            };
-            let distributions = {
-                valence: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
-                danceability: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
-                energy: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
-                acousticness: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
-                instrumentalness: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
-                liveness: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
-            };
-            let keys = Object.keys(averages);
-            let altKeys = Object.keys(distributions);
-            for (let i = 0; i < tracks.length; i++) {
-                for (let j = 0; j < keys.length; j++) {
-                    averages[keys[j]] += tracks[i][keys[j]];
-                    if (altKeys.includes(keys[j])) {
-                        distributions[keys[j]][ Math.round(tracks[i][keys[j]] * 20) ] += 1;
-                    }
-                }
-            }
-            for (let i = 0; i < keys.length; i++) {
-                averages[keys[i]] /= tracks.length;
-            }
-            socket.emit('AudioFeatureAverages', averages);
-            socket.emit('AudioFeatureDistributions', distributions);
-            await User.updateOne({
-                _id: userID
-            }, {
-                $set: {
-                    'averages': averages,
-                    'distributions': distributions,
-                }
-            });
-            
-        } catch(error) {
-            console.log(error);
-        }
-    }
-
-    // { query: String, type: Number, offset: Number }
-    socket.on('search', async function(data) {
-        try {
-            socket.emit('ListClear');
-            let items;
-            let key;
-            if (data.type == 0) {
-                items = await spotifyAPI.search(data.query, ['track'], {limit: 50, offset: data.offset});
-                key = "tracks";
-            } else if (data.type == 1) {
-                items = await spotifyAPI.search(data.query, ['artist'], {limit: 50, offset: data.offset});
-                key = "artists";
-            } else if (data.type == 2) {
-                items = await spotifyAPI.search(data.query, ['album'], {limit: 50, offset: data.offset});
-                key = "albums";
-            } else if (data.type == 3) {
-                items = await spotifyAPI.search(data.query, ['playlist'], {limit: 50, offset: data.offset});
-                key = "playlists";
-            } else {
-                console.log("error");
-                return;
-            }
-            if (data.offset == 0) {
-                socket.emit('ListStart', {list: items.body[key].items.map(item => item.id), type: data.type});
-            } else {
-                socket.emit('ListAdd', {list: items.body[key].items.map(item => item.id), type: data.type});
-            }
-        } catch(error) {
-            console.log(error);
-        }
+    socket.on('loggedin', function() {
+       socket.emit('LoggedInStatus', tokenSet); 
     });
-    /*
-    _id: String,
-    name: String,
-    artists: Array, 
-    album: String,  
-    image: String,
-    key: Number,
-    mode: Number,
-    tempo: Number,
-    valence: Number,
-    danceability: Number,
-    energy: Number,
-    acousticness: Number,
-    instrumentalness: Number,
-    liveness: Number,
-    loudness: Number,
-    speechiness: Number,
-    */
-    
-    // { list: [], type: Number }
-    socket.on('requestListTracks', async function(data) {
-        try {
-            currSearchID += 1;
-            let searchID = currSearchID;
-
-            let requiredItems = data.list;
-            let items = [];
-
-            if (data.type == 0) {
-                items = await Track.find({"_id": {$in: requiredItems}});
-            } else if (data.type == 1) {
-                items = await Artist.find({"_id": {$in: requiredItems}});
-            } else if (data.type == 2) {
-                items = await Artist.find({"_id": {$in: requiredItems}});
-            } else if (data.type == 3) {
-                items = await Artist.find({"_id": {$in: requiredItems}});
-            } 
-            if (searchID != currSearchID) {
-                return;
-            } else {
-                for (let i = 0; i < items.length; i++) {
-                    requiredItems.splice(requiredItems.indexOf(items[i]._id), 1);
-                }
-                for (let i = 0; i < Math.ceil(requiredItems.length / 50); i++) {
-                    let ids = await requiredItems.slice(i * 50, (i * 50 + 50));
-                    let newTracks = await spotifyAPI.getTracks(ids);
-                    for (let j = 0; j < newTracks.body.tracks.length; j++) {
-                        let image;
-                        if (newTracks.body.tracks[j].album.images.length == 0) 
-                            image = "Undefined";
-                        else    
-                            image = newTracks.body.tracks[j].album.images[0].url;
-                        let track = {
-                            _id: newTracks.body.tracks[j].id,
-                            name: newTracks.body.tracks[j].name,
-                            artists: newTracks.body.tracks[j].artists.map( function(artist) {
-                                return {name: artist.name, _id: artist.id};
-                            }),
-                            album: {
-                                name: newTracks.body.tracks[j].album.name, 
-                                _id: newTracks.body.tracks[j].album.id
-                            },
-                            image: image,
-                            // key: unsaved[ids[i]].audioFeatures.key,
-                            // mode: unsaved[ids[i]].audioFeatures.mode,
-                            // tempo: unsaved[ids[i]].audioFeatures.tempo,
-                            // valence: unsaved[ids[i]].audioFeatures.valence,
-                            // danceability: unsaved[ids[i]].audioFeatures.danceability,
-                            // energy: unsaved[ids[i]].audioFeatures.energy,
-                            // acousticness: unsaved[ids[i]].audioFeatures.acousticness,
-                            // instrumentalness: unsaved[ids[i]].audioFeatures.instrumentalness,
-                            // liveness: unsaved[ids[i]].audioFeatures.liveness,
-                            // loudness: unsaved[ids[i]].audioFeatures.loudness,
-                            // speechiness: unsaved[ids[i]].audioFeatures.speechiness,
-                        };
-                        items.push(track);
-                    }
-                }
-                socket.emit('RequestedList', {items: items, type: data.type});
-            }
-            
-        } catch(error) {
-            console.log(error);
-        }
-    });
-
-
 
     socket.on('disconnect', function() {
         clients.splice(clients.indexOf(socket.id), 1);
