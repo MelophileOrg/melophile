@@ -6,49 +6,75 @@ let ArtistDAO = require('./ArtistDAO.js');
 
 class TrackDAO {
     constructor(id, data) {
-        this._id = id;
-        if (data) {
-            if ('name' in data) this.name = data.name;
-            if ('artists' in data) this.artists = data.artists;
-        }
+        this._id = (id ? id : null);
+        this.name = ((data && 'name' in data) ? data.name : null);
+        this.artists = ((data && 'artists' in data) ? data.artists.map(this.minify) : null);
+        this.album = ((data && 'album' in data) ? this.minify(data.album) : null);
+        this.image = ((data && 'album' in data && 'images' in data.album && data.album.images.length) ? data.album.images[0].url : "");
+        this.key = ((data && 'key' in data) ? data.key : null);
+        this.mode = ((data && 'mode' in data) ? data.mode : null);
+        this.tempo = ((data && 'tempo' in data) ? data.tempo : null);
+        this.valence = ((data && 'valence' in data) ? data.valence : null);
+        this.danceability = ((data && 'danceability' in data) ? data.danceability : null);
+        this.energy = ((data && 'energy' in data) ? data.energy : null);
+        this.acousticness = ((data && 'acousticness' in data) ? data.acousticness : null);
+        this.instrumentalness = ((data && 'instrumentalness' in data) ? data.instrumentalness : null);
+        this.liveness = ((data && 'liveness' in data) ? data.liveness : null);
+        this.loudness = ((data && 'loudness' in data) ? data.loudness : null);
+        this.speechiness = ((data && 'speechiness' in data) ? data.speechiness : null);
+        this.popularity = ((data && 'popularity' in data) ? data.popularity : null);
     }
 
     async inDatabase() {
-        return (await TrackSchema.findOne({ _id: this._id })) != null;
+        try {
+            return (await TrackSchema.findOne({ _id: this._id })) != null;
+        } catch(error) {
+            console.log(error);
+        }
     }
 
     async retrieve(spotifyAPI) {
-        if (this.name && this.artists.length && this.album && this.image) {
-            return;
-        } else if (await this.inDatabase()) {
-            let track = await TrackSchema.findOne({ _id: this._id });
-            this._id = track.id;
-            this.name = track.name;
-            this.artists = track.artists;
-            this.album = track.album;
-            this.image = track.image;
-        } else if (spotifyAPI != null) {
-            let track = await spotifyAPI.getTrack(id);
-            this.convertTrack(track);
-        } else {
-            return;
+        try {
+            if (!this._id) {
+                return;
+            } else if (this.name && this.artists && this.album && this.image.length) {
+                return;
+            } else if (await this.inDatabase()) {
+                let track = await TrackSchema.findOne({ _id: this._id });
+                this._id = track._id;
+                this.name = track.name;
+                this.artists = track.artists;
+                this.album = track.album;
+                this.image = track.image;
+                this.popularity = track.popularity;
+            } else if (spotifyAPI != null) {
+                let response = await spotifyAPI.getTrack(this._id);
+                await this.convertTrack(response.body);
+            } 
+        } catch(error) {
+            console.log(error);
         }
     }
 
     async retrieveAudioFeatures(spotifyAPI) {
-        if (this.key && this.mode && this.tempo && this.valence && this.danceability && this.energy && this.acousticness && this.instrumentalness && this.liveness && this.loudness && this.speechiness) return;
-        let audioFeatures = await spotifyAPI.getAudioFeaturesForTrack(this._id);
-        this.key = audioFeatures.key;
-        this.mode = audioFeatures.mode;
-        this.tempo = audioFeatures.tempo;
-        this.valence = audioFeatures.valence;
-        this.danceability = audioFeatures.danceability;
-        this.energy = audioFeatures.energy;
-        this.acousticness = audioFeatures.acousticness;
-        this.instrumentalness = audioFeatures.instrumentalness;
-        this.liveness = audioFeatures.liveness;
-        this.loudness = audioFeatures.loudness;
-        this.speechiness = audioFeatures.speechiness;
+        try {
+            if (this.key && this.mode && this.tempo && this.valence && this.danceability && this.energy && this.acousticness && this.instrumentalness && this.liveness && this.loudness && this.speechiness) return;
+            let response = await spotifyAPI.getAudioFeaturesForTrack(this._id);
+            let audioFeatures = response.body;
+            this.key = audioFeatures.key;
+            this.mode = audioFeatures.mode;
+            this.tempo = audioFeatures.tempo;
+            this.valence = audioFeatures.valence;
+            this.danceability = audioFeatures.danceability;
+            this.energy = audioFeatures.energy;
+            this.acousticness = audioFeatures.acousticness;
+            this.instrumentalness = audioFeatures.instrumentalness;
+            this.liveness = audioFeatures.liveness;
+            this.loudness = audioFeatures.loudness;
+            this.speechiness = audioFeatures.speechiness;
+        } catch(error) {
+            console.log(error);
+        }
     }
 
     retrieveAudioAnalysis(spotifyAPI) {
@@ -60,49 +86,51 @@ class TrackDAO {
     }
 
     async save(spotifyAPI) {
-        if (!this.name || !this.artists || !this.album || !this.image)
-            await this.retrieve(spotifyAPI);
-        if (!this.key || !this.mode || !this.tempo || !this.valence || !this.danceability || !this.energy || !this.acousticness || !this.instrumentalness || !this.liveness || !this.loudness || !this.speechiness)
-            await this.retrieveAudioFeatures(spotifyAPI);
-        let track = new TrackSchema({
-            _id: this._id,
-            name: this._name,
-            artists: this._artists, 
-            album: this.album,  
-            image: this.image,
-            key: this.key,
-            mode: this.mode,
-            tempo: this.tempo,
-            valence: this.valence,
-            danceability: this.danceability,
-            energy: this.energy,
-            acousticness: this.acousticness,
-            instrumentalness: this.instrumentalness,
-            liveness: this.liveness,
-            loudness: this.loudness,
-            speechiness: this.speechiness,
-        });
-        await track.save();
-        let aristDAOs = [];
-        for (let i = 0; i < this.artists.length; i++) {
-            aristDAOs.push(new ArtistDAO(artists[i]._id));
+        try {
+            if (!this._id) return;
+            if (!this.name || !this.artists || !this.album || !this.image || this.popularity)
+                await this.retrieve(spotifyAPI);
+            if (!this.key || !this.mode || !this.tempo || !this.valence || !this.danceability || !this.energy || !this.acousticness || !this.instrumentalness || !this.liveness || !this.loudness || !this.speechiness)
+                await this.retrieveAudioFeatures(spotifyAPI);
+            let track = new TrackSchema({
+                _id: this._id,
+                name: this._name,
+                artists: this._artists, 
+                album: this.album,  
+                image: this.image,
+                key: this.key,
+                mode: this.mode,
+                tempo: this.tempo,
+                valence: this.valence,
+                danceability: this.danceability,
+                energy: this.energy,
+                acousticness: this.acousticness,
+                instrumentalness: this.instrumentalness,
+                liveness: this.liveness,
+                loudness: this.loudness,
+                speechiness: this.speechiness,
+                popularity: this.popularity,
+            });
+            await track.save();
+            return await this.artistDAOs();
+        } catch(error) {
+            console.log(error);
         }
-        return aristDAOs;
     }
 
-    convertTrack(track) {
+    async convertTrack(track) {
         this._id = track.id;
         this.name = track.name;
-        if (track.album.images.length) this.image = track.album.images[0].url;
-        else this.image = "Undefined";
-        this.artists = track.artists.map(this.minify);
-        this.album = this.minify(track.album);
+        this.image = ((track.album.images.length ? track.album.images[0].url : ""));
+        this.artists = await track.artists.map(this.minify);
+        this.album = await this.minify(track.album);
+        this.popularity = track.popularity;
     }
 
     minify(item) {
         let min = {
-            _id: item.id,
-            name: item.name,
+            _id: ('id' in item) ? item.id : (('_id' in item) ? item._id : null),
+            name: ('name' in data) ? data.name : "",
         }
         return min;
     }
@@ -128,6 +156,7 @@ class TrackDAO {
         this.liveness = null;
         this.loudness = null;
         this.speechiness = null;
+        this.popularity = null;
     }
 
     get name() {
@@ -136,6 +165,14 @@ class TrackDAO {
 
     get artists() {
         return this.artists;
+    }
+
+    artistDAOs() {
+        let artists = [];
+        for (let i = 0; i < this.artists.length; i++) {
+            artists.push(new ArtistDAO(this.artists[i]._id, {name: this.artists[i].name}));
+        }
+        return artists;
     }
 
     get album() {
@@ -189,21 +226,10 @@ class TrackDAO {
     get speechiness() {
         return this.speechiness;
     }
+
+    get popularity() {
+        return this.popularity;
+    }
 }
 
-// _id: String,
-// name: String,
-// artists: Array, 
-// album: Object,  
-// image: String,
-// key: Number,
-// mode: Number,
-// tempo: Number,
-// valence: Number,
-// danceability: Number,
-// energy: Number,
-// acousticness: Number,
-// instrumentalness: Number,
-// liveness: Number,
-// loudness: Number,
-// speechiness: Number,
+module.exports = TrackDAO;

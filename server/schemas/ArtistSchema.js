@@ -5,6 +5,7 @@ const artistSchema = new mongoose.Schema({
   name: String,
   image: Array,
   genres: Array,
+  popularity: Number,
 });
 
 const Artist = mongoose.model('Artist', artistSchema);

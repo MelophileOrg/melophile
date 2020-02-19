@@ -119,7 +119,8 @@ class UserDAO {
 
     async retrieve(spotifyAPI) {
         try {
-            let user = await spotifyAPI.getMe();
+            let response = await spotifyAPI.getMe();
+            let user = response.body;
             this._id = user.id;
             this.username = user.display_name;
             this.images = images;
@@ -136,51 +137,55 @@ class UserDAO {
     }
 
     async save(spotifyAPI) {
-        if (!this.username || !this.images || !this.privacy)
-            await this.retrieve(spotifyAPI);
-        if (!this.tracks || !this.artists || !this.genres || !this.audioFeatures || !this.history)
-            await this.retrieveSavedTracks(spotifyAPI);
-        if (!this.topPlayed) 
-            await this.retrieveCharts(spotifyAPI);
-        if (!this.playlists) 
-            await this.retrievePlaylists(spotifyAPI);
-        this.updated = (await new Date()).getTime();
-        if (this.inDatabase()) {
-            await UserSchema.updateOne({
-                _id: this._id,
-            }, {
-                $set: {
-                    "username": this.username,
-                    "images": this.images,
-                    "tracks": this.tracks,
-                    "artists": this.artists,
-                    "genres": this.genres,
-                    "playlists": this.playlists,
-                    "topPlayed": this.topPlayed,
-                    "topSaved": this.topSaved,
-                    "audioFeatures": this.audioFeatures,
-                    "history": this.history,
-                    "privacy": this.privacy,
-                    "updated": this.updated,
-                }
-            });
-        } else {
-            let user = new UserSchema({
-                _id: this._id,
-                username: this.username,
-                images: this.images,
-                tracks: this.tracks,
-                artists: this.artists,
-                genres: this.genres,
-                playlists: this.playlists,
-                topPlayed: this.topPlayed,
-                topSaved: this.topSaved,
-                audioFeatures: this.audioFeatures,
-                history: this.history,
-                privacy: this.privacy,
-                updated: this.updated,
-            });
-            await user.save();
+        try {
+            if (!this.username || !this.images || !this.privacy)
+                await this.retrieve(spotifyAPI);
+            if (!this.tracks || !this.artists || !this.genres || !this.audioFeatures || !this.history)
+                await this.retrieveSavedTracks(spotifyAPI);
+            if (!this.topPlayed) 
+                await this.retrieveCharts(spotifyAPI);
+            if (!this.playlists) 
+                await this.retrievePlaylists(spotifyAPI);
+            this.updated = (await new Date()).getTime();
+            if (this.inDatabase()) {
+                await UserSchema.updateOne({
+                    _id: this._id,
+                }, {
+                    $set: {
+                        "username": this.username,
+                        "images": this.images,
+                        "tracks": this.tracks,
+                        "artists": this.artists,
+                        "genres": this.genres,
+                        "playlists": this.playlists,
+                        "topPlayed": this.topPlayed,
+                        "topSaved": this.topSaved,
+                        "audioFeatures": this.audioFeatures,
+                        "history": this.history,
+                        "privacy": this.privacy,
+                        "updated": this.updated,
+                    }
+                });
+            } else {
+                let user = new UserSchema({
+                    _id: this._id,
+                    username: this.username,
+                    images: this.images,
+                    tracks: this.tracks,
+                    artists: this.artists,
+                    genres: this.genres,
+                    playlists: this.playlists,
+                    topPlayed: this.topPlayed,
+                    topSaved: this.topSaved,
+                    audioFeatures: this.audioFeatures,
+                    history: this.history,
+                    privacy: this.privacy,
+                    updated: this.updated,
+                });
+                await user.save();
+            }
+        } catch(error) {
+            console.log(error);
         }
     }
 
@@ -298,3 +303,5 @@ class UserDAO {
         return this.history;
     }
 }
+
+module.exports = UserDAO;

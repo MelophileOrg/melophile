@@ -19,12 +19,6 @@ mongoose.connect('mongodb://localhost:27017/melophile', {
   useUnifiedTopology: true,
 });
 
-// Mongoose Schemas
-let Track = require("./schemas/TrackSchema.js");
-let Artist = require("./schemas/ArtistSchema.js");
-let Playlist = require("./schemas/PlaylistSchema.js");
-let User = require("./schemas/UserSchema.js");
-
 // Server Settings
 let app = express();
 app.use(cookieParser());
@@ -75,7 +69,6 @@ io.on('connection', function(socket) {
     let spotifyAPI = new SpotifyWebApi();
     let tokenSet = false;
     let userID = null;
-
     
     //////////////////////////////////////////////////////////////////////////////////
     // AUTHORIZATION /////////////////////////////////////////////////////////////////
@@ -94,117 +87,13 @@ io.on('connection', function(socket) {
         })});
     });
 
-    let createUser = async function(userData) {
-        try {
-            let user = new User({
-                _id: userData.id,
-                updated: new Date(),
-                username: userData.display_name,
-                images: userData.images,
-                tracks: {},
-                artists: {},
-                genres: {},
-                topPlayed: {
-                    tracks: [],
-                    artists: [],
-                },
-                topSaved: {
-                    artists: [],
-                    genres: [],
-                },
-                playlists: [],
-                privacy: {
-                    public: false,
-                    protected: true,
-                    values: false, // saved songs, artists, genres,
-                    average: {
-                        valence: false,
-                        danceability: false,
-                        energy: false,
-                        tempo: false,
-                        mode: false,
-                        loudness: false,
-                        key: false,
-                        speechiness: false,
-                        instrumentalness: false,
-                        acousticness: false,
-                        liveness: false,
-                    },
-                    distribution: {
-                        valence: false,
-                        danceability: false,
-                        energy: false,
-                        tempo: false,
-                        mode: false,
-                        loudness: false,
-                        key: false,
-                        speechiness: false,
-                        instrumentalness: false,
-                        acousticness: false,
-                        liveness: false,
-                    },
-                    topPlayed: {
-                        tracks: false,
-                        artists: false,
-                    },
-                    topSaved: {
-                        artists: false,
-                        genres: false,
-                    },
-                    extremes: {
-                        valence: false,
-                        danceability: false,
-                        energy: false,
-                        tempo: false,
-                        loudness: false,
-                        speechiness: false,
-                        instrumentalness: false,
-                        acousticness: false,
-                        liveness: false,
-                    },
-                    timeline: {
-                        added: false,
-                        months: false,
-                        years: false,
-                        features: {
-                            valence: false,
-                            danceability: false,
-                            energy: false,
-                            tempo: false,
-                            loudness: false,
-                            speechiness: false,
-                            instrumentalness: false,
-                            acousticness: false,
-                            liveness: false,
-                        },
-                        artists: false,
-                        genres: false,
-                    },
-                },
-                averages: null,
-                distributions: null,
-            });
-            await user.save();
-            process();
-        } catch(error) {
-            console.log(error);
-        }
-    };
-
     let inicialize = async function(access_token) {
         try {
             accessToken = access_token;
             await spotifyAPI.setAccessToken(accessToken);
             tokenSet = true;
-            let userData = await spotifyAPI.getMe();
-            userID = userData.body.id;
-            let savedUser = await User.findOne({ _id: userID });
-            if (savedUser == null) {
-                createUser(userData.body);
-            } else {
-                user = savedUser;
-                processed = true;
-            }
+            let response = await spotifyAPI.getMe();
+            userID = response.body.id;
         } catch(error) {
             console.log(error);
         }
@@ -267,10 +156,9 @@ io.on('connection', function(socket) {
     ////////////////////////////////////////////////////////////////////////////
     let process = async function() {
         processed = false;
-        let processor = new Process.MelomaniacProcessor(socket, spotifyAPI, userID);
+        let processor = new Process(socket, spotifyAPI, userID);
         await processor.start();
         socket.emit('ProcessDone');
-        user = await User.findOne({ _id: userID });
         processed = true;
     }
 

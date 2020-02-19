@@ -17,6 +17,7 @@ const trackSchema = new mongoose.Schema({
   liveness: Number,
   loudness: Number,
   speechiness: Number,
+  popularity: Number,
 });
 
 const Track = mongoose.model('Track', trackSchema);
