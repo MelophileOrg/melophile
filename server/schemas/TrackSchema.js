@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const trackSchema = new mongoose.Schema({
+const schema = new mongoose.Schema({
   _id: String,
   name: String,
   artists: Array, 
@@ -20,6 +20,6 @@ const trackSchema = new mongoose.Schema({
   popularity: Number,
 });
 
-const Track = mongoose.model('Track', trackSchema);
+const TrackSchema = mongoose.model('TrackSchema', schema);
 
-module.exports = Track;
+module.exports = TrackSchema;

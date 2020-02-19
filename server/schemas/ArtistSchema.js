@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const artistSchema = new mongoose.Schema({
+const schema = new mongoose.Schema({
   _id: String,
   name: String,
   image: Array,
@@ -8,6 +8,6 @@ const artistSchema = new mongoose.Schema({
   popularity: Number,
 });
 
-const Artist = mongoose.model('Artist', artistSchema);
+const ArtistSchema = mongoose.model('ArtistSchema', schema);
 
-module.exports = Artist;
+module.exports = ArtistSchema;

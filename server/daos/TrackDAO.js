@@ -58,7 +58,7 @@ class TrackDAO {
 
     async retrieveAudioFeatures(spotifyAPI) {
         try {
-            if (this.key && this.mode && this.tempo && this.valence && this.danceability && this.energy && this.acousticness && this.instrumentalness && this.liveness && this.loudness && this.speechiness) return;
+            if (typeof(this.key) == 'number' && typeof(this.mode) == 'number' && typeof(this.tempo) == 'number' && typeof(this.valence) == 'number' && typeof(this.danceability) == 'number' && typeof(this.energy) == 'number' && typeof(this.acousticness) == 'number' && typeof(this.instrumentalness) == 'number' && typeof(this.liveness) == 'number' && typeof(this.loudness) == 'number' && typeof(this.speechiness) == number) return;
             let response = await spotifyAPI.getAudioFeaturesForTrack(this._id);
             let audioFeatures = response.body;
             this.key = audioFeatures.key;
@@ -88,9 +88,9 @@ class TrackDAO {
     async save(spotifyAPI) {
         try {
             if (!this._id) return;
-            if (!this.name || !this.artists || !this.album || !this.image || this.popularity)
+            if (!this.name || !this.artists || !this.album || !this.image || typeof(this.popularity) != 'number')
                 await this.retrieve(spotifyAPI);
-            if (!this.key || !this.mode || !this.tempo || !this.valence || !this.danceability || !this.energy || !this.acousticness || !this.instrumentalness || !this.liveness || !this.loudness || !this.speechiness)
+            if (typeof(this.key) != 'number' || typeof(this.mode) != 'number' || typeof(this.tempo) != 'number' || typeof(this.valence) != 'number' || typeof(this.danceability) != 'number' || typeof(this.energy) != 'number' || typeof(this.acousticness) != 'number' || typeof(this.instrumentalness) != 'number' || typeof(this.liveness) != 'number' || typeof(this.loudness) != 'number' || typeof(this.speechiness) != 'number')
                 await this.retrieveAudioFeatures(spotifyAPI);
             let track = new TrackSchema({
                 _id: this._id,
@@ -112,7 +112,7 @@ class TrackDAO {
                 popularity: this.popularity,
             });
             await track.save();
-            return await this.artistDAOs();
+            return await this.artists;
         } catch(error) {
             console.log(error);
         }
@@ -130,16 +130,16 @@ class TrackDAO {
     minify(item) {
         let min = {
             _id: ('id' in item) ? item.id : (('_id' in item) ? item._id : null),
-            name: ('name' in data) ? data.name : "",
+            name: ('name' in item) ? item.name : "",
         }
         return min;
     }
 
-    get _id() {
+    getID() {
         return this._id;
     }
 
-    set _id(id) {
+    resetID(id) {
         this._id = id;
         this.name = null;
         this.artists = null;
@@ -159,11 +159,11 @@ class TrackDAO {
         this.popularity = null;
     }
 
-    get name() {
+    getName() {
         return this.name;
     }
 
-    get artists() {
+    getArtists() {
         return this.artists;
     }
 
@@ -175,59 +175,59 @@ class TrackDAO {
         return artists;
     }
 
-    get album() {
+    getAlbum() {
         return this.album;
     }
 
-    get image() {
+    getImage() {
         return this.image;
     }
 
-    get key() {
+    getKey() {
         return this.key;
     }
 
-    get mode() {
+    getMode() {
         return this.mode;
     }
 
-    get tempo() {
+    getTempo() {
         return this.tempo;
     }
 
-    get valence() {
+    getValence() {
         return this.valence;
     }
 
-    get danceability() {
+    getDanceability() {
         return this.danceability;
     }
 
-    get energy() {
+    getEnergy() {
         return this.energy;
     }
 
-    get acousticness() {
+    getAcousticness() {
         return this.acousticness;
     }
 
-    get instrumentalness() {
+    getInstrumentalness() {
         return this.instrumentalness;
     }
 
-    get liveness() {
+    getLiveness() {
         return this.liveness;
     }
 
-    get loudness() {
+    getLoudness() {
         return this.loudness;
     }
 
-    get speechiness() {
+    getSpeechiness() {
         return this.speechiness;
     }
 
-    get popularity() {
+    getPopularity() {
         return this.popularity;
     }
 }

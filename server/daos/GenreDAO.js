@@ -4,11 +4,11 @@ class GenreDAO {
         this.name = name;
     }
 
-    get _id() {
+    getID() {
         return this.name;
     }
 
-    get name() {
+    getName() {
         return this.name;
     }
 }

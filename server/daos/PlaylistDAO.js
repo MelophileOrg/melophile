@@ -15,9 +15,9 @@ class PlaylistDAO {
         this.tracks = ((data && 'tracks' in data) ? data.tracks : null);
     }
 
-    inDatabase() {
+    async inDatabase() {
         try {
-            return (await PlaylistSchema.findOne({ _id: this._id })) != null;
+            return ((await PlaylistSchema.findOne({ _id: this._id })) != null);
         } catch(error) {
             console.log(error);
         }
@@ -85,7 +85,7 @@ class PlaylistDAO {
                     }
                 });
             }
-            return await this.trackDAOs();
+            return Object.keys(this.tracks);
         } catch(error) {
             console.log(error);
         }
@@ -120,11 +120,11 @@ class PlaylistDAO {
         }
     }
 
-    get _id() {
+    getID() {
         return this._id;
     }
 
-    get tracks() {
+    getTracks() {
         return this.tracks;
     }
 
@@ -132,7 +132,7 @@ class PlaylistDAO {
         this.tracks[trackID] = (await new Date(dateAdded)).getTime();
     }
 
-    trackDAOs() {
+    async trackDAOs() {
         let tracks = [];
         for (let i = 0; i < this.tracks.length; i++) {
             tracks.push(await new TrackDAO(this.tracks[i]))
@@ -140,23 +140,23 @@ class PlaylistDAO {
         return tracks;
     }
     
-    get name() {
+    getName() {
         return this.name;
     }
 
-    get owner() {
+    getOwner() {
         return this.owner;
     }
 
-    get image() {
+    getImage() {
         return this.image;
     }
 
-    get description() {
+    getDescription() {
         return this.description;
     }
 
-    get public() {
+    getPublic() {
         return this.public;
     }
 }

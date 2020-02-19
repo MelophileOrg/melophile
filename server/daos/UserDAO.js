@@ -4,23 +4,23 @@ let UserSchema = require('../schemas/UserSchema.js');
 
 class UserDAO {
     constructor(id, data) {
-        this.id = id ? id : null;
-        this.username = (data && data.username) ? data.username : null;
-        this.updated = (data && data.updated) ? data.updated : null;
-        this.images = (data && data.images) ? data.images : [];
-        this.tracks = (data && data.tracks) ? data.tracks : {};
-        this.artists = (data && data.artists) ? data.artists : {};
-        this.genres = (data && data.genres) ? data.genres : {};
-        this.playlists = (data && data.playlists) ? data.playlists : [];
-        this.topPlayed = (data && data.topPlayed) ? data.topPlayed : {
+        this._id = (id ? id : null);
+        this.username = ((data && data.username) ? data.username : null);
+        this.updated = ((data && data.updated) ? data.updated : null);
+        this.images = ((data && data.images) ? data.images : []);
+        this.tracks = ((data && data.tracks) ? data.tracks : {});
+        this.artists = ((data && data.artists) ? data.artists : {});
+        this.genres = ((data && data.genres) ? data.genres : {});
+        this.playlists = ((data && data.playlists) ? data.playlists : []);
+        this.topPlayed = ((data && data.topPlayed) ? data.topPlayed : {
             tracks: [null,null,null],
             artists: [null,null,null],
-        };
-        this.topSaved = (data && data.topSaved) ? data.topSaved : {
+        });
+        this.topSaved = ((data && data.topSaved) ? data.topSaved : {
             artists: [],
             genres: [],
-        };
-        this.audioFeatures = (data && data.audioFeatures) ? data.audioFeatures : {
+        });
+        this.audioFeatures = ((data && data.audioFeatures) ? data.audioFeatures : {
             valence: {
                 average: 0,
                 distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
@@ -75,14 +75,20 @@ class UserDAO {
                 average: 0,
                 distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
                 history: [],
+            },
+            popularity: {
+                average: 0,
+                distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                history: [],
             }
-        };
-        this.history = (data && data.history) ? data.history : {
+        });
+        this.total = 0;
+        this.history = ((data && data.history) ? data.history : {
             added: [],
             genres: [],
             artists: [],
-        };
-        this.privacy = (data && data.privacy) ? data.privacy : {
+        });
+        this.privacy = ((data && data.privacy) ? data.privacy : {
             public: false,
             protected: true,
             values: false, // saved songs, artists, genres,
@@ -114,7 +120,7 @@ class UserDAO {
                 artists: false,
                 genres: false,
             },
-        };
+        });
     }
 
     async retrieve(spotifyAPI) {
@@ -123,8 +129,8 @@ class UserDAO {
             let user = response.body;
             this._id = user.id;
             this.username = user.display_name;
-            this.images = images;
-            if (this.inDatabase()) 
+            this.images = user.images;
+            if (await this.inDatabase()) 
                 this.privacy = (await UserSchema.findOne({ _id: this._id })).privacy;
             
         } catch(error) {
@@ -189,19 +195,19 @@ class UserDAO {
         }
     }
 
-    get _id() {
+    getID() {
         return this._id;
     }
 
-    get username() {
+    getUsername() {
         return this.username;
     }
 
-    get images() {
+    getImages() {
         return this.images;
     }
 
-    get tracks() {
+    getTracks() {
         return this.tracks;
     }
 
@@ -209,12 +215,24 @@ class UserDAO {
         return (id in this.tracks);
     }
 
-    addTrack(id, dateAdded) {
-        if (!this.containsTrack(id))
+    async addTrack(id, dateAdded) {
+        if (!this.containsTrack(id)) {
+            const MONTH_MILI = 2628000000;
+            let now = (new Date()).getTime();
             this.tracks[id] = {dateAdded: (await new Date(dateAdded)).getTime()};
+            let diff = Math.floor((now - this.tracks[id]) / MONTH_MILI);
+            await this.historyPadding(diff);
+            this.history.added[diff] += 1;
+        }
     }
 
-    get artists() {
+    historyPadding(index) {
+        while (this.history.added.length <= index) {
+            this.history.added.push(0);
+        }
+    }
+
+    getArtists() {
         return this.artists;
     }
 
@@ -227,7 +245,7 @@ class UserDAO {
         else this.artists[id] = tracks;
     }
 
-    get genres() {
+    getGenres() {
         return this.genres;
     }
 
@@ -243,7 +261,7 @@ class UserDAO {
         }
     }
 
-    get playlists() {
+    getPlaylists() {
         return this.playlists;
     }
 
@@ -255,7 +273,7 @@ class UserDAO {
         if (!this.containsPlaylist(id)) this.playlists.push(id);
     }
 
-    get topPlayed() {
+    getTopPlayed() {
         return this.topPlayed;
     }
 
@@ -267,7 +285,7 @@ class UserDAO {
         this.topPlayed.artists[index] = list;
     }
 
-    get topSaved() {
+    getTopSaved() {
         return this.topSaved;
     }
 
@@ -295,11 +313,34 @@ class UserDAO {
         this.topSaved.genres = ((Object.entries(this.genres)).sort((a, b) => b[1].track_num - a[1].track_num)).splice(0, 50);
     }
 
-    get audioFeatures() {
+    getAudioFeatures() {
         return this.audioFeatures;
     }
 
-    get history() {
+    addFeatureValues(track) {
+        let features = ['valence', 'energy', 'danceability', 'tempo', 'key', 'mode', 'speechiness', 'instrumentalness', 'acousticness', 'loudness', 'liveness', 'popularity'];
+        const MONTH_MILI = 2628000000;
+        let now = (new Date()).getTime();
+        for (let i = 0; i < features.length; i++) {
+            this.audioFeatures[features[i]].average += track[features[i]];
+            this.audioFeatures[features[i]].distribtion[ Math.round(track[features[i]] * 20) ] += 1;
+            if (track._id in this.tracks) {
+                let diff = Math.floor((now - this.tracks[track._id]) / MONTH_MILI);
+                this.featureHistoryPadding(diff, features[i]);
+                this.audioFeatures[features[i]].history[diff].total += 1;
+                this.audioFeatures[features[i]].history[diff].value += track[features[i]];
+            }
+        }
+        this.total += 1;
+    }
+
+    featureHistoryPadding(index, feature) {
+        while (this.audioFeatures[feature].history.length <= index) {
+            this.audioFeatures[feature].history.push({total: 0, value: 0});
+        }
+    }
+
+    getHistory() {
         return this.history;
     }
 }

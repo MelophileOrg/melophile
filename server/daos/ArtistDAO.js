@@ -8,7 +8,7 @@ class ArtistDAO {
     constructor(id, data) {
         this._id = (id ? id : null);
         this.name = ((data && 'name' in data) ? data.name : null);
-        this.image = ((data && 'image' in data) ? data.image : (data && 'images' in data && images.length) ? data.images[0].url : "");
+        this.image = ((data && 'image' in data) ? data.image : (data && 'images' in data && data.images.length) ? data.images[0].url : "");
         this.genres = ((data && 'genres' in data) ? data.genres : null);
         this.popularity = ((data && 'popularity' in data) ? data.popularity : null);
     }
@@ -23,6 +23,7 @@ class ArtistDAO {
 
     async retrieve(spotifyAPI) {
         try {
+            console.log("ARTIST RETRIEVED");
             if (!this._id) {
                 return;
             } else if (this.name && this.image.length && this.genres && this.popularity) {
@@ -71,11 +72,11 @@ class ArtistDAO {
         this.popularity = artist.popularity;
     }
 
-    get _id() {
+    getID() {
         return this._id;
     }
 
-    set _id(id) {
+    resetID(id) {
         this._id = id;
         this.name = null;
         this.image = null;
@@ -83,11 +84,11 @@ class ArtistDAO {
         this.popularity = null;
     }
 
-    get name() {
+    getName() {
         return this.name;
     }
 
-    get genres() {
+    getGenres() {
         return this.genres;
     }
 
@@ -99,11 +100,11 @@ class ArtistDAO {
         return genres;
     }
 
-    get image() {
+    getImage() {
         return this.image;
     }
 
-    get popularity() {
+    getPopularity() {
         return this.popularity;
     }
 }
