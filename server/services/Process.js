@@ -74,7 +74,7 @@ class Process {
                 }));
                 // Check if added to user.
                 if (!this.user.containsTrack(track.getID())) {
-                    this.user.addTrack(track.getID(), (await new Date(tracks[i].added_at)).getTime(), track);
+                    this.user.addTrack(track, (await new Date(tracks[i].added_at)).getTime());
                 }
                 let trackArtists;
                 // Check if saved.
@@ -93,7 +93,7 @@ class Process {
                 }
             }
             let artistKeys = Object.keys(artists);
-            let artistData = await this.retrieveArtists(artistKeys);
+            let artistData = await this.retrieveArtists(Object.keys(artists));
             // Run through track artists.
             for (let i = 0; i < artistKeys.length; i++) {
                 if (artistData[artistKeys[i]] == null) continue;
@@ -140,7 +140,7 @@ class Process {
         try {
             let arr = [];
             while (artists.length > 0) {
-                arr.concat(await this.getArtists(artists.splice(0, 50)));
+                arr = arr.concat(await this.getArtists(artists.splice(0, 50)));
             }
             let obj = {};
             for (let i = 0; i < arr.length; i++) {

@@ -53,8 +53,6 @@ class UserDAO {
             },
             loudness: {
                 average: 0,
-                distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
-                history: [],
             },
             speechiness: {
                 average: 0,
@@ -63,24 +61,15 @@ class UserDAO {
             },
             key: {
                 average: 0,
-                distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
-                history: [],
             },
             mode: {
                 average: 0,
-                distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
-                history: [],
             },
             tempo: {
                 average: 0,
                 distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
                 history: [],
             },
-            popularity: {
-                average: 0,
-                distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
-                history: [],
-            }
         });
         this.total = 0;
         this.history = ((data && data.history) ? data.history : {
@@ -153,6 +142,7 @@ class UserDAO {
                 await this.retrieve(spotifyAPI);
             this.updated = (await new Date()).getTime();
             await this.averageAudioFeatures();
+            await this.findTopSaved();
             if (await this.inDatabase()) {
                 await UserSchema.updateOne({
                     _id: this._id,
@@ -196,13 +186,24 @@ class UserDAO {
     }
 
     averageAudioFeatures() {
-        let features = ['valence', 'energy', 'danceability', 'tempo', 'key', 'mode', 'speechiness', 'instrumentalness', 'acousticness', 'loudness', 'liveness', 'popularity'];
+        let features = ['valence', 'energy', 'danceability', 'tempo', 'key', 'mode', 'speechiness', 'instrumentalness', 'acousticness', 'loudness', 'liveness'];
         for (let i = 0; i < features.length; i++) {
             this.audioFeatures[features[i]].average /= this.total;
+            if (features[i] == 'key' || features[i] == 'mode' || features[i] == 'loudness') continue;
             for (let j = 0; j < this.audioFeatures[features[i]].history.length; j++) {
-                this.audioFeatures[features[i]].history[j].value /= this.audioFeatures[features[i]].history[j].total;
+                if (this.audioFeatures[features[i]].history[j].total > 0)
+                    this.audioFeatures[features[i]].history[j].value /= this.audioFeatures[features[i]].history[j].total;
+                else if (features[i] == 'tempo')
+                    this.audioFeatures[features[i]].history[j].value = 125;
+                else
+                    this.audioFeatures[features[i]].history[j].value = .5;
             }
         }
+    }
+
+    async findTopSaved() {
+        this.topSaved.artists = (await Object.entries(this.artists)).sort((a, b) => { return b[1].length - a[1].length}).splice(0, 50).map(artist => artist[0]);
+        this.topSaved.genres = (await Object.entries(this.genres)).sort((a, b) => { return b[1].track_num - a[1].track_num}).splice(0, 50).map(genre => genre[0]);
     }
 
     getID() {
@@ -225,22 +226,36 @@ class UserDAO {
         return (id in this.tracks);
     }
 
-    async addTrack(id, dateAdded, track) {
-        this.tracks[id] = (await new Date(dateAdded)).getTime();
+    async addTrack(track, dateAdded) {
+        this.tracks[track.getID()] = dateAdded;
         const MONTH_MILI = 2628000000;
         let now = (new Date()).getTime();
-        let diff = Math.floor((now - this.tracks[id].dateAdded) / MONTH_MILI);
+        let diff = Math.floor((now - dateAdded) / MONTH_MILI);
         await this.historyPadding(diff);
         this.history.added[diff] += 1;
-        this.addFeatureValues(track.getAudioFeatures(), diff);
+        this.addFeatureValues(await track.getAudioFeatures(), diff);
     }
 
-    addFeatureValues(track, diff) {
-        let features = ['valence', 'energy', 'danceability', 'tempo', 'key', 'mode', 'speechiness', 'instrumentalness', 'acousticness', 'loudness', 'liveness', 'popularity'];
+    async addFeatureValues(track, diff) {
+        let features = ['valence', 'energy', 'danceability', 'tempo', 'key', 'mode', 'speechiness', 'instrumentalness', 'acousticness', 'loudness', 'liveness'];
         for (let i = 0; i < features.length; i++) {
             this.audioFeatures[features[i]].average += track[features[i]];
-            this.audioFeatures[features[i]].distribtion[ Math.round(track[features[i]] * 20) ] += 1;
-            this.featureHistoryPadding(diff, features[i]);
+            let divider;
+            switch(i) {
+                case 3:
+                    divider = 250;
+                    break;
+                case 4:
+                case 5:
+                case 9:
+                    continue;
+                default:
+                    divider = 1;
+                    break;
+            }
+            let index = Math.round((track[features[i]] / divider) * 20);
+            this.audioFeatures[features[i]].distribution[ ( index < 21 ? index : 20) ] += 1;
+            await this.featureHistoryPadding(diff, features[i]);
             this.audioFeatures[features[i]].history[diff].total += 1;
             this.audioFeatures[features[i]].history[diff].value += track[features[i]];
         }

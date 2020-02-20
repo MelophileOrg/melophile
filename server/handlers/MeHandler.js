@@ -10,7 +10,7 @@ let ArtistDAO = require("../daos/ArtistDAO.js");
 let PlaylistDAO = require("../daos/PlaylistDAO.js");
 let UserDAO = require("../daos/UserDAO.js");
 
-// Helper Function
+// Helper Functions
 // Instance of Spotify Web API
 let generateSpotifyWebAPI = async (token) => {
     if (token == null) return null;
@@ -22,7 +22,9 @@ let generateSpotifyWebAPI = async (token) => {
 // Verifying user
 let requestUser = async (spotifyAPI) => {
     let response = await spotifyAPI.getMe();
-    return await new UserDAO(response.body.id);
+    let user = await new UserDAO(response.body.id);
+    await user.retrieve(spotifyAPI);
+    return user;
 }
 
 router.put("/stats", async (req, res) => {
@@ -31,9 +33,9 @@ router.put("/stats", async (req, res) => {
         let user = await requestUser(spotifyAPI);
         if (!(await user.inDatabase())) return res.sendStatus(401);
         return res.send({
-            track_num: Object.keys(await user.getTracks()).length,
-            artist_num: Object.keys(await user.getArtists()).length,
-            genre_num: Object.keys(await user.getGenres()).length,
+            track_num: (await Object.keys(await user.getTracks())).length,
+            artist_num: (await Object.keys(await user.getArtists())).length,
+            genre_num: (await Object.keys(await user.getGenres())).length,
         });
     } catch (error) {
         console.log(error);
@@ -63,6 +65,18 @@ router.put("/features/all", async (req, res) => {
         let user = await requestUser(spotifyAPI);
         if (!(await user.inDatabase())) return res.sendStatus(401);
         return res.send(await user.getAudioFeatures());
+    } catch (error) {
+        console.log(error);
+        return res.sendStatus(500);
+    }
+});
+
+router.put("/features/:feature", async (req, res) => {
+    try {
+        let spotifyAPI = await generateSpotifyWebAPI(req.body.token);
+        let user = await requestUser(spotifyAPI);
+        if (!(await user.inDatabase())) return res.sendStatus(401);
+        return res.send((await user.getAudioFeatures())[req.params.feature]);
     } catch (error) {
         console.log(error);
         return res.sendStatus(500);

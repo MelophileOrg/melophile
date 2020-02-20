@@ -37,7 +37,7 @@ class TrackDAO {
         try {
             if (!this._id) {
                 return;
-            } else if (this.name && this.artists && this.album && this.image.length) {
+            } else if (this.name && this.artists instanceof Array && this.album && this.image.length) {
                 return;
             } else if (await this.inDatabase()) {
                 let track = await TrackSchema.findOne({ _id: this._id });
@@ -104,14 +104,14 @@ class TrackDAO {
     async getData(spotifyAPI) {
         try {
             if (!this._id) return;
-            if (!this.name || !this.artists || !this.album || !this.image || typeof(this.popularity) != 'number')
+            if (!this.name || !(this.artists instanceof Array) || !this.album || !this.image || typeof(this.popularity) != 'number')
                 await this.retrieve(spotifyAPI);
             if (typeof(this.key) != 'number' || typeof(this.mode) != 'number' || typeof(this.tempo) != 'number' || typeof(this.valence) != 'number' || typeof(this.danceability) != 'number' || typeof(this.energy) != 'number' || typeof(this.acousticness) != 'number' || typeof(this.instrumentalness) != 'number' || typeof(this.liveness) != 'number' || typeof(this.loudness) != 'number' || typeof(this.speechiness) != 'number')
                 await this.retrieveAudioFeatures(spotifyAPI);
             return {
                 _id: this._id,
-                name: this._name,
-                artists: this._artists, 
+                name: this.name,
+                artists: this.artists, 
                 album: this.album,  
                 image: this.image,
                 key: this.key,
@@ -141,8 +141,8 @@ class TrackDAO {
                 await this.retrieveAudioFeatures(spotifyAPI);
             let track = new TrackSchema({
                 _id: this._id,
-                name: this._name,
-                artists: this._artists, 
+                name: this.name,
+                artists: this.artists, 
                 album: this.album,  
                 image: this.image,
                 key: this.key,
