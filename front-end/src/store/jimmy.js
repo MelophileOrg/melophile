@@ -41,7 +41,7 @@ class Jimmy {
     async getStats() {
         try {
             if (this.userStats != null) return this.userStats;
-            let response = await axios.put('/api/user/stats', {token: this.token});
+            let response = await axios.put('/api/me/stats', {token: this.token});
             this.userStats = response.data;
             return this.userStats;
         } catch (error) {
@@ -52,7 +52,7 @@ class Jimmy {
     async getAudioFeatureAverage(audioFeature) {
         try {
             if (this.audioFeatures[audioFeature].average != null) return this.audioFeatures[audioFeature].average;
-            let response = await axios.put('/api/user/stats', {token: this.token});
+            let response = await axios.put('/api/me/stats', {token: this.token});
             this.userStats = response.data;
             return this.userStats;
         } catch (error) {
@@ -63,7 +63,7 @@ class Jimmy {
     async getSpotlights() {
         try {
             if (this.spotlight != null) return this.spotlight;
-            let response = await axios.put('/api/user/spotlight', {token: this.token});
+            let response = await axios.put('/api/me/spotlight', {token: this.token});
             this.spotlight = response.data;
             response = await this.spotifyAPI.getMyTopTracks({limit: 5, time_range: 'long_term'});
             let items = response.body.items;
@@ -86,8 +86,9 @@ class Jimmy {
     async getAllAudioFeatureData() {
         try {
             if (this.audioFeatures != null) return this.audioFeatures;
-            let response = await axios.put('/api/features/all', {token: this.token});
+            let response = await axios.put('/api/me/features/all', {token: this.token});
             this.audioFeatures = response.data;
+            console.log(this.audioFeatures);
             return this.audioFeatures;
         } catch (error) {
             return null;

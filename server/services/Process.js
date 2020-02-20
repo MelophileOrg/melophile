@@ -28,7 +28,7 @@ class Process {
             // Save all relevent data in user object.
             await this.user.save(this.spotifyAPI);
         } catch(error) {
-            console.log(error);
+            throw error;
         }
     }
 
@@ -39,20 +39,19 @@ class Process {
             // Start process at track 0
             await this.retrieveSavedTracks(0);
         } catch(error) {
-            console.log(error);
+            throw error;
         }
     }
   
     async retrieveSavedTracks(offset) {
         try {
             // Retrieve Tracks from Spotify
-            console.log("Retrieving Tracks", offset);
             let tracks = await this.getSavedTracks(offset);
-            let audioFeatures = await this.retrieveAudioFeatures(tracks);
+            let audioFeatures = await this.retrieveAudioFeatures(await tracks.map(track => track.track));
             // Track artists holder
             let artists = {};
             // Emit Progress
-            this.socket.emit('ProcessMessage', {message: "Processing Liked Tracks", percent: offset / this.total});
+            this.socket.emit('ProcessMessage', {message: "Processing Library", percent: offset / this.total});
 
             for (let i = 0; i < tracks.length; i++) {
                 // Create new Track item.
@@ -74,25 +73,23 @@ class Process {
                     speechiness: audioFeatures[tracks[i].track.id].speechiness,
                 }));
                 // Check if added to user.
-                if (!this.user.containsTrack(track._id)) {
-                    this.user.addTrack(track._id, (await new Date(tracks[i].added_at)).getTime());
+                if (!this.user.containsTrack(track.getID())) {
+                    this.user.addTrack(track.getID(), (await new Date(tracks[i].added_at)).getTime(), track);
                 }
                 let trackArtists;
                 // Check if saved.
                 if (!(await track.inDatabase())) {
                     trackArtists = await track.save(this.spotifyAPI);
-                    console.log("Saved");
                 } else {
                     trackArtists = await track.getArtists();
-                    console.log("Did not save");
                 }
                 for (let j = 0; j < trackArtists.length; j++) {
                     // Add artist to user.
-                    this.user.addArtist(trackArtists[j]._id, [track._id]);
+                    this.user.addArtist(trackArtists[j]._id, [track.getID()]);
                     if (!(trackArtists[j]._id in artists))
-                        artists[trackArtists[j]._id] = [track._id];
+                        artists[trackArtists[j]._id] = [track.getID()];
                     else 
-                        artists[trackArtists[j]._id].push(track._id);
+                        artists[trackArtists[j]._id].push(track.getID());
                 }
             }
             let artistKeys = Object.keys(artists);
@@ -108,11 +105,9 @@ class Process {
                 });
                 for (let j = 0; j < artistData[artistKeys[i]].genres.length; j++) {
                     // Add to user object artist and track.
-                    console.log("Saving Genre");
                     this.user.addGenre(artistData[artistKeys[i]].genres[j], artists[artistKeys[i]], 1);
                 }
                 if (!(await artistDAO.inDatabase())) {
-                    console.log("Artist Saved");
                     artistDAO.save(this.spotifyAPI);
                 }
             }
@@ -121,23 +116,23 @@ class Process {
             if (!(tracks.length < 50)) {
                 await this.retrieveSavedTracks(offset + 50);
             } else  {
-                this.socket.emit('ProcessMessage', {message: "Finished Processing Tracks", percent: 1});
+                this.socket.emit('ProcessMessage', {message: "Finished Library", percent: 1});
             }
         } catch(error) {
-            console.log(error);
+            throw error;
         }
     }
 
     async retrieveAudioFeatures(tracks) {
         try {
-            let arr = await this.getAudioFeaturesForTracks(await tracks.map(track => track.track.id));
+            let arr = await this.getAudioFeaturesForTracks(await tracks.map(track => track.id));
             let obj = {};
             for (let i = 0; i < arr.length; i++) {
                 obj[arr[i].id] = arr[i];
             }
             return obj;
         } catch(error) {
-            console.log(error);
+            throw error;
         }
     }
 
@@ -153,7 +148,7 @@ class Process {
             }
             return obj;
         } catch(error) {
-            console.log(error);
+            throw error;
         }
     }
   
@@ -164,7 +159,7 @@ class Process {
           // Get Artists
           await this.retrieveTopArtists();
       } catch(error) {
-          console.log(error);
+          throw error;
       }
     }
   
@@ -172,20 +167,38 @@ class Process {
         try {
             // Different Time Ranges
             for (let i = 0; i < 3; i++) {
+                this.socket.emit('ProcessMessage', {message: "Retrieving Top Tracks", percent: i / 3});
                 // Request for tracks.
                 let tracks = await this.getTopTracks(i, 0);
+                let audioFeatures = await this.retrieveAudioFeatures(tracks);
                 // Add tracks to user.
                 this.user.addTopPlayedTracks(await tracks.map(track => track.id), i);
                 // Run through each track.
                 for (let j = 0; j < tracks.length; j++) {
-                    let track = new TrackDAO(tracks[j].id, {name: tracks[j].name, artists: tracks[j].artists, album: tracks[j].album, popularity: tracks[j].popularity});
+                    let track = await (new TrackDAO(tracks[j].id, {
+                        name: tracks[j].name, 
+                        artists: tracks[j].artists, 
+                        album: tracks[j].album, 
+                        popularity: tracks[j].popularity,
+                        key: audioFeatures[tracks[j].id].key,
+                        mode: audioFeatures[tracks[j].id].mode,
+                        tempo: audioFeatures[tracks[j].id].tempo,
+                        valence: audioFeatures[tracks[j].id].valence,
+                        danceability: audioFeatures[tracks[j].id].danceability,
+                        energy: audioFeatures[tracks[j].id].energy,
+                        acousticness: audioFeatures[tracks[j].id].acousticness,
+                        instrumentalness: audioFeatures[tracks[j].id].instrumentalness,
+                        liveness: audioFeatures[tracks[j].id].liveness,
+                        loudness: audioFeatures[tracks[j].id].loudness,
+                        speechiness: audioFeatures[tracks[j].id].speechiness,
+                    }));
                     // Save if not in database.
                     if (!(await track.inDatabase()))
                         track.save(this.spotifyAPI);
                 }
             }
         } catch(error) {
-            console.log(error);
+            throw error;
         }
     }
   
@@ -193,20 +206,21 @@ class Process {
         try {
             // Different Time Ranges
             for (let i = 0; i < 3; i++) {
+                this.socket.emit('ProcessMessage', {message: "Retrieving Top Artists", percent: i / 3});
                 // Request for artists.
                 let artists = await this.getTopArtists(i, 0);
                 // Add artists to user.
                 this.user.addTopPlayedArtists(await artists.map(artist => artist.id), i);
                 // Run through each artist.
                 for (let j = 0; j < artists.length; j++) {
-                    let artist = new TrackDAO(artists[j].id, {name: artists[j].name, genres: artists[j].genres, images: artists[j].images, popularity: artists[j].popularity});
+                    let artist = await (new ArtistDAO(artists[j].id, {name: artists[j].name, genres: artists[j].genres, images: artists[j].images, popularity: artists[j].popularity}));
                     // Save if not in database.
                     if (!(await artist.inDatabase()))
                         artist.save(this.spotifyAPI);
                 }
             }
         } catch(error) {
-            console.log(error);
+            throw error;
         }
     }
   
@@ -217,7 +231,7 @@ class Process {
             // Start retrieving at playlist 0
             await this.retrieveUserPlaylists(0);
         } catch(error) {
-            console.log(error);
+            throw error;
         }  
     }
   
@@ -228,20 +242,17 @@ class Process {
             // For ever playlist
             for (let i = 0; i < playlists.length; i++) {
                 // Create Data Access Object
-                let playlist = new PlaylistDAO(playlists[i].id, {name: playlists[i].name, owner: playlists[i].owner, images: playlists[i].images, description: playlists[i].description, public: playlists[i].public});
+                let playlist = await (new PlaylistDAO(playlists[i].id, {
+                    name: playlists[i].name, 
+                    owner: playlists[i].owner, 
+                    images: playlists[i].images, 
+                    description: playlists[i].description, 
+                    public: playlists[i].public
+                }));
                 this.user.addPlaylist(playlist._id);
                 // Save Playlist
-                let tracks = await playlist.save(this.spotifyAPI);
-
-                // for (let j = 0; j < tracks.length; j++) {
-                //     // Save Tracks.
-                //     let artists = await tracks[j].save(this.spotifyAPI);
-                //     for (let k = 0; k < artists.length; k++) {
-                //         // Save artists.
-                //         artists[k].save(this.spotifyAPI);
-                //     }
-                // }
-                // Update Progress
+                await playlist.retrieveAudioFeatures(this.spotifyAPI);
+                await playlist.save(this.spotifyAPI);
                 this.socket.emit('ProcessMessage', {message: "Processing Playlists: " + playlists[i].name, percent: (offset + i) / this.total});
             }
             // Get the next 50
@@ -250,7 +261,7 @@ class Process {
             else 
                 this.socket.emit('ProcessMessage', {message: "Finished Processing Playlists", percent: 1});
         } catch(error) {
-            console.log(error);
+            throw error;
         }
     }
 
@@ -260,7 +271,7 @@ class Process {
             return response.body.tracks;
         } catch (error) {
             this.socket.emit('ConsoleLog', {message: error}); 
-            console.log(error);
+            throw error;
             return 1;
         }
     }
@@ -275,7 +286,7 @@ class Process {
             return response.body.items;
         } catch (error) {
             this.socket.emit('ConsoleLog', {message: error}); 
-            console.log(error);
+            throw error;
             return 1;
         }  
     }
@@ -286,7 +297,7 @@ class Process {
             return response.body.audio_features;
         } catch (error) {
             this.socket.emit('ConsoleLog', {message: error}); 
-            console.log(error);
+            throw error;
             return 1;
         }
     }
@@ -297,7 +308,7 @@ class Process {
             return response.body.artists;
         } catch (error) {
             this.socket.emit('ConsoleLog', {message: error}); 
-            console.log(error);
+            throw error;
             return 1;
         } 
     }
@@ -311,7 +322,7 @@ class Process {
             return response.body.items;
         } catch (error) {
             this.socket.emit('ConsoleLog', {message: error}); 
-            console.log(error);
+            throw error;
             return 1;
         } 
     }
@@ -324,7 +335,7 @@ class Process {
             return response.body.items;
         } catch (error) {
             this.socket.emit('ConsoleLog', {message: error}); 
-            console.log(error);
+            throw error;
             return 1;
         }  
     }
@@ -339,7 +350,7 @@ class Process {
             return response.body.items;
         } catch (error) {
             this.socket.emit('ConsoleLog', {message: error}); 
-            console.log(error);
+            throw error;
             return 1;
         }  
     }

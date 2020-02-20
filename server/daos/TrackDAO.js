@@ -29,7 +29,7 @@ class TrackDAO {
         try {
             return (await TrackSchema.findOne({ _id: this._id })) != null;
         } catch(error) {
-            console.log(error);
+            throw error;
         }
     }
 
@@ -52,7 +52,7 @@ class TrackDAO {
                 await this.convertTrack(response.body);
             } 
         } catch(error) {
-            console.log(error);
+            throw error;
         }
     }
 
@@ -73,7 +73,23 @@ class TrackDAO {
             this.loudness = audioFeatures.loudness;
             this.speechiness = audioFeatures.speechiness;
         } catch(error) {
-            console.log(error);
+            throw error;
+        }
+    }
+
+    async getAudioFeatures() {
+        return {
+            key: this.key,
+            mode: this.mode,
+            tempo: this.tempo,
+            valence: this.valence,
+            danceability: this.danceability,
+            energy: this.energy,
+            acousticness: this.acousticness,
+            instrumentalness: this.instrumentalness,
+            liveness: this.liveness,
+            loudness: this.loudness,
+            speechiness: this.speechiness,
         }
     }
 
@@ -83,6 +99,37 @@ class TrackDAO {
 
     retrieveLibraryCompairison(spotifyAPI) {
 
+    }
+
+    async getData(spotifyAPI) {
+        try {
+            if (!this._id) return;
+            if (!this.name || !this.artists || !this.album || !this.image || typeof(this.popularity) != 'number')
+                await this.retrieve(spotifyAPI);
+            if (typeof(this.key) != 'number' || typeof(this.mode) != 'number' || typeof(this.tempo) != 'number' || typeof(this.valence) != 'number' || typeof(this.danceability) != 'number' || typeof(this.energy) != 'number' || typeof(this.acousticness) != 'number' || typeof(this.instrumentalness) != 'number' || typeof(this.liveness) != 'number' || typeof(this.loudness) != 'number' || typeof(this.speechiness) != 'number')
+                await this.retrieveAudioFeatures(spotifyAPI);
+            return {
+                _id: this._id,
+                name: this._name,
+                artists: this._artists, 
+                album: this.album,  
+                image: this.image,
+                key: this.key,
+                mode: this.mode,
+                tempo: this.tempo,
+                valence: this.valence,
+                danceability: this.danceability,
+                energy: this.energy,
+                acousticness: this.acousticness,
+                instrumentalness: this.instrumentalness,
+                liveness: this.liveness,
+                loudness: this.loudness,
+                speechiness: this.speechiness,
+                popularity: this.popularity,
+            };
+        } catch(error) {
+            throw error;
+        }
     }
 
     async save(spotifyAPI) {
@@ -114,7 +161,7 @@ class TrackDAO {
             await track.save();
             return await this.artists;
         } catch(error) {
-            console.log(error);
+            throw error;
         }
     }
 

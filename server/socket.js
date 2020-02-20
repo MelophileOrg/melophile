@@ -155,11 +155,15 @@ io.on('connection', function(socket) {
     // PROCESSING //////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
     let process = async function() {
+      try {
         processed = false;
         let processor = new Process(socket, spotifyAPI, userID);
         await processor.start();
         socket.emit('ProcessDone');
         processed = true;
+      } catch(error) {
+        console.log(error);
+      }
     }
 
     socket.on('process', function(data) {

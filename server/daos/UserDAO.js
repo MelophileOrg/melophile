@@ -130,11 +130,16 @@ class UserDAO {
             this._id = user.id;
             this.username = user.display_name;
             this.images = user.images;
-            if (await this.inDatabase()) 
-                this.privacy = (await UserSchema.findOne({ _id: this._id })).privacy;
-            
+            if (await this.inDatabase()) {
+                let savedData = await UserSchema.findOne({ _id: this._id });
+                let keys = Object.keys(savedData._doc);
+                for (let i = 0; i < keys.length; i++) {
+                    if (keys[i] == '_id' || keys[i] == 'username' || keys[i] == 'images' || keys[i] == '__v') continue;
+                    this[keys[i]] = savedData._doc[keys[i]];
+                }
+            }
         } catch(error) {
-            console.log(error);
+            throw error;
         }
     }
 
@@ -144,16 +149,11 @@ class UserDAO {
 
     async save(spotifyAPI) {
         try {
-            if (!this.username || !this.images || !this.privacy)
+            if (typeof(this.username) != 'string' || !this.topPlayed.tracks[0] || !this.playlists.length || typeof(this.images) != 'string' || this.privacy || !Object.keys(this.tracks).length || !Object.keys(this.artists).length || !Object.keys(this.genres).length || !this.audioFeatures.valence.history.length || !this.history.added.length)
                 await this.retrieve(spotifyAPI);
-            if (!this.tracks || !this.artists || !this.genres || !this.audioFeatures || !this.history)
-                await this.retrieveSavedTracks(spotifyAPI);
-            if (!this.topPlayed) 
-                await this.retrieveCharts(spotifyAPI);
-            if (!this.playlists) 
-                await this.retrievePlaylists(spotifyAPI);
             this.updated = (await new Date()).getTime();
-            if (this.inDatabase()) {
+            await this.averageAudioFeatures();
+            if (await this.inDatabase()) {
                 await UserSchema.updateOne({
                     _id: this._id,
                 }, {
@@ -191,7 +191,17 @@ class UserDAO {
                 await user.save();
             }
         } catch(error) {
-            console.log(error);
+            throw error;
+        }
+    }
+
+    averageAudioFeatures() {
+        let features = ['valence', 'energy', 'danceability', 'tempo', 'key', 'mode', 'speechiness', 'instrumentalness', 'acousticness', 'loudness', 'liveness', 'popularity'];
+        for (let i = 0; i < features.length; i++) {
+            this.audioFeatures[features[i]].average /= this.total;
+            for (let j = 0; j < this.audioFeatures[features[i]].history.length; j++) {
+                this.audioFeatures[features[i]].history[j].value /= this.audioFeatures[features[i]].history[j].total;
+            }
         }
     }
 
@@ -215,14 +225,31 @@ class UserDAO {
         return (id in this.tracks);
     }
 
-    async addTrack(id, dateAdded) {
-        if (!this.containsTrack(id)) {
-            const MONTH_MILI = 2628000000;
-            let now = (new Date()).getTime();
-            this.tracks[id] = {dateAdded: (await new Date(dateAdded)).getTime()};
-            let diff = Math.floor((now - this.tracks[id]) / MONTH_MILI);
-            await this.historyPadding(diff);
-            this.history.added[diff] += 1;
+    async addTrack(id, dateAdded, track) {
+        this.tracks[id] = (await new Date(dateAdded)).getTime();
+        const MONTH_MILI = 2628000000;
+        let now = (new Date()).getTime();
+        let diff = Math.floor((now - this.tracks[id].dateAdded) / MONTH_MILI);
+        await this.historyPadding(diff);
+        this.history.added[diff] += 1;
+        this.addFeatureValues(track.getAudioFeatures(), diff);
+    }
+
+    addFeatureValues(track, diff) {
+        let features = ['valence', 'energy', 'danceability', 'tempo', 'key', 'mode', 'speechiness', 'instrumentalness', 'acousticness', 'loudness', 'liveness', 'popularity'];
+        for (let i = 0; i < features.length; i++) {
+            this.audioFeatures[features[i]].average += track[features[i]];
+            this.audioFeatures[features[i]].distribtion[ Math.round(track[features[i]] * 20) ] += 1;
+            this.featureHistoryPadding(diff, features[i]);
+            this.audioFeatures[features[i]].history[diff].total += 1;
+            this.audioFeatures[features[i]].history[diff].value += track[features[i]];
+        }
+        this.total += 1;
+    }
+
+    featureHistoryPadding(index, feature) {
+        while (this.audioFeatures[feature].history.length <= index) {
+            this.audioFeatures[feature].history.push({total: 0, value: 0});
         }
     }
 
@@ -250,7 +277,11 @@ class UserDAO {
     }
 
     containsGenre(name) {
-        return (name in this.genres);
+        try {
+            return (name in this.genres);
+        } catch(error) {
+            throw error;
+        }
     }
 
     addGenre(name, artists, track_num) {
@@ -315,29 +346,6 @@ class UserDAO {
 
     getAudioFeatures() {
         return this.audioFeatures;
-    }
-
-    addFeatureValues(track) {
-        let features = ['valence', 'energy', 'danceability', 'tempo', 'key', 'mode', 'speechiness', 'instrumentalness', 'acousticness', 'loudness', 'liveness', 'popularity'];
-        const MONTH_MILI = 2628000000;
-        let now = (new Date()).getTime();
-        for (let i = 0; i < features.length; i++) {
-            this.audioFeatures[features[i]].average += track[features[i]];
-            this.audioFeatures[features[i]].distribtion[ Math.round(track[features[i]] * 20) ] += 1;
-            if (track._id in this.tracks) {
-                let diff = Math.floor((now - this.tracks[track._id]) / MONTH_MILI);
-                this.featureHistoryPadding(diff, features[i]);
-                this.audioFeatures[features[i]].history[diff].total += 1;
-                this.audioFeatures[features[i]].history[diff].value += track[features[i]];
-            }
-        }
-        this.total += 1;
-    }
-
-    featureHistoryPadding(index, feature) {
-        while (this.audioFeatures[feature].history.length <= index) {
-            this.audioFeatures[feature].history.push({total: 0, value: 0});
-        }
     }
 
     getHistory() {

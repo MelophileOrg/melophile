@@ -17,13 +17,12 @@ class ArtistDAO {
         try {
             return (await ArtistSchema.findOne({ _id: this._id })) != null;
         } catch(error) {
-            console.log(error);
+            throw error;
         }
     }
 
     async retrieve(spotifyAPI) {
         try {
-            console.log("ARTIST RETRIEVED");
             if (!this._id) {
                 return;
             } else if (this.name && this.image.length && this.genres && this.popularity) {
@@ -40,7 +39,7 @@ class ArtistDAO {
                 await this.convertArtist(response.body);
             } 
         } catch(error) {
-            console.log(error);
+            throw error;
         }
     }
 
@@ -60,7 +59,7 @@ class ArtistDAO {
             });
             await artist.save();
         } catch(error) {
-            console.log(error);
+            throw error;
         }
     }
     
