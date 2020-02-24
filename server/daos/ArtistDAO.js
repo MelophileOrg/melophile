@@ -2,7 +2,10 @@ const mongoose = require('mongoose');
 
 let ArtistSchema = require('../schemas/ArtistSchema');
 
+let TrackDAO = require('./TrackDAO.js');
+let AlbumDAO = require('./AlbumDAO.js');
 let GenreDAO = require('./GenreDAO.js');
+
 
 class ArtistDAO {
     constructor(id, data) {
@@ -13,6 +16,9 @@ class ArtistDAO {
         this.popularity = ((data && 'popularity' in data) ? data.popularity : null);
     }
 
+// Public Methods
+
+    // Returns boolean of whether artist is saved in database.
     async inDatabase() {
         try {
             return (await ArtistSchema.findOne({ _id: this._id })) != null;
@@ -20,6 +26,121 @@ class ArtistDAO {
             throw error;
         }
     }
+    // Returns Data Object (Retrieves Data if Needed)
+    async getData(spotifyAPI) {
+        try {
+            if (!this._id) throw new Error("No ID");
+            if (!this.name || !this.image || !(this.genres instanceof Array) || typeof(this.popularity) != 'number')
+                await this.retrieve(spotifyAPI);
+            return {
+                _id: this._id,
+                name: this.name,
+                image: this.image,
+                genres: this.genres,
+                popularity: this.popularity,
+            };
+        } catch(error) {
+            throw error;
+        }
+    }
+    // Saves artist to Database (Retrieves Data if Needed)
+    async save(spotifyAPI) {
+        try {
+            if (!this._id) 
+                return;
+            if (!this.name || !this.image.length || !this.genres || !this.popularity) 
+                await this.retrieve(spotifyAPI);
+            if (await this.inDatabase()) return;
+            let artist = new ArtistSchema({
+                _id: this._id,
+                name: this.name,
+                image: this.image,
+                genres: this.genres,
+                popularity: this.popularity,
+            });
+            await artist.save();
+        } catch(error) {
+            throw error;
+        }
+    }
+    // Returns TrackDAO of Artist Top Tracks
+    async getTopTracks(spotifyAPI) {
+        try {
+            let response = await spotifyAPI.getArtistTopTracks(this._id);
+            let tracks = response.tracks;
+            return await tracks.map(async (track) => {
+                return await new TrackDAO(track.id, {
+                    name: track.name,
+                    album: track.album,
+                    artists: track.artists,
+                    popularity: track.popularity
+                });
+            });
+        } catch(error) {
+            throw error;
+        }
+    }
+    // Returns AlbumDAO of Artist Albums
+    async getAlbums(spotifyAPI) {
+        try {
+            let albums = [];
+            let offset = 0;
+            let response;
+            do {
+                response = await spotifyAPI.getArtistAlbums(this._id, {limit: 50, offset: offset});
+                albums = albums.concat(await response.body.items.map(async (album) => {
+                    return await new AlbumDAO(album.id, {
+
+                    });
+                }));
+                offset += 50;
+            } while ((offset + 50) < response.body.total);
+            return albums;
+        } catch(error) {
+            throw error;
+        }
+    }
+    // Returns Atist Object of Related Artist
+    async getRelatedArtists(spotifyAPI) {
+        try {
+            let response = await spotifyAPI.getArtistRelatedArtists(this._id);
+            let artists = await response.body.artists.map(async (artist) => {
+                return await new ArtistDAO(artist.id, {
+                    name: artist.name ? artist.name : null,
+                    name: artist.images ? artist.images : null,
+                    name: artist.genres ? artist.genres : null,
+                    name: artist.popularity ? artist.popularity : null,
+                });
+            });
+            return artists;
+        } catch(error) {
+            throw error;
+        }
+    }
+
+    async getArtistLikedTracks(user) {
+        try {
+            return await user.getTracksFromArtist(this._id);
+        } catch(error) {
+            throw error;
+        }
+    }
+
+    async getHistory(spotifyAPI, user) {
+        try {
+            let tracks = await this.getArtistLikedTracks(user);
+            let timeline = await user.historyFromTracks(tracks);
+            tracks = await user.sortTracksByDate(spotifyAPI, tracks);
+            return {
+                tracks: tracks,
+                timeline: timeline,
+            };
+        } catch(error) {
+            console.log(error);
+        }
+    }
+
+// Helper Methods 
 
     async retrieve(spotifyAPI) {
         try {
@@ -42,26 +163,6 @@ class ArtistDAO {
             throw error;
         }
     }
-
-    async save(spotifyAPI) {
-        try {
-            if (!this._id) {
-                return;
-            } else if (!this.name || !this.image.length || !this.genres || !this.popularity) {
-                await this.retrieve(spotifyAPI);
-            }
-            let artist = new ArtistSchema({
-                _id: this._id,
-                name: this.name,
-                image: this.image,
-                genres: this.genres,
-                popularity: this.popularity,
-            });
-            await artist.save();
-        } catch(error) {
-            throw error;
-        }
-    }
     
     convertArtist(artist) {
         this._id = artist.id;
@@ -71,16 +172,10 @@ class ArtistDAO {
         this.popularity = artist.popularity;
     }
 
+// Get Methods
+
     getID() {
         return this._id;
-    }
-
-    resetID(id) {
-        this._id = id;
-        this.name = null;
-        this.image = null;
-        this.genres = null;
-        this.popularity = null;
     }
 
     getName() {
@@ -91,7 +186,10 @@ class ArtistDAO {
         return this.genres;
     }
 
-    genreDAOs() {
+    async genreDAOs(spotifyAPI) {
+        if (!this._id) throw new Error("No ID");
+        if (!(this.genres instanceof Array))
+            await this.retrieve(spotifyAPI);
         let genres = [];
         for (let i = 0; i < this.genres.length; i++) {
             genres.push(new GenreDAO(this.genres[i]));

@@ -1,33 +1,19 @@
-let SpotifyWebApi = require('spotify-web-api-node');
-import axios from 'axios';
+
 
 // Jimmy just your everyday cowboy gone sailor here for a good time.
 
 class Jimmy {
     constructor() {
-        this.spotifyAPI =  new SpotifyWebApi();
         this.ready = false;
         this.requestNum = 0;
-        this.userStats = null;
-        this.audioFeatures = null;
-        this.spotlight = null;
-    }
-
-    sayHello() {
-        return "I'm-a chewin' on a honeysuckle vine.";
-    }
-
-    async checkServer() {
-        console.log("Hello, this is JIMMY?");
     }
 
     async inicialize(accessToken) {
         try {
+            this.token = accessToken;
             this.axios = axios.create({
                 headers: {'Authorization': 'Bearer ' + accessToken}
             });
-            this.token = accessToken;
-            await this.spotifyAPI.setAccessToken(this.token);
             this.ready = true;
         } catch(error) {
             return;
@@ -39,11 +25,19 @@ class Jimmy {
     ////////////////////////////
 
     async getStats() {
+
+    }
+
+    ////////////////////////////
+    // AUDIO FEATURES //////////
+    ////////////////////////////
+
+    async getAllAudioFeatureData() {
         try {
-            if (this.userStats != null) return this.userStats;
-            let response = await axios.put('/api/me/stats', {token: this.token});
-            this.userStats = response.data;
-            return this.userStats;
+            if (this.audioFeatures) return this.audioFeatures;
+            let response = await axios.put('/api/me/features/all', {token: this.token});
+            this.audioFeatures = response.data;
+            return response.data;
         } catch (error) {
             return null;
         }
@@ -51,52 +45,54 @@ class Jimmy {
 
     async getAudioFeatureAverage(audioFeature) {
         try {
-            if (this.audioFeatures[audioFeature].average != null) return this.audioFeatures[audioFeature].average;
-            let response = await axios.put('/api/me/stats', {token: this.token});
-            this.userStats = response.data;
-            return this.userStats;
-        } catch (error) {
-            return null;
-        }
-    }
-
-    async getSpotlights() {
-        try {
-            if (this.spotlight != null) return this.spotlight;
-            let response = await axios.put('/api/me/spotlight', {token: this.token});
-            this.spotlight = response.data;
-            response = await this.spotifyAPI.getMyTopTracks({limit: 5, time_range: 'long_term'});
-            let items = response.body.items;
-            let convertedItems = [];
-            for (let i = 0; i < items.length; i++) 
-                convertedItems.push(await this.convertTrack(items[i]));
-            this.spotlight.tracks = convertedItems;
-            response = await this.spotifyAPI.getMyTopArtists({limit: 5, time_range: 'long_term'});
-            items = response.body.items;
-            convertedItems = [];
-            for (let i = 0; i < items.length; i++) 
-                convertedItems.push(await this.convertArtist(items[i]));
-            this.spotlight.artists = convertedItems;
-            return this.spotlight;
-        } catch (error) {
-            return null;
-        }
-    }
-
-    async getAllAudioFeatureData() {
-        try {
-            if (this.audioFeatures != null) return this.audioFeatures;
+            if (this.audioFeatures && audioFeature in this.audioFeatures && 'average' in this.audioFeatures[audioFeature] && typeof(this.audioFeatures[audioFeature].average) == 'number') 
+                return this.audioFeatures[audioFeature].average;
             let response = await axios.put('/api/me/features/all', {token: this.token});
             this.audioFeatures = response.data;
-            console.log(this.audioFeatures);
-            return this.audioFeatures;
+            return response.data[audioFeature].average;
         } catch (error) {
             return null;
         }
     }
 
-    async getAddedTimeline() {
-        
+    async getAudioFeatureDistribution(audioFeature) {
+        try {
+            if (this.audioFeatures && audioFeature in this.audioFeatures && 'distribution' in this.audioFeatures[audioFeature] && typeof(this.audioFeatures[audioFeature].distribution) == 'number') 
+                return this.audioFeatures[audioFeature].distribution;
+            let response = await axios.put('/api/me/features/all', {token: this.token});
+            this.audioFeatures = response.data;
+            return response.data[audioFeature].distribution;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    async getAudioFeatureHistory(audioFeature) {
+        try {
+            if (this.audioFeatures && audioFeature in this.audioFeatures && 'history' in this.audioFeatures[audioFeature] && typeof(this.audioFeatures[audioFeature].history) == 'number') 
+                return this.audioFeatures[audioFeature].history;
+            let response = await axios.put('/api/me/features/all', {token: this.token});
+            this.audioFeatures = response.data;
+            return response.data[audioFeature].history;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    ////////////////////////////
+    // HISTORY /////////////////
+    ////////////////////////////
+
+    async getAddedHistory() {
+        try {
+            if (this.history && 'added' in this.history) return this.history.added;
+            let response = await axios.put('/api/me/history/added', {token: this.token});
+            if (!this.history) this.history = {};
+            this.history.added = response.data;
+            return response.data;
+        } catch (error) {
+            return null;
+        }
     }
 
     ////////////////////////////
@@ -232,42 +228,26 @@ class Jimmy {
             let localRequestNum = this.requestNum + 1;
             this.requestNum += 1;
 
-            let time_ranges = ['short_term', 'medium_term', 'long_term'];
-
-            if (!this.ready) 
-                return null;
             let response;
+            
+
             switch(type) {
                 case 0: 
-                    response = await this.spotifyAPI.getMyTopTracks({limit: 50, time_range: time_ranges[time_range]});
+                    response = await this.axios.put('/api/me/chart/played/tracks/' + time_range, {token: this.token});
                     break;
                 case 1:
-                    response = await this.spotifyAPI.getMyTopArtists({limit: 50, time_range: time_ranges[time_range]});
+                    response = await this.axios.put('/api/me/chart/played/artists/' + time_range, {token: this.token});
                     break;
                 default:
                     return null;
             }
-            let items = response.body.items;
-            let convertedItems = [];
-            for (let i = 0; i < items.length; i++) {
-                if (this.requestNum != localRequestNum) {
-                    return null;
-                }
-                switch(type) {
-                    case 0:
-                        convertedItems.push(await this.convertTrack(items[i]));
-                        break;
-                    case 1:
-                        convertedItems.push(await this.convertArtist(items[i]));
-                        break;
-                    default: 
-                        continue;
-                }
-            }
+            console.log(response);
+            let items = response.data;
             if (this.requestNum != localRequestNum) {
                 return null;
             }
-            return convertedItems;
+            console.log(items);
+            return items;
         } catch(error) {
             return;
         }
@@ -318,28 +298,7 @@ class Jimmy {
 
             if (!this.ready) 
                 return null;
-            let response;
-            let key;
-            switch(type) {
-                case 0: 
-                    response = await this.spotifyAPI.searchTracks(query, {limit: 50, offset: offset});
-                    key = "tracks";
-                    break;
-                case 1:
-                    response = await this.spotifyAPI.searchArtists(query, {limit: 50, offset: offset});
-                    key = "artists";
-                    break;
-                case 2:
-                    response = await this.spotifyAPI.searchAlbums(query, {limit: 50, offset: offset});
-                    key = "albums";
-                    break;
-                case 3:
-                    response = await this.spotifyAPI.searchPlaylists(query, {limit: 50, offset: offset});
-                    key = "playlists";
-                    break;
-                default:
-                    return null;
-            }
+            
             let items = response.body[key].items;
             let convertedItems = [];
             for (let i = 0; i < items.length; i++) {
@@ -377,47 +336,7 @@ class Jimmy {
             if (!this.ready) {
                 return null;
             }
-            let keys = Object.keys(options);
-            let optionStrings = [];
-            for (let i = 0; i < keys.length; i++) {
-                if (keys[i] == 'seed_tracks') {
-                    let seed_tracks = "seed_tracks=";
-                    for (let i = 0; i < options.seed_tracks.length; i++) {
-                        seed_tracks += options.seed_tracks[i];
-                        if (i < options.seed_tracks.length - 1) {
-                            seed_tracks += "%2C%20";
-                        }
-                    }
-                    optionStrings.push(seed_tracks);
-                } else if (keys[i] == 'seed_artists') {
-                    let seed_artists = "seed_artists=";
-                    for (let i = 0; i < options.seed_artists.length; i++) {
-                        seed_artists += options.seed_artists[i];
-                        if (i < options.seed_artists.length - 1) {
-                            seed_artists += "%2C%20";
-                        }
-                    }
-                    optionStrings.push(seed_artists);
-                } else {
-                    optionStrings.push(keys[i] + "=" + options[keys[i]]);
-                }
-            }
-            let parameters = "";
-            for (let i = 0; i < optionStrings.length; i++) {
-                parameters += optionStrings[i];
-                if (i < optionStrings.length - 1) {
-                    parameters += '&';
-                }
-            }
-            if (this.requestNum != localRequestNum) return null;
-            let response = await this.axios.get('https://api.spotify.com/v1/recommendations?' + parameters);
-            let tracks = response.data.tracks;
-            let list = [];
-            for (let i = 0; i < tracks.length; i++) {
-                list.push(await this.convertTrack(tracks[i]));
-            }
-            if (this.requestNum != localRequestNum) return null;
-            return list;
+            
         } catch(error) {
             return [];
         }
@@ -498,28 +417,7 @@ class Jimmy {
     // PLAY ////////////////////
     ////////////////////////////
 
-    async playTrack(id) {
-        this.spotifyAPI.play({uris: ["spotify:track:" + id]});
-    }
 
-    async playTracks(ids) {
-        let uris = [];
-        for (let i = 0; i < ids.length; i++) 
-            uris.push("spotify:track:" + ids[i]);
-        this.spotifyAPI.play({uris: uris});
-    }
-
-    async playArtist(id) {
-        this.spotifyAPI.play({context_uri: "spotify:artist:" + id});
-    }
-
-    async playAlbum(id) {
-        this.spotifyAPI.play({context_uri: "spotify:album:" + id});
-    }
-
-    async playPlaylist(id) {
-        this.spotifyAPI.play({context_uri: "spotify:playlist:" + id});
-    }
 }
 
 export default Jimmy;

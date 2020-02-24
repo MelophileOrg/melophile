@@ -1,7 +1,6 @@
-const mongoose = require('mongoose');
-
+// Model Schema
 let PlaylistSchema = require('../schemas/PlaylistSchema.js');
-
+// Other Affiliated DAOs
 let TrackDAO = require('./TrackDAO.js');
 
 class PlaylistDAO {
@@ -26,6 +25,8 @@ class PlaylistDAO {
         this.speechiness = ((data && 'speechiness' in data) ? data.speechiness : null);
     }
 
+// Public Methods
+
     async inDatabase() {
         try {
             return ((await PlaylistSchema.findOne({ _id: this._id })) != null);
@@ -34,41 +35,143 @@ class PlaylistDAO {
         }
     }
 
-    async retrieve(spotifyAPI) {
+    async permission(spotifyAPI, user) {
         try {
-            if (!this._id) {
-                return;
-            } else if (typeof(this.name) == 'string' && this.owner && typeof(this.image) == 'string' && typeof(this.description) == 'string' && typeof(this.public) == 'boolean' && this.tracks) {
-                return;
-            } else if (await this.inDatabase()) {
-                let playlist = await PlaylistSchema.findOne({ _id: this._id });
-                this.name = playlist.name;
-                this.owner = playlist.owner;
-                this.image = playlist.image;
-                this.description = playlist.description;
-                this.public = playlist.public;
-                this.tracks = playlist.tracks;
-                this.key = playlist.key;
-                this.mode = playlist.mode;
-                this.tempo = playlist.tempo;
-                this.valence = playlist.valence;
-                this.danceability = playlist.danceability;
-                this.energy = playlist.energy;
-                this.acousticness = playlist.acousticness;
-                this.instrumentalness = playlist.instrumentalness;
-                this.liveness = playlist.liveness;
-                this.loudness = playlist.loudness;
-                this.speechiness = playlist.speechiness;
-            } else if (spotifyAPI != null) {
-                let response = await spotifyAPI.getPlaylist(this._id);
-                let playlist = response.body;
-                this.name = playlist.name;
-                this.owner = playlist.owner;
-                this.image = ('images' in playlist && playlist.images.length ? playlist.images[0].url : "");
-                this.description = playlist.description;
-                this.public = playlist.public;
-                this.tracks = await this.retrieveTracks(spotifyAPI);
+            if (!this._id) throw new Error("No ID");
+            if (typeof(this.public) == 'boolean' && this.public) return true;
+            if (!this.owner) await this.retrieve(spotifyAPI);
+            if (this.owner && this.owner.id == await user.getID()) return true;
+            return false;
+        } catch(error) {
+            throw error;
+        }
+    }
+
+    async getPlaylistTracks(spotifyAPI) {
+        try {
+            if (!this._id) throw new Error("No ID");
+            if (!this.tracks) await this.retrieveTracks(spotifyAPI);
+            return await this.trackDAOs();
+        } catch(error) {
+            throw error;
+        }
+    }
+
+    async getDistributions(spotifyAPI) {
+        try {
+            if (!this._id) throw new Error("No ID");
+            if (!this.tracks) await this.retrieveTracks(spotifyAPI);
+            let distributions = {
+                valence: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                danceability: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                tempo: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                energy: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                acousticness: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                instrumentalness: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                liveness: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                speechiness: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             }
+            let trackKeys = Object.keys(this.tracks);
+            if (trackKeys.length == 0) return distributions;
+            let audioFeatures = [];
+            while (trackKeys.length > 0) {
+                let response = await spotifyAPI.getAudioFeaturesForTracks(trackKeys.splice(0, 50));
+                audioFeatures = await audioFeatures.concat(response.body.audio_features);
+            }
+            let features = await Object.keys(distributions);
+            for (let i = 0; i < audioFeatures.length; i++) {
+                if (!audioFeatures[i]) continue;
+                for (let j = 0; j < features.length; j++) {
+                    if (features[j] == 'tempo') 
+                        distributions[features[j]][ (Math.round(audioFeatures[i][features[j]] / 250) * 20) ] += 1;
+                    else 
+                        distributions[features[j]][ Math.round(audioFeatures[i][features[j]] * 20) ] += 1;
+                }
+            }
+            return distributions;
+        } catch(error) {
+            throw error;
+        }
+    }
+
+    async getTimelines(spotifyAPI) {
+        try {
+            if (!this._id) throw new Error("No ID");
+            if (!this.tracks) await this.retrieveTracks(spotifyAPI);
+            let timelines = {
+                valence: [0, 0],
+                danceability: [0, 0],
+                tempo: [0, 0],
+                energy: [0, 0],
+                acousticness: [0, 0],
+                instrumentalness: [0, 0],
+                liveness: [0, 0],
+                speechiness: [0, 0],
+            }
+            let trackKeys = Object.keys(this.tracks);
+            if (trackKeys.length == 0) return timelines;
+            let audioFeatures = [];
+            while (trackKeys.length > 0) {
+                let response = await spotifyAPI.getAudioFeaturesForTracks(trackKeys.splice(0, 50));
+                audioFeatures = await audioFeatures.concat(response.body.audio_features);
+            }
+            let features = await Object.keys(timelines);
+            for (let i = 0; i < audioFeatures.length; i++) {
+                for (let j = 0; j < features.length; j++) {
+                    if (!audioFeatures[i]) 
+                        timelines[features[j]].push(0);
+                    else if (features[j] == 'tempo') 
+                        timelines[features[j]].push(audioFeatures[i][features[j]] / 250);
+                    else 
+                        timelines[features[j]].push(audioFeatures[i][features[j]]);
+                }
+            }
+            return timelines;
+        } catch(error) {
+            throw error;
+        }
+    }
+
+
+    async getPlaylistGenres() {
+        try {
+            if (!this._id) throw new Error("No ID");
+            if (!this.tracks) await this.retrieveTracks(spotifyAPI);
+            let genres = {};
+            await (await Object.keys(this.tracks)).map(async (track) => {
+                let track = await new TrackDAO(track);
+                let trackGenres = await track.getTrackGenres(spotifyAPI);
+                await trackGenres.map(async (genre) => {
+                    let genreID = genre.getID;
+                    if (genreID in genres) genres[genreID].track_num += 1;
+                    else genres[genreID] = {_id: genreID, name: genreID, track_num: 1};
+                });
+                return track;
+            });
+            return await Object.values(genres);
+        } catch(error) {
+            throw error;
+        }
+    }
+
+    async getPlaylistArtists(spotifyAPI) {
+        try {
+            let tracks = await this.getPlaylistTracks(spotifyAPI);
+            let artists = {};
+            for (let i = 0; i < tracks.length; i++) {
+                let trackID = await tracks[i].getID();
+                let trackArtists = await track.getTrackArtists(spotifyAPI);
+                for (let j = 0; j < trackArtists.length; j++) {
+                    let artistID = await trackArtists[j].getID();
+                    if (!(artistID in artists)) {
+                        artists[artistID] = await trackArtists.getData(spotifyAPI);
+                        artists[artistID].tracks = [trackID];
+                    } else {
+                        artists[artistID].tracks.push(trackID);
+                    }
+                }
+            }
+            return (await Object.values(artists));
         } catch(error) {
             throw error;
         }
@@ -132,6 +235,64 @@ class PlaylistDAO {
                 });
             }
             return Object.keys(this.tracks);
+        } catch(error) {
+            throw error;
+        }
+    }
+
+// Helper Methods
+
+    async retrieve(spotifyAPI) {
+        try {
+            if (!this._id) {
+                throw new Error("No ID");
+            } else if (typeof(this.name) == 'string' && this.owner && typeof(this.image) == 'string' && typeof(this.description) == 'string' && typeof(this.public) == 'boolean' && this.tracks) {
+                return;
+            } else if (await this.inDatabase()) {
+                await this.retrieveFromDatabase();
+            } else if (spotifyAPI != null) {
+                await this.retrieveFromAPI(spotifyAPI);
+            }
+        } catch(error) {
+            throw error;
+        }
+    }
+
+    async retrieveFromDatabase() {
+        try {
+            let playlist = await PlaylistSchema.findOne({ _id: this._id });
+            this.name = playlist.name;
+            this.owner = playlist.owner;
+            this.image = playlist.image;
+            this.description = playlist.description;
+            this.public = playlist.public;
+            this.tracks = playlist.tracks;
+            this.key = playlist.key;
+            this.mode = playlist.mode;
+            this.tempo = playlist.tempo;
+            this.valence = playlist.valence;
+            this.danceability = playlist.danceability;
+            this.energy = playlist.energy;
+            this.acousticness = playlist.acousticness;
+            this.instrumentalness = playlist.instrumentalness;
+            this.liveness = playlist.liveness;
+            this.loudness = playlist.loudness;
+            this.speechiness = playlist.speechiness;
+        } catch(error) {
+            throw error;
+        }
+    }
+
+    async retrieveFromAPI(spotifyAPI) {
+        try {
+            let response = await spotifyAPI.getPlaylist(this._id);
+            let playlist = response.body;
+            this.name = playlist.name;
+            this.owner = playlist.owner;
+            this.image = ('images' in playlist && playlist.images.length ? playlist.images[0].url : "");
+            this.description = playlist.description;
+            this.public = playlist.public;
+            this.tracks = await this.retrieveTracks(spotifyAPI);
         } catch(error) {
             throw error;
         }
@@ -225,11 +386,9 @@ class PlaylistDAO {
     }
 
     async trackDAOs() {
-        let tracks = [];
-        for (let i = 0; i < this.tracks.length; i++) {
-            tracks.push(await new TrackDAO(this.tracks[i]))
-        }
-        return tracks;
+        return await (await Object.keys(this.tracks)).map(async (track) => {
+            return await new TrackDAO(track);
+        });
     }
     
     getName() {
