@@ -139,8 +139,8 @@ class PlaylistDAO {
             if (!this.tracks) await this.retrieveTracks(spotifyAPI);
             let genres = {};
             await (await Object.keys(this.tracks)).map(async (track) => {
-                let track = await new TrackDAO(track);
-                let trackGenres = await track.getTrackGenres(spotifyAPI);
+                let trackDAO = await new TrackDAO(track);
+                let trackGenres = await trackDAO.getTrackGenres(spotifyAPI);
                 await trackGenres.map(async (genre) => {
                     let genreID = genre.getID;
                     if (genreID in genres) genres[genreID].track_num += 1;

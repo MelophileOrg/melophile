@@ -59,9 +59,7 @@ export default {
     }
   },
   computed: {
-    jimmy() {
-      return this.$store.state.jimmy;
-    }
+
   }
 }
 </script>

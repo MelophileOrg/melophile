@@ -30,8 +30,12 @@ const search = async(context, payload) => {
     try {
         if (!context.state.authentication.accessToken) throw new Error("Not Logged In");
         let localRequestNum = await context.commit('setRequestID');
+        console.log("Making Request");
         let response = await axios.put('/api/general/search', {token: context.state.authentication.accessToken, options: payload});
+        console.log("Checking ID");
+        console.log(localRequestNum);
         if (localRequestNum != context.state.requestID) return null;
+        console.log(response.data);
         return response.data;
     } catch(error) {
         return;

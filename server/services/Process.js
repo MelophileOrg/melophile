@@ -28,6 +28,7 @@ class Process {
             // Save all relevent data in user object.
             await this.user.save(this.spotifyAPI);
         } catch(error) {
+            console.trace(error);
             throw error;
         }
     }
@@ -39,6 +40,7 @@ class Process {
             // Start process at track 0
             await this.retrieveSavedTracks(0);
         } catch(error) {
+            console.trace(error);
             throw error;
         }
     }
@@ -119,6 +121,7 @@ class Process {
                 this.socket.emit('ProcessMessage', {message: "Finished Library", percent: 1});
             }
         } catch(error) {
+            console.trace(error);
             throw error;
         }
     }
@@ -132,6 +135,7 @@ class Process {
             }
             return obj;
         } catch(error) {
+            console.trace(error);
             throw error;
         }
     }
@@ -148,6 +152,7 @@ class Process {
             }
             return obj;
         } catch(error) {
+            console.trace(error);
             throw error;
         }
     }
@@ -159,7 +164,8 @@ class Process {
           // Get Artists
           await this.retrieveTopArtists();
       } catch(error) {
-          throw error;
+        console.trace(error);  
+        throw error;
       }
     }
   
@@ -198,6 +204,7 @@ class Process {
                 }
             }
         } catch(error) {
+            console.trace(error);
             throw error;
         }
     }
@@ -220,6 +227,7 @@ class Process {
                 }
             }
         } catch(error) {
+            console.trace(error);
             throw error;
         }
     }
@@ -231,6 +239,7 @@ class Process {
             // Start retrieving at playlist 0
             await this.retrieveUserPlaylists(0);
         } catch(error) {
+            console.trace(error);
             throw error;
         }  
     }
@@ -261,6 +270,7 @@ class Process {
             else 
                 this.socket.emit('ProcessMessage', {message: "Finished Processing Playlists", percent: 1});
         } catch(error) {
+            console.trace(error);
             throw error;
         }
     }
@@ -270,9 +280,8 @@ class Process {
             let response = await this.spotifyAPI.getTracks(trackIDs);
             return response.body.tracks;
         } catch (error) {
-            this.socket.emit('ConsoleLog', {message: error}); 
+            console.trace(error);
             throw error;
-            return 1;
         }
     }
 
@@ -285,9 +294,8 @@ class Process {
             }
             return response.body.items;
         } catch (error) {
-            this.socket.emit('ConsoleLog', {message: error}); 
+            console.trace(error);
             throw error;
-            return 1;
         }  
     }
 
@@ -296,9 +304,8 @@ class Process {
             let response = await this.spotifyAPI.getAudioFeaturesForTracks(trackIDs);
             return response.body.audio_features;
         } catch (error) {
-            this.socket.emit('ConsoleLog', {message: error}); 
+            console.trace(error);
             throw error;
-            return 1;
         }
     }
 
@@ -307,9 +314,8 @@ class Process {
             let response = await this.spotifyAPI.getArtists(artistIDs);
             return response.body.artists;
         } catch (error) {
-            this.socket.emit('ConsoleLog', {message: error}); 
+            console.trace(error);
             throw error;
-            return 1;
         } 
     }
 
@@ -321,9 +327,8 @@ class Process {
             let response = await this.spotifyAPI.getMyTopArtists({time_range: adjusted_time_range, limit: 50, offset: offset});
             return response.body.items;
         } catch (error) {
-            this.socket.emit('ConsoleLog', {message: error}); 
+            console.trace(error);
             throw error;
-            return 1;
         } 
     }
 
@@ -334,9 +339,8 @@ class Process {
             let response = await this.spotifyAPI.getMyTopTracks({time_range: adjusted_time_range, limit: 50, offset: offset});
             return response.body.items;
         } catch (error) {
-            this.socket.emit('ConsoleLog', {message: error}); 
+            console.trace(error);
             throw error;
-            return 1;
         }  
     }
 
@@ -349,9 +353,8 @@ class Process {
             }
             return response.body.items;
         } catch (error) {
-            this.socket.emit('ConsoleLog', {message: error}); 
+            console.trace(error);
             throw error;
-            return 1;
         }  
     }
 };

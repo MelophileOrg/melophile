@@ -2,7 +2,6 @@
   <div class="Home content-padding">
     <button @click="login">Press Me</button>
     <button @click="process">Process</button>
-    <button @click="test">Test</button>
     <h1>{{progressMessage}}</h1>
     <DistributionGraph title="Happiness Distribution"/>
     
@@ -33,17 +32,11 @@ export default {
     process() {
       this.$store.dispatch('process', {instance: this});
     },
-    test() {
-      this.jimmy.checkServer();
-    }
   },
   computed: {
     progressMessage() {
       return this.$store.state.progress.message + " " + Math.round(this.$store.state.progress.percent * 100) + "%";
     },
-    jimmy() {
-      return this.$store.state.jimmy;
-    }
   },
   async created() {
     this.test();

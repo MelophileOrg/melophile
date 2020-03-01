@@ -8,9 +8,6 @@
     <div class="windows-div">
       <v-skeleton-loader v-if="audioFeatures == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
       <Characteristics v-else :valence="audioFeatures.valence.average" :danceability="audioFeatures.danceability.average" :energy="audioFeatures.energy.average"/>
-
-
-      
     </div>
 
     <div class="windows-div">
@@ -85,9 +82,6 @@ export default {
     },
   },
   computed: {
-    jimmy() {
-      return this.$store.state.jimmy;
-    },
     graphWidth() {
       if (window.innerWidth < 1264) return this.windowSize.x;
       return (this.windowSize.x / 2.9) - 46;
@@ -95,11 +89,11 @@ export default {
   },
   async created() {
     await this.onResize();
-    this.audioFeatures = await this.jimmy.getAllAudioFeatureData();
+    this.audioFeatures = await this.$store.dispatch('getAllAudioFeatureData');
     console.log(this.audioFeatures);
-    this.spotlights = await this.jimmy.getSpotlights();
+    this.spotlights = await this.$store.dispatch('getSpotlights');
     
-    this.timeline = await this.jimmy.getAddedTimeline();
+    this.timeline = await this.$store.dispatch('getAddedTimeline');
   }
 }
 </script>

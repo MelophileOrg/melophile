@@ -77,7 +77,6 @@ class TrackDAO {
                 album: this.album,  
                 image: this.image,
             };
-
         } catch(error) {
             throw error;
         }
@@ -140,11 +139,69 @@ class TrackDAO {
     // Returns array with audio analysis
     async getAudioAnalysis(spotifyAPI) {
         try {
-
+            let response = await spotifyAPI.getAudioAnalysisForTrack(this._id); 
+            return await this.processAudioAnalysis(response.body);
         } catch(error) {
             throw error;
         }
     }
+
+    async processAudioAnalysis(apiReturn) {
+        let audioAnalysisSegments = 80;
+        let newSegments = [];
+        if (apiReturn.segments.length < audioAnalysisSegments)
+            audioAnalysisSegments = apiReturn.segments.length;
+        let width = Math.round(apiReturn.segments.length / audioAnalysisSegments);
+          
+        for (var i = 0; i < audioAnalysisSegments; i++)
+        {
+            let itemIndex = Math.round(width * i);
+            if (itemIndex > apiReturn.segments.length - 1)
+            {
+                itemIndex = apiReturn.segments.length - 2;
+            }
+            let sum = 0;
+            for (var j = 0; j < apiReturn.segments[itemIndex].pitches.length; j++)
+            {
+                sum += apiReturn.segments[itemIndex].pitches[j];
+            }
+            let averagePitch = sum / apiReturn.segments[itemIndex].pitches.length; 
+            let color = await this.HSVtoRGB({hue: (((1 - averagePitch) * 229 + -50) / 360), saturation: 0.51, value: 0.89});
+            let loudness = (Math.round(((apiReturn.segments[itemIndex].loudness_max / 60) + 1) * 100) / 100);
+
+            newSegments.push({
+                start: Math.round(apiReturn.segments[itemIndex].start),
+                loudness_max: loudness, 
+                red: color.r,
+                green: color.g,
+                blue: color.b,
+            });
+        }
+        return newSegments;
+    }
+
+    async HSVtoRGB(payload) {
+        var r, g, b, i, f, p, q, t;
+        i = Math.floor(payload.hue * 6);
+        f = payload.hue * 6 - i;
+        p = payload.value * (1 - payload.saturation);
+        q = payload.value * (1 - f * payload.saturation);
+        t = payload.value * (1 - (1 - f) * payload.saturation);
+        switch (i % 6) {
+            case 0: r = payload.value, g = t, b = p; break;
+            case 1: r = q, g = payload.value, b = p; break;
+            case 2: r = p, g = payload.value, b = t; break;
+            case 3: r = p, g = q, b = payload.value; break;
+            case 4: r = t, g = p, b = payload.value; break;
+            case 5: r = payload.value, g = p, b = q; break;
+        }
+        return {
+            r: Math.round(r * 255),
+            g: Math.round(g * 255),
+            b: Math.round(b * 255)
+        };
+    }
+    
     // Get recommendations for simular tracks.
     async getRecommendations(spotifyAPI) {
         try {

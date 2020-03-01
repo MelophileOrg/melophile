@@ -351,22 +351,17 @@ export default {
         }
       }
       options.limit = 20;
-      this.recommends = await this.jimmy.getRecommends(options);
+      this.recommends = await this.$store.dispatch('getRecommends', options);
       if (this.recommends.length == 0) {
         this.noRecommends = true;
       }
-    }
-  },
-  computed: {
-    jimmy() {
-      return this.$store.state.jimmy;
     }
   },
   watch: {
     searchInput: async function() {
       if (this.searchInput.length > 0) {
         await this.clearList();
-        let response = await this.jimmy.search(this.searchInput, 0, this.searchType);
+        let response = await this.$store.dispatch('search', {query: this.searchInput, offset: 0, type: this.searchType});
         if (response == null) return;
         console.log(response);
         this.list = response.splice(0, 10);
@@ -377,7 +372,7 @@ export default {
     searchType: async function() {
       if (this.searchInput.length > 0) {
         await this.clearList();
-        let response = await this.jimmy.search(this.searchInput, 0, this.searchType);
+        let response = await this.$store.dispatch('search', {query: this.searchInput, offset: 0, type: this.searchType});
         if (response == null) return;
         this.list = response.splice(0, 10);
       } else {

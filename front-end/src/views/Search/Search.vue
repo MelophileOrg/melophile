@@ -54,7 +54,7 @@ export default {
       this.none = false;
       if (this.searchInput.length > 0) {
         await this.clearList();
-        let response = await this.jimmy.search(this.searchInput, 0, this.type);
+        let response = await this.$store.dispatch('search', {query: this.searchInput, offset: 0, type: this.type});
         if (response == null) return;
         this.list = response;
         if (this.list.length == 0) {

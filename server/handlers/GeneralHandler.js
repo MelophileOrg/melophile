@@ -25,53 +25,58 @@ let UserDAO = require("../daos/UserDAO.js");
 router.put("/search", async (req, res) => {
     try {
         let spotifyAPI = await generateSpotifyWebAPI(req.body.token);
-        let items;
-        switch(req.body.type) {
+        let items = [];
+        let converted =[];
+        let response;
+        switch(req.body.options.type) {
             case 0: 
-                items = (await spotifyAPI.searchTracks(req.body.query, {limit: 50, offset: req.body.offset})).tracks.items;
-                items = items.map(async (item) => {
-                    return await (await new TrackDAO(item.id, {
-                        name: item.name,
-                        album: item.album,
-                        artists: item.artists, 
-                        popularity: item.popularity,
-                    }).getBaseData(spotifyAPI));
-                });
+                response = await spotifyAPI.searchTracks(req.body.options.query, {limit: 50, offset: req.body.options.offset});
+                for (let i = 0; i < response.body.tracks.items.length; i++) 
+                    items.push(new TrackDAO(response.body.tracks.items[i].id, {
+                        name: response.body.tracks.items[i].name,
+                        album: response.body.tracks.items[i].album,
+                        artists: response.body.tracks.items[i].artists, 
+                        popularity: response.body.tracks.items[i].popularity,
+                    }));
+                for (let i = 0; i < items.length; i++)
+                    converted.push(await items[i].getBaseData(spotifyAPI));
                 break;
             case 1:
-                items = (await spotifyAPI.searchArtists(req.body.query, {limit: 50, offset: req.body.offset})).artists.items;
-                items = items.map(async (item) => {
-                    return await (await new ArtistDAO(item.id, {
-                        name: item.name,
-                        images: item.images,
-                        genres: item.genres, 
-                        popularity: item.popularity,
-                    }).getData(spotifyAPI));
-                });
+                response = (await spotifyAPI.searchArtists(req.body.options.query, {limit: 50, offset: req.body.options.offset})).body.artists.items;
+                for (let i = 0; i < response.body.artists.items.length; i++) 
+                    items.push(await new ArtistDAO(response.body.artists.items[i].id, {
+                        name: response.body.artists.items[i].name,
+                        images: response.body.artists.items[i].images,
+                        genres: response.body.artists.items[i].genres, 
+                        popularity: response.body.artists.items[i].popularity,
+                    }));
+                for (let i = 0; i < items.length; i++)
+                    converted.push(await items[i].getBaseData(spotifyAPI));
                 break;
             case 2:
-                items = (await spotifyAPI.searchAlbums(req.body.query, {limit: 50, offset: req.body.offset})).albums.items;
-                items = items.map(async (item) => {
-                    return await (await new AlbumDAO(item.id, {
-                        name: item.name,
-                        images: item.images,
-                        artists: item.artists, 
-                        genres: item.genres,
-                    }).getData(spotifyAPI));
-                });
+                response = (await spotifyAPI.searchAlbums(req.body.options.query, {limit: 50, offset: req.body.options.offset})).body.albums.items;
+                for (let i = 0; i < response.body.albums.items.length; i++) 
+                    items.push(await new AlbumDAO(response.body.albums.items[i].id, {
+                        name: response.body.albums.items[i].name,
+                        images: response.body.albums.items[i].images,
+                        artists: response.body.albums.items[i].artists, 
+                        genres: response.body.albums.items[i].genres,
+                    }));
+                for (let i = 0; i < items.length; i++)
+                    converted.push(await items[i].getBaseData(spotifyAPI));    
                 break;
             case 3:
-                items = (await spotifyAPI.searchPlaylists(req.body.query, {limit: 50, offset: req.body.offset})).playlists.items;
-                items = items.map(async (item) => {
-                    return await (await new AlbumDAO(item.id, {
+                items = (await spotifyAPI.searchPlaylists(req.body.options.query, {limit: 50, offset: req.body.options.offset})).body.playlists.items;
+                items = await items.map(async (item) => {
+                    return await (await new PlaylistDAO(item.id, {
                         name: item.name,
                         images: item.images, 
                         public: item.public,
-                    }).getData(spotifyAPI));
+                    })).getData(spotifyAPI);
                 });
                 break;
         }
-        return res.send(items);
+        return res.send(converted);
     } catch (error) {
         console.log(error);
         return res.sendStatus(500);
