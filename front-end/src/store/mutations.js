@@ -44,9 +44,7 @@ const SOCKET_USERID = (state, data) => {
 // ANALYSIS ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 const setRequestID = (state) => {
-    console.log("STATE ID", state.requestID);
     state.requestID += 1;
-    return state.requestID;
 };
 
 const setStats = (state, stats) => {

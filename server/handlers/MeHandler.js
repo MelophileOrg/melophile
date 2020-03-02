@@ -27,6 +27,7 @@ router.put("/stats", async (req, res) => {
         let spotifyAPI = await generateSpotifyWebAPI(req.body.token);
         let user = await requestUser(spotifyAPI);
         if (!(await user.inDatabase())) return res.sendStatus(401);
+        console.log(await user.getTracks());
         return res.send({
             track_num: (await Object.keys(await user.getTracks())).length,
             artist_num: (await Object.keys(await user.getArtists())).length,

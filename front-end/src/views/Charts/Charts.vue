@@ -37,6 +37,8 @@
 <script>
 import List from '@/components/List/List.vue'
 
+//import axios from 'axios';
+
 export default {
   name: 'Charts',
   components: {

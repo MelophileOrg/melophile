@@ -39,7 +39,6 @@ export default {
     },
   },
   async created() {
-    this.test();
   }
 }
 </script>

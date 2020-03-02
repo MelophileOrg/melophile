@@ -4,68 +4,26 @@
       <div class="page-title-icon overview-icon"/>
       <h1 class="page-title">Your Library Overview</h1>
     </div>
-    <Stats/>
-    <div class="windows-div">
-      <v-skeleton-loader v-if="audioFeatures == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
-      <Characteristics v-else :valence="audioFeatures.valence.average" :danceability="audioFeatures.danceability.average" :energy="audioFeatures.energy.average"/>
-    </div>
+    <Stats :stats="stats"/>
 
-    <div class="windows-div">
-      <div class="third">
-        <v-skeleton-loader v-if="audioFeatures == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
-        <Probabilities v-else :instrumentalness="audioFeatures.instrumentalness.average" :acousticness="audioFeatures.acousticness.average" :liveness="audioFeatures.liveness.average"/>
-
-        <v-skeleton-loader v-if="audioFeatures == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
-        <Averages v-else :tempo="audioFeatures.tempo.average" :mode="audioFeatures.mode.average"/>
-      </div>
-
-      <v-skeleton-loader v-if="spotlights == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
-      <TopTracks v-else :tracks="spotlights.tracks"/>
-
-      <v-skeleton-loader v-if="spotlights == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
-      <TopArtists v-else :artists="spotlights.artists"/>
-    </div>
-    
-
-
-    <div class="windows-div">
-      <v-skeleton-loader v-if="audioFeatures == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
-      <DistributionGraph class="distribution" :width="graphWidth" v-else :height="200" title="Distribution of Happiness" feature="valence" :bars="audioFeatures.valence.distribution"/>
-
-      <v-skeleton-loader v-if="audioFeatures == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
-      <DistributionGraph class="distribution" :width="graphWidth" v-else :height="200" title="Distribution of Danceability" feature="danceability" :bars="audioFeatures.danceability.distribution"/>
-      
-      <v-skeleton-loader v-if="audioFeatures == null" type="image" :width="graphWidth" class="elevation-1" style="margin-bottom: 15px; margin-top: 10px;"></v-skeleton-loader>
-      <DistributionGraph class="distribution" :width="graphWidth" v-else :height="200" title="Distribution of Energy" feature="energy" :bars="audioFeatures.energy.distribution"/>
-    </div>
 
   </div>
 </template>
 
 <script>
+let axios = require('axios');
+
 import Stats from '@/components/LibraryAnalysis/Stats.vue'
-import Characteristics from '@/components/LibraryAnalysis/Characteristics.vue'
-import TopTracks from '@/components/LibraryAnalysis/TopTracks.vue'
-import TopArtists from '@/components/LibraryAnalysis/TopArtists.vue'
-import Probabilities from '@/components/LibraryAnalysis/Probabilities.vue'
-import Averages from '@/components/LibraryAnalysis/Averages.vue'
-import DistributionGraph from '@/components/Graphs/DistributionGraph.vue'
 
 export default {
   name: 'LibraryAnalysis',
   components: {
-    Stats,
-    DistributionGraph,
-    Characteristics,
-    Probabilities,
-    Averages,
-    TopTracks,
-    TopArtists
+    Stats
   },
   data() {
     return {
       audioFeatures: null,
-      spotlights: null,
+      stats: null,
       windowSize: {x: 0, y: 0},
     }
   },
@@ -74,7 +32,6 @@ export default {
       let diff = 225 + 32;
       if (window.innerWidth < 1264) diff = 32;
       this.windowSize = {x: window.innerWidth - diff, y: window.innerHeight};
-      console.log(this.windowSize.x);
     },
     formatNumber(val) {
       if (val == null) return "0";
@@ -85,15 +42,15 @@ export default {
     graphWidth() {
       if (window.innerWidth < 1264) return this.windowSize.x;
       return (this.windowSize.x / 2.9) - 46;
+    },
+    token() {
+      return this.$store.state.authentication.accessToken;
     }
   },
   async created() {
     await this.onResize();
-    this.audioFeatures = await this.$store.dispatch('getAllAudioFeatureData');
-    console.log(this.audioFeatures);
-    this.spotlights = await this.$store.dispatch('getSpotlights');
-    
-    this.timeline = await this.$store.dispatch('getAddedTimeline');
+    this.stats = (await axios.put('/api/me/stats', {token: this.token})).data;
+    this.audioFeatures = await axios.put('/api/me/features/all', {token: this.token});
   }
 }
 </script>

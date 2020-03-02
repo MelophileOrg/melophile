@@ -14,6 +14,8 @@
 <script>
 import List from '@/components/List/List.vue'
 
+//import axios from 'axios';
+
 export default {
   name: 'Search',
   components: {
@@ -40,7 +42,6 @@ export default {
       if (this.searchInput.length > 0) {
         await this.clearList();
         let response = await this.$store.dispatch('search', {query: this.searchInput, offset: 0, type: this.type});
-        console.log(response);
         if (response == null) return;
         this.list = response;
         if (this.list.length == 0) {
