@@ -5,6 +5,7 @@
       <h1 class="page-title">Your Library Overview</h1>
     </div>
     <Stats :stats="stats"/>
+    <AddedTimeline :width="windowSize.x"/>
 
 
   </div>
@@ -14,11 +15,13 @@
 let axios = require('axios');
 
 import Stats from '@/components/LibraryAnalysis/Stats.vue'
+import AddedTimeline from '@/components/LibraryAnalysis/AddedTimeline.vue'
 
 export default {
   name: 'LibraryAnalysis',
   components: {
-    Stats
+    Stats,
+    AddedTimeline
   },
   data() {
     return {
@@ -29,7 +32,7 @@ export default {
   },
   methods: {
     onResize() {
-      let diff = 225 + 32;
+      let diff = 240 + 32;
       if (window.innerWidth < 1264) diff = 32;
       this.windowSize = {x: window.innerWidth - diff, y: window.innerHeight};
     },

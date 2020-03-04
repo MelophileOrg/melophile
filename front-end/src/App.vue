@@ -257,7 +257,7 @@
   white-space: nowrap;
   padding: 12px 12px;
   border-radius: 3px;
-  margin-bottom: 15px;
+  margin-bottom: 16px;
   margin-top: 10px;
   position: relative;
 }
@@ -265,8 +265,6 @@
 .window-limit {
   width: 440px;
 }
-
-
 
 .window-header {
   position: absolute;
@@ -276,10 +274,10 @@
   text-align: left;
   border-radius: 3px 3px 0px 0px;
   margin: 0px;
-  padding: 3px 8px;
-  background: var(--melophile-brand-1);
-  font-weight: lighter;
-  color: rgba(251, 251, 251, 0.726);
+  padding: 5px 8px;
+  background: var(--melophile-green);
+  font-weight: normal;
+  color: rgba(2, 2, 2, 0.952);
   font-size: 1rem;
   opacity: .6;
 }
@@ -297,7 +295,7 @@
 }
 
 .window-title {
-  color: rgba(255, 255, 255, 0.288);
+  color: rgba(255, 255, 255, 0.507);
   text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.247);
   font-size: 1.5rem;
   font-family: 'Roboto', sans-serif;

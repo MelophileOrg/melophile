@@ -2,10 +2,10 @@
   <div class="TimelineAddedGraph relative window-header-active elevation-2">
         <h1 class="window-header">{{title}}</h1>
         <div class="canvasWrap" :style="{height: height - 8 + 'px', width: width - 8 + 'px'}">
-            <canvas :id="'timeline-graph-' + title" class="canvas"></canvas>
+            <canvas :id="'timeline-graph'" class="canvas"></canvas>
             <div class="flex flex-space-between labels" :style="{'--red': + color.red,'--green': + color.green,'--blue': + color.blue, }">
-                <h2>oldest</h2>
-                <h2>newest</h2>
+                <h2>Joined Spotify</h2>
+                <h2>Today</h2>
             </div>
         </div>
   </div>
@@ -17,14 +17,14 @@ import Chart from "chart.js";
 export default {
     name: 'TimelineAddedGraph',
     props: {
-        title: { type: String, default: 'History of Liked Tracks' },
+        title: { type: String, default: 'Tracks Added Each Month' },
         bars: { type: Array, default: () => { return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0] } },
-        width: { type: Number, default: 500 },
+        width: { type: Number, default: 720 },
         height: { type: Number, default: 300 },
     },
     data: () => ({
         reversedBars: null,
-        color: {red: 82, green: 227, blue: 197},
+        color: {red: 38, green: 200, blue: 159},
         graph: null,
         current: null,
         tooltip: null,
@@ -72,7 +72,7 @@ export default {
             let now = new Date();
             let monthIndex = now.getMonth();
             let year = now.getFullYear();
-            for (let i = 0; i < this.reverseBars.length; i++) {
+            for (let i = 0; i < this.reversedBars.length; i++) {
                 labels.push(MONTHS[monthIndex] + " " + year);
                 monthIndex -= 1;
                 if (monthIndex < 0) {
@@ -80,38 +80,36 @@ export default {
                     year -= 1;
                 }
             }
-            return labels;
+            return labels.reverse();
         },
-        graphLabels(value) {
+        graphLabels() {
             return "1";
         },
         reverseBars() {
-            this.reverseBars = [];
-            for (let i = (this.bars.length - 1); i >= 0; i--) {
-                this.reverseBars.push(this.bars[i]);
-            }
+            this.reversedBars = this.bars.reverse();
         },
         //updating chart to new trend
         renderChart() {
-            let color1 = "rgba(" + this.color.red + ", " + this.color.green + ", " + this.color.blue + ", " + " 0.2)";
+            let color1 = "rgba(" + this.color.red + ", " + this.color.green + ", " + this.color.blue + ", " + " 1)";
             let color2 = "rgba(" + this.color.red + ", " + this.color.green + ", " + this.color.blue + ", " + " 1)";
             let color3 = "rgba(" + this.color.red + ", " + this.color.green + ", " + this.color.blue + ", " + " 1)";
+            console.log(this.reversedBars);
             var options = {
                 type: "line",
                 data: {
                     labels: this.labels(),
                     datasets: [
                         {
-                            label: "Months",
+                            label: "Songs Added",
                             data: this.reversedBars,
                             backgroundColor: color1,
                             borderColor: color3,
                             pointBackgroundColor: color2,
-                            borderWidth: 2.5,
-                            pointBorderWidth: 0.1,
+                            borderWidth: 3,
+                            pointBorderWidth: 0,
                             hitRadius: 8,
-                            pointRadius: 3.5,
-                            pointHoverRadius: 5,
+                            pointRadius: 0,
+                            pointHoverRadius: 2,
                             pointHoverBorderColor: 'rgb(255,255,255)',
                             pointHoverBackgroundColor: 'rgb(255,255,255)',
                         }
@@ -182,7 +180,7 @@ export default {
                                     z: -100,
                                 },
                                 scaleLabel: {
-                                    display: false,
+                                    display: true,
                                     labelString: "Number of Songs",
                                     fontColor: 'rgba(255,255,255,.15)',
                                     padding: 0,
@@ -203,7 +201,7 @@ export default {
                 }
             };
             var ctx = document
-                .getElementById("timeline-graph-" + this.title)
+                .getElementById("timeline-graph")
                 .getContext("2d");
             this.graph = new Chart(ctx, options);
             }
