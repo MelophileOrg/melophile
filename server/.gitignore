@@ -1,2 +1,2 @@
-.env
+services/general/.env
 node_modules
