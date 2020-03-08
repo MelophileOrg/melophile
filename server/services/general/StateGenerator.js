@@ -7,7 +7,7 @@ var generateRandomString = function(length) {
     }
     return text;
 };
-
+// Export
 module.exports = {
     generateRandomString = generateRandomString,
 }
