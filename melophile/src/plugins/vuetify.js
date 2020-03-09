@@ -5,6 +5,7 @@ Vue.use(Vuetify);
 
 export default new Vuetify({
     theme: {
+        dark: true,
         themes: {
             dark: {
                 "melophile-red": "#ff4495",
@@ -26,7 +27,7 @@ export default new Vuetify({
                 "melophile-brand-7": "#8f94ab",
                 "melophile-brand-8": "#b4b8cd",
                 "melophile-contrast": "#fff",
-            }
+            },
         },
     }
 });

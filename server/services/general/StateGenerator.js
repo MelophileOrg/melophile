@@ -9,5 +9,5 @@ var generateRandomString = function(length) {
 };
 // Export
 module.exports = {
-    generateRandomString = generateRandomString,
+    generateRandomString: generateRandomString,
 }

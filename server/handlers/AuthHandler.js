@@ -1,5 +1,6 @@
 // Dependencies
 const express = require("express");
+const querystring = require("querystring");
 const router = express.Router();
 const StateGenerator = require("../services/general/StateGenerator.js");
 const KeyRetriever = require("../services/general/KeyRetriever.js");
@@ -9,6 +10,7 @@ let redirectUri = "https://melophile.org/redirect/";
 if (DEV) redirectUri = "http://localhost:8080/redirect/";
 const state = StateGenerator.generateRandomString(10);
 let keys = new KeyRetriever();
+
 // Endpoints
 /**
  * Login Spotify
@@ -16,7 +18,7 @@ let keys = new KeyRetriever();
  * 
  * @return String of link.
  */
-router.put("/login", async (req, res) => {
+router.get("/login", async (req, res) => {
     try {
         const scopes = ['user-read-recently-played','user-top-read','user-library-read','user-read-email','playlist-read-private','playlist-modify-public','user-library-modify', 'user-modify-playback-state'];
         return res.send('https://accounts.spotify.com/authorize?' + querystring.stringify({
@@ -63,13 +65,48 @@ router.put("/callback", async (req, res) => {
               refresh_token = body.refresh_token;
               return res.send({
                 token: body.access_token, 
-                refreshTOken: refresh_token
-              })
+                refreshToken: refresh_token,
+              });
             } else {
-                return res.sendStatus(500);
+                return res.sendStatus(response.statusCode).send(error);
             }
           });
     } catch (error) {
+        console.log(error);
+        return res.sendStatus(500);
+    }
+});
+
+/**
+ * Spotify Refresh
+ * Use refresh token to re-authenticate
+ * @param refreshToken Refresh token from last login.
+ * @return Object with auth token.
+ */
+router.put("/refresh", async (req, res) => {
+    try {
+        let refreshToken = req.body.refreshToken ? req.body.refreshToken: null;
+        if (!refreshToken) return res.sendStatus(400);
+        let authOptions = {
+            url: 'https://accounts.spotify.com/api/token',
+            headers: { 'Authorization': 'Basic ' + (new Buffer(keys.getSpotify().id + ':' + keys.getSpotify().secret).toString('base64')) },
+            form: {
+                grant_type: 'refresh_token',
+                refresh_token: refreshToken
+            },
+            json: true
+            };
+            request.post(authOptions, function(error, response, body) {
+                if (!error && response.statusCode === 200) {
+                    inicialize(body.access_token);
+                    return res.send({
+                        accessToken: body.access_token,
+                    });
+                } else {
+                    return res.sendStatus(response.statusCode).send(error);
+                }
+            });
+    } catch(error) {
         console.log(error);
         return res.sendStatus(500);
     }
