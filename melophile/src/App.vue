@@ -1,20 +1,26 @@
 <template>
-  <v-app class="melophile">
+  <v-app v-resize="onResize" class="melophile">
     <v-navigation-drawer clipped app floating v-model="drawer" :width="210" color="melophile-dark-2">
-      <v-tabs v-model="tab" @change="route" vertical :grow="true" :show-arrows="false">
+      <v-tabs class="nav-bar-tabs" v-model="tab" @change="route" vertical :grow="true" :show-arrows="false" background-color="melophile-dark-2" slider-color="melophile-green" color="white" :slider-size="3">
+        <div v-for="tab in tabs" :key="tab.text">
+          <v-tab class="nav-bar-tab" v-if="tab.type == 'link' || tab.type == 'list'">
+            <img class="nav-bar-tab-icon" :src="getImgUrl(tab.image)"/>
+            <p class="nav-bar-tab-text">{{tab.text}}</p>
+          </v-tab>
+          <p class="nav-bar-category" v-if="tab.type == 'category'">{{tab.text}}</p>
+        </div>
       </v-tabs>
     </v-navigation-drawer>
-    <v-app-bar app dark clipped-left color="melophile-dark-2">
-      <div class="flex flex-align-center title">
-        <div class="title-m"/>
-        <p class="title-continue">elophile</p>
-      </div>
+
+    <v-app-bar app dark clipped-left color="melophile-dark-2" :elevation="0">
+      <p class="melophile-title">melophile</p>
+      <v-app-bar-nav-icon v-if="windowSize.x < 1264" @click.stop="closeDrawer"/>
       <v-spacer></v-spacer>
       <v-btn href="https://github.com/vuetifyjs/vuetify/releases/latest" target="_blank" text>
         <span class="mr-2">Latest Release</span>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
-      <v-app-bar-nav-icon @click.stop="closeDrawer" />
+      
     </v-app-bar>
 
     <v-content>
@@ -24,17 +30,46 @@
 </template>
 
 <script>
-//import HelloWorld from './components/HelloWorld';
+
 
 export default {
   name: 'App',
+  components: {
+
+  },
   data: () => ({
     tab: 0,
     drawer: true,
+    tabs: [
+      {text: "Home", type: "link", route: "home", image: "home"},
+      {text: "Discover", type: "link", route: "discover", image: "discover"},
+      {text: "Your Charts", type: "category"},
+      {text: "Top Played", type: "link", route: "discover", image: "topplayed"},
+      {text: "Top Saved", type: "link", route: "discover", image: "topsaved"},
+      {text: "Extremes", type: "link", route: "discover", image: "extremes"},
+      {text: "Your Library", type: "category"},
+      {text: "Overview", type: "link", route: "discover", image: "overview"},
+      {text: "Library", type: "link", route: "library", image: "library-2"},
+      {text: "History", type: "link", route: "history", image: "history"},
+      {text: "Social", type: "category"},
+      {text: "My Profile", type: "link", route: "myprofile", image: "profile"},
+      {text: "Public Profiles", type: "link", route: "publicprofiles", image: "public"},
+    ],
+    windowSize: {x: 0, y: 0},
   }),
   methods: {
     closeDrawer() {
       this.drawer = !this.drawer;
+    },
+    getImgUrl(pic) {
+      var images = require.context('./assets/navbar', false, /\.svg$/);
+      return images('./' + pic + ".svg");
+    },
+    route() {
+      console.log("route)");
+    },
+    onResize() {
+      this.windowSize = {x: window.innerWidth, y: window.innerHeight};
     },
   }
 };
@@ -95,29 +130,55 @@ html::-webkit-scrollbar-thumb
 }
 
 .v-application {
-  background: var(--dark-1) !important;
+  background: var(--dark-2) !important;
 }
 
-.title {
-  cursor: pointer;
-}
-
-.title-m {
-  display: block;
-  width: 40px;
-  height: 40px;
-  background-image: url('./assets/general/logo-white-100.svg');
-  background-size: 100% 100%;
-}
-
-p.title-continue {
+p.melophile-title {
+  font-size: 2rem;
   font-family: 'Roboto', sans-serif;
   font-weight: lighter;
-  margin: 0px;
-  margin-left: 3px;
-  font-size: 1.3rem;
-  text-transform: uppercase;
+  margin: 0px 3px 0px 3px !important;
+ 
+  text-transform: lowercase;
 }
+
+.nav-bar-tabs {
+  margin-top: 5px;
+}
+
+.nav-bar-tab.v-tab {
+  padding-left: 20px;
+  justify-content: left;
+  align-items: center;
+}
+
+p.nav-bar-tab-text {
+  display: inline-block;
+  font-family: 'Roboto', sans-serif;
+  font-weight: lighter;
+  font-size: 1rem;
+  text-align: left;
+  text-transform: lowercase;
+  margin: 0px 0px 0px 10px !important;
+}
+
+p.nav-bar-category {
+  text-transform: uppercase;
+  color: var(--dark-5);
+  font-size: .8rem;
+  letter-spacing: 1px;
+  margin: 0px 0px 0px 18px !important;
+  padding-top: 10px;
+}
+
+.nav-bar-tab-icon {
+  display: block;
+  width: 22px;
+  height: 22px;
+  margin-right: 8px;
+}
+
+
 </style>
 
 <style>

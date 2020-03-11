@@ -10,6 +10,14 @@
 export default {
   name: 'Artist',
   components: {
-  }
+  },
+  data: () => ({
+    
+  }),
+  methods: {
+    async getArtist() {
+
+    }
+  },
 }
 </script>

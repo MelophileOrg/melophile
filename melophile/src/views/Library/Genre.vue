@@ -10,6 +10,14 @@
 export default {
   name: 'Genre',
   components: {
-  }
+  },
+  data: () => ({
+    
+  }),
+  methods: {
+    async getGenre() {
+
+    }
+  },
 }
 </script>

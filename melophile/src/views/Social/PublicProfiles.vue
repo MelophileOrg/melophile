@@ -10,6 +10,14 @@
 export default {
   name: 'PublicProfiles',
   components: {
-  }
+  },
+  data: () => ({
+    
+  }),
+  methods: {
+    async getProfiles() {
+
+    }
+  },
 }
 </script>

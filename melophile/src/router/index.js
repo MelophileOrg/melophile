@@ -18,7 +18,7 @@ import Month from '../views/History/Month.vue'
 import Year from '../views/History/Year.vue'
 
 import Album from '../views/Library/Album.vue'
-import Analysis from '../views/Library/Analysis.vue'
+import Overview from '../views/Library/Overview.vue'
 import Artist from '../views/Library/Artist.vue'
 import Genre from '../views/Library/Genre.vue'
 import Library from '../views/Library/Library.vue'
@@ -36,7 +36,7 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'Home',
+    name: 'home',
     component: Home
   },
   {
@@ -100,9 +100,9 @@ const routes = [
     component: Library
   },
   {
-    path: '/library/analysis',
-    name: 'analysis',
-    component: Analysis
+    path: '/library/overview',
+    name: 'overview',
+    component: Overview
   },
   {
     path: '/album/:id',

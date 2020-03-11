@@ -10,6 +10,14 @@
 export default {
   name: 'TopPlayed',
   components: {
-  }
+  },
+  data: () => ({
+    
+  }),
+  methods: {
+    async getTopPlayed() {
+
+    }
+  },
 }
 </script>

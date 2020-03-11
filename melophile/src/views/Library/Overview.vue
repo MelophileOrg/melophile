@@ -1,5 +1,5 @@
 <template>
-  <div class="Analysis">
+  <div class="Overview">
 
   </div>
 </template>
@@ -8,8 +8,13 @@
 //import HelloWorld from '@/components/HelloWorld.vue'
 
 export default {
-  name: 'Analysis',
+  name: 'Overview',
   components: {
+  },
+  methods: {
+  },
+  created() {
+    
   }
 }
 </script>

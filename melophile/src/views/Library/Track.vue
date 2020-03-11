@@ -10,6 +10,14 @@
 export default {
   name: 'Track',
   components: {
-  }
+  },
+  data: () => ({
+    
+  }),
+  methods: {
+    async getTrack() {
+
+    }
+  },
 }
 </script>

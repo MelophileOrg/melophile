@@ -10,6 +10,14 @@
 export default {
   name: 'Discover',
   components: {
+  },
+  data: () => ({
+    
+  }),
+  methods: {
+    async recommends() {
+      
+    }
   }
 }
 </script>

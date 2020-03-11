@@ -10,6 +10,14 @@
 export default {
   name: 'Album',
   components: {
-  }
+  },
+  data: () => ({
+    
+  }),
+  methods: {
+    async getAlbum() {
+
+    }
+  },
 }
 </script>

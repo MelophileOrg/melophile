@@ -10,6 +10,11 @@
 export default {
   name: 'History',
   components: {
-  }
+  },
+  data: () => ({
+    
+  }),
+  methods: {
+  },
 }
 </script>

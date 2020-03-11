@@ -10,6 +10,14 @@
 export default {
   name: 'TopSaved',
   components: {
-  }
+  },
+  data: () => ({
+    
+  }),
+  methods: {
+    async getTopSaved() {
+
+    }
+  },
 }
 </script>

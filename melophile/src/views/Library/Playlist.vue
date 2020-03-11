@@ -10,6 +10,14 @@
 export default {
   name: 'Playlist',
   components: {
-  }
+  },
+  data: () => ({
+    
+  }),
+  methods: {
+    async getPlaylist() {
+
+    }
+  },
 }
 </script>

@@ -10,6 +10,14 @@
 export default {
   name: 'Profile',
   components: {
+  },
+  data: () => ({
+    
+  }),
+  methods: {
+    async getProfile() {
+
+    }
   }
 }
 </script>
