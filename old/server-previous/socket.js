@@ -46,6 +46,7 @@ var generateRandomString = function(length) {
     }
     return text;
 };
+let state = generateRandomString(16);
 
 // Variables
 let clients = [];
