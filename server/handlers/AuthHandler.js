@@ -1,5 +1,6 @@
 // Dependencies
 const express = require("express");
+const request = require("request");
 const querystring = require("querystring");
 const auth = require('../services/general/Authorization');
 let generateSpotifyWebAPI = require('../services/general/GenerateSpotifyWebAPI.js');
@@ -32,7 +33,34 @@ const state = stateGenerator(10);
  */
 router.get("/", auth.verifyToken, async (req, res) => {
     try {
-        console.log(req.token);
+        let spotifyAPI = await generateSpotifyWebAPI(req.token);
+        let me, error;
+        try {
+            let response = await spotifyAPI.getMe();
+            me = response.body;
+        } catch(e) {
+            error = e;
+        }
+        if (!error && me) {
+            // Familiar Face?
+            let spotifyID = req.userID;
+            let existingUser = await User.findOne({
+                spotifyID: spotifyID,
+            });
+            if (existingUser) {
+                // Welcome back.
+                login(existingUser, req.token, req.refresh, res);
+            } else {
+                return res.clearCookie('melophile-token').status(403).send({
+                    error: "Invalid user account."
+                });
+            }
+        } else if (error.statusCode == 401) {
+            refresh(req.refresh, res);
+        } else {
+            console.log(error);
+            return res.sendStatus(500);
+        }
     } catch (error) {
         console.log(error);
         return res.sendStatus(500);
@@ -48,7 +76,7 @@ router.get("/", auth.verifyToken, async (req, res) => {
 router.get("/login", async (req, res) => {
     try {
         const scopes = ['user-read-recently-played','user-top-read','user-library-read','user-read-email','playlist-read-private','playlist-modify-public','user-library-modify', 'user-modify-playback-state'];
-        return res.send('https://accounts.spotify.com/authorize?' + querystring.stringify({
+        return await res.send(await 'https://accounts.spotify.com/authorize?' + querystring.stringify({
             response_type: 'code',
             client_id: await keys.getSpotify().id,
             scope: scopes.join('%20'),
@@ -79,7 +107,7 @@ router.put("/callback", async (req, res) => {
             return res.sendStatus(500);
         // Preparations for Request
         let url = "https://accounts.spotify.com/api/token";
-        let headers = { 'Authorization': 'Basic ' + (new Buffer(await keys.getSpotify().id + ':' + await keys.getSpotify().secret).toString('base64'))};
+        let headers = { 'Authorization': 'Basic ' + (new Buffer.from(await keys.getSpotify().id + ':' + await keys.getSpotify().secret).toString('base64'))};
         let form = {
             code: code,
             redirect_uri: redirectUri,
@@ -91,12 +119,13 @@ router.put("/callback", async (req, res) => {
             // If OKAY
             if (!error && response.statusCode === 200) {
                 // Who is this.
-                let spotifyAPI = generateSpotifyWebAPI(body.access_token);
-                let me = spotifyAPI.getMe();
+                let spotifyAPI = await generateSpotifyWebAPI(body.access_token);
+                let response = await spotifyAPI.getMe();
+                let me = response.body;
                 // Familiar Face?
                 const existingUser = await User.findOne({
                     spotifyID: me.id,
-                    username: me.username,
+                    username: me.display_name,
                 });
                 if (!existingUser) {
                     // First time? Welcome!
@@ -164,7 +193,7 @@ let register = async (user, accessToken, refreshToken, res) => {
         }, "24h");
         let newUser = new User({
             spotifyID: user.id,
-            username: user.username,
+            username: user.display_name,
             images: user.images,
             tokens: [token],
         });
@@ -190,7 +219,7 @@ let register = async (user, accessToken, refreshToken, res) => {
 let refresh = async (refreshToken, res) => {
     try {
         let url = "https://accounts.spotify.com/api/token";
-        let headers = { 'Authorization': 'Basic ' + (new Buffer(keys.getSpotify().id + ':' + keys.getSpotify().secret).toString('base64')) };
+        let headers = { 'Authorization': 'Basic ' + (new Buffer.from(keys.getSpotify().id + ':' + keys.getSpotify().secret).toString('base64')) };
         let form = {
             grant_type: 'refresh_token',
             refresh_token: refreshToken
@@ -199,8 +228,9 @@ let refresh = async (refreshToken, res) => {
         request.post(authOptions, async function(error, response, body) {
             if (!error && response.statusCode === 200) {
                 // Who is this.
-                let spotifyAPI = generateSpotifyWebAPI(body.access_token);
-                let me = spotifyAPI.getMe();
+                let spotifyAPI = await generateSpotifyWebAPI(body.access_token);
+                let response = await spotifyAPI.getMe();
+                let me = response.body;
                 // Familiar Face?
                 const existingUser = await User.findOne({
                     spotifyID: me.id,

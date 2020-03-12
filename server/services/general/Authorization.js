@@ -33,9 +33,8 @@ let verifyToken = (req, res, next) => {
     try {
         const decoded = jwt.verify(token, key.getServerSecret());
         req.userID = decoded.spotifyID;
-        req.token = token;
-        console.log("TOKEN");
-        console.log(token);
+        req.token = decoded.accessToken;
+        req.refresh = decoded.refreshToken;
         next();
     } catch(error) {
         console.log(error);

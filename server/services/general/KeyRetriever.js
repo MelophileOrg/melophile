@@ -1,5 +1,5 @@
 // Dependencies
-let dotenv = require('dotenv');
+require('dotenv').config();
 /**
  * Key Retriever
  * Accesses keys from .env
@@ -9,7 +9,6 @@ let dotenv = require('dotenv');
 class KeyRetriever {
     // Retrieve from .env
     constructor() {
-        dotenv.config();
         this.spotify = {
             id: process.env.spotifyId,
             secret: process.env.spotifySecret,

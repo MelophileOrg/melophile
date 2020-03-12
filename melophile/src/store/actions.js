@@ -26,7 +26,8 @@ let login = async (context) => {
 let callback = async (context, payload) => {
     try {
         let response = await axios.put('/api/auth/callback', payload);
-
+        console.log(response.data);
+        context.commit('setUser', response.data);
     } catch(error) {
         console.log(error);
         return;

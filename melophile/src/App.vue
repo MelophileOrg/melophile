@@ -16,11 +16,7 @@
       <p class="melophile-title">melophile</p>
       <v-app-bar-nav-icon v-if="windowSize.x < 1264" @click.stop="closeDrawer"/>
       <v-spacer></v-spacer>
-      <v-btn href="https://github.com/vuetifyjs/vuetify/releases/latest" target="_blank" text>
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
-      
+      <v-btn text v-if="!user" @click="login">Login with Spotify</v-btn>
     </v-app-bar>
 
     <v-content>
@@ -73,8 +69,13 @@ export default {
     },
     login() {
       this.$store.dispatch('login');
-    }
+    },
   }, 
+  computed: {
+    user() {
+      return this.$store.state.user;
+    },
+  },
   created() {
     this.$store.dispatch('getUser');
   }
