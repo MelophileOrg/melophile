@@ -46,7 +46,7 @@ Think [Spotify Wrapped](https://open.spotify.com/genre/2019-page) with a greater
     Your Library Overview
 </h1>
 
-Your Library Overview contains data on `your library as a whole`:
+Your Library Overview contains data on **your library as a whole**:
 - Number of Tracks, Artists, Genres, Playlists
 - Timeline of when you liked tracks.
 - Top Played Tracks (Top 5)
@@ -68,7 +68,7 @@ Your Library Overview contains data on `your library as a whole`:
     - Speech Based (Podcasts)
 - Percent of tracks in Major Key vs Minor
 
-This data is shareable and `updates upon request`. 
+This data is shareable and **updates upon request**. 
 
 Your overview is first generated on your first login and takes some time depending on how large your library is. The application is requesting every song, every track, every playlist in order to generate this data.
 
@@ -77,13 +77,13 @@ Your overview is first generated on your first login and takes some time dependi
     Your Top Charts
 </h1>
 
-Your Top Charts are separated into three categories: `Top Played`, `Top Saved` and `Extremes`.
+Your Top Charts are separated into three categories: **Top Played**, **Top Saved** and **Extremes**.
 
-The `save button` allows you to create a `Playlist` for a chart of your choice.
+The **save button** allows you to create a **Playlist** for a chart of your choice.
 
 ## Top Played
 
-Top played looks at `listening time`. These lists are provided by [Spotify's API](https://developer.spotify.com/documentation/web-api/).
+Top played looks at **listening time**. These lists are provided by [Spotify's API](https://developer.spotify.com/documentation/web-api/).
 
 You can choose to view your top played:
 - Tracks
@@ -96,7 +96,7 @@ And clarify the scope to:
 
 ## Top Saved
 
-Top saved looks at `how many tracks you have saved under a given artist or genre`. These lists are generated from processing your library.
+Top saved looks at **how many tracks you have saved under a given artist or genre**. These lists are generated from processing your library.
 
 You can choose to view your top saved:
 - Artists
@@ -104,7 +104,7 @@ You can choose to view your top saved:
 
 ## Extremes
 
-Extremes sort your library by either the `most` or `least` of the following categories:
+Extremes sort your library by either the **most** or **least** of the following categories:
 - Happy
 - Danceable
 - Energetic
@@ -126,15 +126,15 @@ Your [Library Overview](#overview) and [Top Charts](#charts) are shareable via l
 
 The hope is people will have access to each other's top played and discover new music through the best of each other's libraries!
 
-Should you wish to share your data, a button on your [Library Overview](#overview) page, or the tab `My Profile` will allow you to select items you wish to be shared.
+Should you wish to share your data, a button on your [Library Overview](#overview) page, or the tab **My Profile** will allow you to select items you wish to be shared.
 
 You have two choices for sharing:
 - Public
 - By Link
 
-`Public` will be featured on the `Public Profiles` page for all to see. 
+**Public** will be featured on the **Public Profiles** page for all to see. 
 
-`By Link` will only be accessable for those who have your specific link. They are public, but you'd have to know the exact link.
+**By Link** will only be accessable for those who have your specific link. They are public, but you'd have to know the exact link.
 
 I hope you consider making your profile public!
 
@@ -143,13 +143,13 @@ I hope you consider making your profile public!
     Discovery Tool
 </h1>
 
-The discovery tool is an extension of the already existing `Radio` tool from Spotify with more options.
+The discovery tool is an extension of the already existing **Radio** tool from Spotify with more options.
 
-To start, select `up to five` artists or tracks you'd like to find simular tracks to.
+To start, select **up to five** artists or tracks you'd like to find simular tracks to.
 
 Recommends will be listed, however you can apply advanced filters.
 
-For each of the listed traits, you can specify a `target value` or `minimum` and `maximum`:
+For each of the listed traits, you can specify a **target value** or **minimum** and **maximum**:
 - Happiness
 - Danceability
 - Energy
@@ -167,16 +167,16 @@ This allows you to tailor your radios to requests such as:
 
 Keep in mind the further you filter results the harder of a time Spotify has finding your exact needs, and in some cases no results will be returned.
 
-Keep filters simple and use `target value` over `minimum` and `maximum` for best results.
+Keep filters simple and use **target value** over **minimum** and **maximum** for best results.
 
-The `save button` allows you to create a `Playlist` for a list of recommends.
+The **save button** allows you to create a **Playlist** for a list of recommends.
 
 <h1 style="display: flex; align-items: center" id="history">
     <img style="margin-right: 20px; margin-top: 10px" src="./documentation/images/history-icon.png">
     Your History
 </h1>
 
-Your History includes [Library Overview](#overview) data specific to specified `years` or `months`. 
+Your History includes [Library Overview](#overview) data specific to specified **years** or **months**. 
 
 General data once again includes:
 - Timeline of when you liked tracks.
@@ -187,9 +187,9 @@ However additionally included:
 
 Meaning a timeline showing you what genres / artist you were most into and when.
 
-It should be noted, [Spotify's API](https://developer.spotify.com/documentation/web-api/) does not provide `listening time` data besides their `top played` endpoint. 
+It should be noted, [Spotify's API](https://developer.spotify.com/documentation/web-api/) does not provide **listening time** data besides their **top played** endpoint. 
 
-That means all this data is derived from `what you liked (added) in a given time period`.
+That means all this data is derived from **what you liked (added) in a given time period**.
 
 If you spent a whole month listening to a song you added years ago, there's no way to know that. This data is only relevent to what you were adding to your libary.
 
@@ -218,14 +218,14 @@ These will include:
     - Speech Based (Podcasts)
 - Percent of tracks in Major Key vs Minor
 
-The `save button` allows you to create a `Playlist` for a month or year of your choice, or create playlists for every month or year.
+The **save button** allows you to create a **Playlist** for a month or year of your choice, or create playlists for every month or year.
 
 <h1 style="display: flex; align-items: center" id="track">
     <img style="margin-right: 20px; margin-top: 10px" src="./documentation/images/track-icon.png">
     Track Analysis
 </h1>
 
-Any `Track` shown on melophile.org can be selected to take you to it's analysis.
+Any **Track** shown on melophile.org can be selected to take you to it's analysis.
 
 Track Analysis has multiple tabs with different information:
 - Overview
@@ -234,7 +234,7 @@ Track Analysis has multiple tabs with different information:
 
 ## Overview
 
-Overview focuses on `general track data`.
+Overview focuses on **general track data**.
 
 Information displayed includes:
 - Album Data
@@ -246,7 +246,7 @@ Information displayed includes:
 
 ## Analysis
 
-Analysis focuses on `audio data from the track`.
+Analysis focuses on **audio data from the track**.
 
 Information displayed includes:
 - Visualzation of Audio Wave.
@@ -266,10 +266,10 @@ Information displayed includes:
     
 ## My Relationship
 
-My Relationship focuses on `how this track compairs or fits into your library`.
+My Relationship focuses on **how this track compairs or fits into your library**.
 
 Information displayed includes:
-- Compaired to your library what `percentile` it falls under in the following categories:
+- Compaired to your library what **percentile** it falls under in the following categories:
     - Happiness
     - Danceability
     - Energy
@@ -283,7 +283,7 @@ Information displayed includes:
     Artist Analysis
 </h1>
 
-Any `Artist` shown on melophile.org can be selected to take you to it's analysis.
+Any **Artist** shown on melophile.org can be selected to take you to it's analysis.
 
 Artist Analysis has multiple tabs with different information:
 - Overview
@@ -292,7 +292,7 @@ Artist Analysis has multiple tabs with different information:
 
 ## Overview
 
-Overview focuses on `general artist data`.
+Overview focuses on **general artist data**.
 
 Information displayed includes:
 - Populartity
@@ -314,7 +314,7 @@ Information displayed includes:
 
 ## My Relationship
 
-My Relationship focuses on `your relationship with this artist`.
+My Relationship focuses on **your relationship with this artist**.
 
 Information displayed includes:
 - When you first liked a track from them.
@@ -335,7 +335,7 @@ Information displayed includes:
 
 ## Tracks
 
-Tracks is a `list of tracks you've liked from them`.
+Tracks is a **list of tracks you've liked from them**.
 
 Sortable by:
 - Added Date
@@ -349,7 +349,7 @@ Sortable by:
     Playlist Analysis
 </h1>
 
-Any `Playlist` shown on melophile.org can be selected to take you to it's analysis.
+Any **Playlist** shown on melophile.org can be selected to take you to it's analysis.
 
 Playlist Analysis has multiple tabs with different information:
 - Overview
@@ -357,7 +357,7 @@ Playlist Analysis has multiple tabs with different information:
 
 ## Overview
 
-Overview focuses on `general playlist data`.
+Overview focuses on **general playlist data**.
 
 Information displayed includes:
 - Owner Data
@@ -380,7 +380,7 @@ Information displayed includes:
 
 ## Tracks
 
-Tracks is a `list of tracks you've liked from them`.
+Tracks is a **list of tracks you've liked from them**.
 
 Sortable by:
 - Happiness
@@ -389,18 +389,18 @@ Sortable by:
 - Popularity
 - Added Date
 
-`Changes can be applied directly to the playlist` should you wish to reorder them.
+**Changes can be applied directly to the playlist** should you wish to reorder them.
 
 <h1 style="display: flex; align-items: center" id="genre">
     <img style="margin-right: 20px; margin-top: 10px" src="./documentation/images/genre-icon.png">
     Genre Analysis
 </h1>
 
-Any `Genre` shown on melophile.org can be selected to take you to it's analysis.
+Any **Genre** shown on melophile.org can be selected to take you to it's analysis.
 
-It should be noted genres are assigned to `Artists` and therefore as assumed for all of their tracks. Spotify does not give `Tracks` genres.
+It should be noted genres are assigned to **Artists** and therefore as assumed for all of their tracks. Spotify does not give **Tracks** genres.
 
-The `save button` allows you to create a `Playlist` for a genre.
+The **save button** allows you to create a **Playlist** for a genre.
 
 Genre Analysis has multiple tabs with different information:
 - Overview
@@ -409,7 +409,7 @@ Genre Analysis has multiple tabs with different information:
 
 ## Overview
 
-Overview focuses on `general genre data`.
+Overview focuses on **general genre data**.
 
 Information displayed includes:
 - Number of Tracks and Artists
@@ -423,7 +423,7 @@ Information displayed includes:
 
 ## Tracks
 
-Tracks is a `list of tracks you've liked from this genre`.
+Tracks is a **list of tracks you've liked from this genre**.
 
 Sortable by:
 - Happiness
@@ -433,7 +433,7 @@ Sortable by:
 
 ## Artists
 
-Artists is a `list of artists you've liked from this genre`.
+Artists is a **list of artists you've liked from this genre**.
 
 Sortable by:
 - Number of tracks saved.
@@ -443,7 +443,7 @@ Sortable by:
     Album Analysis
 </h1>
 
-Any `Album` shown on melophile.org can be selected to take you to it's analysis.
+Any **Album** shown on melophile.org can be selected to take you to it's analysis.
 
 Album Analysis has multiple tabs with different information:
 - Overview
@@ -451,7 +451,7 @@ Album Analysis has multiple tabs with different information:
 
 ## Overview
 
-Overview focuses on `general album data`.
+Overview focuses on **general album data**.
 
 Information displayed includes:
 - Artist Data
@@ -471,7 +471,7 @@ Information displayed includes:
 
 ## Tracks
 
-Tracks is a `list of tracks from the album`.
+Tracks is a **list of tracks from the album**.
 
 Sortable by:
 - Offical Order
@@ -505,7 +505,7 @@ For additional information [visit the markdown](https://github.com/andyruwruw/me
 
 # Server Design
 
-The server is designed using `node.js`. 
+The server is designed using **node.js**. 
 
 Analysis and data requests are made to an [express](https://expressjs.com/) Rest API.
 
