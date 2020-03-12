@@ -1,4 +1,10 @@
-// Generates Random String
+/**
+ * Stage Generator
+ * Creates random string.
+ * 
+ * @param length Length of random string.
+ * @returns Random String
+ */
 var generateRandomString = function(length) {
     var text = '';
     var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -8,6 +14,4 @@ var generateRandomString = function(length) {
     return text;
 };
 // Export
-module.exports = {
-    generateRandomString: generateRandomString,
-}
+module.exports = generateRandomString;

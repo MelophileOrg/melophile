@@ -66,11 +66,17 @@ export default {
       return images('./' + pic + ".svg");
     },
     route() {
-      console.log("route)");
+      console.log("route");
     },
     onResize() {
       this.windowSize = {x: window.innerWidth, y: window.innerHeight};
     },
+    login() {
+      this.$store.dispatch('login');
+    }
+  }, 
+  created() {
+    this.$store.dispatch('getUser');
   }
 };
 </script>

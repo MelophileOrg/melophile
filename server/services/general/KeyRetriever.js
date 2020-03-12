@@ -1,6 +1,11 @@
 // Dependencies
 let dotenv = require('dotenv');
-// Key Retriever
+/**
+ * Key Retriever
+ * Accesses keys from .env
+ * 
+ * @returns Class
+ */
 class KeyRetriever {
     // Retrieve from .env
     constructor() {
@@ -16,6 +21,7 @@ class KeyRetriever {
         this.musixmatch = {
             key: process.env.musixmatchKey,
         }
+        this.secret = process.env.secret;
     }
     // Retrieve Spotify Application Keys
     getSpotify() {
@@ -29,6 +35,12 @@ class KeyRetriever {
     getMusixmatch() {
         return this.musixmatch;
     }
+
+    getServerSecret() {
+        return this.secret;
+    }
 }
+// Instance
+let keys = new KeyRetriever();
 // Export
-module.exports = KeyRetriever;
+module.exports = keys;
