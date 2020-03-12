@@ -501,7 +501,7 @@ A peek into how the site was built and how it works.
 
 melophile.org is designed using [Vue CLI](https://cli.vuejs.org/), a front-end framework. Additional components are used from [Vuetify](https://vuetifyjs.com/en/).
 
-For additional information [visit the markdown](./documenation/FRONTEND.md).
+For additional information [visit the markdown](https://github.com/andyruwruw/melophile/blob/master/documentation/FRONTEND.md).
 
 # Server Design
 
@@ -513,6 +513,6 @@ Processing of the user's library is dealt with by a [web-socket server](https://
 
 Data is saved to a [Mongo Database](https://www.mongodb.com/) to limit the amount of requests required to [Spotify's API](https://developer.spotify.com/documentation/web-api/).
 
-For additional information [visit the markdown](./documenation/BACKEND.md).
+For additional information [visit the markdown](https://github.com/andyruwruw/melophile/blob/master/documentation/FRONTEND.md).
 
 

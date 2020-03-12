@@ -9,3 +9,5 @@
     <img src="https://img.shields.io/badge/dependency-vue--socket.io--extended-blue">
     <img src="https://img.shields.io/badge/dependency-socket.io--client-blue">
 </p>
+
+# Documentation
