@@ -520,5 +520,7 @@ For additional information [visit the markdown](https://github.com/andyruwruw/me
 
 ## Hope you enjoy!
 
-<img src="https://media.giphy.com/media/3ndAvMC5LFPNMCzq7m/giphy.gif"/>
+<img src="./documentation/images/cutegifthing.gif"/>
+
+
 
