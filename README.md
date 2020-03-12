@@ -6,7 +6,7 @@
 
 <p align="center" style="margin: 0px auto; margin-top: 15px; max-width: 600px">
     <a href="https://melophile.org"><img src="https://img.shields.io/website?down_color=ff4b12&down_message=in%20production&up_message=live&url=https%3A%2F%2Fmelophile.org"></a>
-    <a href="#"><img src="https://img.shields.io/github/commit-activity/m/andyruwruw/melophile?color=0781ff"/></a>
+    <a href="#"><img src="https://img.shields.io/github/commit-activity/w/andyruwruw/melophile?color=0781ff"/></a>
     <a href="https://melophile.org"><img src="https://img.shields.io/github/last-commit/andyruwruw/melophile?color=%230781ff"></a>
 </p>
 <p align="center">
@@ -518,9 +518,11 @@ For additional information [visit the markdown](https://github.com/andyruwruw/me
 
 ---
 
-## Hope you enjoy!
+<h1 align="center"> Hope you enjoy!</h1>
+<p align="center">
+<img width="400px" src="./documentation/images/gif.gif"/>
+</p>
 
-<img width="500px" src="./documentation/images/gif.gif"/>
-
+---
 
 
