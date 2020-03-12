@@ -1,2 +1,6 @@
 .DS_Store
+
 old
+
+server/node_modules
+server/.env
