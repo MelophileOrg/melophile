@@ -1,7 +1,9 @@
 <div align="center">
-<image src="./documentation/images/title.png"/><br/>
-Web application for analyzing your music library using Spotify's API.
+    <image  align="center"src="./documentation/images/title.png"/><br/>
 </div>
+
+<p align="center">Web application for analyzing your music library using Spotify's API.</p>
+
 <p align="center" style="margin: 0px auto; margin-top: 15px; max-width: 600px">
     <a href="https://melophile.org"><img src="https://img.shields.io/website?down_color=ff4b12&down_message=in%20production&up_message=live&url=https%3A%2F%2Fmelophile.org"></a>
     <a href="#"><img src="https://img.shields.io/github/commit-activity/m/andyruwruw/melophile?color=0781ff"/></a>
