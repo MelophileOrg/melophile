@@ -520,7 +520,7 @@ For additional information [visit the markdown](https://github.com/andyruwruw/me
 
 ## Hope you enjoy!
 
-<img src="./documentation/images/cutegifthing.gif"/>
+<img width="500px" src="./documentation/images/gif.gif"/>
 
 
 
