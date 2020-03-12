@@ -1,4 +1,4 @@
-// Other Affiliated DAOs
+// Associated DAOs
 let TrackDAO = require('./TrackDAO.js');
 let ArtistDAO = require('./ArtistDAO.js');
 let GenreDAO = require('./GenreDAO.js');

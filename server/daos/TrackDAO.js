@@ -1,7 +1,10 @@
+// Dependencies
 const mongoose = require('mongoose');
 
-let TrackSchema = require('../schemas/TrackSchema.js');
+// Models
+let Track = require('../models/Track.js');
 
+// Associated DAOs
 let ArtistDAO = require('./ArtistDAO.js');
 let AlbumDAO = require('./AlbumDAO.js');
 

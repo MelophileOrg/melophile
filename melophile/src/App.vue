@@ -45,7 +45,7 @@ export default {
       {text: "Extremes", type: "link", route: "discover", image: "extremes"},
       {text: "Your Library", type: "category"},
       {text: "Overview", type: "link", route: "discover", image: "overview"},
-      {text: "Library", type: "link", route: "library", image: "library-2"},
+      {text: "Library", type: "link", route: "library", image: "library"},
       {text: "History", type: "link", route: "history", image: "history"},
       {text: "Social", type: "category"},
       {text: "My Profile", type: "link", route: "myprofile", image: "profile"},

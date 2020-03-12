@@ -1,4 +1,4 @@
-// Other Affiliated DAOs
+// Associated DAOs
 let ArtistDAO = require('./ArtistDAO.js');
 
 class GenreDAO {

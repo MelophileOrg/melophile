@@ -1,6 +1,10 @@
-// Model Schema
-let PlaylistSchema = require('../schemas/PlaylistSchema.js');
-// Other Affiliated DAOs
+// Dependencies
+const mongoose = require('mongoose');
+
+// Models
+let Playlist = require('../models/Playlist.js');
+
+// Associated DAOs
 let TrackDAO = require('./TrackDAO.js');
 
 class PlaylistDAO {

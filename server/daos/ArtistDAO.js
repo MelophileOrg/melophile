@@ -1,12 +1,15 @@
+// Dependencies
 const mongoose = require('mongoose');
 
-let ArtistSchema = require('../schemas/ArtistSchema');
+// Models
+let Artist = require('../models/Artist.js');
 
+// Associated DAOs
 let TrackDAO = require('./TrackDAO.js');
 let AlbumDAO = require('./AlbumDAO.js');
 let GenreDAO = require('./GenreDAO.js');
 
-
+// Artist DAO
 class ArtistDAO {
     constructor(id, data) {
         this._id = (id ? id : null);
