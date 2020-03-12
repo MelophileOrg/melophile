@@ -516,3 +516,9 @@ Data is saved to a [Mongo Database](https://www.mongodb.com/) to limit the amoun
 For additional information [visit the markdown](https://github.com/andyruwruw/melophile/blob/master/documentation/FRONTEND.md).
 
 
+---
+
+## Hope you enjoy!
+
+<img src="https://media.giphy.com/media/3ndAvMC5LFPNMCzq7m/giphy.gif"/>
+
