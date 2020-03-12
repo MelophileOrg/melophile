@@ -1,5 +1,6 @@
 // Dependencies
 const mongoose = require('mongoose');
+
 // Playlist Schema
 const schema = new mongoose.Schema({
     _id: String,
@@ -9,6 +10,7 @@ const schema = new mongoose.Schema({
     images: Array,
     public: Boolean,
     tracks: Object,
+
     key: Number,
     mode: Number,
     tempo: Number,
@@ -21,7 +23,9 @@ const schema = new mongoose.Schema({
     loudness: Number,
     speechiness: Number,
 });
+
 // Playlist Object
 const Playlist = mongoose.model('Playlist', schema);
+
 // Export 
 module.exports = Playlist;

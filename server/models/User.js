@@ -1,6 +1,7 @@
 // Dependencies
 const mongoose = require('mongoose');
 const auth = require('../services/general/Authorization');
+let generateSpotifyWebAPI = require('../services/general/GenerateSpotifyWebAPI.js');
 
 // User Schema
 const schema = new mongoose.Schema({
@@ -31,15 +32,28 @@ schema.methods.removeOldTokens = function() {
 }
 
 schema.statics.verify = async function(req, res, next) {
-  const user = await User.findOne({
-    _id: req.userID
-  });
-  if (!user || !user.tokens.includes(req.token))
-    return res.clearCookie('melophile-token').status(403).send({
+  try {
+    req.spotifyAPI = await generateSpotifyWebAPI(req.authToken);
+    let response = await req.spotifyAPI.getMe();
+    let me = response.body;
+    if (me.id != req.userID)
+      return res.clearCookie('melophile-token').status(403).send({
+        error: "Invalid user account."
+      });
+    const user = await User.findOne({
+      spotifyID: req.userID
+    });
+    if (!user || !user.tokens.includes(req.token))
+      return res.clearCookie('melophile-token').status(403).send({
+        error: "Invalid user account."
+      });
+    req.user = user;
+    next();
+  } catch(e) {
+    return res.clearCookie('melophile-token').status(500).send({
       error: "Invalid user account."
     });
-  req.user = user;
-  next();
+  }
 }
 
 // User Object

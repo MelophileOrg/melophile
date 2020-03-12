@@ -17,10 +17,11 @@
     "fs": "0.0.1-security",
     "https": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.9.3",
+    "mongoose": "^5.9.4",
     "querystring": "^0.2.0",
     "request": "^2.88.2",
     "socket.io": "^2.3.0",
-    "spotify-web-api-node": "^4.0.0"
+    "spotify-web-api-node": "^4.0.0",
+    "uuid": "^7.0.2"
   }
 }

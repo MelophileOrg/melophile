@@ -1,5 +1,6 @@
 // Dependencies
 const mongoose = require('mongoose');
+
 // Track Schema
 const schema = new mongoose.Schema({
   _id: String,
@@ -20,7 +21,9 @@ const schema = new mongoose.Schema({
   speechiness: Number,
   popularity: Number,
 });
+
 // Track Object
 const Track = mongoose.model('Track', schema);
+
 // Export
 module.exports = Track;

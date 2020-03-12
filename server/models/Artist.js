@@ -1,5 +1,6 @@
 // Dependencies
 const mongoose = require('mongoose');
+
 // Artist Schema
 const schema = new mongoose.Schema({
   _id: String,
@@ -8,7 +9,9 @@ const schema = new mongoose.Schema({
   genres: Array,
   popularity: Number,
 });
+
 // Artist Object
 const Artist = mongoose.model('Artist', schema);
+
 // Export
 module.exports = Artist;

@@ -1,10 +1,13 @@
 // Dependencies
 const mongoose = require('mongoose');
+let User = require('./User');
 
 // Profile Schema
 const schema = new mongoose.Schema({
-  _id: String,
-  username: String,
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User'
+  },
   tokens: [],
   images: Array,
   tracks: Object, // id: {dateAdded: Number}
@@ -22,7 +25,10 @@ const schema = new mongoose.Schema({
   audioFeatures: Object,
   history: Object,
   privacy: Object,
-  updated: Date,
+  updated: {
+    type: Date,
+    default: Date.now
+  },
 });
 
 // Profile Object

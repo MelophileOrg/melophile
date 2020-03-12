@@ -1,6 +1,7 @@
 // Dependencies
 const express = require("express");
 const request = require("request");
+let mongoose = require('mongoose');
 const querystring = require("querystring");
 const auth = require('../services/general/Authorization');
 let generateSpotifyWebAPI = require('../services/general/GenerateSpotifyWebAPI.js');
@@ -13,13 +14,11 @@ const keys = require("../services/general/KeyRetriever.js");
 const DEV = true;
 let redirectUri = "https://melophile.org/redirect/";
 if (DEV) redirectUri = "http://localhost:8080/redirect/";
+import { v4 as uuidv4 } from 'uuid';
+const state = uuidv4();
 
 // User Model
 let User = require('../models/User.js');
-
-// Helper Functions
-const stateGenerator = require("../services/general/StateGenerator.js");
-const state = stateGenerator(10);
 
 /////////////////////////////////////////////////////
 // Endpoints ////////////////////////////////////////
@@ -31,9 +30,9 @@ const state = stateGenerator(10);
  * 
  * @return User object and cookie
  */
-router.get("/", auth.verifyToken, async (req, res) => {
+router.get("/", auth.verifyToken, User.verify, async (req, res) => {
     try {
-        let spotifyAPI = await generateSpotifyWebAPI(req.token);
+        let spotifyAPI = await generateSpotifyWebAPI(req.authToken);
         let me, error;
         try {
             let response = await spotifyAPI.getMe();
@@ -49,14 +48,14 @@ router.get("/", auth.verifyToken, async (req, res) => {
             });
             if (existingUser) {
                 // Welcome back.
-                login(existingUser, req.token, req.refresh, res);
+                login(existingUser, req.authToken, req.refreshToken, res);
             } else {
                 return res.clearCookie('melophile-token').status(403).send({
                     error: "Invalid user account."
                 });
             }
         } else if (error.statusCode == 401) {
-            refresh(req.refresh, res);
+            refresh(req.refreshToken, res);
         } else {
             console.log(error);
             return res.sendStatus(500);
@@ -88,6 +87,27 @@ router.get("/login", async (req, res) => {
         console.log(error);
         return res.sendStatus(500);
     }
+});
+
+/**
+ * Logout User
+ * Logs user out from broweser.
+ * 
+ * @param jsonwebtoken a valid logged in web tokin
+ * @returns 200 Status delete token
+ */
+router.delete("/", auth.verifyToken, User.verify, async (req, res) => {
+    const user = await User.findOne({
+      spotifyID: req.userID
+    });
+    if (!user)
+      return res.clearCookie('melophile-token').status(403).send({
+        error: "Invalid user account."
+      });
+    user.removeToken(req.token);
+    await user.save();
+    res.clearCookie('melophile-token');
+    res.sendStatus(200);
 });
 
 /**
@@ -254,6 +274,7 @@ let refresh = async (refreshToken, res) => {
     }
 }
 
+// Export
 module.exports = {
     routes: router,
 }

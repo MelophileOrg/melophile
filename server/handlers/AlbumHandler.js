@@ -1,5 +1,6 @@
 // Dependencies
 const express = require("express");
+let mongoose = require('mongoose');
 const router = express.Router();
 
 // Model's Data Access Objects (DAO)
@@ -24,11 +25,10 @@ let generateSpotifyWebAPI = require('../services/general/GenerateSpotifyWebAPI.j
  * @param token Spotify Authorization token.
  * @return Object with Album Properties.
  */
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth.verify, User.verify, async (req, res) => {
     try {
-        let spotifyAPI = await generateSpotifyWebAPI(req.body.token);
         let album = await new AlbumDAO(req.params.id);
-        return res.send(await album.getData(spotifyAPI));
+        return res.send(await album.getData(req.spotifyAPI));
     } catch (error) {
         console.log(error);
         return res.sendStatus(500);
