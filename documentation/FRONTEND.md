@@ -11,3 +11,18 @@
 </p>
 
 # Documentation
+- [Views](#Views)
+    - Home
+    - About Pages
+    - Charts Pages
+    - History Pages
+    - Library Pages
+    - Analysis Pages
+    - Search Pages
+    - Social Pages
+- [Components](#Components)
+- [Router](#Router)
+- [Vuex](#Vuex)
+    - [State](#State)
+    - [Actions](#Actions)
+    - [Mutations](#Mutations)

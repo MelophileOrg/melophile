@@ -1,5 +1,5 @@
 <div align="center">
-    <image  align="center"src="./documentation/images/title.png"/><br/>
+    <image align="center"src="./documentation/images/title.png"/><br/>
 </div>
 
 <p align="center">Web application for analyzing your music library using Spotify's API.</p>
@@ -24,9 +24,9 @@ Sharing and making your profile public allows users to discover new music throug
 Think [Spotify Wrapped](https://open.spotify.com/genre/2019-page) with a greater emphasis on your library as a whole. 
 
 # Documentation
-- [Available Services](#Available-Services)
-- [Development Updates](#Development-Updates)
-- [Code Structure](#Code-Structure)
+- [Available Services](#available-services)
+- [Development Updates](#development-updates)
+- [Code Structure](#code-structure)
 
 # Available Services
 
@@ -494,8 +494,8 @@ Sortable by:
 # Code Structure
 
 A peek into how the site was built and how it works.
-- [Front-End](#melophile.org)
-- [Back-end](#Server-Design)
+- [Front-End](#melophileorg)
+- [Back-end](#server-design)
 
 # melophile.org
 
@@ -513,7 +513,7 @@ Processing of the user's library is dealt with by a [web-socket server](https://
 
 Data is saved to a [Mongo Database](https://www.mongodb.com/) to limit the amount of requests required to [Spotify's API](https://developer.spotify.com/documentation/web-api/).
 
-For additional information [visit the markdown](https://github.com/andyruwruw/melophile/blob/master/documentation/FRONTEND.md).
+For additional information [visit the markdown](https://github.com/andyruwruw/melophile/blob/master/documentation/BACKEND.md).
 
 
 ---

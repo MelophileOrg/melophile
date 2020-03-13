@@ -8,8 +8,6 @@ const schema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'User'
   },
-  tokens: [],
-  images: Array,
   tracks: Object, // id: {dateAdded: Number}
   artists: Object, // id: [trackIDs]
   genres: Object, // id: [artistIDs]
@@ -22,9 +20,15 @@ const schema = new mongoose.Schema({
     artists: Array, // artistIDs
     genres: Array, // genreIDs
   },
-  audioFeatures: Object,
-  history: Object,
-  privacy: Object,
+  audioFeatures: {
+
+  },
+  history: {
+
+  },
+  privacy: {
+    
+  },
   updated: {
     type: Date,
     default: Date.now

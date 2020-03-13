@@ -11,16 +11,16 @@
 </p>
 
 # Documentation
-- [Analysis Server](#Analysis-Server)
+- [Analysis Server](#analysis-server)
     - [General](#general-analysis)
-    - [Endpoints](#Endpoints)
-- [Process Server](#Process-Server)
+    - [Endpoints](#endpoints)
+- [Process Server](#process-server)
     - [General](#general-process)
-    - [Event Listeners](#Event-Listeners)
+    - [Event Listeners](#event-listeners)
 
 # Analysis Server
 - [General](#general-analysis)
-- [Endpoints](#Endpoints)
+- [Endpoints](#endpoints)
 
 <h1 id="general-analysis">General</h1>
 
@@ -85,49 +85,80 @@ Data is saved to a [Mongo Database](https://www.mongodb.com/) to limit the amoun
     - Album Genres
 - Profile
 
+# Authorization Handler
 
 # Automatic Login
-## **GET /api/auth/**
+```
+GET /api/auth/
+```
 
 # Login
-## **GET /api/auth/login**
+```
+GET /api/auth/login
+```
 
 # Login Callback
-## **GET /api/auth/callback**
+```
+GET /api/auth/callback
+```
 
 # My Stats
-## **GET /api/me/stats**
+```
+GET /api/me/stats
+```
+
+# Me Handler
 
 # My Features
-## **GET /api/me/features**
+```
+GET /api/me/features
+```
 
 # My Added Timeline
-## **GET /api/me/history/added**
+```
+GET /api/me/history/added
+```
 
 # My Top Played Tracks Chart
-## **GET /api/me/chart/played/tracks/:time_range**
+```
+GET /api/me/chart/played/tracks/:time_range
+```
 
 # My Top Played Artists Chart
-## **GET /api/me/chart/played/artists/:time_range**
+```
+GET /api/me/chart/played/artists/:time_range
+```
 
 # My Top Saved Artists Chart
-## **GET /api/me/chart/saved/artists**
+```
+GET /api/me/chart/saved/artists
+```
 
 # My Top Saved Genres Chart
-## **GET /api/me/chart/saved/genres**
+```
+GET /api/me/chart/saved/genres
+```
 
 # My Extremes Chart
-## **GET /api/me/chart/extreme/:feature/:sort**
+```
+GET /api/me/chart/extreme/:feature/:sort
+```
 
 # My Spotlights
-## **GET /api/me/spotlight**
+```
+GET /api/me/spotlight
+```
+
+# Track Handler
 
 # Track Base Data
-## **GET /api/track/:id**
+```
+GET /api/track/:id
+```
 
 # Process Server
 - [General](#general-process)
-- [Event Listeners](#Event-Listeners)
+- [Event Listeners](#event-listeners)
 
 <h1 id="general-process">General</h1>
 

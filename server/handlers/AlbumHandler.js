@@ -10,9 +10,6 @@ let PlaylistDAO = require("../daos/PlaylistDAO.js");
 let AlbumDAO = require("../daos/AlbumDAO.js");
 let UserDAO = require("../daos/UserDAO.js");
 
-// Helper Functions
-let generateSpotifyWebAPI = require('../services/general/GenerateSpotifyWebAPI.js');
-
 /////////////////////////////////////////////////////
 // Endpoints ////////////////////////////////////////
 /////////////////////////////////////////////////////
