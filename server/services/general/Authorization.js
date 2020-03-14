@@ -27,9 +27,7 @@ let generateToken = (data, expires) => {
  */
 let verifyToken = (req, res, next) => {
     const token = req.cookies["melophile-token"];
-    if (!token) return res.status(403).send({
-        message: "No token provided."
-    });
+    if (!token) return res.status(204).send("No Token Provided");
     try {
         const decoded = jwt.verify(token, key.getServerSecret());
         req.token = token;
@@ -39,9 +37,7 @@ let verifyToken = (req, res, next) => {
         next();
     } catch(error) {
         console.log(error);
-        return res.status(403).send({
-            message: "Failed to authenticate token."
-        });
+        return res.status(204).send("Failed to authenticate token");
     }
 }
 

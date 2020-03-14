@@ -6,7 +6,6 @@
     <img src="https://img.shields.io/badge/runtime-node.js-orange">
     <img src="https://img.shields.io/badge/database-mongodb-orange">
     <img src="https://img.shields.io/badge/dependency-socket.io-orange">
-    <img src="https://img.shields.io/badge/dependency-socket.io-orange">
     <img src="https://img.shields.io/badge/dependency-spotify--web--api--node-orange">
 </p>
 
@@ -87,71 +86,80 @@ Data is saved to a [Mongo Database](https://www.mongodb.com/) to limit the amoun
 
 # Authorization Handler
 
-# Automatic Login
+## Automatic Login
 ```
 GET /api/auth/
 ```
+### Parameters: None
 
-# Login
+### Returns: 
+```
+    // On Success
+    {
+
+    }
+```
+
+## Login
 ```
 GET /api/auth/login
 ```
 
-# Login Callback
+## Login Callback
 ```
 GET /api/auth/callback
 ```
 
-# My Stats
+## My Stats
 ```
 GET /api/me/stats
 ```
 
 # Me Handler
 
-# My Features
+## My Features
 ```
 GET /api/me/features
 ```
 
-# My Added Timeline
+## My Added Timeline
 ```
 GET /api/me/history/added
 ```
 
-# My Top Played Tracks Chart
+## My Top Played Tracks Chart
 ```
 GET /api/me/chart/played/tracks/:time_range
 ```
 
-# My Top Played Artists Chart
+## My Top Played Artists Chart
 ```
 GET /api/me/chart/played/artists/:time_range
 ```
 
-# My Top Saved Artists Chart
+## My Top Saved Artists Chart
 ```
 GET /api/me/chart/saved/artists
 ```
 
-# My Top Saved Genres Chart
+## My Top Saved Genres Chart
 ```
 GET /api/me/chart/saved/genres
 ```
 
-# My Extremes Chart
+## My Extremes Chart
 ```
 GET /api/me/chart/extreme/:feature/:sort
 ```
 
-# My Spotlights
+## My Spotlights
 ```
 GET /api/me/spotlight
 ```
 
 # Track Handler
 
-# Track Base Data
+## Track Base Data
 ```
 GET /api/track/:id
 ```

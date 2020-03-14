@@ -3,20 +3,16 @@ import axios from 'axios';
 let getUser = async (context) => {
     try {
         let response = await axios.get('/api/auth');
-        console.log("SUCCESS");
-        console.log(response.data);
-        console.log(context);
+        if (response.status == 200) context.commit('setUser', response.data);
     } catch(error) {
-        console.log(error);
         return;
     }
 };
 
-let login = async (context) => {
+let login = async () => {
     try {
         let response = await axios.get('/api/auth/login');
         window.location = response.data;
-        console.log(context);
     } catch (error) {
         console.log(error);
         return;
@@ -26,8 +22,17 @@ let login = async (context) => {
 let callback = async (context, payload) => {
     try {
         let response = await axios.put('/api/auth/callback', payload);
-        console.log(response.data);
         context.commit('setUser', response.data);
+    } catch(error) {
+        console.log(error);
+        return;
+    }
+};
+
+let logout = async (context) => {
+    try {
+        await axios.delete('/api/auth/');
+        context.commit('setUser', null);
     } catch(error) {
         console.log(error);
         return;
@@ -74,6 +79,7 @@ export default {
     getUser,
     login, 
     callback, 
+    logout,
     // process,
     // getStats,
     // getAudioFeatures,

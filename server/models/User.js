@@ -37,22 +37,16 @@ schema.statics.verify = async function(req, res, next) {
     let response = await req.spotifyAPI.getMe();
     let me = response.body;
     if (me.id != req.userID)
-      return res.clearCookie('melophile-token').status(403).send({
-        error: "Invalid user account."
-      });
+      return res.clearCookie('melophile-token').status(204).send("Invalid User Account");
     const user = await User.findOne({
       spotifyID: req.userID
     });
     if (!user || !user.tokens.includes(req.token))
-      return res.clearCookie('melophile-token').status(403).send({
-        error: "Invalid user account."
-      });
+      return res.clearCookie('melophile-token').status(204).send("Invalid User Account");
     req.user = user;
     next();
   } catch(e) {
-    return res.clearCookie('melophile-token').status(500).send({
-      error: "Invalid user account."
-    });
+    return res.clearCookie('melophile-token').status(500).send("Internal Server Error");
   }
 }
 

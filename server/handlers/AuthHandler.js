@@ -14,7 +14,9 @@ const keys = require("../services/general/KeyRetriever.js");
 const DEV = true;
 let redirectUri = "https://melophile.org/redirect/";
 if (DEV) redirectUri = "http://localhost:8080/redirect/";
-import { v4 as uuidv4 } from 'uuid';
+// State.
+let uuid = require('uuid');
+let uuidv4 = uuid.v4;
 const state = uuidv4();
 
 // User Model
@@ -33,10 +35,11 @@ let User = require('../models/User.js');
 router.get("/", auth.verifyToken, User.verify, async (req, res) => {
     try {
         let spotifyAPI = await generateSpotifyWebAPI(req.authToken);
-        let me, error;
+        let me, error, followers;
         try {
             let response = await spotifyAPI.getMe();
             me = response.body;
+            followers = response.body.followers.total;
         } catch(e) {
             error = e;
         }
@@ -48,21 +51,19 @@ router.get("/", auth.verifyToken, User.verify, async (req, res) => {
             });
             if (existingUser) {
                 // Welcome back.
-                login(existingUser, req.authToken, req.refreshToken, res);
+                login(existingUser, followers, req.token, req.authToken, req.refreshToken, res);
             } else {
-                return res.clearCookie('melophile-token').status(403).send({
-                    error: "Invalid user account."
-                });
+                return res.clearCookie('melophile-token').status(204).send("User Account not Found");
             }
         } else if (error.statusCode == 401) {
             refresh(req.refreshToken, res);
         } else {
             console.log(error);
-            return res.sendStatus(500);
+            return res.sendStatus(500).send("Internal Server Error");
         }
     } catch (error) {
         console.log(error);
-        return res.sendStatus(500);
+        return res.sendStatus(500).send("Internal Server Error");
     }
 });
 
@@ -85,7 +86,7 @@ router.get("/login", async (req, res) => {
         }));
     } catch (error) {
         console.log(error);
-        return res.sendStatus(500);
+        return res.sendStatus(500).send("Internal Server Error");
     }
 });
 
@@ -101,13 +102,10 @@ router.delete("/", auth.verifyToken, User.verify, async (req, res) => {
       spotifyID: req.userID
     });
     if (!user)
-      return res.clearCookie('melophile-token').status(403).send({
-        error: "Invalid user account."
-      });
+      return res.clearCookie('melophile-token').status(204).send("Invalid User Account");
     user.removeToken(req.token);
     await user.save();
-    res.clearCookie('melophile-token');
-    res.sendStatus(200);
+    return res.clearCookie('melophile-token').sendStatus(200).send("User Logged Out");
 });
 
 /**
@@ -124,7 +122,7 @@ router.put("/callback", async (req, res) => {
         let code = req.body.code ? req.body.code : null;
         // Shady Stuff Goin On?
         if (!code || !req.body.state || req.body.state != state)
-            return res.sendStatus(500);
+            return res.sendStatus(204).send("Invalid Callback");
         // Preparations for Request
         let url = "https://accounts.spotify.com/api/token";
         let headers = { 'Authorization': 'Basic ' + (new Buffer.from(await keys.getSpotify().id + ':' + await keys.getSpotify().secret).toString('base64'))};
@@ -142,6 +140,7 @@ router.put("/callback", async (req, res) => {
                 let spotifyAPI = await generateSpotifyWebAPI(body.access_token);
                 let response = await spotifyAPI.getMe();
                 let me = response.body;
+                let followers = response.body.followers.total;
                 // Familiar Face?
                 const existingUser = await User.findOne({
                     spotifyID: me.id,
@@ -149,10 +148,10 @@ router.put("/callback", async (req, res) => {
                 });
                 if (!existingUser) {
                     // First time? Welcome!
-                    register(me, body.access_token, body.refresh_token, res);
+                    register(me, followers, body.access_token, body.refresh_token, res);
                 } else {
                     // Welcome back.
-                    login(existingUser, body.access_token, body.refresh_token, res);
+                    login(existingUser, followers, null, body.access_token, body.refresh_token, res);
                 }
             } else {
                 return res.sendStatus(response.statusCode).send(error);
@@ -160,7 +159,7 @@ router.put("/callback", async (req, res) => {
         });
     } catch (error) {
         console.log(error);
-        return res.sendStatus(500).send(error);
+        return res.sendStatus(500).send("Internal Server Error");
     }
 });
 
@@ -174,23 +173,24 @@ router.put("/callback", async (req, res) => {
  * @param res Send back data.
  * @returns User data and Cookie
  */
-let login = async (user, accessToken, refreshToken, res) => {
+let login = async (user, followers, oldToken, accessToken, refreshToken, res) => {
     try {
-        let token = auth.generateToken({
+        let token = await auth.generateToken({
             spotifyID: user.spotifyID,
             accessToken: accessToken,
             refreshToken: refreshToken,
         }, "24h");
-        user.removeOldTokens();
-        user.addToken(token);
+        await user.removeOldTokens();
+        await user.removeToken(oldToken);
+        await user.addToken(token);
         await user.save();
         // Send user data with cookie.
         return res.cookie("melophile-token", token, {
             expires: new Date(Date.now() + 86400 * 1000)
-        }).status(200).send(user);
+        }).status(200).send({...user.toJSON(), followers: followers});
     } catch(error) {
         console.log(error);
-        return res.sendStatus(500).send(error);
+        return res.sendStatus(500).send("Internal Server Error");
     }
 }
 
@@ -204,7 +204,7 @@ let login = async (user, accessToken, refreshToken, res) => {
  * @param res Send back data.
  * @returns User data and Cookie
  */
-let register = async (user, accessToken, refreshToken, res) => {
+let register = async (user, followers, accessToken, refreshToken, res) => {
     try {
         let token = auth.generateToken({
             spotifyID: user.spotifyID,
@@ -221,10 +221,10 @@ let register = async (user, accessToken, refreshToken, res) => {
         // Send user data with cookie.
         return res.cookie("melophile-token", token, {
             expires: new Date(Date.now() + 86400 * 1000)
-        }).status(200).send(newUser);
+        }).status(200).send({...newUser.toJSON(), followers: followers});
     } catch(error) {
         console.log(error);
-        return res.sendStatus(500).send(error);
+        return res.sendStatus(500).send("Internal Server Error");
     }
 }
 
@@ -251,6 +251,7 @@ let refresh = async (refreshToken, res) => {
                 let spotifyAPI = await generateSpotifyWebAPI(body.access_token);
                 let response = await spotifyAPI.getMe();
                 let me = response.body;
+                let followers = response.body.followers.total;
                 // Familiar Face?
                 const existingUser = await User.findOne({
                     spotifyID: me.id,
@@ -258,19 +259,17 @@ let refresh = async (refreshToken, res) => {
                 });
                 if (existingUser) {
                     // Welcome back.
-                    login(existingUser, body.access_token, body.refresh_token, res);
+                    login(existingUser, followers, null, body.access_token, body.refresh_token, res);
                 } else {
-                    return res.clearCookie('melophile-token').status(403).send({
-                        error: "Invalid user account."
-                    });
+                    return res.clearCookie('melophile-token').status(204).send("Invalid User Account");
                 }
             } else {
-                return res.sendStatus(response.statusCode).send(error);
+                return res.sendStatus(response.statusCode).send("Could not Refresh Token");
             }
         });
     } catch(error) {
         console.log(error);
-        return res.sendStatus(500).send(error);
+        return res.sendStatus(500).send("Internal Server Error");
     }
 }
 

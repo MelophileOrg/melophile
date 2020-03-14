@@ -9,7 +9,7 @@ let Track = require('../models/Track.js');
 let TrackDAO = require('./TrackDAO.js');
 let ArtistDAO = require('./ArtistDAO.js');
 
-let Proximity = require('../services/Proximity.js');
+let Proximity = require('../services/process/Proximity.js');
 
 class UserDAO {
     constructor(id, data) {

@@ -1,7 +1,19 @@
 <template>
   <v-app v-resize="onResize" class="melophile">
     <v-navigation-drawer clipped app floating v-model="drawer" :width="210" color="melophile-dark-2">
-      <v-tabs class="nav-bar-tabs" v-model="tab" @change="route" vertical :grow="true" :show-arrows="false" background-color="melophile-dark-2" slider-color="melophile-green" color="white" :slider-size="3">
+      <v-btn text style="display: block; margin: 15px auto 10px;" elevation="0" tile v-if="mobile && !user" @click="login">Login with Spotify</v-btn>
+      <v-list-item style="margin: 10px 0px 10px;" v-else-if="mobile" inactive>
+        <v-list-item-avatar>
+          <v-img :src="user.images[0].url"></v-img>
+        </v-list-item-avatar>
+        <v-list-item-content>
+          <v-list-item-title>{{user.username}}</v-list-item-title>
+          <v-list-item-subtitle @click="logout">Sign out</v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
+      <v-divider v-if="mobile"></v-divider>
+      <p class="nav-bar-category" v-if="mobile">Menu</p>
+      <v-tabs class="nav-bar-tabs" v-model="tab" @change="route" vertical :grow="true" :show-arrows="false" background-color="melophile-dark-2" slider-color="melophile-green" color="white" :slider-size="4">
         <div v-for="tab in tabs" :key="tab.text">
           <v-tab class="nav-bar-tab" v-if="tab.type == 'link' || tab.type == 'list'">
             <img class="nav-bar-tab-icon" :src="getImgUrl(tab.image)"/>
@@ -14,9 +26,33 @@
 
     <v-app-bar app dark clipped-left color="melophile-dark-2" :elevation="0">
       <p class="melophile-title">melophile</p>
-      <v-app-bar-nav-icon v-if="windowSize.x < 1264" @click.stop="closeDrawer"/>
       <v-spacer></v-spacer>
-      <v-btn text v-if="!user" @click="login">Login with Spotify</v-btn>
+      <v-btn v-if="!user && !mobile" color="rgba(255, 255, 255, .02)" style="border: 1px solid var(--light-border) !important; background: var(--light-background);" elevation="0" tile @click="login">Login with Spotify</v-btn>
+      <v-menu v-else-if="!mobile" :offset-y="true">
+        <template v-slot:activator="{ on }">
+          <div v-on="on" id="profile-image" :style="{backgroundImage: 'url(' + user.images[0].url + ')'}" />
+        </template>
+        <v-list color="melophile-dark-3" flat nav tile dense>
+          <v-list-item inactive>
+            <v-list-item-avatar>
+              <v-img :src="user.images[0].url"></v-img>
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title>{{user.username}}</v-list-item-title>
+              <v-list-item-subtitle>{{user.followers}} Follower{{checkS(user.followers)}}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-divider></v-divider>
+
+          <v-list-item @click="logout">
+            <v-list-item-content>
+              <v-list-item-title>Sign out</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+      <v-app-bar-nav-icon v-if="mobile" @click.stop="closeDrawer"/>
     </v-app-bar>
 
     <v-content>
@@ -52,6 +88,7 @@ export default {
       {text: "Public Profiles", type: "link", route: "publicprofiles", image: "public"},
     ],
     windowSize: {x: 0, y: 0},
+    settings: [],
   }),
   methods: {
     closeDrawer() {
@@ -70,11 +107,30 @@ export default {
     login() {
       this.$store.dispatch('login');
     },
+    logout() {
+      this.$store.dispatch('logout');
+    },
+    playSongs() {
+
+    },
+    autoUpdated() {
+
+    },
+    checkS(num) {
+      if (num > 1) {
+        return "s";
+      } else {
+        return "";
+      }
+    }
   }, 
   computed: {
     user() {
       return this.$store.state.user;
     },
+    mobile() {
+      return (this.windowSize.x < 1264);
+    }
   },
   created() {
     this.$store.dispatch('getUser');
@@ -84,9 +140,11 @@ export default {
 
 <style>
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700|Roboto:300,400,500,700,900&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Titillium+Web:300,400&display=swap');
 /*
 font-family: 'Roboto', sans-serif;
 font-family: 'Open Sans', sans-serif;
+font-family: 'Titillium Web', sans-serif;
 */
 
 :root {
@@ -109,6 +167,8 @@ font-family: 'Open Sans', sans-serif;
   --dark-7: #8f94ab;
   --dark-8: #b4b8cd;
   --text: #fdfdfd;
+  --light-border: rgba(255, 255, 255, 0.212);
+  --light-background: rgba(255, 255, 255, 0.02);
 }
 
 .melophile {
@@ -146,11 +206,18 @@ p.melophile-title {
   font-weight: lighter;
   margin: 0px 3px 0px 3px !important;
  
-  text-transform: lowercase;
+  text-transform: uppercase;
 }
 
+.v-btn__content {
+  font-family: 'Roboto', sans-serif;
+  font-weight: normal;
+  color: rgba(255, 255, 255, 0.856) !important;
+}
+
+
 .nav-bar-tabs {
-  margin-top: 5px;
+  margin-top: 0px;
 }
 
 .nav-bar-tab.v-tab {
@@ -161,29 +228,56 @@ p.melophile-title {
 
 p.nav-bar-tab-text {
   display: inline-block;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Titillium Web', sans-serif;
   font-weight: lighter;
-  font-size: 1rem;
+  font-size: .8rem;
   text-align: left;
-  text-transform: lowercase;
+  text-transform: uppercase;
   margin: 0px 0px 0px 10px !important;
 }
 
 p.nav-bar-category {
   text-transform: uppercase;
+  font-family: 'Titillium Web', sans-serif;
   color: var(--dark-5);
   font-size: .8rem;
   letter-spacing: 1px;
   margin: 0px 0px 0px 18px !important;
-  padding-top: 10px;
+  padding-top: 15px !important;
 }
 
 .nav-bar-tab-icon {
+  --size: 20;
   display: block;
-  width: 22px;
-  height: 22px;
+  width: calc(var(--size) * 1px);
+  height: calc(var(--size) * 1px);
   margin-right: 8px;
+  opacity: .5;
 }
+
+#menu-title {
+  color:rgba(255, 255, 255, 0.288);
+  font-family: 'Titillium Web', sans-serif;
+  text-transform: uppercase;
+  margin-left: 18px;
+  font-weight: lighter;
+}
+
+.v-tab--active .nav-bar-tab-icon {
+  opacity: 1;
+}
+
+
+#profile-image {
+  --size: 32;
+  display: block;
+  border-radius: 100%;
+  width: calc(var(--size) * 1px);
+  height: calc(var(--size) * 1px);
+  background-size: 100% 100%;
+  cursor: pointer;
+  border: 1px solid var(--light-border);
+} 
 
 
 </style>
@@ -203,6 +297,10 @@ p.nav-bar-category {
 
 .flex-justify-left {
   justify-content: left;
+}
+
+.flex-justify-right {
+  justify-content: flex-end;
 }
 
 .flex-justify-space-around {

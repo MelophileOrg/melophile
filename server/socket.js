@@ -24,7 +24,7 @@ let clients = [];
 
 io.on('connection', function(socket) {
     clients.push(socket.id);
-    console.log(socket);
+    //console.log(socket);
 
     socket.on('process', async function(data) {
         await process(socket, data.authToken);
