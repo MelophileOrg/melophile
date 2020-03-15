@@ -5,208 +5,216 @@ const mongoose = require('mongoose');
 let Artist = require('../models/Artist.js');
 
 // Associated DAOs
-let TrackDAO = require('./TrackDAO.js');
-let AlbumDAO = require('./AlbumDAO.js');
-let GenreDAO = require('./GenreDAO.js');
+let ArtistsDAO = require('./ArtistsDAO.js');
+let TracksDAO = require('./TracksDAO.js');
+let AlbumsDAO = require('./AlubmsDAO.js');
+let GenresDAO = require('./GenreDAO.js');
 
-// Artist DAO
+/**
+ * Artist Data Access Object
+ * Various methods for working with and retrieving with Artist Data.
+*/
 class ArtistDAO {
+    /**
+     * Contructor
+     * Creates a new instance of Artist Data Access object for a given artist. Loads in data.
+     * 
+     * @param {string} id Spotify ID for artist.
+     * @param {object} data Option data to pre-load into DAO.
+    */
     constructor(id, data) {
-        this._id = (id ? id : null);
-        this.name = ((data && 'name' in data) ? data.name : null);
-        this.image = ((data && 'image' in data) ? data.image : (data && 'images' in data && data.images.length) ? data.images[0].url : "");
-        this.genres = ((data && 'genres' in data) ? data.genres : null);
-        this.popularity = ((data && 'popularity' in data) ? data.popularity : null);
+        if (!id) throw error;
+        this._id = id;
+        if (data) {
+            this.name = (('name' in data) ? data.name : null);
+            this.images = (('images' in data) ? data.images : null);
+            this.genres = (('genres' in data) ? data.genres : null);
+            this.popularity = (('popularity' in data) ? data.popularity : null);
+            this.followers = (('followers' in data) ? ((typeof(data.followers) == 'object') ? data.followers.total : data.followers) : null);
+        }
     }
 
-// Public Methods
-
-    // Returns boolean of whether artist is saved in database.
+    /**
+     * Is In Database
+     * Return boolean if artist is stored in database.
+     * 
+     * @returns {boolean}
+    */
     async inDatabase() {
         try {
-            return (await ArtistSchema.findOne({ _id: this._id })) != null;
-        } catch(error) {
+            return (await Artist.findOne({ _id: this._id })) != null;
+        } catch (error) {
             throw error;
         }
     }
-    // Returns Data Object (Retrieves Data if Needed)
-    async getData(spotifyAPI) {
+
+    /**
+     * Get Complete Data
+     * Returns all artist data, identical to Artist Model.
+     * 
+     * @param {class} spotifyAPI spotify-web-api instance.
+     * @returns {object} Object with complete data values
+    */
+    async getCompleteData(spotifyAPI) {
         try {
-            if (!this._id) throw new Error("No ID");
-            if (!this.name || !this.image || !(this.genres instanceof Array) || typeof(this.popularity) != 'number')
-                await this.retrieve(spotifyAPI);
-            return {
+            if (this.name == null || this.images == null || this.genres == null || this.popularity == null || this.followers == null)
+                await this.retrieveCompleteData(spotifyAPI);
+            let completeData = {
                 _id: this._id,
                 name: this.name,
-                image: this.image,
+                images: this.images,
                 genres: this.genres,
                 popularity: this.popularity,
-            };
-        } catch(error) {
+                followers: this.followers
+            }
+            return completeData;
+        } catch (error) {
             throw error;
         }
     }
-    // Saves artist to Database (Retrieves Data if Needed)
+
+    /**
+     * Retrieve Complete Data
+     * Retrieves artist object from the Database or Spotify API and loads in data.
+     * 
+     * @param {class} spotifyAPI spotify-web-api instance.
+    */
+    async retrieveCompleteData(spotifyAPI) {
+        try {
+            if (await this.inDatabase()) {
+                await this.retrieveCompleteDataFromDatabase();
+            } else {
+                await this.retrieveCompleteDataFromSpotify(spotifyAPI);
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    /**
+     * Retrieve Complete Data From Spotify
+     * Retrieves artist object from Spotify API and loads in data.
+     * 
+     * @param {class} spotifyAPI spotify-web-api instance.
+    */
+    async retrieveCompleteDataFromSpotify(spotifyAPI) {
+        try {
+            let response = await spotifyAPI.getArtist(this._id);
+            this.name = response.body.name;
+            this.images = response.body.images;
+            this.genres = response.body.genres;
+            this.popularity = response.body.popularity;
+            this.followers = response.body.followers.total;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    /**
+     * Retrieve Complete Data From Database
+     * Retrieves artist object from database and loads in data.
+     */
+    async retrieveCompleteDataFromDatabase() {
+        try {
+            let artist = await Artist.findOne({ _id: this._id });
+            this.name = artist.name;
+            this.images = artist.images;
+            this.genres = artist.genres;
+            this.popularity = artist.popularity;
+            this.followers = artist.followers;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    /**
+     * Save to Database
+     * Saves data to database. Retrieves data if nessisary.
+     * 
+     * @param {object} item Item to be minified
+    */
     async save(spotifyAPI) {
         try {
-            if (!this._id) 
-                return;
-            if (!this.name || !this.image.length || !this.genres || !this.popularity) 
-                await this.retrieve(spotifyAPI);
             if (await this.inDatabase()) return;
-            let artist = new ArtistSchema({
+            if (this.name == null || this.images == null || this.genres == null || this.popularity == null || this.followers == null)
+                await this.retrieveCompleteData(spotifyAPI);
+            let artist = new Artist({
                 _id: this._id,
                 name: this.name,
-                image: this.image,
-                genres: this.genres,
+                images: this.images,
+                genres: this.genres, 
                 popularity: this.popularity,
+                followers: this.followers,
             });
             await artist.save();
-        } catch(error) {
+        } catch (error) {
             throw error;
         }
     }
-    // Returns TrackDAO of Artist Top Tracks
+
+    /** 
+     * Get Artist Genre DAOs
+     * Returns array of Genre DAOs for Artist.
+     * 
+     * @param {class} spotifyAPI spotify-web-api instance.
+     * @returns {array} Array of Genre DAOs
+    */
+    async getGenres(spotifyAPI) {
+        try {
+            if (this.genres == null) 
+                await this.retrieveCompleteData(spotifyAPI);
+            return await new GenresDAO(this.genres);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    /** 
+     * Get Artist Top Tracks
+     * Returns Tracks DAO of Top Tracks
+     * 
+     * @param {class} spotifyAPI spotify-web-api instance.
+     * @returns {class} Tracks DAO
+    */
     async getTopTracks(spotifyAPI) {
         try {
-            let response = await spotifyAPI.getArtistTopTracks(this._id);
-            let tracks = response.tracks;
-            return await tracks.map(async (track) => {
-                return await new TrackDAO(track.id, {
-                    name: track.name,
-                    album: track.album,
-                    artists: track.artists,
-                    popularity: track.popularity
-                });
-            });
-        } catch(error) {
+            let response = await spotifyAPI.getArtistTopTracks(this._id, "US");
+            return await new TracksDAO(response.body.tracks);
+        } catch (error) {
             throw error;
         }
-    }
-    // Returns AlbumDAO of Artist Albums
-    async getAlbums(spotifyAPI) {
-        try {
-            let albums = [];
-            let offset = 0;
-            let response;
-            do {
-                response = await spotifyAPI.getArtistAlbums(this._id, {limit: 50, offset: offset});
-                albums = albums.concat(await response.body.items.map(async (album) => {
-                    return await new AlbumDAO(album.id, {
+    } 
 
-                    });
-                }));
-                offset += 50;
-            } while ((offset + 50) < response.body.total);
-            return albums;
-        } catch(error) {
-            throw error;
-        }
-    }
-    // Returns Atist Object of Related Artist
-    async getRelatedArtists(spotifyAPI) {
+    /** 
+     * Get Simular Artists
+     * Returns Artists DAO of simular Artists
+     * 
+     * @param {class} spotifyAPI spotify-web-api instance.
+     * @returns {class} Artists DAO
+    */
+    async getSimular(spotifyAPI) {
         try {
             let response = await spotifyAPI.getArtistRelatedArtists(this._id);
-            let artists = await response.body.artists.map(async (artist) => {
-                return await new ArtistDAO(artist.id, {
-                    name: artist.name ? artist.name : null,
-                    name: artist.images ? artist.images : null,
-                    name: artist.genres ? artist.genres : null,
-                    name: artist.popularity ? artist.popularity : null,
-                });
-            });
-            return artists;
-        } catch(error) {
+            return await new ArtistsDAO(response.body.artists);
+        } catch (error) {
             throw error;
         }
-    }
+    } 
 
-    async getArtistLikedTracks(user) {
+    /** 
+     * Get Data from Discogs
+     * Returns object with Artist data retrieved from Discogs.
+     * 
+     * @returns {object} Discogs Data
+    */
+   async getDiscogsData() {
         try {
-            return await user.getTracksFromArtist(this._id);
-        } catch(error) {
+            
+        } catch (error) {
             throw error;
         }
-    }
-
-    async getHistory(spotifyAPI, user) {
-        try {
-            let tracks = await this.getArtistLikedTracks(user);
-            let timeline = await user.historyFromTracks(tracks);
-            tracks = await user.sortTracksByDate(spotifyAPI, tracks);
-            return {
-                tracks: tracks,
-                timeline: timeline,
-            };
-        } catch(error) {
-            console.log(error);
-        }
-    }
-
-// Helper Methods 
-
-    async retrieve(spotifyAPI) {
-        try {
-            if (!this._id) {
-                return;
-            } else if (this.name && this.image.length && this.genres && this.popularity) {
-                return;
-            } else if (await this.inDatabase()) {
-                let artist = await ArtistSchema.findOne({ _id: this._id });
-                this._id = artist._id;
-                this.name = artist.name;
-                this.image = artist.image;
-                this.genres = artist.genres;
-                this.popularity = artist.popularity;
-            } else if (spotifyAPI != null) {
-                let response = await spotifyAPI.getArtist(this._id);
-                await this.convertArtist(response.body);
-            } 
-        } catch(error) {
-            throw error;
-        }
-    }
-    
-    convertArtist(artist) {
-        this._id = artist.id;
-        this.name = artist.name;
-        this.image = (artist.images.length ? artist.images[0].url : "");
-        this.genres = artist.genres;
-        this.popularity = artist.popularity;
-    }
-
-// Get Methods
-
-    getID() {
-        return this._id;
-    }
-
-    getName() {
-        return this.name;
-    }
-
-    getGenres() {
-        return this.genres;
-    }
-
-    async genreDAOs(spotifyAPI) {
-        if (!this._id) throw new Error("No ID");
-        if (!(this.genres instanceof Array))
-            await this.retrieve(spotifyAPI);
-        let genres = [];
-        for (let i = 0; i < this.genres.length; i++) {
-            genres.push(new GenreDAO(this.genres[i]));
-        }
-        return genres;
-    }
-
-    getImage() {
-        return this.image;
-    }
-
-    getPopularity() {
-        return this.popularity;
-    }
+    } 
 }
 
+// Export
 module.exports = ArtistDAO;

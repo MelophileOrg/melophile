@@ -5,9 +5,10 @@ const mongoose = require('mongoose');
 const schema = new mongoose.Schema({
   _id: String,
   name: String,
+  images: Array,
   artists: Array, 
   album: Object,  
-  images: Array,
+  popularity: Number,
   key: Number,
   mode: Number,
   tempo: Number,
@@ -19,7 +20,6 @@ const schema = new mongoose.Schema({
   liveness: Number,
   loudness: Number,
   speechiness: Number,
-  popularity: Number,
 });
 
 // Track Object

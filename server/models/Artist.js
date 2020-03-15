@@ -8,6 +8,7 @@ const schema = new mongoose.Schema({
   images: Array,
   genres: Array,
   popularity: Number,
+  followers: Number,
 });
 
 // Artist Object

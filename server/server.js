@@ -15,6 +15,9 @@ app.use(cookieParser());
 const AuthHandler = require("./handlers/AuthHandler.js");
 app.use("/api/auth", AuthHandler.routes);
 
+const MeHandler = require("./handlers/MeHandler.js");
+app.use("/api/me", MeHandler.routes);
+
 // const UserHandler = require("./handlers/UserHandler.js");
 // app.use("/api/user", UserHandler.routes);
 

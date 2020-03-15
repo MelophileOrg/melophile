@@ -130,7 +130,7 @@ const routes = [
     component: Track
   },
   {
-    path: '/search',
+    path: '/search/:query',
     name: 'search',
     component: Search
   },

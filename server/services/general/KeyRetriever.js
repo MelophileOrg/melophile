@@ -1,5 +1,6 @@
 // Dependencies
 require('dotenv').config();
+
 /**
  * Key Retriever
  * Accesses keys from .env

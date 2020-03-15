@@ -1,6 +1,6 @@
 <template>
   <v-app v-resize="onResize" class="melophile">
-    <v-navigation-drawer clipped app floating v-model="drawer" :width="210" color="melophile-dark-2">
+    <v-navigation-drawer clipped app floating v-model="drawer" :width="mobile ? windowSize.x - 75 : 210" color="melophile-dark-2">
       <v-btn text style="display: block; margin: 15px auto 10px;" elevation="0" tile v-if="mobile && !user" @click="login">Login with Spotify</v-btn>
       <v-list-item style="margin: 10px 0px 10px;" v-else-if="mobile" inactive>
         <v-list-item-avatar>
@@ -13,9 +13,9 @@
       </v-list-item>
       <v-divider v-if="mobile"></v-divider>
       <p class="nav-bar-category" v-if="mobile">Menu</p>
-      <v-tabs class="nav-bar-tabs" v-model="tab" @change="route" vertical :grow="true" :show-arrows="false" background-color="melophile-dark-2" slider-color="melophile-green" color="white" :slider-size="4">
+      <v-tabs class="nav-bar-tabs" v-model="tab" vertical :grow="true" :show-arrows="false" background-color="melophile-dark-2" slider-color="melophile-green" color="white" :slider-size="4">
         <div v-for="tab in tabs" :key="tab.text">
-          <v-tab class="nav-bar-tab" v-if="tab.type == 'link' || tab.type == 'list'">
+          <v-tab class="nav-bar-tab" @click="route(tab.route)" v-if="tab.type == 'link' || tab.type == 'list'">
             <img class="nav-bar-tab-icon" :src="getImgUrl(tab.image)"/>
             <p class="nav-bar-tab-text">{{tab.text}}</p>
           </v-tab>
@@ -25,7 +25,11 @@
     </v-navigation-drawer>
 
     <v-app-bar app dark clipped-left color="melophile-dark-2" :elevation="0">
-      <p class="melophile-title">melophile</p>
+      <v-row align="center" style="max-width: 800px;">
+        <p class="melophile-title">MELOPHILE</p>
+        <v-text-field v-if="!mobile" @keydown="search" v-model="query" style="margin-left: 20px;" background-color="melophile-dark-1" color="#4d505f" clearable flat solo dense single-line hide-details placeholder="Search"></v-text-field>
+      </v-row>
+      
       <v-spacer></v-spacer>
       <v-btn v-if="!user && !mobile" color="rgba(255, 255, 255, .02)" style="border: 1px solid var(--light-border) !important; background: var(--light-background);" elevation="0" tile @click="login">Login with Spotify</v-btn>
       <v-menu v-else-if="!mobile" :offset-y="true">
@@ -76,11 +80,11 @@ export default {
       {text: "Home", type: "link", route: "home", image: "home"},
       {text: "Discover", type: "link", route: "discover", image: "discover"},
       {text: "Your Charts", type: "category"},
-      {text: "Top Played", type: "link", route: "discover", image: "topplayed"},
-      {text: "Top Saved", type: "link", route: "discover", image: "topsaved"},
-      {text: "Extremes", type: "link", route: "discover", image: "extremes"},
+      {text: "Top Played", type: "link", route: "topplayed", image: "topplayed"},
+      {text: "Top Saved", type: "link", route: "topsaved", image: "topsaved"},
+      {text: "Extremes", type: "link", route: "extremes", image: "extremes"},
       {text: "Your Library", type: "category"},
-      {text: "Overview", type: "link", route: "discover", image: "overview"},
+      {text: "Overview", type: "link", route: "overview", image: "overview"},
       {text: "Library", type: "link", route: "library", image: "library"},
       {text: "History", type: "link", route: "history", image: "history"},
       {text: "Social", type: "category"},
@@ -89,6 +93,7 @@ export default {
     ],
     windowSize: {x: 0, y: 0},
     settings: [],
+    query: "",
   }),
   methods: {
     closeDrawer() {
@@ -98,8 +103,8 @@ export default {
       var images = require.context('./assets/navbar', false, /\.svg$/);
       return images('./' + pic + ".svg");
     },
-    route() {
-      console.log("route");
+    route(name) {
+      this.$router.push({name: name});
     },
     onResize() {
       this.windowSize = {x: window.innerWidth, y: window.innerHeight};
@@ -110,18 +115,16 @@ export default {
     logout() {
       this.$store.dispatch('logout');
     },
-    playSongs() {
-
-    },
-    autoUpdated() {
-
-    },
     checkS(num) {
       if (num > 1) {
         return "s";
       } else {
         return "";
       }
+    },
+    search(event) {
+      if (event.keyCode != 13) return;
+      this.$router.push({ name: 'search', params: { query: this.query }});
     }
   }, 
   computed: {
@@ -130,6 +133,9 @@ export default {
     },
     mobile() {
       return (this.windowSize.x < 1264);
+    },
+    titleMargin() {
+      return (this.mobile ? "20px" : "5px");
     }
   },
   created() {
@@ -201,7 +207,7 @@ html::-webkit-scrollbar-thumb
 }
 
 p.melophile-title {
-  font-size: 2rem;
+  font-size: 1.6rem;
   font-family: 'Roboto', sans-serif;
   font-weight: lighter;
   margin: 0px 3px 0px 3px !important;
@@ -214,7 +220,6 @@ p.melophile-title {
   font-weight: normal;
   color: rgba(255, 255, 255, 0.856) !important;
 }
-
 
 .nav-bar-tabs {
   margin-top: 0px;
@@ -278,6 +283,13 @@ p.nav-bar-category {
   cursor: pointer;
   border: 1px solid var(--light-border);
 } 
+
+@media only screen and (max-width: 1264px) {
+  p.melophile-title {
+    font-size: 1.8rem;
+    margin: 0px 3px 0px 10px !important;
+  }
+}
 
 
 </style>
