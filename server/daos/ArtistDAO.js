@@ -7,7 +7,7 @@ let Artist = require('../models/Artist.js');
 // Associated DAOs
 let ArtistsDAO = require('./ArtistsDAO.js');
 let TracksDAO = require('./TracksDAO.js');
-let AlbumsDAO = require('./AlubmsDAO.js');
+let AlbumsDAO = require('./AlbumsDAO.js');
 let GenresDAO = require('./GenreDAO.js');
 
 /**
@@ -52,7 +52,7 @@ class ArtistDAO {
      * Get Complete Data
      * Returns all artist data, identical to Artist Model.
      * 
-     * @param {class} spotifyAPI spotify-web-api instance.
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
      * @returns {object} Object with complete data values
     */
     async getCompleteData(spotifyAPI) {
@@ -77,7 +77,7 @@ class ArtistDAO {
      * Retrieve Complete Data
      * Retrieves artist object from the Database or Spotify API and loads in data.
      * 
-     * @param {class} spotifyAPI spotify-web-api instance.
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
     */
     async retrieveCompleteData(spotifyAPI) {
         try {
@@ -95,7 +95,7 @@ class ArtistDAO {
      * Retrieve Complete Data From Spotify
      * Retrieves artist object from Spotify API and loads in data.
      * 
-     * @param {class} spotifyAPI spotify-web-api instance.
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
     */
     async retrieveCompleteDataFromSpotify(spotifyAPI) {
         try {
@@ -156,7 +156,7 @@ class ArtistDAO {
      * Get Artist Genre DAOs
      * Returns array of Genre DAOs for Artist.
      * 
-     * @param {class} spotifyAPI spotify-web-api instance.
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
      * @returns {array} Array of Genre DAOs
     */
     async getGenres(spotifyAPI) {
@@ -173,13 +173,15 @@ class ArtistDAO {
      * Get Artist Top Tracks
      * Returns Tracks DAO of Top Tracks
      * 
-     * @param {class} spotifyAPI spotify-web-api instance.
-     * @returns {class} Tracks DAO
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
+     * @returns {TracksDAO} Tracks DAO
     */
     async getTopTracks(spotifyAPI) {
         try {
             let response = await spotifyAPI.getArtistTopTracks(this._id, "US");
-            return await new TracksDAO(response.body.tracks);
+            let tracksDAO = new TracksDAO();
+            await tracksDAO.loadBaseDataObjects(response.body.tracks);
+            return tracksDAO;
         } catch (error) {
             throw error;
         }
@@ -189,8 +191,8 @@ class ArtistDAO {
      * Get Simular Artists
      * Returns Artists DAO of simular Artists
      * 
-     * @param {class} spotifyAPI spotify-web-api instance.
-     * @returns {class} Artists DAO
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
+     * @returns {ArtistsDAO} Artists DAO
     */
     async getSimular(spotifyAPI) {
         try {
@@ -214,6 +216,60 @@ class ArtistDAO {
             throw error;
         }
     } 
+
+    /** 
+     * Get Artist Albums
+     * Returns Albums Data Access Object of Artist Albums
+     * 
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
+     * @returns {AlbumsDAO} Albums Access Object
+    */
+    async getArtistAlbums(spotifyAPI) {
+        try {
+            let albums = [];
+            let offset = 0;
+            let response;
+            do {
+                response = await spotifyAPI.getArtistAlbums(this._id, {limit: 50, offset: offset});
+                albums = albums.concat(response.body.items);
+                offset += 50;
+            } while (response.body.items.length == 50);
+            return new AlbumsDAO(albums);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    /** 
+     * Get First Liked
+     * Handled in UserDAO
+    */ 
+
+    /** 
+     * Get Relationship Age
+     * Handled in UserDAO
+    */
+
+    /** 
+     * Get Added Timeline
+     * Handled in UserDAO
+    */
+
+    /** 
+     * Get Liked Tracks
+     * Handled in UserDAO
+    */
+
+    /** 
+     * Get Liked Same Time Range
+     * Handled in UserDAO
+    */ 
+
+    /** 
+     * Get Playlists Included In
+     * Handled in UserDAO
+    */ 
+ 
 }
 
 // Export

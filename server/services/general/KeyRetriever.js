@@ -4,11 +4,12 @@ require('dotenv').config();
 /**
  * Key Retriever
  * Accesses keys from .env
- * 
- * @returns Class
  */
 class KeyRetriever {
-    // Retrieve from .env
+    /**
+     * Contructor
+     * Creates a new instance of Key retriever and gets keys.
+    */
     constructor() {
         this.spotify = {
             id: process.env.spotifyId,
@@ -23,24 +24,50 @@ class KeyRetriever {
         }
         this.secret = process.env.secret;
     }
-    // Retrieve Spotify Application Keys
+
+    /**
+     * Get Spotify Keys
+     * Returns object with spotify authentication keys as properties.
+     * 
+     * @returns {object} Object with Spotify Auth Properties
+    */
     getSpotify() {
         return this.spotify;
     }
-    // Retrieve Discogs Application Keys
+
+    /**
+     * Get Discogs Keys
+     * Returns object with discogs authentication keys as properties.
+     * 
+     * @returns {object} Object with Discogs Auth Properties
+    */
     getDiscogs() {
         return this.discogs;
     }
-    // Retrieve MusixMatch Application Keys
+
+    /**
+     * Get Musixmatch Keys
+     * Returns object with Musixmatch authentication keys as properties.
+     * 
+     * @returns {object} Object with Musixmatch Auth Properties
+    */
     getMusixmatch() {
         return this.musixmatch;
     }
 
+    /**
+     * Get Server Secret
+     * Returns string for encryption
+     * 
+     * @returns {string} Server secret encryption token.
+    */
     getServerSecret() {
         return this.secret;
     }
 }
-// Instance
+
+// Instanciate 
 let keys = new KeyRetriever();
+
 // Export
 module.exports = keys;

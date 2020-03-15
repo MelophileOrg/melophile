@@ -1,5 +1,6 @@
 // Dependencies
 const jwt = require("jsonwebtoken");
+let generateSpotifyWebAPI = require('../services/general/GenerateSpotifyWebAPI.js');
 
 // Key Retriever for Secret
 let key = require("./KeyRetriever.js");
@@ -30,6 +31,7 @@ let verifyToken = (req, res, next) => {
     if (!token) return res.status(204).send("No Token Provided");
     try {
         const decoded = jwt.verify(token, key.getServerSecret());
+        req.spotifyAPI = generateSpotifyWebAPI(decoded.accessToken);
         req.token = token;
         req.userID = decoded.spotifyID;
         req.authToken = decoded.accessToken;
@@ -58,6 +60,7 @@ let removeOldTokens = (tokens) => {
     });
 }
 
+// Export
 module.exports = {
     generateToken: generateToken,
     verifyToken: verifyToken,

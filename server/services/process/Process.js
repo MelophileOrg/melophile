@@ -1,31 +1,40 @@
 // Dependencies
-let SpotifyWebApi = require('spotify-web-api-node');
-let UserDAO = require('../../daos/UserDAO.js');
+let generateSpotifyWebAPI = require('../general/GenerateSpotifyWebAPI.js');
+
+// Data Access Objects
+let ProfileDAO = require('../../daos/ProfileDAO.js');
 let TrackDAO = require('../../daos/TrackDAO.js');
+let TracksDAO = require('../../daos/TracksDAO.js');
 let ArtistDAO = require('../../daos/ArtistDAO.js');
+let ArtistsDAO = require('../../daos/ArtistsDAO.js');
 let PlaylistDAO = require('../../daos/PlaylistDAO.js');
-// Processor Class.
+let PlaylistsDAO = require('../../daos/PlaylistDAO.js');
+
+/**
+ * Processor Service
+ * retrieves and saves all user library information.
+*/
 class Processor {
-    // Instantiates Processor Object
+    /**
+     * Contructor
+     * Creates a new instance of Process service for a given user.
+     * 
+     * @param {socket} socket socket.io socket instance object.
+     * @param {string} authToken Authorization token from Spotify
+    */
     constructor(socket, authToken) {
         try {
             this.socket = socket;
-            this.initializeSpotifyWebAPI(authToken);
+            this.spotifyAPI = generateSpotifyWebAPI(authToken);
         } catch(error) {
             throw error;
         }
     }
-    // Creates and Instantiates spotify API Wrapper with Token.
-    async initializeSpotifyWebAPI(authToken) {
-        try {
-            // Reference to Spotify API Wrapper.
-            this.spotifyAPI = new SpotifyWebApi();
-            await this.spotifyAPI.setAccessToken(authToken);
-        } catch(error) {
-            throw error;
-        }
-    }
-    // Retrieves User Info and creates DAO
+
+    /**
+     * Retrieve User
+     * Requests user data to access profile.
+    */
     async retrieveUser() {
         try {
             let response = await this.spotifyAPI.getMe();
@@ -34,6 +43,7 @@ class Processor {
             throw error;
         }
     }
+
     async start() {
         try {
             // Inicialize Username, Image and ID.

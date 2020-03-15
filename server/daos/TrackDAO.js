@@ -62,7 +62,7 @@ class TrackDAO {
      * Get Complete Data
      * Returns all track data, identical to Track Model.
      * 
-     * @param {class} spotifyAPI spotify-web-api instance.
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
      * @returns {object} Object with complete data values
      */
     async getCompleteData(spotifyAPI) {
@@ -98,7 +98,7 @@ class TrackDAO {
      * Get Base Data
      * Returns base track data.
      * 
-     * @param {class} spotifyAPI spotify-web-api instance.
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
      * @returns {object} Object with base data values.
      */
     async getBaseData(spotifyAPI) {
@@ -123,7 +123,7 @@ class TrackDAO {
      * Get Audio Feature Data
      * Returns audio feature track data.
      * 
-     * @param {class} spotifyAPI spotify-web-api instance.
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
      * @returns {object} Object with audio feature values.
      */
     async getAudioFeatureData(spotifyAPI) {
@@ -153,7 +153,7 @@ class TrackDAO {
      * Retrieve Complete Data
      * Retrieves track object from the Database or Spotify API and loads in data.
      * 
-     * @param {class} spotifyAPI spotify-web-api instance.
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
      */
     async retrieveCompleteData(spotifyAPI) {
         try {
@@ -172,7 +172,7 @@ class TrackDAO {
      * Retrieve Base Data
      * Retrieves track object from the Database or Spotify API and loads in data.
      * 
-     * @param {class} spotifyAPI spotify-web-api instance.
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
      */
     async retrieveBaseData(spotifyAPI) {
         try {
@@ -190,7 +190,7 @@ class TrackDAO {
      * Retrieve Audio Feature Data
      * Retrieves track object from the Database or Spotify API and loads in data.
      * 
-     * @param {class} spotifyAPI spotify-web-api instance.
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
      */
     async retrieveAudioFeatures(spotifyAPI) {
         try {
@@ -208,7 +208,7 @@ class TrackDAO {
      * Retrieve Base Data From Spotify
      * Retrieves track object from Spotify API and loads in data.
      * 
-     * @param {class} spotifyAPI spotify-web-api instance.
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
      */
     async retrieveBaseDataFromSpotify(spotifyAPI) {
         try {
@@ -227,7 +227,7 @@ class TrackDAO {
      * Retrieve Audio Feature Data From Spotify
      * Retrieves track object from Spotify API and loads in data.
      * 
-     * @param {class} spotifyAPI spotify-web-api instance.
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
      */
     async retrieveAudioFeaturesFromSpotify(spotifyAPI) {
         try {
@@ -335,7 +335,7 @@ class TrackDAO {
      * Save to Database
      * Saves data to database. Retrieves data if nessisary.
      * 
-     * @param {class} spotifyAPI spotify-web-api instance.
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
      */
     async save(spotifyAPI) {
         try {
@@ -371,10 +371,10 @@ class TrackDAO {
      * Get Audio Analysis
      * Returns audio wave data from Spotify API
      * 
-     * @param {class} spotifyAPI spotify-web-api instance.
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
      * @returns {array} Array of segment analysis data.
      */
-    async getAudioAnalysis() {
+    async getAudioAnalysis(spotifyAPI) {
         try {
             let response = await spotifyAPI.getAudioAnalysisForTrack(this._id);
             let audioAnalysisSegments = 80;
@@ -439,7 +439,7 @@ class TrackDAO {
      * Get Simular Tracks
      * Returns array of track base data objects of simular tracks.
      * 
-     * @param {class} spotifyAPI spotify-web-api instance.
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
      * @param {number} limit Number of tracks desired.
      * @returns {array} Array of track base data objects.
     */
@@ -450,7 +450,9 @@ class TrackDAO {
                 seed_tracks: this._id,
             };
             let response = await spotifyAPI.getRecommendations(options);
-            return await new TracksDAO(response.body.tracks);
+            let tracksDAO = new TracksDAO();
+            await tracksDAO.loadBaseDataObjects(response.body.tracks);
+            return tracksDAO;
         } catch (error) {
             throw error;
         }
@@ -460,8 +462,8 @@ class TrackDAO {
      * Get Track Album DAO
      * Returns Album DAO object.
      * 
-     * @param {class} spotifyAPI spotify-web-api instance.
-     * @returns {class} Album DAO
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
+     * @returns {AlbumDAO} Album DAO
     */
     async getAlbum(spotifyAPI) {
         try {
@@ -475,7 +477,7 @@ class TrackDAO {
             }
             return await new AlbumDAO(this.album._id, { name: this.album.name });
         } catch (error) {
-
+            throw error;
         }
     }
 
@@ -483,14 +485,35 @@ class TrackDAO {
      * Get Track Artist DAOs
      * Returns array of Artist DAOs for Track.
      * 
-     * @param {class} spotifyAPI spotify-web-api instance.
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
      * @returns {array} Array of Artist DAOs
     */
     async getArtists(spotifyAPI) {
         try {
             if (this.artists == null) 
                 await this.retrieveBaseData(spotifyAPI);
-            return await new ArtistsDAO(this.artists);
+            let artistsDao = new ArtistsDAO();
+            await artistsDao.loadIDs(this.artists.map(artist => artist._id));
+            return artistsDao;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    /** 
+     * Append Artists
+     * Appends artists into ArtistsDAO
+     * 
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
+     * @param {ArtistsDAO} artists ArtistsDAO to be inserted into.
+    */
+    async appendArtists(spotifyAPI, artists) {
+        try {
+            if (this.artists == null) 
+                await this.retrieveBaseData(spotifyAPI);
+            for (let i = 0; i < this.artists; i++) {
+                artists.insertArtist(this.artists[i], this._id);
+            }
         } catch (error) {
             throw error;
         }
@@ -500,14 +523,15 @@ class TrackDAO {
      * Get Track Genre DAOs
      * Returns array of Genre DAOs for Track.
      * 
-     * @param {class} spotifyAPI spotify-web-api instance.
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
      * @returns {array} Array of Genre DAOs
     */
     async getGenres(spotifyAPI) {
         try {
             if (this.artists == null) 
                 await this.retrieveBaseData(spotifyAPI);
-            let artists = await new ArtistsDAO(this.artists);
+            let artists = new ArtistsDAO();
+            await artists.loadIDs(this.artists.map(artist => artist._id));
             return await artists.getGenres(spotifyAPI);
         } catch (error) {
             throw error;

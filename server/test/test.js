@@ -1,8 +1,11 @@
-let discogsWrapper = require('../services/analysis/DiscogsWrapper.js');
+let TrackDAO = require('../daos/TrackDAO.js');
 
 async function test() {
     try {
-        console.log(await discogsWrapper.getArtistData("Creedence Clearwater Revival"));
+        let track = new TrackDAO("kljsdf");
+        console.log(track);
+        track.name = "Hello!";
+        console.log(track);
     } catch (error) {
         console.log(error);
     }

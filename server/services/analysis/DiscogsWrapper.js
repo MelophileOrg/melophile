@@ -1,7 +1,7 @@
 // Dependencies
 const axios = require('axios');
 
-// Application Keys
+// Key Retriever for Secret
 const keys = require("../general/KeyRetriever.js");
 
 /**
