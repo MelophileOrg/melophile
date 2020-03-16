@@ -39,7 +39,9 @@ class Processor {
     async retrieveUser() {
         try {
             let response = await this.spotifyAPI.getMe();
-            this.user = new UserDAO(response.body.id, {username: response.body.display_name, images: response.body.images});
+            this.user = await User.findOne({
+                spotifyID: response.body.id
+            });
         } catch(error) {
             throw error;
         }
@@ -64,27 +66,21 @@ class Processor {
 
     /**
      * Profile Inicialization
-     * 
+     * Sets up Profile DAO with blank slate.
      */
     async initializeProfile() {
         try {
-            this.profile = new ProfileDAO(this.user._id, {username: this.user.username, images: this.user.images});
-            if (this.profile.inDatabase())
-                this.profile.loadFromDatabase();
-            else 
-                this.profile.initializeNew();
+            this.profile = await new ProfileDAO(this.user);
+            this.profile.initialize();
         } catch(error) {
             console.trace(error);
             throw error;
         }
     }
 
-
     async processSavedTracks() {
         try {
-            // Start new progress bar.
             this.reportTotal = false;
-            // Start process at track 0
             await this.retrieveSavedTracks(0);
         } catch(error) {
             console.trace(error);
@@ -94,13 +90,17 @@ class Processor {
   
     async retrieveSavedTracks(offset) {
         try {
-            // Retrieve Tracks from Spotify
-            let tracks = await this.getSavedTracks(offset);
-            let audioFeatures = await this.retrieveAudioFeatures(await tracks.map(track => track.track));
-            // Track artists holder
-            let artists = {};
-            // Emit Progress
             this.socket.emit('ProcessMessage', {message: "Processing Library", percent: offset / this.total});
+            let response = await this.getSavedTracks(offset);
+            let tracks = new TracksDAO();
+            tracks.loadBaseDataWithDate(response);
+            tracks.save(this.spotifyAPI);
+            tracks.addToProfile(this.profile);
+            
+            
+
+            
+            
 
             for (let i = 0; i < tracks.length; i++) {
                 // Create new Track item.

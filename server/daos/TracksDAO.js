@@ -94,6 +94,30 @@ class TracksDAO {
     }
 
     /**
+     * Load Base Data Objects with Dates
+     * Loads in track dao's from array of data objects of tracks.
+     * 
+     * @param {array} tracks Array of track data objects
+    */
+    async loadBaseDataWithDate(tracks) {
+        try {
+            for (let i = 0; i < tracks.length; i++) {
+                if (!(tracks[i].track.id in this.tracks)) {
+                     this.tracks[tracks[i].track.id] = await {
+                        baseData: true,
+                        audioFeatures: false,
+                        dao: await new TrackDAO(tracks[i].track.id, tracks[i].track),
+                    };    
+                    this.tracks[tracks[i].track.id].dao.added = await (await new Date(tracks[i].added_at)).getTime();
+                }
+            }
+            this.baseDataLoaded = true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    /**
      * Has Base Data
      * Returns boolean of whether base data has been loaded.
      * 
@@ -333,6 +357,42 @@ class TracksDAO {
         }
         return min;
     }
+
+    /**
+     * Save
+     * Saves all track to database. Retrieves data if nessisary
+     * 
+     * @param {spotify-web-api} spotifyAPI Instance of spotify-web-api
+    */
+    async save(spotifyAPI) {
+        try {
+            if (!this.baseDataLoaded)
+                await this.retrieveBaseData(spotifyAPI);
+            if (!this.audioFeaturesLoaded)
+                await this.retrieveAudioFeatures(spotifyAPI);
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    /**
+     * Get Artists
+     * Retrieves artists from all tracks.
+     * 
+     * @param {spotify-web-api} spotifyAPI Instance of spotify-web-api
+     * @returns {ArtistsDAO} artists dao
+    */
+   async getArtists(spotifyAPI) {
+    try {
+        if (!this.baseDataLoaded)
+            await this.retrieveBaseData(spotifyAPI);
+    } catch (error) {
+        throw error;
+    }
+}
+
+
 }
 
 // Export

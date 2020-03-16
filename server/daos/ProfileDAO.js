@@ -5,10 +5,8 @@ const mongoose = require('mongoose');
 let Profile = require('../models/Profile.js');
 
 class ProfileDAO {
-    constructor(id, data) {
-        this._id = id;
-        this.username = (data != null && 'username' in data ? data.username: null);
-        this.images = (data != null && 'images' in data ? data.images: null);
+    constructor(user) {
+        this.user = user;
     }
 
     /**
@@ -26,19 +24,173 @@ class ProfileDAO {
     }
 
     /**
-     * Load From Database
-     * Loads profile data from Database.
-     * 
-     * @returns {boolean}
+     * Initialize
+     * Resets data
     */
-    async loadFromDatabase() {
-    try {
-        
-    } catch (error) {
-        throw error;
+    async initialize() {
+        try {
+            this.tracks = {};
+            this.artists = {};
+            this.genres = {};
+            this.playlists = [];
+            this.topPlayed = {
+                tracks: [[],[],[]],
+                artists: [[],[],[]],
+            },
+            this.topSaved = {
+                artists: [],
+                genres: [],
+            }
+            this.audioFeatures = {
+                valence: {
+                    average: 0,
+                    distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                    history: [],
+                    topPlayed: [],
+                },
+                danceability: {
+                    average: 0,
+                    distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                    history: [],
+                    topPlayed: [],
+                },
+                energy: {
+                    average: 0,
+                    distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                    history: [],
+                    topPlayed: [],
+                },
+                acousticness: {
+                    average: 0,
+                    distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                    history: [],
+                    topPlayed: [],
+                },
+                instrumentalness: {
+                    average: 0,
+                    distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                    history: [],
+                },
+                liveness: {
+                    average: 0,
+                    distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                    history: [],
+                },
+                loudness: {
+                    average: 0,
+                },
+                speechiness: {
+                    average: 0,
+                    distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                    history: [],
+                },
+                key: {
+                    average: 0,
+                },
+                mode: {
+                    average: 0,
+                },
+                tempo: {
+                    average: 0,
+                    distribution: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+                    history: [],
+                    topPlayed: [],
+                },
+            }
+            this.history = {
+                added: [],
+                artists: [],
+                genres: [],
+            },
+            this.privacy = {
+                public: false,
+                link: false,
+                numerics: false,
+                audioFeatures: {
+                    characteristics: false,
+                    probabilibites: false,
+                    averages: false,
+                    distributions: false,
+                    extremes: false,
+                    topPlayed: false,
+                },
+                topPlayed: {
+                    tracks: [false, false, false],
+                    artists: [false, false, false],
+                },
+                topSaved: {
+                    artists: false,
+                    genres: false,
+                },
+                history: {
+                    added: false,
+                    artists: false,
+                    genres: false,
+                },
+            }
+        } catch (error) {
+            throw error;
+        }
     }
-}
 
+    /**
+     * Save Profile
+     * Saves the profile to the database.
+    */
+    async save() {
+        try {
+            if (!await this.inDatabase()) {
+                let profile = new Profile({
+                    user: this.user,
+                    tracks: this.tracks,
+                    artists: this.artists,
+                    genres: this.genres,
+                    playlists: this.playlists,
+                    topPlayed: {
+                        tracks: this.topPlayed.tracks,
+                        artists: this.topPlayed.artists,
+                    },
+                    topSaved: {
+                        artists: this.topSaved.artists,
+                        genres: this.topSaved.genres,
+                    },
+                    audioFeatures: this.audioFeatures,
+                    history: this.history,
+                    privacy: this.privacy,
+                });
+                await profile.save();
+            } else {
+                await Profile.updateOne({
+                    user: this.user,
+                }, {
+                    $set: {
+                        "user": this.user,
+                        "tracks": this.tracks,
+                        "artists": this.artists,
+                        "genres": this.genres,
+                        "playlists": this.playlists,
+                        "topPlayed.tracks": this.topPlayed.tracks,
+                        "topPlayed.artists": this.topPlayed.artists,
+                        "topSaved.artists": this.topSaved.artists,
+                        "topSaved.genres": this.topSaved.genres,
+                        "audioFeatures": this.audioFeatures,
+                        "history": this.history,
+                        "privacy": this.privacy,
+                    }
+                });
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    /** 
+     * Add Track
+     * Adds track to list at given date.
+     * 
+     * @param {string} id Track ID
+     * @param {}
+     */
 }
 
 module.exports = ProfileDAO;

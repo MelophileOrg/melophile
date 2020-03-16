@@ -1,6 +1,8 @@
 // Dependencies
 const mongoose = require('mongoose');
-let User = require('./User');
+
+// Related Schemas
+let User = require('./User.js');
 
 // Profile Schema
 const schema = new mongoose.Schema({
@@ -20,15 +22,9 @@ const schema = new mongoose.Schema({
     artists: Array, // artistIDs
     genres: Array, // genreIDs
   },
-  audioFeatures: {
-
-  },
-  history: {
-
-  },
-  privacy: {
-    
-  },
+  audioFeatures: Object,
+  history: Object,
+  privacy: Object,
   updated: {
     type: Date,
     default: Date.now
