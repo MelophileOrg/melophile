@@ -26,6 +26,7 @@ class Processor {
         try {
             this.socket = socket;
             this.spotifyAPI = generateSpotifyWebAPI(authToken);
+            this.retrieveUser();
         } catch(error) {
             throw error;
         }
@@ -38,29 +39,46 @@ class Processor {
     async retrieveUser() {
         try {
             let response = await this.spotifyAPI.getMe();
-            this.user = new UserDAO(response.body.id);
+            this.user = new UserDAO(response.body.id, {username: response.body.display_name, images: response.body.images});
         } catch(error) {
             throw error;
         }
     }
 
+    /**
+     * Start
+     * Starts the processing service.
+    */
     async start() {
         try {
-            // Inicialize Username, Image and ID.
-            await this.initializeUser();
-            // Run through and save all tracks.
-            await this.processSavedTracks();
-            // Retrieve top played
-            await this.processTopCharts();
-            // Process playlists.
-            await this.processUserPlaylists();
-            // Save all relevent data in user object.
-            await this.user.save(this.spotifyAPI);
+            await this.initializeProfile();
+            // await this.processSavedTracks();
+            // await this.processTopCharts();
+            // await this.processUserPlaylists();
+            // await this.user.save(this.spotifyAPI);
         } catch(error) {
             console.trace(error);
             throw error;
         }
     }
+
+    /**
+     * Profile Inicialization
+     * 
+     */
+    async initializeProfile() {
+        try {
+            this.profile = new ProfileDAO(this.user._id, {username: this.user.username, images: this.user.images});
+            if (this.profile.inDatabase())
+                this.profile.loadFromDatabase();
+            else 
+                this.profile.initializeNew();
+        } catch(error) {
+            console.trace(error);
+            throw error;
+        }
+    }
+
 
     async processSavedTracks() {
         try {
