@@ -25,12 +25,13 @@
     </v-navigation-drawer>
 
     <v-app-bar app dark clipped-left color="melophile-dark-2" :elevation="0">
-      <v-row align="center" style="max-width: 800px;">
+      <v-row align="center" >
         <p class="melophile-title">MELOPHILE</p>
         <v-text-field v-if="!mobile" @keydown="search" v-model="query" style="margin-left: 20px;" background-color="melophile-dark-1" color="#4d505f" clearable flat solo dense single-line hide-details placeholder="Search"></v-text-field>
       </v-row>
       
       <v-spacer></v-spacer>
+      <v-btn @click="startProcess">Process</v-btn>
       <v-btn v-if="!user && !mobile" color="rgba(255, 255, 255, .02)" style="border: 1px solid var(--light-border) !important; background: var(--light-background);" elevation="0" tile @click="login">Login with Spotify</v-btn>
       <v-menu v-else-if="!mobile" :offset-y="true">
         <template v-slot:activator="{ on }">
@@ -61,6 +62,20 @@
 
     <v-content>
       <router-view></router-view>
+      <div id="alerts">
+        <v-alert elevation="2" :style="{textAlign: 'center'}" :max-width="windowSize - 20" min-width="250" color="melophile-dark-1" dense v-if="progress != null && progress > 0 && progress < 1">
+          <div :style="{margin: '4px 0px 6px 0px'}">
+            <v-progress-linear background-color="melophile-dark-3" color="melophile-green" :value="progress * 100"/>
+          </div>
+          {{progressMessage}}
+        </v-alert>
+        <v-alert elevation="2" :style="{textAlign: 'center'}" :max-width="windowSize - 20" min-width="250" color="melophile-dark-1" dense v-if="progress != null && progress == 1" dismissible>
+          <div :style="{margin: '4px 0px 6px 0px'}">
+            <v-progress-linear background-color="melophile-dark-3" color="melophile-dark-5" :value="100"/>
+          </div>
+          {{progressMessage}}
+        </v-alert>
+      </div>
     </v-content>
   </v-app>
 </template>
@@ -125,6 +140,9 @@ export default {
     search(event) {
       if (event.keyCode != 13) return;
       this.$router.push({ name: 'search', params: { query: this.query }});
+    },
+    startProcess() {
+      this.$store.dispatch('process', {instance: this});
     }
   }, 
   computed: {
@@ -136,6 +154,12 @@ export default {
     },
     titleMargin() {
       return (this.mobile ? "20px" : "5px");
+    },
+    progress() {
+      return this.$store.state.process.progress;
+    },
+    progressMessage() {
+      return this.$store.state.process.message;
     }
   },
   created() {
@@ -210,8 +234,7 @@ p.melophile-title {
   font-size: 1.6rem;
   font-family: 'Roboto', sans-serif;
   font-weight: lighter;
-  margin: 0px 3px 0px 3px !important;
- 
+  margin: 0px 36px 0px 16px !important;
   text-transform: uppercase;
 }
 
@@ -291,7 +314,18 @@ p.nav-bar-category {
   }
 }
 
+#alerts {
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+}
 
+.height-span {
+
+}
 </style>
 
 <style>

@@ -5,7 +5,6 @@
 </template>
 
 <script>
-//import HelloWorld from '@/components/HelloWorld.vue'
 
 export default {
   name: 'Genre',
@@ -19,5 +18,7 @@ export default {
 
     }
   },
+  computed: {
+  }
 }
 </script>

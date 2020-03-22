@@ -8,7 +8,7 @@ let Artist = require('../models/Artist.js');
 let ArtistsDAO = require('./ArtistsDAO.js');
 let TracksDAO = require('./TracksDAO.js');
 let AlbumsDAO = require('./AlbumsDAO.js');
-let GenresDAO = require('./GenreDAO.js');
+let GenreDAO = require('./GenreDAO.js');
 
 /**
  * Artist Data Access Object
@@ -163,7 +163,9 @@ class ArtistDAO {
         try {
             if (this.genres == null) 
                 await this.retrieveCompleteData(spotifyAPI);
-            return await new GenresDAO(this.genres);
+            return await this.genres.map((genre) => {
+                return new GenreDAO(genre, {artists: [this._id]});
+            });
         } catch (error) {
             throw error;
         }
@@ -241,17 +243,7 @@ class ArtistDAO {
     }
 
     /** 
-     * Get First Liked
-     * Handled in UserDAO
-    */ 
-
-    /** 
-     * Get Relationship Age
-     * Handled in UserDAO
-    */
-
-    /** 
-     * Get Added Timeline
+     * Get Added Timeline, Relationship Age
      * Handled in UserDAO
     */
 

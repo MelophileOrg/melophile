@@ -41,6 +41,7 @@ class ProfileDAO {
                 artists: [],
                 genres: [],
             }
+            this.total = 0;
             this.audioFeatures = {
                 valence: {
                     average: 0,
@@ -189,8 +190,88 @@ class ProfileDAO {
      * Adds track to list at given date.
      * 
      * @param {string} id Track ID
-     * @param {}
+     * @param {number} added Date track was added
      */
+    addSavedTrack(id, added, dao) {
+        this.tracks[id] = added;
+        let audioFeatures = [
+            {key: "valence", arrays: true},
+            {key: "danceability", arrays: true},
+            {key: "energy", arrays: true},
+            {key: "acousticness", arrays: true},
+            {key: "instrumentalness", arrays: true},
+            {key: "liveness", arrays: true},
+            {key: "loudness", arrays: false},
+            {key: "speechiness", arrays: true},
+            {key: "key", arrays: false},
+            {key: "mode", arrays: false},
+            {key: "tempo", arrays: true},
+        ];
+        const MONTH = 2628000000;
+        let now = new Date();
+        let diff = Math.floor((now.getTime() - added) / MONTH);
+        while (this.history.added.length - 1 < diff) {
+            this.history.added.push([]);
+        }
+        this.history.added[diff].push(id);
+        for (let i = 0; i < audioFeatures.length; i++) {
+            this.audioFeatures[audioFeatures[i].key].average += dao[audioFeatures[i].key];
+            if (audioFeatures[i].arrays) {
+                if (audioFeatures[i].key != 'tempo')
+                    this.audioFeatures[audioFeatures[i].key].distribution[ Math.round(dao[audioFeatures[i].key] * 20) ] += 1;
+                else 
+                    this.audioFeatures[audioFeatures[i].key].distribution[ Math.round(dao[audioFeatures[i].key] * 20 / 250) ] += 1;
+                while (this.audioFeatures[audioFeatures[i].key].history.length - 1 < diff) {
+                    this.audioFeatures[audioFeatures[i].key].history.push({total: 0, average: 0});
+                }
+                this.audioFeatures[audioFeatures[i].key].history[diff].total += 1;
+                this.audioFeatures[audioFeatures[i].key].history[diff].average += dao[audioFeatures[i].key];
+            }
+        }
+        this.total += 1;
+    }
+
+    /**
+     * Average Features
+     * Calculates averages for all features.
+    */
+    averageFeatures() {
+        for (let feature in this.audioFeatures) {
+            this.audioFeatures[feature].average /= this.total;
+        }
+    }
+
+    /** 
+     * Add Artist
+     * Adds artist to list with tracks.
+     * 
+     * @param {string} id Artist ID
+     * @param {number} tracks Array of Track IDs
+     */
+    addSavedArtist(id, tracks) {
+        if (id in this.artists) {
+            this.artists[id] = this.artists[id].concat(tracks);
+        } else {
+            this.artists[id] = tracks;
+        } 
+    }
+
+    /** 
+     * Add Saved Genre
+     * Adds genre to list
+     * 
+     * @param {object} genres Object with genres and ids
+     */
+    addGenres(genres) {
+        for (let genre in genres) {
+            if (genre in this.genres) {
+                this.genres[genre].trackNum += genres[genre].trackNum;
+                this.genres[genre].artists = this.genres[genre].artists.concat(genres[genre].artists);
+            } else {
+                this.genres[genre] = genres[genre].getProfileObject();
+            }
+        }
+    }
 }
 
 module.exports = ProfileDAO;

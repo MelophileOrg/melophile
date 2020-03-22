@@ -1,5 +1,11 @@
 import axios from 'axios';
 
+/**
+ * Get User
+ * Automatic Login
+ * 
+ * @param {object} context Vuex Context
+ */
 let getUser = async (context) => {
     try {
         let response = await axios.get('/api/auth');
@@ -9,6 +15,10 @@ let getUser = async (context) => {
     }
 };
 
+/**
+ * Login
+ * Requests login URL.
+ */
 let login = async () => {
     try {
         let response = await axios.get('/api/auth/login');
@@ -19,6 +29,13 @@ let login = async () => {
     }
 };
 
+/**
+ * Login Callback
+ * Processes given code from callback.
+ *  
+ * @param {object} context Vuex Context
+ * @param {object} payload Retrieved data from callback.
+ */
 let callback = async (context, payload) => {
     try {
         let response = await axios.put('/api/auth/callback', payload);
@@ -29,6 +46,12 @@ let callback = async (context, payload) => {
     }
 };
 
+/**
+ * Logout
+ * Deletes tokens and clears user.
+ *  
+ * @param {object} context Vuex Context
+ */
 let logout = async (context) => {
     try {
         await axios.delete('/api/auth/');
@@ -39,9 +62,15 @@ let logout = async (context) => {
     }
 };
 
-// let process = async (context) => {
-
-// };
+let process = async (context, payload) => {
+    try {
+        payload.instance.$socket.client.emit('process', {authToken: (await axios.get('/api/auth/token')).data});
+        console.log(context);
+    } catch (error) {
+        console.log(error);
+        return;
+    }
+};
 
 // let getStats = async (context) => {
 
@@ -80,7 +109,7 @@ export default {
     login, 
     callback, 
     logout,
-    // process,
+    process,
     // getStats,
     // getAudioFeatures,
     // getHistory,

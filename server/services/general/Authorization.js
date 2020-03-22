@@ -1,6 +1,6 @@
 // Dependencies
 const jwt = require("jsonwebtoken");
-let generateSpotifyWebAPI = require('../services/general/GenerateSpotifyWebAPI.js');
+let generateSpotifyWebAPI = require('./GenerateSpotifyWebAPI.js');
 
 // Key Retriever for Secret
 let key = require("./KeyRetriever.js");

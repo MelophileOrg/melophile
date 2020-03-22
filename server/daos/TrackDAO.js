@@ -1,6 +1,3 @@
-// Dependencies
-const mongoose = require('mongoose');
-
 // Models
 let Track = require('../models/Track.js');
 
@@ -340,8 +337,9 @@ class TrackDAO {
     async save(spotifyAPI) {
         try {
             if (await this.inDatabase()) return;
-            if (this.name == null || this.images == null || this.artists == null || this.album == null || this.popularity == null || this.key == null || this.mode == null || this.tempo == null || this.valence == null || this.danceability == null || this.energy == null || this.acousticness == null || this.instrumentalness == null || this.liveness == null || this.loudness == null || this.speechiness == null)
+            if (this.name == null || this.images == null || this.artists == null || this.album == null || this.popularity == null || this.key == null || this.mode == null || this.tempo == null || this.valence == null || this.danceability == null || this.energy == null || this.acousticness == null || this.instrumentalness == null || this.liveness == null || this.loudness == null || this.speechiness == null) {
                 await this.retrieveCompleteData(spotifyAPI);
+            }
             let track = new Track({
                 _id: this._id,
                 name: this.name,
@@ -493,27 +491,8 @@ class TrackDAO {
             if (this.artists == null) 
                 await this.retrieveBaseData(spotifyAPI);
             let artistsDao = new ArtistsDAO();
-            await artistsDao.loadIDs(this.artists.map(artist => artist._id));
+            await artistsDao.loadIDs(this.artists.map(artist => artist._id), this._id);
             return artistsDao;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    /** 
-     * Append Artists
-     * Appends artists into ArtistsDAO
-     * 
-     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
-     * @param {ArtistsDAO} artists ArtistsDAO to be inserted into.
-    */
-    async appendArtists(spotifyAPI, artists) {
-        try {
-            if (this.artists == null) 
-                await this.retrieveBaseData(spotifyAPI);
-            for (let i = 0; i < this.artists; i++) {
-                artists.insertArtist(this.artists[i], this._id);
-            }
         } catch (error) {
             throw error;
         }

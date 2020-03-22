@@ -1,103 +1,119 @@
 // Associated DAOs
-let ArtistDAO = require('./ArtistDAO.js');
+let TracksDAO = require('./TracksDAO.js');
+let ArtistsDAO = require('./ArtistsDAO.js');
 
+/**
+ * Genre Data Access Object
+ * Various methods for working with and retrieving a genre.
+ */
 class GenreDAO {
+    /**
+     * Contructor
+     * Creates a new instance of Genre Data Access object for a given genre. Loads in data.
+    */
     constructor(name, data) {
         this._id = name ? name : null;
         this.name = name ? name : null;
         this.artists = ((data && 'artists' in data) ? data.artists : null);
-        this.track_num = ((data && 'track_num' in data) ? data.track_num : null);
+        this.trackNum = ((data && 'trackNum' in data) ? data.trackNum : null);
     }
 
-// Public Methods
-    async getData(user) {
+    /**
+     * Add To Track Num
+     * Adds value to track num for genre.
+     * 
+     * @param {number} val value to add to track number.
+    */
+    addTrackNum(val) {
+        this.trackNum += val;
+    }
+
+    /**
+     * Add Artist
+     * Adds artist to genre.
+     * 
+     * @param {array | string} artist
+    */
+    addArtist(artist) {
+        if (artist instanceof Array) {
+            this.artists = this.artists.concat(artist);
+        } else {
+            this.artists.push(artist);
+        }
+    }
+
+    /**
+     * Get Profile Object
+     * Returns simplified object for addition to profile.
+     *
+     * @returns {object} genre profile object
+     */
+    getProfileObject() {
+        let obj = {
+            name: this.name,
+            artists: this.artists instanceof Array ? this.artists : [],
+            trackNum: this.trackNum != null ? this.trackNum : 0,
+        }
+        return obj;
+    }
+
+    /**
+     * Retrieve From Profile
+     * Retrieves genre data from profile DAO.
+     * 
+     * @param {ProfileDAO} profile Profile to extract from.
+    */
+    async retrieveFromProfile(profile) {
         try {
-            if (!this._id) throw new Error("No ID");
-            if (!(this.artists instanceof Array) || !(typeof(this.track_num) == 'number'))
-                await this.retrieve(user);
-            return {
-                _id: this._id,
-                name: this.name,
-                artists: this.artists,
-                track_num: this.track_num,
-            }
+            
         } catch(error) {
             throw error;
         }
     }
 
-    async getGenreArtists(user) {
+    /**
+     * Get Genre Artists
+     * Retrieves all artists saved from genre. Retrieves from profile if nessiary.
+     * 
+     * @param {ProfileDAO} profile Profile to extract from. (optional)
+     * @returns {ArtistsDAO} artists from genre.
+    */
+    async getGenreArtists(profile) {
         try {
-            return await user.getArtistsFromGenre(this._id);
         } catch(error) {
             throw error;
         }
     }
 
-    async getGenreTracks(user) {
+    /**
+     * Get Genre Tracks
+     * Retrieves all tracks saved from genre. Retrieves from profile if nessiary.
+     * 
+     * @param {ProfileDAO} profile Profile to extract from. (optional)
+     * @returns {TracksDAO} tracks from genre.
+    */
+    async getGenreTracks(profile) {
         try {
-            let tracks = [];
-            let artists = await this.getGenreArtists(user);
-            for (let i = 0; i < artists.length; i++) {
-                tracks = await tracks.concat(await user.getTracksFromArtist(await artists[i].getID()));
-            }
-            return tracks;
+
         } catch(error) {
             throw error;
         }
     }
 
-    async getHistory(spotifyAPI, user) {
+    /**
+     * Get Genre History
+     * Retrieves history data between a user and a genre.
+     * 
+     * @param {ProfileDAO} profile Profile to extract from.
+     */
+    async getHistory(profile) {
         try {
-            let tracks = await this.getGenreTracks(user);
-            let timeline = await user.historyFromTracks(tracks);
-            tracks = await user.sortTracksByDate(spotifyAPI, tracks);
-            return {
-                tracks: tracks,
-                timeline: timeline,
-            };
+            
         } catch(error) {
             console.log(error);
         }
     }
-
-// Helper Methods {
-
-    async retrieve(user) {
-        try {
-            if (!user) return;
-            let genre = await user.getGenre(this._id);
-            this.artists = genre.artists;
-            this.track_num = genre.track_num;
-        } catch(error) {
-            return;
-        }
-        
-    }
-
-// Get Methods
-
-    getID() {
-        return this.name;
-    }
-
-    getName() {
-        return this.name;
-    }
-
-    getArtists() {
-        return this.artists;
-    }
-
-    async artistDAOs() {
-        return (await this.artists.map(async (artist) => {
-            return await new ArtistDAO(artist);
-        }));
-    }
-
-    getTrackNum() {
-        return this.track_num;
-    }
 }
 
+// Export
 module.exports = GenreDAO;

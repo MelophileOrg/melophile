@@ -1,7 +1,6 @@
 // Dependencies
 const express = require("express");
 const request = require("request");
-let mongoose = require('mongoose');
 const querystring = require("querystring");
 const auth = require('../services/general/Authorization');
 let generateSpotifyWebAPI = require('../services/general/GenerateSpotifyWebAPI.js');
@@ -14,6 +13,7 @@ const keys = require("../services/general/KeyRetriever.js");
 const DEV = true;
 let redirectUri = "https://melophile.org/redirect/";
 if (DEV) redirectUri = "http://localhost:8080/redirect/";
+
 // State.
 let uuid = require('uuid');
 let uuidv4 = uuid.v4;
@@ -61,6 +61,21 @@ router.get("/", auth.verifyToken, User.verify, async (req, res) => {
             console.log(error);
             return res.sendStatus(500).send("Internal Server Error");
         }
+    } catch (error) {
+        console.log(error);
+        return res.sendStatus(500).send("Internal Server Error");
+    }
+});
+
+/**
+ * Get Token
+ * Retrieves spotify token for user.
+ * 
+ * @return Auth token string.
+ */
+router.get("/token", auth.verifyToken, User.verify, async (req, res) => {
+    try {
+        return res.send(req.authToken);
     } catch (error) {
         console.log(error);
         return res.sendStatus(500).send("Internal Server Error");

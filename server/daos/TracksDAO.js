@@ -1,11 +1,9 @@
-// Dependencies
-const mongoose = require('mongoose');
-
 // Models
 let Track = require('../models/Track.js');
 
 // Associated DAOs
 let TrackDAO = require('./TrackDAO.js');
+let ArtistsDAO = require('./ArtistsDAO.js');
 
 /**
  * Tracks Data Access Object
@@ -17,13 +15,9 @@ class TracksDAO {
      * Creates a new instance of Tracks Data Access object for a given set of tracks. Loads in data.
      */
     constructor() {
-        try {
-            this.baseDataLoaded = false;
-            this.audioFeaturesLoaded = false;
-            this.tracks = {};
-        } catch (error) {
-            throw error;
-        }
+        this.baseDataLoaded = false;
+        this.audioFeaturesLoaded = false;
+        this.tracks = {};
     }
 
     /**
@@ -103,10 +97,11 @@ class TracksDAO {
         try {
             for (let i = 0; i < tracks.length; i++) {
                 if (!(tracks[i].track.id in this.tracks)) {
-                     this.tracks[tracks[i].track.id] = await {
+                    let track = new TrackDAO(tracks[i].track.id, tracks[i].track);
+                     this.tracks[tracks[i].track.id] = {
                         baseData: true,
                         audioFeatures: false,
-                        dao: await new TrackDAO(tracks[i].track.id, tracks[i].track),
+                        dao: track,
                     };    
                     this.tracks[tracks[i].track.id].dao.added = await (await new Date(tracks[i].added_at)).getTime();
                 }
@@ -249,7 +244,7 @@ class TracksDAO {
                     ids.push(track);
             let response;
             do {
-                response = await spotifyAPI.getTracks(ids);
+                response = await spotifyAPI.getTracks(ids.splice(0, 50));
                 for (let i = 0; i < response.body.tracks.length; i++) {
                     if (!response.body.tracks[i]) continue;
                     this.tracks[response.body.tracks[i].id].dao.name = response.body.tracks[i].name;
@@ -259,7 +254,7 @@ class TracksDAO {
                     this.tracks[response.body.tracks[i].id].dao.popularity = response.body.tracks[i].popularity;
                     this.tracks[response.body.tracks[i].id].baseData = true;
                 }
-            } while (response.body.tracks.length == 50)
+            } while (ids.length > 0)
         } catch (error) {
             throw error;
         }
@@ -280,22 +275,22 @@ class TracksDAO {
             let response;
             do {
                 response = await spotifyAPI.getAudioFeaturesForTracks(ids.splice(0, 50));
-                for (let i = 0; i < response.body.tracks.length; i++) {
-                    if (!response.body.tracks[i]) continue;
-                    this.tracks[response.body.tracks[i].id].dao.key = response.body.tracks[i].key;
-                    this.tracks[response.body.tracks[i].id].dao.mode = response.body.tracks[i].mode;
-                    this.tracks[response.body.tracks[i].id].dao.tempo = response.body.tracks[i].tempo;
-                    this.tracks[response.body.tracks[i].id].dao.valence = response.body.tracks[i].valence;
-                    this.tracks[response.body.tracks[i].id].dao.danceability = response.body.tracks[i].danceability;
-                    this.tracks[response.body.tracks[i].id].dao.energy = response.body.tracks[i].energy;
-                    this.tracks[response.body.tracks[i].id].dao.acousticness = response.body.tracks[i].acousticness;
-                    this.tracks[response.body.tracks[i].id].dao.instrumentalness = response.body.tracks[i].instrumentalness;
-                    this.tracks[response.body.tracks[i].id].dao.liveness = response.body.tracks[i].liveness;
-                    this.tracks[response.body.tracks[i].id].dao.loudness = response.body.tracks[i].loudness;
-                    this.tracks[response.body.tracks[i].id].dao.speechiness = response.body.tracks[i].speechiness;
-                    this.tracks[response.body.tracks[i].id].audioFeatures = true;
+                for (let i = 0; i < response.body.audio_features.length; i++) {
+                    if (!response.body.audio_features[i]) continue;
+                    this.tracks[response.body.audio_features[i].id].dao.key = response.body.audio_features[i].key;
+                    this.tracks[response.body.audio_features[i].id].dao.mode = response.body.audio_features[i].mode;
+                    this.tracks[response.body.audio_features[i].id].dao.tempo = response.body.audio_features[i].tempo;
+                    this.tracks[response.body.audio_features[i].id].dao.valence = response.body.audio_features[i].valence;
+                    this.tracks[response.body.audio_features[i].id].dao.danceability = response.body.audio_features[i].danceability;
+                    this.tracks[response.body.audio_features[i].id].dao.energy = response.body.audio_features[i].energy;
+                    this.tracks[response.body.audio_features[i].id].dao.acousticness = response.body.audio_features[i].acousticness;
+                    this.tracks[response.body.audio_features[i].id].dao.instrumentalness = response.body.audio_features[i].instrumentalness;
+                    this.tracks[response.body.audio_features[i].id].dao.liveness = response.body.audio_features[i].liveness;
+                    this.tracks[response.body.audio_features[i].id].dao.loudness = response.body.audio_features[i].loudness;
+                    this.tracks[response.body.audio_features[i].id].dao.speechiness = response.body.audio_features[i].speechiness;
+                    this.tracks[response.body.audio_features[i].id].audioFeatures = true;
                 }
-            } while (response.body.tracks.length == 50);
+            } while (response.body.audio_features.length == 50);
         } catch (error) {
             throw error;
         }
@@ -370,7 +365,26 @@ class TracksDAO {
                 await this.retrieveBaseData(spotifyAPI);
             if (!this.audioFeaturesLoaded)
                 await this.retrieveAudioFeatures(spotifyAPI);
+            let ids = Object.keys(this.tracks);
+            for (let i = 0; i < ids.length; i++)
+                this.tracks[ids[i]].dao.save(spotifyAPI);
+        } catch (error) {
+            throw error;
+        }
+    }
 
+    /**
+     * Add to Profile
+     * Adds tracks to profile object as saved tracks.
+     * 
+     * @param {ProfileDAO} profileDAO Instance of profile dao
+    */
+    async addToProfile(profileDAO) {
+        try {
+            let ids = Object.keys(this.tracks);
+            for (let i = 0; i < ids.length; i++) {
+                profileDAO.addSavedTrack(ids[i], this.tracks[ids[i]].dao.added, this.tracks[ids[i]].dao);
+            }
         } catch (error) {
             throw error;
         }
@@ -384,15 +398,19 @@ class TracksDAO {
      * @returns {ArtistsDAO} artists dao
     */
    async getArtists(spotifyAPI) {
-    try {
-        if (!this.baseDataLoaded)
-            await this.retrieveBaseData(spotifyAPI);
-    } catch (error) {
-        throw error;
+        try {
+            if (!this.baseDataLoaded)
+                await this.retrieveBaseData(spotifyAPI);
+            let artists = new ArtistsDAO();
+            let ids = Object.keys(this.tracks);
+            for (let i = 0; i < ids.length; i++) {
+                await artists.add(await this.tracks[ids[i]].dao.getArtists())
+            }
+            return artists;
+        } catch (error) {
+            throw error;
+        }
     }
-}
-
-
 }
 
 // Export

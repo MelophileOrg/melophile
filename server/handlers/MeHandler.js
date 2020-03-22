@@ -1,20 +1,23 @@
 // Dependencies
 const express = require("express");
 const auth = require('../services/general/Authorization');
-let generateSpotifyWebAPI = require('../services/general/GenerateSpotifyWebAPI.js');
 const router = express.Router();
 
-// Profile Model
+// Model's Data Access Objects (DAO)
 let Profile = require('../models/Profile.js');
+let User = require('../models/User.js');
+
+/////////////////////////////////////////////////////
+// Endpoints ////////////////////////////////////////
+/////////////////////////////////////////////////////
 
 /**
- * Top Played Chart
- * Returns array of track objects for top played chart.
+ * Numerical Data
+ * Returns number of items in users library.
  * 
- * @param time_range short_term, medium_term, long_term
- * @returns 200 Array of track objects for display
+ * @returns Object with tracks, artists, genres, and playlist properties with numbers.
  */
-router.delete("/charts/topplayed/tracks/:time_range", auth.verifyToken, User.verify, async (req, res) => {
+router.get("/numerics", auth.verifyToken, User.verify, async (req, res) => {
     try {
         
     } catch(error) {
@@ -23,6 +26,97 @@ router.delete("/charts/topplayed/tracks/:time_range", auth.verifyToken, User.ver
     }
 });
 
+/**
+ * Audio Feature Data
+ * Returns all audio feature data for a user.
+ * 
+ * @returns Object with audio feature properties.
+ */
+router.get("/audiofeatures", auth.verifyToken, User.verify, async (req, res) => {
+    try {
+        
+    } catch(error) {
+        console.log(error);
+        return res.sendStatus(500).send("Internal Server Error");
+    }
+});
+
+/**
+ * Top Played Track Chart
+ * Returns array of track objects for top played chart.
+ * 
+ * @param time_range short_term, medium_term, long_term
+ * @returns Array of track objects for display
+ */
+router.get("/charts/topplayed/tracks/:time_range", auth.verifyToken, User.verify, async (req, res) => {
+    try {
+        
+    } catch(error) {
+        console.log(error);
+        return res.sendStatus(500).send("Internal Server Error");
+    }
+});
+
+/**
+ * Top Played Artist Chart
+ * Returns array of artist objects for top played chart.
+ * 
+ * @param time_range short_term, medium_term, long_term
+ * @returns Array of artist objects for display
+ */
+router.get("/charts/topplayed/artists/:time_range", auth.verifyToken, User.verify, async (req, res) => {
+    try {
+        
+    } catch(error) {
+        console.log(error);
+        return res.sendStatus(500).send("Internal Server Error");
+    }
+});
+
+/**
+ * Top Saved Artist Chart
+ * Returns array of artist objects for top saved chart.
+ * 
+ * @returns Array of artist objects for display
+ */
+router.get("/charts/topsaved/artists", auth.verifyToken, User.verify, async (req, res) => {
+    try {
+        
+    } catch(error) {
+        console.log(error);
+        return res.sendStatus(500).send("Internal Server Error");
+    }
+});
+
+/**
+ * Top Saved Genre Chart
+ * Returns array of genre objects for top saved chart.
+ * 
+ * @returns Array of genre objects for display
+ */
+router.get("/charts/topsaved/genres", auth.verifyToken, User.verify, async (req, res) => {
+    try {
+        
+    } catch(error) {
+        console.log(error);
+        return res.sendStatus(500).send("Internal Server Error");
+    }
+});
+
+/**
+ * History Data
+ * Returns all history data for user.
+ * 
+ * @returns Object with history properties
+ */
+router.get("/history", auth.verifyToken, User.verify, async (req, res) => {
+    try {
+        
+    } catch(error) {
+        console.log(error);
+        return res.sendStatus(500).send("Internal Server Error");
+    }
+});
 
 
 // Endpoints

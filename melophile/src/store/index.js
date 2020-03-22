@@ -11,6 +11,10 @@ export default new Vuex.Store({
   state: {
     user: null,
     constants: constants,
+    process: {
+      message: "",
+      progress: 0,
+    }
   },
   mutations,
   actions,

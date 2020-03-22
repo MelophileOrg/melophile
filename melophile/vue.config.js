@@ -6,6 +6,9 @@ module.exports = {
     "proxy": {
       "^/api": {
         "target": "http://localhost:3001"
+      },
+      "^/socket": {
+        "target": "http://localhost:3000"
       }
     }
   },

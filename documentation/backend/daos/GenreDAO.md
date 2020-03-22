@@ -1,0 +1,1 @@
+# Genre Data Access Object (DAO)
