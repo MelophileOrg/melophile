@@ -43,6 +43,7 @@ class Processor {
             await this.profile.averageFeatures();
             await this.processTopCharts();
             await this.processUserPlaylists();
+            await this.profile.processTopSaved();
             await this.profile.save(this.spotifyAPI);
             console.log(this.profile);
         } catch(error) {

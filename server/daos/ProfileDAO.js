@@ -187,6 +187,30 @@ class ProfileDAO {
         }
     }
 
+    async retrieveData(user) {
+        try {
+            let profile = Profile.findOne({
+                user: user
+            });
+            if (profile == null) throw new Error("Profile not found");
+            else {
+                this.user = user;
+                this.tracks = profile.tracks;
+                this.artists = profile.artists;
+                this.genres = profile.genres;
+                this.playlists = profile.playlists;
+                this.topPlayed = profile.topPlayed;
+                this.topSaved = profile.topSaved;
+                this.audioFeatures = profile.audioFeatures;
+                this.history = profile.history;
+                this.privacy = profile.privacy;
+            }
+        } catch (error) {
+            console.trace(error);
+            throw error;
+        }
+    }
+
     /** 
      * Add Track
      * Adds track to list at given date.
@@ -296,19 +320,64 @@ class ProfileDAO {
     addPlaylist(id) {
         this.playlists.push(id);
     }
+
+    /**
+     * Process Top Saved
+     * Determines top saved artists and genres.
+     */
+    async processTopSaved() {
+        try {
+            let allArtists = await Object.entries(this.artists).sort((a, b) => {
+                return b[1].length - a[1].length;
+            }).splice(0, 50);
+            this.topSaved.artists = await allArtists.map((artist) => artist[0]);
+            let allGenres = await Object.entries(this.genres).sort((a, b) => {
+                return b[1].trackNum - a[1].trackNum;
+            }).splice(0, 50);
+            this.topSaved.genres = await allGenres.map((genre) => genre[0]);
+        } catch (error) {
+            console.trace(error);
+            throw error;
+        }
+    }
+
+    getData() {
+
+    }
+
+    getSimularSaved(track) {
+
+    }
+
+    getTracksLikedFromArtist(id) {
+
+    }
+
+    getTracksLikedFromGenre(id) {
+
+    }
+
+    getArtistsLikedFromGenre(id) {
+
+    }
+
+    getHistoryFromTracks(trackIDs) {
+
+    }
+
+    sortTracksByDate(tracks) {
+
+    }
+
+    getPercentiles(track) {
+
+    }
 }
+
 
 module.exports = ProfileDAO;
 
 
-//     // Returns Data Object (Retrieves Data if Needed)
-//     async getData(spotifyAPI) {
-
-//     // Returns Track DAO's of artist tracks liked.
-//     async getTracksFromArtist(artistID) {
-
-//     // Genre Object
-//     async getGenre(genreID) {
 
 //     async getNearest(trackDAO, n, spotifyAPI) {
 //         try {
@@ -326,8 +395,6 @@ module.exports = ProfileDAO;
 //         }
 //     }
 
-//     // Returns Liked Artist's DAOs of a given genre
-//     async getArtistsFromGenre(genreID) {
 
 //     async historyFromTracks(tracks) {
 //         try {
@@ -402,7 +469,3 @@ module.exports = ProfileDAO;
 //         }
 //     }
 
-//     async findTopSaved() {
-//         this.topSaved.artists = (await Object.entries(this.artists)).sort((a, b) => { return b[1].length - a[1].length}).splice(0, 50).map(artist => artist[0]);
-//         this.topSaved.genres = (await Object.entries(this.genres)).sort((a, b) => { return b[1].track_num - a[1].track_num}).splice(0, 50).map(genre => genre[0]);
-//     }
