@@ -96,9 +96,10 @@ class TracksDAO {
     async loadBaseDataWithDate(tracks) {
         try {
             for (let i = 0; i < tracks.length; i++) {
+                if ('is_local' in tracks[i] && tracks[i].is_local) continue; 
                 if (!(tracks[i].track.id in this.tracks)) {
                     let track = new TrackDAO(tracks[i].track.id, tracks[i].track);
-                     this.tracks[tracks[i].track.id] = {
+                    this.tracks[tracks[i].track.id] = {
                         baseData: true,
                         audioFeatures: false,
                         dao: track,
@@ -410,6 +411,16 @@ class TracksDAO {
         } catch (error) {
             throw error;
         }
+    }
+
+    /**
+     * Get IDs
+     * Returns array of ids for items.
+     * 
+     * @returns {array} Array of IDs
+    */
+    getIDs() {
+        return Object.keys(this.tracks);
     }
 }
 

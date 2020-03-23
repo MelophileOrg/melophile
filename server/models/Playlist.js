@@ -10,7 +10,6 @@ const schema = new mongoose.Schema({
     images: Array,
     public: Boolean,
     tracks: Object,
-
     key: Number,
     mode: Number,
     tempo: Number,

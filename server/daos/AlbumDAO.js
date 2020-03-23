@@ -1,113 +1,115 @@
-// // Associated DAOs
-// let TrackDAO = require('./TrackDAO.js');
-// let ArtistDAO = require('./ArtistDAO.js');
-// let GenreDAO = require('./GenreDAO.js');
+// Associated DAOs
+let TrackDAO = require('./TrackDAO.js');
+let ArtistDAO = require('./ArtistDAO.js');
+let GenreDAO = require('./GenreDAO.js');
 
-// class AlbumDAO {
-//     constructor(id, data) {
-//         this._id = id ? id : null;
-//         this.name = ((data && 'name' in data) ? data.name : null);
-//         this.artists = ((data && 'artists' in data) ? data.artists.map(this.minify) : null);
-//         this.genres = ((data && 'genres' in data) ? data.genres : null);
-//         this.image = ((data && 'image' in data) ? data.image : (data && 'images' in data && data.images.length) ? data.images[0].url : "");
-//         this.popularity = ((data && 'popularity' in data) ? data.popularity : null);
-//         this.release_date = ((data && 'release_date' in data) ? data.release_date : null);
-//         this.tracks = ((data && 'tracks' in data) ? data.tracks : null);
-//     }
+/**
+ * Album Data Access Object
+ * Various methods for working with and retrieving with Album Data.
+*/
+class AlbumDAO {
+    /**
+     * Contructor
+     * Creates a new instance of Album Data Access object for a given album. Loads in data.
+     * 
+     * @param {string} id Spotify ID for album.
+     * @param {object} data Option data to pre-load into DAO.
+    */
+    constructor(id, data) {
+        if (!id) throw new Error("No ID Provided.");
+        this._id = id;
+        if (data) {
+            this.name = ('name' in data) ? data.name : null;
+            this.artists = ('artists' in data) ? data.artists.map(this.minify) : null;
+            this.genres = ('genres' in data) ? data.genres : null;
+            this.images = ('images' in data) ? data.images : null;
+            this.popularity = ('popularity' in data) ? data.popularity : null;
+            this.release_date = ('release_date' in data) ? data.release_date : null;
+            this.tracks = ('tracks' in data) ? data.tracks : null;
+        }
+    }
 
-// // Public methods
+    /**
+     * Get Data
+     * Returns base album data.
+     * 
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
+     * @returns {object} Object with complete data values
+    */
+    async getData(spotifyAPI) {
+        try {
 
-//     async getData(spotifyAPI) {
-//         try {
-//             if (!this._id) throw new Error("No ID");
-//             if (typeof(name) != 'string' || !(this.artists instanceof Array) || !(this.genres instanceof Array) || typeof(this.image) != 'string' || typeof(this.popularity) != 'number' || typeof(release_date) != 'number' || !(this.tracks instanceof Array))
-//                 await this.retrieve(spotifyAPI); 
-//             return {
-//                 _id: this._id,
-//                 name: this.name,
-//                 artists: this.artists,
-//                 genres: this.genres,
-//                 image: this.image,
-//                 popularity: this.popularity,
-//                 release_date: this.release_date,
-//                 tracks: this.tracks,
-//             };
-//         } catch(error) {
-//             throw error;
-//         }
-//     }
+        } catch (error) {
+            console.trace(error);
+            throw error;
+        }
+    }
 
-//     async getAlbumGenres(spotifyAPI) {
-//         try {
-//             if (!(this.genres instanceof Array))
-//                 await this.retrieve(spotifyAPI);
-//             return this.genres.map(async (genre) => {
-//                 return await new GenreDAO(genre);
-//             });
-//         } catch(error) {
-//             throw error;
-//         }
-//     }
+    /**
+     * Retrieve Data
+     * Retrieves the data from Spotify API
+     * 
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
+    */
+    async retrieveData(spotifyAPI) {
+        try {
 
-//     async getAlbumArtists(spotifyAPI) {
-//         try {
-//             if (!(this.artists instanceof Array))
-//                 await this.retrieve(spotifyAPI);
-//             return this.artists.map(async (artist) => {
-//                 return await new ArtistDAO(artist._id);
-//             });
-//         } catch(error) {
-//             throw error;
-//         }
-//     }
+        } catch (error) {
+            console.trace(error);
+            throw error;
+        }
+    }
 
-//     async getAlbumTracks(spotifyAPI) {
-//         try {
-//             if (!(this.tracks instanceof Array))
-//                 await this.retrieve(spotifyAPI);
-//             return this.tracks.map(async (track) => {
-//                 return await new TrackDAO(track);
-//             });
-//         } catch(error) {
-//             throw error;
-//         }
-//     }
+    /**
+     * Get Genres
+     * Returns genre for album.
+     * 
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
+     * @returns {array} Array of GenreDAO
+    */
+    async getGenres(spotifyAPI) {
+        try {
 
-// // Helper methods
+        } catch (error) {
+            console.trace(error);
+            throw error;
+        }
+    }
 
-//     async retrieve(spotifyAPI) {
-//         try {
-//             if (!this._id) throw new Error("No ID");
-//             if (typeof(name) == 'string' && this.artists instanceof Array && this.genres instanceof Array && typeof(this.image) == 'string' && typeof(this.popularity) == 'number' && typeof(release_date) == 'number' && this.tracks instanceof Array) 
-//                 return;
-//             let response = await spotifyAPI.getAlbum(this._id);
-//             let album = response.body;
-//             this.name = album.name;
-//             this.artists = await this.minify(album.artists);
-//             this.genres = album.genres;
-//             this.image = ('images' in album ? (album.images.length ? album.images[0].url : "") : "");
-//             this.popularity = album.popularity;
-//             this.release_date = album.release_date;
-//             this.tracks = album.tracks.items.map(track => track.id);
-//         } catch(error) {
-//             throw error;
-//         }
-//     }
+    /**
+     * Get Artists
+     * Returns artists for album.
+     * 
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
+     * @returns {ArtistsDAO}
+    */
+    async getArtists(spotifyAPI) {
+        try {
 
-//     minify(item) {
-//         let min = {
-//             _id: ('id' in item) ? item.id : (('_id' in item) ? item._id : item),
-//             name: ('name' in item) ? item.name : typeof(item) == 'string' ? item : "",
-//         }
-//         return min;
-//     }
+        } catch (error) {
+            console.trace(error);
+            throw error;
+        }
+    }
 
-// // Get methods
+    /**
+     * Get Tracks
+     * Returns tracks for album.
+     * 
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
+     * @returns {TracksDAO}
+    */
+    async getTracks(spotifyAPI) {
+        try {
 
-//     getID() {
-//         return this._id;
-//     }
+        } catch (error) {
+            console.trace(error);
+            throw error;
+        }
+    }
 
-// }
 
-// module.exports = AlbumDAO;
+
+}
+
+module.exports = AlbumDAO;

@@ -257,6 +257,16 @@ class ArtistsDAO {
             throw error;
         }
     }
+
+    /**
+     * Get IDs
+     * Returns array of ids for items.
+     * 
+     * @returns {array} Array of IDs
+    */
+    getIDs() {
+        return Object.keys(this.artists);
+    }
 }
 
 // Export

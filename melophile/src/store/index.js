@@ -12,6 +12,8 @@ export default new Vuex.Store({
     user: null,
     constants: constants,
     process: {
+      state: false,
+      needed: false,
       message: "",
       progress: 0,
     }

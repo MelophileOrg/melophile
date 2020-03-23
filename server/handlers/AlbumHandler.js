@@ -8,7 +8,6 @@ let TrackDAO = require("../daos/TrackDAO.js");
 let ArtistDAO = require("../daos/ArtistDAO.js");
 let PlaylistDAO = require("../daos/PlaylistDAO.js");
 let AlbumDAO = require("../daos/AlbumDAO.js");
-let UserDAO = require("../daos/UserDAO.js");
 
 /////////////////////////////////////////////////////
 // Endpoints ////////////////////////////////////////

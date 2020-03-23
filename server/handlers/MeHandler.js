@@ -12,6 +12,28 @@ let User = require('../models/User.js');
 /////////////////////////////////////////////////////
 
 /**
+ * Processed
+ * Returns boolean whether user has been processed before.
+ * 
+ * @returns Boolean 
+ */
+router.get("/exists", auth.verifyToken, User.verify, async (req, res) => {
+    try {
+        let response = await req.spotifyAPI.getMe();
+        let user = await User.findOne({
+            spotifyID: response.body.id
+        });
+        let profile = await Profile.findOne({
+            user: user,
+        });
+        return res.send(profile != null);
+    } catch(error) {
+        console.log(error);
+        return res.sendStatus(500).send("Internal Server Error");
+    }
+});
+
+/**
  * Numerical Data
  * Returns number of items in users library.
  * 

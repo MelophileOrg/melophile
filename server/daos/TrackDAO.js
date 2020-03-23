@@ -19,7 +19,7 @@ class TrackDAO {
      * @param {object} data Option data to pre-load into DAO.
      */
     constructor(id, data) {
-        if (!id) throw error;
+        if (!id) throw new Error("No ID Provided.");
         this._id = id;
         if (data) {
             this.name = (('name' in data) ? data.name : null);

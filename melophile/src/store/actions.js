@@ -6,10 +6,16 @@ import axios from 'axios';
  * 
  * @param {object} context Vuex Context
  */
-let getUser = async (context) => {
+let getUser = async (context, payload) => {
     try {
         let response = await axios.get('/api/auth');
-        if (response.status == 200) context.commit('setUser', response.data);
+        if (response.status == 200) {
+            await context.commit('setUser', response.data);
+            response = await axios.get('/api/me/exists');
+            if (!response.data)
+                payload.instance.$socket.client.emit('process', {authToken: (await axios.get('/api/auth/token')).data});
+
+        }
     } catch(error) {
         return;
     }
@@ -39,7 +45,11 @@ let login = async () => {
 let callback = async (context, payload) => {
     try {
         let response = await axios.put('/api/auth/callback', payload);
-        context.commit('setUser', response.data);
+        await context.commit('setUser', response.data);
+        response = await axios.get('/api/me/exists');
+        if (!response.data)
+            payload.instance.$socket.client.emit('process', {authToken: (await axios.get('/api/auth/token')).data});
+        
     } catch(error) {
         console.log(error);
         return;
@@ -65,7 +75,7 @@ let logout = async (context) => {
 let process = async (context, payload) => {
     try {
         payload.instance.$socket.client.emit('process', {authToken: (await axios.get('/api/auth/token')).data});
-        console.log(context);
+        context.commit('setProcessState', true);
     } catch (error) {
         console.log(error);
         return;

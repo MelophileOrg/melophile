@@ -1,6 +1,3 @@
-// Dependencies
-const mongoose = require('mongoose');
-
 // Models
 let Artist = require('../models/Artist.js');
 
@@ -23,7 +20,7 @@ class ArtistDAO {
      * @param {object} data Option data to pre-load into DAO.
     */
     constructor(id, data) {
-        if (!id) throw error;
+        if (!id) throw new Error("No ID Provided.");
         this._id = id;
         if (data) {
             this.name = (('name' in data) ? data.name : null);
@@ -131,7 +128,7 @@ class ArtistDAO {
      * Save to Database
      * Saves data to database. Retrieves data if nessisary.
      * 
-     * @param {object} item Item to be minified
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
     */
     async save(spotifyAPI) {
         try {
@@ -220,13 +217,13 @@ class ArtistDAO {
     } 
 
     /** 
-     * Get Artist Albums
+     * Get Artists Albums
      * Returns Albums Data Access Object of Artist Albums
      * 
      * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
      * @returns {AlbumsDAO} Albums Access Object
     */
-    async getArtistAlbums(spotifyAPI) {
+    async getArtistsAlbums(spotifyAPI) {
         try {
             let albums = [];
             let offset = 0;

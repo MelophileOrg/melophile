@@ -63,16 +63,14 @@
     <v-content>
       <router-view></router-view>
       <div id="alerts">
-        <v-alert elevation="2" :style="{textAlign: 'center'}" :max-width="windowSize - 20" min-width="250" color="melophile-dark-1" dense v-if="progress != null && progress > 0 && progress < 1">
+        <v-alert elevation="2" :style="{textAlign: 'center'}" :max-width="windowSize - 20" color="melophile-dark-1" dense v-if="progress != null && progress > 0 && progress < 1">
           <div :style="{margin: '4px 0px 6px 0px'}">
             <v-progress-linear background-color="melophile-dark-3" color="melophile-green" :value="progress * 100"/>
           </div>
           {{progressMessage}}
         </v-alert>
-        <v-alert elevation="2" :style="{textAlign: 'center'}" :max-width="windowSize - 20" min-width="250" color="melophile-dark-1" dense v-if="progress != null && progress == 1" dismissible>
-          <div :style="{margin: '4px 0px 6px 0px'}">
-            <v-progress-linear background-color="melophile-dark-3" color="melophile-dark-5" :value="100"/>
-          </div>
+        <v-alert elevation="2" :style="{textAlign: 'center'}" :max-width="windowSize - 20" color="melophile-dark-1" dense v-if="progress != null && progress == 1" dismissible>
+          <div :style="{margin: '4px 0px 6px 0px'}"/>
           {{progressMessage}}
         </v-alert>
       </div>
@@ -163,7 +161,7 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch('getUser');
+    this.$store.dispatch('getUser', {instance: this});
   }
 };
 </script>
