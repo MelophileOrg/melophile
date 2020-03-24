@@ -4,6 +4,8 @@ let socket = require('socket.io');
 let bodyParser = require("body-parser");
 let cookieParser = require("cookie-parser");
 let process = require("./services/process/Process.js");
+// const fs = require('fs');
+// const https = require('https');
 
 // Server Initialization
 let app = express();
@@ -14,24 +16,39 @@ app.use(bodyParser.urlencoded({extended: false}));
 // Start Server
 let server = app.listen(3000, function(){ console.log("Process Endpoints Ready on: 3000");});
 
-// Socket Server
+// Web-Socket Initialization
 let io = socket(server);
-let clients = [];
+let activeClients = 0;
 
 /////////////////////////////////////////////////////
 // Endpoints ////////////////////////////////////////
 /////////////////////////////////////////////////////
 
+/**
+ * Socket : On Connection
+ * Run when a socket makes a connection with the server.
+ * 
+ * @param {socket} socket Instance of socket.io socket connection
+ */
 io.on('connection', function(socket) {
-    clients.push(socket.id);
-    //console.log(socket);
+    activeClients += 1;
 
+    /**
+     * Socket : Process
+     * Begins the library process for a given user.
+     * 
+     * @param {object} data Contains authorization token for Spotify User.
+     */
     socket.on('process', async function(data) {
         await process(socket, data.authToken);
     });
 
+    /**
+     * Socket : Disconnect
+     * Upon a user's disconnection from the service.
+     */
     socket.on('disconnect', function() {
-        clients.splice(clients.indexOf(socket.id), 1);
+        activeClients -= 1;
     });
 });
 

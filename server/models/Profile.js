@@ -6,10 +6,7 @@ let User = require('./User.js');
 
 // Profile Schema
 const schema = new mongoose.Schema({
-  user: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'User'
-  },
+  user: String,
   tracks: Object, // id: {dateAdded: Number}
   artists: Object, // id: [trackIDs]
   genres: Object, // id: [artistIDs]

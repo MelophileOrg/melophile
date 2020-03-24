@@ -1,15 +1,16 @@
 <template>
   <div class="Discover">
-
+    <PageHeader title="Discover"/>
   </div>
 </template>
 
 <script>
-//import HelloWorld from '@/components/HelloWorld.vue'
+import PageHeader from '@/components/General/PageHeader.vue'
 
 export default {
   name: 'Discover',
   components: {
+    PageHeader,
   },
   data: () => ({
     

@@ -59,11 +59,11 @@ router.get("/", auth.verifyToken, User.verify, async (req, res) => {
             refresh(req.refreshToken, res);
         } else {
             console.log(error);
-            return res.sendStatus(500).send("Internal Server Error");
+            return res.status(500).send("Internal Server Error");
         }
     } catch (error) {
         console.log(error);
-        return res.sendStatus(500).send("Internal Server Error");
+        return res.status(500).send("Internal Server Error");
     }
 });
 
@@ -78,7 +78,7 @@ router.get("/token", auth.verifyToken, User.verify, async (req, res) => {
         return res.send(req.authToken);
     } catch (error) {
         console.log(error);
-        return res.sendStatus(500).send("Internal Server Error");
+        return res.status(500).send("Internal Server Error");
     }
 });
 
@@ -101,7 +101,7 @@ router.get("/login", async (req, res) => {
         }));
     } catch (error) {
         console.log(error);
-        return res.sendStatus(500).send("Internal Server Error");
+        return res.status(500).send("Internal Server Error");
     }
 });
 
@@ -120,7 +120,7 @@ router.delete("/", auth.verifyToken, User.verify, async (req, res) => {
       return res.clearCookie('melophile-token').status(204).send("Invalid User Account");
     user.removeToken(req.token);
     await user.save();
-    return res.clearCookie('melophile-token').sendStatus(200).send("User Logged Out");
+    return res.clearCookie('melophile-token').status(200).send("User Logged Out");
 });
 
 /**
@@ -137,7 +137,7 @@ router.put("/callback", async (req, res) => {
         let code = req.body.code ? req.body.code : null;
         // Shady Stuff Goin On?
         if (!code || !req.body.state || req.body.state != state)
-            return res.sendStatus(204).send("Invalid Callback");
+            return res.status(204).send("Invalid Callback");
         // Preparations for Request
         let url = "https://accounts.spotify.com/api/token";
         let headers = { 'Authorization': 'Basic ' + (new Buffer.from(await keys.getSpotify().id + ':' + await keys.getSpotify().secret).toString('base64'))};
@@ -169,12 +169,12 @@ router.put("/callback", async (req, res) => {
                     login(existingUser, followers, null, body.access_token, body.refresh_token, res);
                 }
             } else {
-                return res.sendStatus(response.statusCode).send(error);
+                return res.status(response.statusCode).send(error);
             }
         });
     } catch (error) {
         console.log(error);
-        return res.sendStatus(500).send("Internal Server Error");
+        return res.status(500).send("Internal Server Error");
     }
 });
 
@@ -205,7 +205,7 @@ let login = async (user, followers, oldToken, accessToken, refreshToken, res) =>
         }).status(200).send({...user.toJSON(), followers: followers});
     } catch(error) {
         console.log(error);
-        return res.sendStatus(500).send("Internal Server Error");
+        return res.status(500).send("Internal Server Error");
     }
 }
 
@@ -239,7 +239,7 @@ let register = async (user, followers, accessToken, refreshToken, res) => {
         }).status(200).send({...newUser.toJSON(), followers: followers});
     } catch(error) {
         console.log(error);
-        return res.sendStatus(500).send("Internal Server Error");
+        return res.status(500).send("Internal Server Error");
     }
 }
 
@@ -279,12 +279,12 @@ let refresh = async (refreshToken, res) => {
                     return res.clearCookie('melophile-token').status(204).send("Invalid User Account");
                 }
             } else {
-                return res.sendStatus(response.statusCode).send("Could not Refresh Token");
+                return res.status(response.statusCode).send("Could not Refresh Token");
             }
         });
     } catch(error) {
         console.log(error);
-        return res.sendStatus(500).send("Internal Server Error");
+        return res.status(500).send("Internal Server Error");
     }
 }
 

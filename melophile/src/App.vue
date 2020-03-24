@@ -25,13 +25,12 @@
     </v-navigation-drawer>
 
     <v-app-bar app dark clipped-left color="melophile-dark-2" :elevation="0">
-      <v-row align="center" >
+      <v-row align="center">
         <p class="melophile-title">MELOPHILE</p>
-        <v-text-field v-if="!mobile" @keydown="search" v-model="query" style="margin-left: 20px;" background-color="melophile-dark-1" color="#4d505f" clearable flat solo dense single-line hide-details placeholder="Search"></v-text-field>
+        <v-text-field v-if="!mobile" @keydown="search" v-model="query" style="margin-left: 32px; margin-right: 32px" background-color="melophile-dark-3" class="elevation-1" color="#4d505f" clearable flat solo dense single-line hide-details placeholder="Search"></v-text-field>
       </v-row>
       
-      <v-spacer></v-spacer>
-      <v-btn @click="startProcess">Process</v-btn>
+      
       <v-btn v-if="!user && !mobile" color="rgba(255, 255, 255, .02)" style="border: 1px solid var(--light-border) !important; background: var(--light-background);" elevation="0" tile @click="login">Login with Spotify</v-btn>
       <v-menu v-else-if="!mobile" :offset-y="true">
         <template v-slot:activator="{ on }">
@@ -49,7 +48,6 @@
           </v-list-item>
 
           <v-divider></v-divider>
-
           <v-list-item @click="logout">
             <v-list-item-content>
               <v-list-item-title>Sign out</v-list-item-title>
@@ -79,7 +77,7 @@
 </template>
 
 <script>
-
+import axios from 'axios'
 
 export default {
   name: 'App',
@@ -117,6 +115,7 @@ export default {
       return images('./' + pic + ".svg");
     },
     route(name) {
+      if (this.$route.name == name) return;
       this.$router.push({name: name});
     },
     onResize() {
@@ -160,8 +159,19 @@ export default {
       return this.$store.state.process.message;
     }
   },
-  created() {
-    this.$store.dispatch('getUser', {instance: this});
+  async created() {
+    let categories = 0;
+    let isRoute = (item) => { 
+      if (item.type == 'category') {
+        categories += 1;
+        return false;
+      }
+      return item.route == this.$route.name; 
+    };
+    this.tab = this.tabs.findIndex(isRoute) - categories;
+    if (await this.$store.dispatch('getUser', {instance: this})) {
+      this.$socket.client.emit('process', {authToken: (await axios.get('/api/auth/token')).data});
+    }
   }
 };
 </script>
@@ -200,7 +210,7 @@ font-family: 'Titillium Web', sans-serif;
 }
 
 .melophile {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Open Sans', sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: var(--text);
@@ -233,7 +243,6 @@ p.melophile-title {
   font-family: 'Roboto', sans-serif;
   font-weight: lighter;
   margin: 0px 36px 0px 16px !important;
-  text-transform: uppercase;
 }
 
 .v-btn__content {
@@ -321,8 +330,44 @@ p.nav-bar-category {
   justify-content: center;
 }
 
-.height-span {
+.page-margin {
+  margin: 0px 12px;
+}
 
+.padding-1 {
+  padding: 8px 8px;
+}
+
+.padding-2 {
+  padding: 8px 16px;
+}
+
+
+.menuable__content__active::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(124, 102, 102, 0.3);
+    background-color: #32323e;
+}
+
+.menuable__content__active::-webkit-scrollbar
+{
+    width: 5px;
+    background-color: rgba(6, 6, 6, 0.007)
+}
+
+.menuable__content__active::-webkit-scrollbar-thumb
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(255, 255, 255, 0);
+    background-color: rgba(255, 255, 255, 0.288);
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0,
+  }
+  to {
+    opacity: 1;
+  }
 }
 </style>
 

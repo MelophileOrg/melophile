@@ -45,7 +45,6 @@ class Processor {
             await this.processUserPlaylists();
             await this.profile.processTopSaved();
             await this.profile.save(this.spotifyAPI);
-            console.log(this.profile);
         } catch(error) {
             console.trace(error);
             throw error;

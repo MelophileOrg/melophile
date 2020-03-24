@@ -14,9 +14,37 @@ class ArtistsDAO {
      * Creates a new instance of Artists Data Access object for a given set of artists. Loads in data.
      */
     constructor() {
+        this.baseDataLoaded = false;
+        this.artists = {};
+    }
+
+    /**
+     * Save
+     * Saves all artists to database. Retrieves data if nessisary
+     * 
+     * @param {spotify-web-api} spotifyAPI Instance of spotify-web-api
+    */
+    async save(spotifyAPI) {
         try {
-            this.baseDataLoaded = false;
-            this.artists = {};
+            if (!this.baseDataLoaded)
+                await this.retrieveBaseData(spotifyAPI);
+            let ids = Object.keys(this.artists);
+            for (let i = 0; i < ids.length; i++)
+                this.artists[ids[i]].dao.save(spotifyAPI);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    /**
+     * Has Base Data
+     * Returns boolean of whether base data has been loaded.
+     * 
+     * @returns {boolean} whether artists have base data.
+     */
+    async hasBaseData() {
+        try {
+            return this.baseDataLoaded;
         } catch (error) {
             throw error;
         }
@@ -27,6 +55,7 @@ class ArtistsDAO {
      * Loads in artist dao's from array of artist ids
      * 
      * @param {array} artists Array of strings: artist IDs
+     * @param {string} trackID Option track artist came from.
      */
     async loadIDs(artists, trackID) {
         try {
@@ -44,6 +73,16 @@ class ArtistsDAO {
         } catch (error) {
             throw error;
         }
+    }
+
+    /**
+     * Get IDs
+     * Returns array of ids for items.
+     * 
+     * @returns {array} Array of IDs
+    */
+    getIDs() {
+        return Object.keys(this.artists);
     }
 
     /**
@@ -70,14 +109,19 @@ class ArtistsDAO {
     }
 
     /**
-     * Has Base Data
-     * Returns boolean of whether base data has been loaded.
+     * Get Complete Data
+     * Returns array of objects with complete artist data properties. Retrieves if nessisary.
      * 
-     * @returns {boolean} whether artists have base data.
+     * @param {spotify-web-api} spotifyAPI spotify-web-api instance.
+     * @returns {array} array of objects with complete data properties
      */
-    async hasBaseData() {
+    async getCompleteData(spotifyAPI) {
         try {
-            return this.baseDataLoaded;
+            if (!this.baseDataLoaded)
+                await this.retrieveBaseData(spotifyAPI);
+            return await Promise.all(await Object.values(this.artists).map(async (artist) => {
+                return await artist.dao.getCompleteData(spotifyAPI);
+            }));
         } catch (error) {
             throw error;
         }
@@ -146,24 +190,6 @@ class ArtistsDAO {
         } catch (error) {
             console.trace(error);
             return;
-        }
-    }
-
-    /**
-     * Save
-     * Saves all artists to database. Retrieves data if nessisary
-     * 
-     * @param {spotify-web-api} spotifyAPI Instance of spotify-web-api
-    */
-   async save(spotifyAPI) {
-        try {
-            if (!this.baseDataLoaded)
-                await this.retrieveBaseData(spotifyAPI);
-            let ids = Object.keys(this.artists);
-            for (let i = 0; i < ids.length; i++)
-                this.artists[ids[i]].dao.save(spotifyAPI);
-        } catch (error) {
-            throw error;
         }
     }
 
@@ -256,16 +282,6 @@ class ArtistsDAO {
         } catch (error) {
             throw error;
         }
-    }
-
-    /**
-     * Get IDs
-     * Returns array of ids for items.
-     * 
-     * @returns {array} Array of IDs
-    */
-    getIDs() {
-        return Object.keys(this.artists);
     }
 }
 

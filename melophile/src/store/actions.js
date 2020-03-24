@@ -6,15 +6,13 @@ import axios from 'axios';
  * 
  * @param {object} context Vuex Context
  */
-let getUser = async (context, payload) => {
+let getUser = async (context) => {
     try {
         let response = await axios.get('/api/auth');
         if (response.status == 200) {
             await context.commit('setUser', response.data);
             response = await axios.get('/api/me/exists');
-            if (!response.data)
-                payload.instance.$socket.client.emit('process', {authToken: (await axios.get('/api/auth/token')).data});
-
+            return response.data;
         }
     } catch(error) {
         return;
@@ -47,9 +45,7 @@ let callback = async (context, payload) => {
         let response = await axios.put('/api/auth/callback', payload);
         await context.commit('setUser', response.data);
         response = await axios.get('/api/me/exists');
-        if (!response.data)
-            payload.instance.$socket.client.emit('process', {authToken: (await axios.get('/api/auth/token')).data});
-        
+        return response.data;
     } catch(error) {
         console.log(error);
         return;
@@ -94,9 +90,6 @@ let process = async (context, payload) => {
 
 // };
 
-// let playTrack = async (context) => {
-
-// };
 
 // let playTracks = async (context) => {
 

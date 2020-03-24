@@ -1,10 +1,12 @@
 // Dependencies
 let mongoose = require('mongoose');
+
 // Database Initialization
 mongoose.connect('mongodb://localhost:27017/melophile', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
+
 // Start Servers
 require('./socket.js');
 const analysis = require('./server.js');

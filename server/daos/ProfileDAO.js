@@ -13,7 +13,7 @@ class ProfileDAO {
      * @param {User} user User object for owner of profile.
      */
     constructor(user) {
-        this.user = user;
+        this.user = user._id;
     }
 
     /**
@@ -24,7 +24,7 @@ class ProfileDAO {
     */
     async inDatabase() {
         try {
-            return (await Profile.findOne({ _id: this._id })) != null;
+            return (await Profile.findOne({ user: this.user })) != null;
         } catch (error) {
             throw error;
         }
@@ -167,7 +167,6 @@ class ProfileDAO {
                     user: this.user,
                 }, {
                     $set: {
-                        "user": this.user,
                         "tracks": this.tracks,
                         "artists": this.artists,
                         "genres": this.genres,
@@ -187,14 +186,18 @@ class ProfileDAO {
         }
     }
 
-    async retrieveData(user) {
+    /**
+     * Retrieve Data
+     * Retrieves the profile from database.
+    */
+    async retrieveData() {
         try {
             let profile = Profile.findOne({
-                user: user
+                user: this.user
             });
             if (profile == null) throw new Error("Profile not found");
             else {
-                this.user = user;
+                this.user = user._id;
                 this.tracks = profile.tracks;
                 this.artists = profile.artists;
                 this.genres = profile.genres;
@@ -341,12 +344,9 @@ class ProfileDAO {
         }
     }
 
-    getData() {
-
-    }
 
     getSimularSaved(track) {
-
+        
     }
 
     getTracksLikedFromArtist(id) {
