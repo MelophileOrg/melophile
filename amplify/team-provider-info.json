@@ -1,0 +1,20 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-melophile-dev-63405-authRole",
+            "UnauthRoleArn": "arn:aws:iam::065984152846:role/amplify-melophile-dev-63405-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::065984152846:role/amplify-melophile-dev-63405-authRole",
+            "Region": "us-west-2",
+            "DeploymentBucketName": "amplify-melophile-dev-63405-deployment",
+            "UnauthRoleName": "amplify-melophile-dev-63405-unauthRole",
+            "StackName": "amplify-melophile-dev-63405",
+            "StackId": "arn:aws:cloudformation:us-west-2:065984152846:stack/amplify-melophile-dev-63405/c22a6e20-8d42-11ea-91a4-0ad539b374b4",
+            "AmplifyAppId": "d2p91zaywkc6sw"
+        },
+        "categories": {
+            "auth": {
+                "melophile540eac77": {}
+            }
+        }
+    }
+}

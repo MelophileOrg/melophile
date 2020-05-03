@@ -1,0 +1,144 @@
+type User 
+  @model
+  @auth(rules: [{allow: owner}])
+{
+  id: ID!
+  username: String!
+  spotifyID: String!
+  email: String
+  tokens: [String]
+  images: [AWSJSON]
+  following: [User]
+  followers: [User]
+  posts: [Post]
+  public: Boolean!
+  updated: AWSTimestamp!
+  tracks: [Track]
+  artists: [Artist]
+  genres: [AWSJSON]
+  playlists: [Playlist]
+}
+
+type Post
+  @model(queries: null)
+  @auth(rules: [{allow: owner}])
+{
+  id: ID!
+  user: User!
+  content: String
+  entityType: PostEntityType!
+  track: Track
+  artist: Artist
+  album: Album
+  playlist: Playlist
+  comments: [Comment]
+  likes: [Like]
+  created: AWSTimestamp!
+}
+
+type Comment
+  @model(queries: null)
+  @auth(rules: [{allow: owner}])
+{
+  id: ID!
+  user: User!
+  post: Post!
+  content: String!
+  likes: [Like]
+  created: AWSTimestamp!
+}
+
+type Like 
+  @model(queries: null)
+  @auth(rules: [{allow: owner}])
+{
+  id: ID!
+  user: User!
+  entityType: LikeEntity!
+  post: Post
+  comment: Comment
+  emoji: Emoji!
+  created: AWSTimestamp!
+}
+
+
+type Track 
+  @model
+  @auth(rules: [{allow: owner}])
+{
+  id: ID
+  name: String!
+  artists: [Artist]
+  album: Album
+  popularity: Int!
+  key: Int!
+  mode: Int!
+  tempo: Float!
+  valence: Float!
+  danceability: Float!
+  energy: Float!
+  acousticness: Float!
+  instrumentalness: Float!
+  liveness: Float!
+  loudness: Float!
+  speechiness: Float!
+}
+
+type Artist 
+  @model
+  @auth(rules: [{allow: owner}])
+{
+  id: ID!
+  name: String!
+  images: [AWSJSON]
+  genres: [String]
+  popularity: Int!
+  followers: Int!
+}
+
+type Album 
+  @model
+  @auth(rules: [{allow: owner}])
+{
+  id: ID!
+  name: String!
+  genres: [String]
+  images: [AWSJSON]
+  artists: [Artist]
+  tracks: [Track]
+}
+
+type Playlist 
+  @model
+  @auth(rules: [{allow: owner}])
+{
+  id: ID!
+  name: String!
+  description: String!
+  userID: ID!
+  owner: User!
+  images: [AWSJSON]
+  tracks: [Track]
+  public: Boolean!
+}
+
+enum Emoji {
+  THUMBSUP
+  FIRE
+  HEART
+  LAUGH
+  EXCLAIM
+}
+
+enum PostEntityType {
+  TRACK
+  ARTIST
+  ALBUM
+  PLAYLIST
+  NONE
+}
+
+enum LikeEntity {
+  POST
+  COMMENT
+}

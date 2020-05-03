@@ -1,0 +1,4803 @@
+/* eslint-disable */
+// this is an auto generated file. This will be overwritten
+
+export const createUser = /* GraphQL */ `
+  mutation CreateUser(
+    $input: CreateUserInput!
+    $condition: ModelUserConditionInput
+  ) {
+    createUser(input: $input, condition: $condition) {
+      id
+      username
+      spotifyID
+      email
+      tokens
+      images
+      following {
+        id
+        username
+        spotifyID
+        email
+        tokens
+        images
+        following {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        followers {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        posts {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        updated
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        genres
+        playlists {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      followers {
+        id
+        username
+        spotifyID
+        email
+        tokens
+        images
+        following {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        followers {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        posts {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        updated
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        genres
+        playlists {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      posts {
+        id
+        user {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        content
+        entityType
+        track {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artist {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        album {
+          id
+          name
+          genres
+          images
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        playlist {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        comments {
+          id
+          content
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        likes {
+          id
+          entityType
+          emoji
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        created
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      public
+      updated
+      tracks {
+        id
+        name
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        album {
+          id
+          name
+          genres
+          images
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        popularity
+        key
+        mode
+        tempo
+        valence
+        danceability
+        energy
+        acousticness
+        instrumentalness
+        liveness
+        loudness
+        speechiness
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      artists {
+        id
+        name
+        images
+        genres
+        popularity
+        followers
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      genres
+      playlists {
+        id
+        name
+        description
+        userID
+        owner {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        images
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      _version
+      _deleted
+      _lastChangedAt
+      owner
+    }
+  }
+`;
+export const updateUser = /* GraphQL */ `
+  mutation UpdateUser(
+    $input: UpdateUserInput!
+    $condition: ModelUserConditionInput
+  ) {
+    updateUser(input: $input, condition: $condition) {
+      id
+      username
+      spotifyID
+      email
+      tokens
+      images
+      following {
+        id
+        username
+        spotifyID
+        email
+        tokens
+        images
+        following {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        followers {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        posts {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        updated
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        genres
+        playlists {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      followers {
+        id
+        username
+        spotifyID
+        email
+        tokens
+        images
+        following {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        followers {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        posts {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        updated
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        genres
+        playlists {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      posts {
+        id
+        user {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        content
+        entityType
+        track {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artist {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        album {
+          id
+          name
+          genres
+          images
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        playlist {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        comments {
+          id
+          content
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        likes {
+          id
+          entityType
+          emoji
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        created
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      public
+      updated
+      tracks {
+        id
+        name
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        album {
+          id
+          name
+          genres
+          images
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        popularity
+        key
+        mode
+        tempo
+        valence
+        danceability
+        energy
+        acousticness
+        instrumentalness
+        liveness
+        loudness
+        speechiness
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      artists {
+        id
+        name
+        images
+        genres
+        popularity
+        followers
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      genres
+      playlists {
+        id
+        name
+        description
+        userID
+        owner {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        images
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      _version
+      _deleted
+      _lastChangedAt
+      owner
+    }
+  }
+`;
+export const deleteUser = /* GraphQL */ `
+  mutation DeleteUser(
+    $input: DeleteUserInput!
+    $condition: ModelUserConditionInput
+  ) {
+    deleteUser(input: $input, condition: $condition) {
+      id
+      username
+      spotifyID
+      email
+      tokens
+      images
+      following {
+        id
+        username
+        spotifyID
+        email
+        tokens
+        images
+        following {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        followers {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        posts {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        updated
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        genres
+        playlists {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      followers {
+        id
+        username
+        spotifyID
+        email
+        tokens
+        images
+        following {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        followers {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        posts {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        updated
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        genres
+        playlists {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      posts {
+        id
+        user {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        content
+        entityType
+        track {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artist {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        album {
+          id
+          name
+          genres
+          images
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        playlist {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        comments {
+          id
+          content
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        likes {
+          id
+          entityType
+          emoji
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        created
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      public
+      updated
+      tracks {
+        id
+        name
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        album {
+          id
+          name
+          genres
+          images
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        popularity
+        key
+        mode
+        tempo
+        valence
+        danceability
+        energy
+        acousticness
+        instrumentalness
+        liveness
+        loudness
+        speechiness
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      artists {
+        id
+        name
+        images
+        genres
+        popularity
+        followers
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      genres
+      playlists {
+        id
+        name
+        description
+        userID
+        owner {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        images
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      _version
+      _deleted
+      _lastChangedAt
+      owner
+    }
+  }
+`;
+export const createPost = /* GraphQL */ `
+  mutation CreatePost(
+    $input: CreatePostInput!
+    $condition: ModelPostConditionInput
+  ) {
+    createPost(input: $input, condition: $condition) {
+      id
+      user {
+        id
+        username
+        spotifyID
+        email
+        tokens
+        images
+        following {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        followers {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        posts {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        updated
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        genres
+        playlists {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      content
+      entityType
+      track {
+        id
+        name
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        album {
+          id
+          name
+          genres
+          images
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        popularity
+        key
+        mode
+        tempo
+        valence
+        danceability
+        energy
+        acousticness
+        instrumentalness
+        liveness
+        loudness
+        speechiness
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      artist {
+        id
+        name
+        images
+        genres
+        popularity
+        followers
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      album {
+        id
+        name
+        genres
+        images
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      playlist {
+        id
+        name
+        description
+        userID
+        owner {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        images
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      comments {
+        id
+        user {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        post {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        content
+        likes {
+          id
+          entityType
+          emoji
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        created
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      likes {
+        id
+        user {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        entityType
+        post {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        comment {
+          id
+          content
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        emoji
+        created
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      created
+      _version
+      _deleted
+      _lastChangedAt
+      owner
+    }
+  }
+`;
+export const updatePost = /* GraphQL */ `
+  mutation UpdatePost(
+    $input: UpdatePostInput!
+    $condition: ModelPostConditionInput
+  ) {
+    updatePost(input: $input, condition: $condition) {
+      id
+      user {
+        id
+        username
+        spotifyID
+        email
+        tokens
+        images
+        following {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        followers {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        posts {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        updated
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        genres
+        playlists {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      content
+      entityType
+      track {
+        id
+        name
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        album {
+          id
+          name
+          genres
+          images
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        popularity
+        key
+        mode
+        tempo
+        valence
+        danceability
+        energy
+        acousticness
+        instrumentalness
+        liveness
+        loudness
+        speechiness
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      artist {
+        id
+        name
+        images
+        genres
+        popularity
+        followers
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      album {
+        id
+        name
+        genres
+        images
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      playlist {
+        id
+        name
+        description
+        userID
+        owner {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        images
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      comments {
+        id
+        user {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        post {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        content
+        likes {
+          id
+          entityType
+          emoji
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        created
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      likes {
+        id
+        user {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        entityType
+        post {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        comment {
+          id
+          content
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        emoji
+        created
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      created
+      _version
+      _deleted
+      _lastChangedAt
+      owner
+    }
+  }
+`;
+export const deletePost = /* GraphQL */ `
+  mutation DeletePost(
+    $input: DeletePostInput!
+    $condition: ModelPostConditionInput
+  ) {
+    deletePost(input: $input, condition: $condition) {
+      id
+      user {
+        id
+        username
+        spotifyID
+        email
+        tokens
+        images
+        following {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        followers {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        posts {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        updated
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        genres
+        playlists {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      content
+      entityType
+      track {
+        id
+        name
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        album {
+          id
+          name
+          genres
+          images
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        popularity
+        key
+        mode
+        tempo
+        valence
+        danceability
+        energy
+        acousticness
+        instrumentalness
+        liveness
+        loudness
+        speechiness
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      artist {
+        id
+        name
+        images
+        genres
+        popularity
+        followers
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      album {
+        id
+        name
+        genres
+        images
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      playlist {
+        id
+        name
+        description
+        userID
+        owner {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        images
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      comments {
+        id
+        user {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        post {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        content
+        likes {
+          id
+          entityType
+          emoji
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        created
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      likes {
+        id
+        user {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        entityType
+        post {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        comment {
+          id
+          content
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        emoji
+        created
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      created
+      _version
+      _deleted
+      _lastChangedAt
+      owner
+    }
+  }
+`;
+export const createComment = /* GraphQL */ `
+  mutation CreateComment(
+    $input: CreateCommentInput!
+    $condition: ModelCommentConditionInput
+  ) {
+    createComment(input: $input, condition: $condition) {
+      id
+      user {
+        id
+        username
+        spotifyID
+        email
+        tokens
+        images
+        following {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        followers {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        posts {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        updated
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        genres
+        playlists {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      post {
+        id
+        user {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        content
+        entityType
+        track {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artist {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        album {
+          id
+          name
+          genres
+          images
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        playlist {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        comments {
+          id
+          content
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        likes {
+          id
+          entityType
+          emoji
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        created
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      content
+      likes {
+        id
+        user {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        entityType
+        post {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        comment {
+          id
+          content
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        emoji
+        created
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      created
+      _version
+      _deleted
+      _lastChangedAt
+      owner
+    }
+  }
+`;
+export const updateComment = /* GraphQL */ `
+  mutation UpdateComment(
+    $input: UpdateCommentInput!
+    $condition: ModelCommentConditionInput
+  ) {
+    updateComment(input: $input, condition: $condition) {
+      id
+      user {
+        id
+        username
+        spotifyID
+        email
+        tokens
+        images
+        following {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        followers {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        posts {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        updated
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        genres
+        playlists {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      post {
+        id
+        user {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        content
+        entityType
+        track {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artist {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        album {
+          id
+          name
+          genres
+          images
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        playlist {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        comments {
+          id
+          content
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        likes {
+          id
+          entityType
+          emoji
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        created
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      content
+      likes {
+        id
+        user {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        entityType
+        post {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        comment {
+          id
+          content
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        emoji
+        created
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      created
+      _version
+      _deleted
+      _lastChangedAt
+      owner
+    }
+  }
+`;
+export const deleteComment = /* GraphQL */ `
+  mutation DeleteComment(
+    $input: DeleteCommentInput!
+    $condition: ModelCommentConditionInput
+  ) {
+    deleteComment(input: $input, condition: $condition) {
+      id
+      user {
+        id
+        username
+        spotifyID
+        email
+        tokens
+        images
+        following {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        followers {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        posts {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        updated
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        genres
+        playlists {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      post {
+        id
+        user {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        content
+        entityType
+        track {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artist {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        album {
+          id
+          name
+          genres
+          images
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        playlist {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        comments {
+          id
+          content
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        likes {
+          id
+          entityType
+          emoji
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        created
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      content
+      likes {
+        id
+        user {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        entityType
+        post {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        comment {
+          id
+          content
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        emoji
+        created
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      created
+      _version
+      _deleted
+      _lastChangedAt
+      owner
+    }
+  }
+`;
+export const createLike = /* GraphQL */ `
+  mutation CreateLike(
+    $input: CreateLikeInput!
+    $condition: ModelLikeConditionInput
+  ) {
+    createLike(input: $input, condition: $condition) {
+      id
+      user {
+        id
+        username
+        spotifyID
+        email
+        tokens
+        images
+        following {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        followers {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        posts {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        updated
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        genres
+        playlists {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      entityType
+      post {
+        id
+        user {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        content
+        entityType
+        track {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artist {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        album {
+          id
+          name
+          genres
+          images
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        playlist {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        comments {
+          id
+          content
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        likes {
+          id
+          entityType
+          emoji
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        created
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      comment {
+        id
+        user {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        post {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        content
+        likes {
+          id
+          entityType
+          emoji
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        created
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      emoji
+      created
+      _version
+      _deleted
+      _lastChangedAt
+      owner
+    }
+  }
+`;
+export const updateLike = /* GraphQL */ `
+  mutation UpdateLike(
+    $input: UpdateLikeInput!
+    $condition: ModelLikeConditionInput
+  ) {
+    updateLike(input: $input, condition: $condition) {
+      id
+      user {
+        id
+        username
+        spotifyID
+        email
+        tokens
+        images
+        following {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        followers {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        posts {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        updated
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        genres
+        playlists {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      entityType
+      post {
+        id
+        user {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        content
+        entityType
+        track {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artist {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        album {
+          id
+          name
+          genres
+          images
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        playlist {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        comments {
+          id
+          content
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        likes {
+          id
+          entityType
+          emoji
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        created
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      comment {
+        id
+        user {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        post {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        content
+        likes {
+          id
+          entityType
+          emoji
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        created
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      emoji
+      created
+      _version
+      _deleted
+      _lastChangedAt
+      owner
+    }
+  }
+`;
+export const deleteLike = /* GraphQL */ `
+  mutation DeleteLike(
+    $input: DeleteLikeInput!
+    $condition: ModelLikeConditionInput
+  ) {
+    deleteLike(input: $input, condition: $condition) {
+      id
+      user {
+        id
+        username
+        spotifyID
+        email
+        tokens
+        images
+        following {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        followers {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        posts {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        updated
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        genres
+        playlists {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      entityType
+      post {
+        id
+        user {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        content
+        entityType
+        track {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artist {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        album {
+          id
+          name
+          genres
+          images
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        playlist {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        comments {
+          id
+          content
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        likes {
+          id
+          entityType
+          emoji
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        created
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      comment {
+        id
+        user {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        post {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        content
+        likes {
+          id
+          entityType
+          emoji
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        created
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      emoji
+      created
+      _version
+      _deleted
+      _lastChangedAt
+      owner
+    }
+  }
+`;
+export const createTrack = /* GraphQL */ `
+  mutation CreateTrack(
+    $input: CreateTrackInput!
+    $condition: ModelTrackConditionInput
+  ) {
+    createTrack(input: $input, condition: $condition) {
+      id
+      name
+      artists {
+        id
+        name
+        images
+        genres
+        popularity
+        followers
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      album {
+        id
+        name
+        genres
+        images
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      popularity
+      key
+      mode
+      tempo
+      valence
+      danceability
+      energy
+      acousticness
+      instrumentalness
+      liveness
+      loudness
+      speechiness
+      _version
+      _deleted
+      _lastChangedAt
+      owner
+    }
+  }
+`;
+export const updateTrack = /* GraphQL */ `
+  mutation UpdateTrack(
+    $input: UpdateTrackInput!
+    $condition: ModelTrackConditionInput
+  ) {
+    updateTrack(input: $input, condition: $condition) {
+      id
+      name
+      artists {
+        id
+        name
+        images
+        genres
+        popularity
+        followers
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      album {
+        id
+        name
+        genres
+        images
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      popularity
+      key
+      mode
+      tempo
+      valence
+      danceability
+      energy
+      acousticness
+      instrumentalness
+      liveness
+      loudness
+      speechiness
+      _version
+      _deleted
+      _lastChangedAt
+      owner
+    }
+  }
+`;
+export const deleteTrack = /* GraphQL */ `
+  mutation DeleteTrack(
+    $input: DeleteTrackInput!
+    $condition: ModelTrackConditionInput
+  ) {
+    deleteTrack(input: $input, condition: $condition) {
+      id
+      name
+      artists {
+        id
+        name
+        images
+        genres
+        popularity
+        followers
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      album {
+        id
+        name
+        genres
+        images
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      popularity
+      key
+      mode
+      tempo
+      valence
+      danceability
+      energy
+      acousticness
+      instrumentalness
+      liveness
+      loudness
+      speechiness
+      _version
+      _deleted
+      _lastChangedAt
+      owner
+    }
+  }
+`;
+export const createArtist = /* GraphQL */ `
+  mutation CreateArtist(
+    $input: CreateArtistInput!
+    $condition: ModelArtistConditionInput
+  ) {
+    createArtist(input: $input, condition: $condition) {
+      id
+      name
+      images
+      genres
+      popularity
+      followers
+      _version
+      _deleted
+      _lastChangedAt
+      owner
+    }
+  }
+`;
+export const updateArtist = /* GraphQL */ `
+  mutation UpdateArtist(
+    $input: UpdateArtistInput!
+    $condition: ModelArtistConditionInput
+  ) {
+    updateArtist(input: $input, condition: $condition) {
+      id
+      name
+      images
+      genres
+      popularity
+      followers
+      _version
+      _deleted
+      _lastChangedAt
+      owner
+    }
+  }
+`;
+export const deleteArtist = /* GraphQL */ `
+  mutation DeleteArtist(
+    $input: DeleteArtistInput!
+    $condition: ModelArtistConditionInput
+  ) {
+    deleteArtist(input: $input, condition: $condition) {
+      id
+      name
+      images
+      genres
+      popularity
+      followers
+      _version
+      _deleted
+      _lastChangedAt
+      owner
+    }
+  }
+`;
+export const createAlbum = /* GraphQL */ `
+  mutation CreateAlbum(
+    $input: CreateAlbumInput!
+    $condition: ModelAlbumConditionInput
+  ) {
+    createAlbum(input: $input, condition: $condition) {
+      id
+      name
+      genres
+      images
+      artists {
+        id
+        name
+        images
+        genres
+        popularity
+        followers
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      tracks {
+        id
+        name
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        album {
+          id
+          name
+          genres
+          images
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        popularity
+        key
+        mode
+        tempo
+        valence
+        danceability
+        energy
+        acousticness
+        instrumentalness
+        liveness
+        loudness
+        speechiness
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      _version
+      _deleted
+      _lastChangedAt
+      owner
+    }
+  }
+`;
+export const updateAlbum = /* GraphQL */ `
+  mutation UpdateAlbum(
+    $input: UpdateAlbumInput!
+    $condition: ModelAlbumConditionInput
+  ) {
+    updateAlbum(input: $input, condition: $condition) {
+      id
+      name
+      genres
+      images
+      artists {
+        id
+        name
+        images
+        genres
+        popularity
+        followers
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      tracks {
+        id
+        name
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        album {
+          id
+          name
+          genres
+          images
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        popularity
+        key
+        mode
+        tempo
+        valence
+        danceability
+        energy
+        acousticness
+        instrumentalness
+        liveness
+        loudness
+        speechiness
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      _version
+      _deleted
+      _lastChangedAt
+      owner
+    }
+  }
+`;
+export const deleteAlbum = /* GraphQL */ `
+  mutation DeleteAlbum(
+    $input: DeleteAlbumInput!
+    $condition: ModelAlbumConditionInput
+  ) {
+    deleteAlbum(input: $input, condition: $condition) {
+      id
+      name
+      genres
+      images
+      artists {
+        id
+        name
+        images
+        genres
+        popularity
+        followers
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      tracks {
+        id
+        name
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        album {
+          id
+          name
+          genres
+          images
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        popularity
+        key
+        mode
+        tempo
+        valence
+        danceability
+        energy
+        acousticness
+        instrumentalness
+        liveness
+        loudness
+        speechiness
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      _version
+      _deleted
+      _lastChangedAt
+      owner
+    }
+  }
+`;
+export const createPlaylist = /* GraphQL */ `
+  mutation CreatePlaylist(
+    $input: CreatePlaylistInput!
+    $condition: ModelPlaylistConditionInput
+  ) {
+    createPlaylist(input: $input, condition: $condition) {
+      id
+      name
+      description
+      userID
+      owner {
+        id
+        username
+        spotifyID
+        email
+        tokens
+        images
+        following {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        followers {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        posts {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        updated
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        genres
+        playlists {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      images
+      tracks {
+        id
+        name
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        album {
+          id
+          name
+          genres
+          images
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        popularity
+        key
+        mode
+        tempo
+        valence
+        danceability
+        energy
+        acousticness
+        instrumentalness
+        liveness
+        loudness
+        speechiness
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      public
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const updatePlaylist = /* GraphQL */ `
+  mutation UpdatePlaylist(
+    $input: UpdatePlaylistInput!
+    $condition: ModelPlaylistConditionInput
+  ) {
+    updatePlaylist(input: $input, condition: $condition) {
+      id
+      name
+      description
+      userID
+      owner {
+        id
+        username
+        spotifyID
+        email
+        tokens
+        images
+        following {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        followers {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        posts {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        updated
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        genres
+        playlists {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      images
+      tracks {
+        id
+        name
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        album {
+          id
+          name
+          genres
+          images
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        popularity
+        key
+        mode
+        tempo
+        valence
+        danceability
+        energy
+        acousticness
+        instrumentalness
+        liveness
+        loudness
+        speechiness
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      public
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const deletePlaylist = /* GraphQL */ `
+  mutation DeletePlaylist(
+    $input: DeletePlaylistInput!
+    $condition: ModelPlaylistConditionInput
+  ) {
+    deletePlaylist(input: $input, condition: $condition) {
+      id
+      name
+      description
+      userID
+      owner {
+        id
+        username
+        spotifyID
+        email
+        tokens
+        images
+        following {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        followers {
+          id
+          username
+          spotifyID
+          email
+          tokens
+          images
+          public
+          updated
+          genres
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        posts {
+          id
+          content
+          entityType
+          created
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        public
+        updated
+        tracks {
+          id
+          name
+          popularity
+          key
+          mode
+          tempo
+          valence
+          danceability
+          energy
+          acousticness
+          instrumentalness
+          liveness
+          loudness
+          speechiness
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        genres
+        playlists {
+          id
+          name
+          description
+          userID
+          images
+          public
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      images
+      tracks {
+        id
+        name
+        artists {
+          id
+          name
+          images
+          genres
+          popularity
+          followers
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        album {
+          id
+          name
+          genres
+          images
+          _version
+          _deleted
+          _lastChangedAt
+          owner
+        }
+        popularity
+        key
+        mode
+        tempo
+        valence
+        danceability
+        energy
+        acousticness
+        instrumentalness
+        liveness
+        loudness
+        speechiness
+        _version
+        _deleted
+        _lastChangedAt
+        owner
+      }
+      public
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
