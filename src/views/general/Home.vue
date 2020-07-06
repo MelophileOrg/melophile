@@ -1,17 +1,19 @@
 <template>
   <div class="home">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <ThreeColumn>
+
+    </ThreeColumn>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue';
+import ThreeColumn from '@/components/layout/ThreeColumn.vue';
 
 export default {
   name: 'Home',
   components: {
-    HelloWorld,
+    ThreeColumn,
   },
 };
 </script>
