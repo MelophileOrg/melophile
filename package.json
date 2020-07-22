@@ -5,19 +5,11 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "eslint --ext .js,.vue src",
-    "lint:fix": "eslint --ext .js,.vue --fix src"
+    "lint": "vue-cli-service lint"
   },
-  "files": [
-    "dist/*"
-  ],
   "dependencies": {
-    "axios": "^0.19.2",
     "core-js": "^3.6.5",
-    "css-loader": "^3.6.0",
     "vue": "^2.6.11",
-    "vue-apollo": "^3.0.0-beta.11",
-    "vue-cli-plugin-apollo": "^0.22.2",
     "vue-router": "^3.2.0",
     "vuetify": "^2.2.11",
     "vuex": "^3.4.0"
@@ -28,16 +20,14 @@
     "@vue/cli-plugin-router": "^4.4.0",
     "@vue/cli-plugin-vuex": "^4.4.0",
     "@vue/cli-service": "^4.4.0",
-    "@vue/eslint-config-airbnb": "^5.0.2",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
-    "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-vue": "^6.2.2",
-    "graphql-tag": "^2.9.0",
-    "node-sass": "^4.14.1",
-    "sass": "^1.26.5",
-    "sass-loader": "^8.0.2",
-    "vue-cli-plugin-vuetify": "^2.0.6",
+    "less": "^3.0.4",
+    "less-loader": "^5.0.0",
+    "sass": "^1.19.0",
+    "sass-loader": "^8.0.0",
+    "vue-cli-plugin-vuetify": "^2.0.7",
     "vue-template-compiler": "^2.6.11",
     "vuetify-loader": "^1.3.0"
   }
