@@ -3,8 +3,7 @@
     <v-app-bar
       app
       color="primary"
-      dark
-    >
+      dark>
       <div class="d-flex align-center">
         <v-img
           alt="Vuetify Logo"
@@ -38,23 +37,25 @@
     </v-app-bar>
 
     <v-main>
-      <HelloWorld/>
+      <router-view />
     </v-main>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
-
 export default {
   name: 'App',
-
   components: {
-    HelloWorld,
-  },
 
+  },
   data: () => ({
-    //
+
   }),
 };
 </script>
+
+<style>
+@import url('./style/global/base.css');
+@import url('./style/global/colors.css');
+@import url('./style/global/typography.css');
+</style>
