@@ -1,5 +1,5 @@
 <div align="center">
-    <image align="center"src="./documentation/images/title.png"/><br/>
+    <image align="center"src="https://raw.githubusercontent.com/MelophileOrg/melophile/f4f3ed8fd7a8bfeb461d46412b2a9229d49454ec/documentation/images/title.png"/><br/>
 </div>
 
 <p align="center">Web application for analyzing your music library using Spotify's API.</p>
@@ -42,7 +42,7 @@ Think [Spotify Wrapped](https://open.spotify.com/genre/2019-page) with a greater
 - [Album Analysis](#album)
 
 <h1 style="display: flex; align-items: center" id="overview">
-    <img style="margin-right: 20px; margin-top: 10px" src="./documentation/images/overview-icon.png">
+    <img style="margin-right: 20px; margin-top: 10px" src="https://raw.githubusercontent.com/MelophileOrg/melophile/f4f3ed8fd7a8bfeb461d46412b2a9229d49454ec/documentation/images/overview-icon.png">
     Your Library Overview
 </h1>
 
@@ -73,7 +73,7 @@ This data is shareable and **updates upon request**.
 Your overview is first generated on your first login and takes some time depending on how large your library is. The application is requesting every song, every track, every playlist in order to generate this data.
 
 <h1 style="display: flex; align-items: center" id="overview">
-    <img style="margin-right: 20px; margin-top: 10px" src="./documentation/images/charts-icon.png">
+    <img style="margin-right: 20px; margin-top: 10px" src="https://raw.githubusercontent.com/MelophileOrg/melophile/f4f3ed8fd7a8bfeb461d46412b2a9229d49454ec/documentation/images/charts-icon.png">
     Your Top Charts
 </h1>
 
@@ -118,7 +118,7 @@ So you can see you're happiest tracks, slowest tracks, least danceable, and so o
 
 
 <h1 style="display: flex; align-items: center" id="social">
-    <img style="margin-right: 20px; margin-top: 10px" src="./documentation/images/social-icon.png">
+    <img style="margin-right: 20px; margin-top: 10px" src="https://raw.githubusercontent.com/MelophileOrg/melophile/f4f3ed8fd7a8bfeb461d46412b2a9229d49454ec/documentation/images/social-icon.png">
     Sharing Your Data
 </h1>
 
@@ -139,7 +139,7 @@ You have two choices for sharing:
 I hope you consider making your profile public!
 
 <h1 style="display: flex; align-items: center" id="discover">
-    <img style="margin-right: 20px; margin-top: 10px" src="./documentation/images/discover-icon.png">
+    <img style="margin-right: 20px; margin-top: 10px" src="https://raw.githubusercontent.com/MelophileOrg/melophile/f4f3ed8fd7a8bfeb461d46412b2a9229d49454ec/documentation/images/discover-icon.png">
     Discovery Tool
 </h1>
 
@@ -172,7 +172,7 @@ Keep filters simple and use **target value** over **minimum** and **maximum** fo
 The **save button** allows you to create a **Playlist** for a list of recommends.
 
 <h1 style="display: flex; align-items: center" id="history">
-    <img style="margin-right: 20px; margin-top: 10px" src="./documentation/images/history-icon.png">
+    <img style="margin-right: 20px; margin-top: 10px" src="https://raw.githubusercontent.com/MelophileOrg/melophile/f4f3ed8fd7a8bfeb461d46412b2a9229d49454ec/documentation/images/history-icon.png">
     Your History
 </h1>
 
@@ -221,7 +221,7 @@ These will include:
 The **save button** allows you to create a **Playlist** for a month or year of your choice, or create playlists for every month or year.
 
 <h1 style="display: flex; align-items: center" id="track">
-    <img style="margin-right: 20px; margin-top: 10px" src="./documentation/images/track-icon.png">
+    <img style="margin-right: 20px; margin-top: 10px" src="https://raw.githubusercontent.com/MelophileOrg/melophile/f4f3ed8fd7a8bfeb461d46412b2a9229d49454ec/documentation/images/track-icon.png">
     Track Analysis
 </h1>
 
@@ -279,7 +279,7 @@ Information displayed includes:
 - Simular tracks in your library.
 
 <h1 style="display: flex; align-items: center" id="artist">
-    <img style="margin-right: 20px; margin-top: 10px" src="./documentation/images/artist-icon.png">
+    <img style="margin-right: 20px; margin-top: 10px" src="https://raw.githubusercontent.com/MelophileOrg/melophile/f4f3ed8fd7a8bfeb461d46412b2a9229d49454ec/documentation/images/artist-icon.png">
     Artist Analysis
 </h1>
 
@@ -345,7 +345,7 @@ Sortable by:
 - Popularity
 
 <h1 style="display: flex; align-items: center" id="playlist">
-    <img style="margin-right: 20px; margin-top: 10px" src="./documentation/images/playlist-icon.png">
+    <img style="margin-right: 20px; margin-top: 10px" src="https://raw.githubusercontent.com/MelophileOrg/melophile/f4f3ed8fd7a8bfeb461d46412b2a9229d49454ec/documentation/images/playlist-icon.png">
     Playlist Analysis
 </h1>
 
@@ -392,7 +392,7 @@ Sortable by:
 **Changes can be applied directly to the playlist** should you wish to reorder them.
 
 <h1 style="display: flex; align-items: center" id="genre">
-    <img style="margin-right: 20px; margin-top: 10px" src="./documentation/images/genre-icon.png">
+    <img style="margin-right: 20px; margin-top: 10px" src="https://raw.githubusercontent.com/MelophileOrg/melophile/f4f3ed8fd7a8bfeb461d46412b2a9229d49454ec/documentation/images/genre-icon.png">
     Genre Analysis
 </h1>
 
@@ -439,7 +439,7 @@ Sortable by:
 - Number of tracks saved.
 
 <h1 style="display: flex; align-items: center" id="album">
-    <img style="margin-right: 20px; margin-top: 10px" src="./documentation/images/album-icon.png">
+    <img style="margin-right: 20px; margin-top: 10px" src="https://raw.githubusercontent.com/MelophileOrg/melophile/f4f3ed8fd7a8bfeb461d46412b2a9229d49454ec/documentation/images/album-icon.png">
     Album Analysis
 </h1>
 
@@ -520,7 +520,7 @@ For additional information [visit the markdown](https://github.com/andyruwruw/me
 
 <h1 align="center"> Hope you enjoy!</h1>
 <p align="center">
-<img width="400px" src="./documentation/images/gif.gif"/>
+<img width="400px" src="https://raw.githubusercontent.com/MelophileOrg/melophile/f4f3ed8fd7a8bfeb461d46412b2a9229d49454ec/documentation/images/gif.gif"/>
 </p>
 
 ---
