@@ -6,8 +6,8 @@
 
 <p align="center" style="margin: 0px auto; margin-top: 15px; max-width: 600px">
     <a href="https://melophile.org"><img src="https://img.shields.io/website?down_color=ff4b12&down_message=in%20production&up_message=live&url=https%3A%2F%2Fmelophile.org"></a>
-    <a href="#"><img src="https://img.shields.io/github/commit-activity/w/andyruwruw/melophile?color=0781ff"/></a>
-    <a href="https://melophile.org"><img src="https://img.shields.io/github/last-commit/andyruwruw/melophile?color=%230781ff"></a>
+    <a href="#"><img src="https://img.shields.io/github/commit-activity/w/MelophileOrg/melophile?color=0781ff"/></a>
+    <a href="https://melophile.org"><img src="https://img.shields.io/github/last-commit/MelophileOrg/melophile?color=%230781ff"></a>
 </p>
 <p align="center">
     <a href="https://www.linkedin.com/in/andrew-young-3322b3133/">Project by Andrew Young.</a>
