@@ -22,6 +22,66 @@ const routes = [
     name: 'Profile',
     component: () => import('../views/profile/profile.vue'),
   },
+  {
+    path: '/search/:query',
+    name: 'Search',
+    component: () => import('../views/search/search.vue'),
+  },
+  {
+    path: '/library',
+    name: 'Library',
+    component: () => import('../views/library/library.vue'),
+  },
+  {
+    path: '/history',
+    name: 'History',
+    component: () => import('../views/history/history.vue'),
+  },
+  {
+    path: '/history/:year',
+    name: 'Year',
+    component: () => import('../views/history/year.vue'),
+  },
+  {
+    path: '/history/:year/:month',
+    name: 'Month',
+    component: () => import('../views/history/month.vue'),
+  },
+  {
+    path: '/discover',
+    name: 'Discover',
+    component: () => import('../views/discover/discover.vue'),
+  },
+  {
+    path: '/callback',
+    name: 'Callback',
+    component: () => import('../views/callback/callback.vue'),
+  },
+  {
+    path: '/track/:id',
+    name: 'Track',
+    component: () => import('../views/analysis-track/analysis-track.vue'),
+  },
+  {
+    path: '/playlist/:id',
+    name: 'Playlist',
+    component: () => import('../views/analysis-playlist/analysis-playlist.vue'),
+  },
+  {
+    path: '/genre/:id',
+    name: 'Genre',
+    component: () => import('../views/analysis-genre/analysis-genre.vue'),
+  },
+  {
+    path: '/artist/:id',
+    name: 'Artist',
+    component: () => import('../views/analysis-artist/analysis-artist.vue'),
+  },
+  {
+    path: '/album/:id',
+    name: 'Album',
+    component: () => import('../views/analysis-album/analysis-album.vue'),
+  },
 ];
 
 const router = new VueRouter({

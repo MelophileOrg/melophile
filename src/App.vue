@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import AppBar from '@/components/ui/app-bar/app-bar.vue';
 
 export default {
@@ -16,9 +17,14 @@ export default {
   components: {
     AppBar,
   },
-  data: () => ({
-
-  }),
+  methods: {
+    ...mapActions('user', [
+      'checkLogin',
+    ]),
+  },
+  created() {
+    this.checkLogin();
+  },
 };
 </script>
 
