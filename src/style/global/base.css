@@ -1,0 +1,13 @@
+html {
+  font-size: 10px;
+}
+
+.limit-width {
+  width: calc(100vw - 4rem);
+  margin: 0 auto;
+  max-width: 120rem;
+}
+
+.v-application {
+  background-color: var(--grey-1) !important;
+}
