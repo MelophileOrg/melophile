@@ -1,7 +1,10 @@
 import request from '../request';
 
 export default {
-  getExample: function() {
-    return request.get('example');
+  playTrack: function({ uri }) {
+    return request.get(`/player/track/${uri}`);
+  },
+  playContext: function({ uri }) {
+    return request.get(`/player/context/${uri}`);
   },
 };

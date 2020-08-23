@@ -69,7 +69,7 @@ export default {
 }
 
 .list-wrapper {
-  flex: 1 1 150px;
+  flex: 1 1 50rem;
   margin: 2rem 0;
 }
 </style>

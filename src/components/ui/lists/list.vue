@@ -42,8 +42,6 @@ export default {
 
 <style module>
 .component {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding: 1rem;
 }
 </style>
