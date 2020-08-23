@@ -17,13 +17,13 @@ export default {
   components: {
     AppBar,
   },
+  created() {
+    this.checkLogin();
+  },
   methods: {
     ...mapActions('user', [
       'checkLogin',
     ]),
-  },
-  created() {
-    this.checkLogin();
   },
 };
 </script>

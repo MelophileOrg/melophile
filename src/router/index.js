@@ -53,34 +53,34 @@ const routes = [
     component: () => import('../views/discover/discover.vue'),
   },
   {
-    path: '/callback',
+    path: '/auth',
     name: 'Callback',
     component: () => import('../views/callback/callback.vue'),
   },
   {
     path: '/track/:id',
     name: 'Track',
-    component: () => import('../views/analysis-track/analysis-track.vue'),
+    component: () => import('../views/analysis/track/track.vue'),
   },
   {
     path: '/playlist/:id',
     name: 'Playlist',
-    component: () => import('../views/analysis-playlist/analysis-playlist.vue'),
+    component: () => import('../views/analysis/playlist/playlist.vue'),
   },
   {
     path: '/genre/:id',
     name: 'Genre',
-    component: () => import('../views/analysis-genre/analysis-genre.vue'),
+    component: () => import('../views/analysis/genre/genre.vue'),
   },
   {
     path: '/artist/:id',
     name: 'Artist',
-    component: () => import('../views/analysis-artist/analysis-artist.vue'),
+    component: () => import('../views/analysis/artist/artist.vue'),
   },
   {
     path: '/album/:id',
     name: 'Album',
-    component: () => import('../views/analysis-album/analysis-album.vue'),
+    component: () => import('../views/analysis/album/album.vue'),
   },
 ];
 

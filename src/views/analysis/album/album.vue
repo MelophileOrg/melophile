@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: 'History',
+  name: 'AnalysisAlbum',
   components: {
 
   }

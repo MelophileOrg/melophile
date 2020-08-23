@@ -1,7 +1,7 @@
 import request from '../request';
 
 export default {
-  getExample: function() {
-    return request.get('example');
+  generalQuery: function(query) {
+    return request.get(`/search/${query}`);
   },
 };
