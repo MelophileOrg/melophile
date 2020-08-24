@@ -73,7 +73,8 @@
 
       <v-list-item
         :class="$style.option"
-        link>
+        link
+        @click="logout">
         <v-list-item-avatar>
           <v-icon>
             mdi-logout
@@ -147,9 +148,7 @@ export default {
   methods: {
     ...mapActions('user', [
       'login',
-    ]),
-    ...mapActions('search', [
-      'search',
+      'logout',
     ]),
   },
 };
@@ -179,7 +178,7 @@ export default {
   cursor: pointer;
 }
 
-.username {
+.me .username {
   font-size: 1.5rem;
 }
 

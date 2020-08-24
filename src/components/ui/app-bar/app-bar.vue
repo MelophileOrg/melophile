@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import UserIcon from '@/components/ui/app-bar/user-icon.vue';
 
 export default {
@@ -55,6 +55,9 @@ export default {
     },
   },
   methods: {
+    ...mapActions('search', [
+      'search',
+    ]),
     home() {
       if (this.user) {
         this.$router.push('/feed');

@@ -16,4 +16,7 @@ export default {
   refreshToken: function(refresh_token) {
     return request.get(`refresh_token?refresh_token=${refresh_token}`);
   },
+  logout: function() {
+    return request.delete('/');
+  },
 };

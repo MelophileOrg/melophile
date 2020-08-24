@@ -99,6 +99,17 @@ const actions = {
       console.log(error);
     }
   },
+
+  async logout({ commit }) {
+    try {
+      const response = await api.auth.logout();
+      if (response.status === 200) {
+        commit('setUser', null);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 };
 
 export default {
