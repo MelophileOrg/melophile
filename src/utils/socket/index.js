@@ -1,42 +1,14 @@
-import { storeModules } from '@/store';
-import { ModuleTree } from 'vuex';
+import { getMessageName } from './get-message-name';
+import { socketFunctions } from './get-socket-functions';
 
-const getMsgName = ({ namespace, isNamespaced }, msgName) => {
-  return isNamespaced ? `${namespace}/${msgName}` : msgName;
-};
-
-const getSocketFunctionsFromStore = () => {
-  const socketMappings: { [key: string]: { [key: string]: any } } = {};
-
-  Object.entries(storeModules)
-    .forEach(([storeNamespace, storeModuleData]) => {
-      const { namespaced: isNamespaced, mutations, actions } = storeModuleData as ModuleTree<any>;
-      const setSocketFunctions = (functionType, storeFunctionData) => {
-        if (!storeFunctionData) {
-          return;
-        }
-        Object.values(storeFunctionData)
-          .map((storeFunction) => storeFunction.name)
-          .filter(socketEventName => socketEventName.startsWith('SOCKET_'))
-          .forEach(socketEventName => {
-            const defaultSocketData = {
-              mutations: [],
-              actions: [],
-            };
-            socketMappings[socketEventName] = {
-              ...defaultSocketData,
-              ...socketMappings[socketEventName],
-            };
-            socketMappings[socketEventName][functionType]
-              .push({ namespace: storeNamespace, isNamespaced });
-          });
-      };
-      setSocketFunctions('mutations', mutations);
-      setSocketFunctions('actions', actions);
-    });
-  return socketMappings;
-};
-
+/**
+ * Establishes and maintains connection with
+ * web socket, connecting it to Vuex
+ * 
+ * @param {string} url Web socket url
+ * @param {Vuex} store Vuex store
+ * @param {function} connectWS Function for reconnecting if lost
+ */
 function Socket(url, store, connectWS) {
   this.url = url;
   this.store = store;
@@ -46,89 +18,141 @@ function Socket(url, store, connectWS) {
 }
 
 Socket.prototype = {
+  /**
+   * Emits message and data to web socket
+   * 
+   * @param {string} action Action name (directs to correct endpoint)
+   * @param {*} data Payload to be sent
+   */
   async emit(action, data) {
     const windowId = window.context.user.windowId || navigator.userAgent + Math.random();
     this.socket.send(JSON.stringify({ action, data, windowId }));
   },
 
+  /**
+   * Esablishes on event methods
+   */
   init() {
-    this.socket.onopen = this.onOpen;
-    this.socket.onclose = this.onClose;
-    this.socket.onmessage = this.onMessage;
-    this.socket.onerror = this.onError;
+    this.socket.onopen = () => {
+      this.onOpen();
+    };
+    this.socket.onclose = () => {
+      this.onClose();
+    };
+    this.socket.onmessage = () => {
+      this.onMessage();
+    };
+    this.socket.onerror = () => {
+      this.onError();
+    };
   },
 
+  /**
+   * Logs connection made with Vuex.
+   */
   onOpen() {
-    this.store.dispatch('conn/wsConnected', true);
+    this.store.dispatch('connection/connectionMade');
   },
 
+  /**
+   * Logs connection lost with Vuex and attempts
+   * to re-establish.
+   */
   onClose() {
-    this.store.dispatch('conn/wsConnected', false);
-    setTimeout(this.connectWS, 1000);
+    this.store.dispatch('connection/connectionLost');
+    setTimeout(this.connectWS, 5000);
   },
 
+  /**
+   * Recieves message from server and routes to Vuex.
+   * 
+   * @param {*} event Web socket event
+   */
   async onMessage(event) {
-    const message: any = this.getMessageData(event.data);
+    const message = this.getMessageData(event.data);
     if (!message) {
       return;
     }
     if (!this.isAppReady) {
-      await this.waitForAppReady(message);
       this.isAppReady = true;
     }
     this.sendMessageToStore(message.mutation.toUpperCase(), message.data);
   },
 
+  /**
+   * Logs error
+   * 
+   * @param {Error} error
+   */
   onError(error) {
     console.log(error);
   },
 
+  /**
+   * Converts message into readable data.
+   * 
+   * @param {JSON} message 
+   */
   getMessageData(message) {
     let parsedMessage;
     try {
       parsedMessage = JSON.parse(message);
     } catch (err) {
-      log.error(err);
+      console.log(err);
     }
     if (!parsedMessage || !parsedMessage.mutation) {
-      log.io('unrecognizable socket message', message);
+      console.log('unrecognizable socket message', message);
       return;
     }
     return parsedMessage;
   },
 
-  sendMessageToStore(msg, msgData) {
-    const msgName = `SOCKET_${msg}`;
-    const configObj = socketFunctions[msgName];
+  /**
+   * Re-routes event to correct Vuex functions.
+   * 
+   * @param {string} message Event name
+   * @param {*} payload Data accompanying message
+   */
+  sendMessageToStore(message, payload) {
+    const messageName = `SOCKET_${message}`;
+    const configObj = socketFunctions[messageName];
     if (!configObj) {
       return;
     }
-    this.sendActionMessages(configObj, msgName, msgData);
-    this.sendMutationMessages(configObj, msgName, msgData);
+    this.sendActionMessages(configObj, messageName, payload);
+    this.sendMutationMessages(configObj, messageName, payload);
   },
 
-  sendActionMessages(configObj, msgName, msgData) {
+  /**
+   * Re-routes event to correct Vuex Action.
+   * 
+   * @param {*} configObj Mapped function
+   * @param {string} message Event name
+   * @param {*} payload Data accompanying message
+   */
+  sendActionMessages(configObj, messageName, payload) {
     if (!configObj.actions.length) {
       return;
     }
-    const actionsPromises = configObj.actions.map((action: ISocketMessage) =>
-      this.store.dispatch(getMsgName(action, msgName), msgData));
-    Promise.all(actionsPromises).catch(err => log.error(`Could not send action message '${msgName}'`, err));
+    const actionsPromises = configObj.actions.map((action) =>
+      this.store.dispatch(getMessageName(action, messageName), payload));
+    Promise.all(actionsPromises).catch(err => console.log(`Could not send action message '${messageName}'`, err));
   },
 
-  sendMutationMessages(configObj, msgName, msgData) {
+  /**
+   * Re-routes event to correct Vuex Mutation.
+   * 
+   * @param {*} configObj Mapped function
+   * @param {string} message Event name
+   * @param {*} payload Data accompanying message
+   */
+  sendMutationMessages(configObj, messageName, payload) {
     if (!configObj.mutations.length) {
       return;
     }
-    configObj.mutations.forEach((mutation: ISocketMessage) => {
-      this.store.commit(getMsgName(mutation, msgName), msgData);
+    configObj.mutations.forEach((mutation) => {
+      this.store.commit(getMessageName(mutation, messageName), payload);
     });
-  },
-
-  async waitForAppReady(data) {
-    if (!['user_connected', 'banned', 'maintenance'].includes(data.mutation)) {
-      await this.waitForConnection();
-    }
   },
 };
 

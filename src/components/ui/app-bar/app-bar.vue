@@ -26,40 +26,24 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn
-        v-if="user"
-        height="5rem"
-        :class="$style.user"
-        text
-        rounded>
-        <div
-          :class="$style.image"
-          :style="{ backgroundImage: `url('${image}')` }" />
-
-        <v-icon
-          v-html="'mdi-chevron-down'"
-          color="grey-6" />
-      </v-btn>
-
-      <v-btn
-        v-if="!user"
-        outlined
-        @click="login">
-        Login with Spotify
-      </v-btn>
+      <user-icon />
 
     </div>
   </v-app-bar>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters } from 'vuex';
+import UserIcon from '@/components/ui/app-bar/user-icon.vue';
+
 export default {
   name: 'AppBar',
+  components: {
+    UserIcon,
+  },
   computed: {
     ...mapGetters('user', [
       'user',
-      'image',
     ]),
     query: {
       get() {
@@ -71,12 +55,6 @@ export default {
     },
   },
   methods: {
-    ...mapActions('user', [
-      'login',
-    ]),
-    ...mapActions('search', [
-      'search',
-    ]),
     home() {
       if (this.user) {
         this.$router.push('/feed');
@@ -86,7 +64,10 @@ export default {
     },
     keydown(event) {
       if (event.key === 'Enter') {
-        this.$router.push(`/search/${this.query}`);
+        if (this.$router.name !== 'Search' ||
+          this.$route.params.query !== this.query) {
+          this.$router.push(`/search/${this.query}`);
+        }
         this.search();
       }
     },
@@ -102,20 +83,5 @@ export default {
 
 .title img {
   height: 3.5rem;
-}
-
-.user {
-  display: flex;
-  align-items: center;
-}
-
-.user .image {
-  display: block;
-  width: 3.5rem;
-  height: 3.5rem;
-  border-radius: 50%;
-  background-size: 100% auto;
-  background-position: center center;
-  margin-right: .5rem;
 }
 </style>
