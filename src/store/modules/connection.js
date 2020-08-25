@@ -26,6 +26,13 @@ const mutations = {
   setConnected(state, status) {
     state.connected = status;
   },
+
+  /**
+   * Verifies Connection
+   */
+  SOCKET_PONG(state, data) {
+    console.log(data);
+  },
 };
 
 const actions = {

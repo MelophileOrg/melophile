@@ -25,8 +25,7 @@ Socket.prototype = {
    * @param {*} data Payload to be sent
    */
   async emit(action, data) {
-    const windowId = window.context.user.windowId || navigator.userAgent + Math.random();
-    this.socket.send(JSON.stringify({ action, data, windowId }));
+    this.socket.send(JSON.stringify({ action, data }));
   },
 
   /**
@@ -39,8 +38,8 @@ Socket.prototype = {
     this.socket.onclose = () => {
       this.onClose();
     };
-    this.socket.onmessage = () => {
-      this.onMessage();
+    this.socket.onmessage = (event) => {
+      this.onMessage(event);
     };
     this.socket.onerror = () => {
       this.onError();

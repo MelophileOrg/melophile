@@ -1,4 +1,5 @@
 import api from '@/api';
+import { getSocket } from '@/utils/get-socket';
 import router from '@/router';
 
 const state = () => ({
@@ -50,6 +51,10 @@ const mutations = {
    */
   setUser(state, user) {
     state.user = user;
+    const socket = getSocket();
+    socket.emit('setAccessToken', {
+      token : window.document.cookie.replace('melophile-token=', ''),
+    });
   },
 };
 
@@ -93,6 +98,7 @@ const actions = {
   async callback({ commit }, payload) {
     try {
       const response = await api.auth.callback(payload);
+      console.log(response.data);
       await commit('setUser', response.data);
       router.push('/feed');
     } catch (error) {

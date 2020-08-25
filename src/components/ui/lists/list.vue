@@ -1,5 +1,11 @@
 <template>
   <div :class="$style.component">
+    <list-header 
+      v-if="title"
+      :title="title"
+      :action="action"
+      @action="handle" />
+
     <item
       v-for="item in items"
       :key="item.id"
@@ -9,11 +15,13 @@
 </template>
 
 <script>
-import Item from './item';
+import ListHeader from './components/list-header';
+import Item from './components/list-item';
 
 export default {
   name: 'List',
   components: {
+    ListHeader,
     Item,
   },
   props: {
@@ -35,6 +43,31 @@ export default {
     type: {
       type: String,
       default: 'track',
+    },
+
+    /**
+     * Header text
+     * 
+     * @type {string}
+     */
+    title: {
+      type: String,
+      default: null,
+    },
+
+    /**
+     * Header action text
+     * 
+     * @type {string}
+     */
+    action: {
+      type: String,
+      default: null,
+    },
+  },
+  methods: {
+    handle() {
+      this.$emit('action');
     },
   },
 };

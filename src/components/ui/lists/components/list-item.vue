@@ -15,7 +15,9 @@
     </div>
 
     <div :class="$style.details">
-      <span :class="$style.name">
+      <span
+        :class="$style.name"
+        @click="route">
         {{ name }}
       </span>
 
@@ -114,7 +116,13 @@ export default {
       ].includes(this.type)) {
         api.spotify.player.playContext({ uri: this.item.uri });
       }
-    }
+    },
+    route() {
+      this.$router.push(`/${this.type}/${this.item.id}`);
+    },
+    routeSecondary() {
+
+    },
   }
 };
 </script>

@@ -5,25 +5,33 @@
     <div :class="$style['list-wrapper']">
       <list
         :items="tracks"
-        type="track" />
+        type="track"
+        title="Tracks"
+        action="Show More" />
     </div>
 
     <div :class="$style['list-wrapper']">
       <list
         :items="artists"
-        type="artist" />
+        type="artist"
+        title="Artists"
+        action="Show More" />
     </div>
 
     <div :class="$style['list-wrapper']">
       <list
         :items="albums"
-        type="album" />
+        type="album"
+        title="Albums"
+        action="Show More" />
     </div>
 
     <div :class="$style['list-wrapper']">
       <list
         :items="playlists"
-        type="playlist" />
+        type="playlist"
+        title="Playlists"
+        action="Show More" />
     </div>
   </div>
 </template>

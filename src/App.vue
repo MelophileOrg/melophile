@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import AppBar from '@/components/ui/app-bar/app-bar.vue';
 
 export default {
@@ -17,8 +17,15 @@ export default {
   components: {
     AppBar,
   },
+  computed: {
+    ...mapGetters('connection', [
+      'connected',
+    ]),
+  },
   created() {
-    this.checkLogin();
+    if (this.$route.name !== 'Callback') {
+      this.checkLogin();
+    }
   },
   methods: {
     ...mapActions('user', [

@@ -12,11 +12,11 @@
         <img src="@/assets/logo/logo.svg" />
       </div>
 
-      <v-text-field 
+      <v-text-field
         v-model="query"
-        color="grey-6"
-        background-color="grey-3"
-        prepend-inner-icon="mdi-magnify"
+        color="grey-4"
+        background-color="grey-4"
+        append-icon="mdi-magnify"
         placeholder="Search"
         solo
         flat

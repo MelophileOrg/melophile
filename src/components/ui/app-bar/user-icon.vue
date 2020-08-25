@@ -21,7 +21,9 @@
     </template>
 
     <v-list>
-      <v-list-item :class="$style.me">
+      <v-list-item
+        :class="$style.me"
+        @click="profile">
         <v-list-item-avatar>
           <v-img :src="image" />
         </v-list-item-avatar>
@@ -108,7 +110,8 @@
 
       <v-list-item
         :class="$style.option"
-        link>
+        link
+        href="https://www.patreon.com/andrewyoung">
         <v-list-item-avatar>
           <v-icon>
             mdi-thumb-up
@@ -150,6 +153,11 @@ export default {
       'login',
       'logout',
     ]),
+    profile() {
+      if (this.$route.name !== 'Profile' || this.$route.params.id !== this.user.id) {
+        this.$router.push(`/user/${this.user.spotify.id}`);
+      }
+    },
   },
 };
 </script>
@@ -182,11 +190,11 @@ export default {
   font-size: 1.5rem;
 }
 
-.me:hover .username {
+.action:hover {
   text-decoration: underline;
 }
 
-.action {
+.me .action {
   font-size: 1.3rem;
 }
 

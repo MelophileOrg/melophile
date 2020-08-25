@@ -18,7 +18,7 @@ const routes = [
     component: Feed,
   },
   {
-    path: '/profile/:id',
+    path: '/user/:id',
     name: 'Profile',
     component: () => import('../views/profile/profile.vue'),
   },
