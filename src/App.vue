@@ -5,17 +5,21 @@
     <v-main>
       <router-view />
     </v-main>
+
+    <snackbars />
   </v-app>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import AppBar from '@/components/ui/app-bar/app-bar.vue';
+import Snackbars from '@/components/ui/snackbars/snackbars.vue';
 
 export default {
   name: 'App',
   components: {
     AppBar,
+    Snackbars,
   },
   computed: {
     ...mapGetters('connection', [

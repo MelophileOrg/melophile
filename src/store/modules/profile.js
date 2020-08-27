@@ -14,6 +14,20 @@ const state = () => ({
    * @type {Date}
    */
   lastProcessed: null,
+
+  /**
+   * Processing message
+   * 
+   * @type {string}
+   */
+  message: '',
+
+  /**
+   * Processing percent complete
+   * 
+   * @type {number}
+   */
+  percent: 0,
 });
 
 const getters = {
@@ -30,6 +44,20 @@ const getters = {
    * @type {Date}
    */
   lastProcessed: (state) => state.lastProcessed,
+
+  /**
+   * Processing message
+   * 
+   * @type {string}
+   */
+  message: (state) => state.message,
+
+  /**
+   * Processing percent complete
+   * 
+   * @type {number}
+   */
+  percent: (state) => state.percent,
 };
 
 const mutations = {
@@ -45,6 +73,17 @@ const mutations = {
       state.lastProcessed = payload.lastProcessed;
     }
   },
+
+  /**
+   * Logs current status of process
+   * 
+   * @param {object} state Vuex state
+   * @param {boolean} payload Data from server
+   */
+  SOCKET_PROCESSINGPROGRESS(state, payload) {
+    state.message = payload.message;
+    state.percent = payload.percent;
+  }
 };
 
 const actions = {
@@ -54,7 +93,6 @@ const actions = {
    * @param {VuexContext} context Vuex context object 
    */
   process() {
-    console.log('process');
     const socket = getSocket();
     socket.emit('process', null);
   },
