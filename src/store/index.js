@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 import connection from './modules/connection';
-import profile from './modules/profile';
+import process from './modules/process';
 import search from './modules/search';
 import user from './modules/user';
 
@@ -10,7 +10,7 @@ Vue.use(Vuex);
 
 export const modules = {
   connection,
-  profile,
+  process,
   search,
   user,
 };

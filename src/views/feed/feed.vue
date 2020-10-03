@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-btn @click="$store.dispatch('profile/process')">
+    <v-btn @click="$store.dispatch('process/process')">
       Process
     </v-btn>
   </div>

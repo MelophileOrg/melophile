@@ -43,4 +43,5 @@ export default {
 @import url('./style/global/colors.css');
 @import url('./style/global/base.css');
 @import url('./style/global/typography.css');
+@import url('./style/global/vuetify.css');
 </style>

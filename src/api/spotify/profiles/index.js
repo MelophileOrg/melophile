@@ -1,7 +1,18 @@
 import request from '../request';
+import store from '@/store';
+
+// store._modules.root.state.user.user.spotify.id
 
 export default {
-  getExample: function() {
-    return request.get('example');
+  getUser: function(id) {
+    return request.get(`/profile/${id}`);
+  },
+  getTopPlayed: function(id, type, timeRange) {
+    const me = store._modules.root.state.user.user.spotify.id;
+    if (me === id) {
+      return request.get(`/me/top/played/${type}/${timeRange}`);
+    } else {
+      return request.get(`/profile/${id}/top/played/${type}/${timeRange}`);
+    }
   },
 };

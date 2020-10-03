@@ -8,6 +8,7 @@ import player from "./player";
 import playlists from "./playlists";
 import profiles from "./profiles";
 import search from "./search";
+import tracks from "./tracks";
 
 export default {
   request,
@@ -18,5 +19,6 @@ export default {
   player,
   playlists,
   profiles,
-  search
+  search,
+  tracks,
 };

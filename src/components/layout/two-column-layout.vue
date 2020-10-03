@@ -2,12 +2,17 @@
   <div
     class="limit-width"
     :class="$style.component">
-    <div :class="$style.content">
-      <slot name="content" />
-    </div>
 
-    <div :class="$style.aside">
-      <slot name="aside" />
+    <slot name="header" />
+
+    <div :class="$style.container">
+      <div :class="$style.aside">
+        <slot name="aside" />
+      </div>
+
+      <div :class="$style.content">
+        <slot name="content" />
+      </div>
     </div>
   </div>
 </template>
@@ -18,17 +23,22 @@ export default {
 };
 </script>
 
-<style scoped>
+<style module>
 .component {
+  margin-top: 5rem;
+}
+
+.container {
   display: flex;
 }
 
-.component .content {
-  flex-grow: 2;
+.container .content {
+  flex-grow: 4;
 }
 
-.component .aside {
+.container .aside {
   flex-grow: 1;
-  margin-left: 2.5rem;
+  margin-right: 2.5rem;
+  max-width: 30rem;
 }
 </style>

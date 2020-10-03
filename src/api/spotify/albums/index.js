@@ -1,7 +1,7 @@
 import request from '../request';
 
 export default {
-  getExample: function() {
-    return request.get('example');
+  getAlbum: function(id) {
+    return request.get(`/album/${id}`);
   },
 };
