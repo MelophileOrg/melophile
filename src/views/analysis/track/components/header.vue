@@ -3,7 +3,9 @@
     :name="name"
     :image="image">
     <template v-slot:secondary>
-      <div :class="$style['secondary-container']">
+      <div
+        v-if="track"
+        :class="$style['secondary-container']">
         <div
           v-for="(artist, index) in track.artists"
           :class="$style.secondary"
@@ -12,12 +14,20 @@
           {{ artist.name }}{{ index === track.artists.length - 1 ? '' : ','}}
         </div>
       </div>
+
+      <div
+        v-else
+        class="loader"
+        :class="$style['secondary-loader']" />
     </template>
 
     <template v-slot:tabs>
       <v-tabs
-        background-color="grey-1"
-        grow>
+        background-color="grey-2"
+        color="white"
+        grow
+        :value="value"
+        @change="$emit('input', $event)">
         <v-tab
           v-for="(tab, index) in tabs"
           :key="`tab-${index}`">
@@ -41,6 +51,9 @@ export default {
       type: Object,
       default: null,
     },
+    value: {
+      type: Number,
+    },
   },
   data: () => ({
     tabs: [
@@ -51,17 +64,10 @@ export default {
   }),
   computed: {
     name() {
-      if (this.track) {
-        return this.track.name;
-      }
-      return '';
+      return this.track !== null ? this.track.name : '';
     },
     image() {
-      if (this.track) {
-        console.log(this.track);
-        return this.track.album.images[0].url;
-      }
-      return null;
+      return this.track !== null ? this.track.album.images[0].url : '';
     },
   },
   methods: {
@@ -89,5 +95,12 @@ export default {
 
 .secondary:hover {
   text-decoration: underline;
+}
+
+.secondary-loader {
+  display: block;
+  width: 10rem;
+  height: 1.5rem;
+  border-radius: .5rem;
 }
 </style>

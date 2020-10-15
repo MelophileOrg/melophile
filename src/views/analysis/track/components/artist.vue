@@ -1,10 +1,6 @@
 <template>
   <v-card color="grey-2">
     <div :class="$style.content">
-      <p :class="$style.type">
-        ARTIST
-      </p>
-
       <div
         class="elevation-4"
         :class="[$style.image, {
@@ -14,12 +10,12 @@
           backgroundImage: `url('${image}')`,
         }" />
 
-      <h1>
+      <h1 @click="routeArtist">
         {{ name }}
       </h1>
 
       <p>
-        {{ followers }}
+        {{ followers }} Followers
       </p>
     </div>
   </v-card>
@@ -43,16 +39,20 @@ export default {
     },
     image() {
       if (this.artist) {
-        console.log(this.artist);
         return this.artist.images[0].url;
       }
       return '';
     },
     followers() {
       if (this.artist) {
-        return this.artist.followers.total;
+        return this.artist.followers.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       }
       return '';
+    },
+  },
+  methods: {
+    routeArtist() {
+      this.$router.push(`/artist/${this.artist.id}`);
     },
   },
 };
@@ -64,24 +64,29 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  max-width: 20rem;
-  padding: 2rem 0rem;
-}
-
-p.type {
-  text-transform: uppercase;
-  color: var(--grey-7);
-  font-size: 1.2rem;
-  margin: 0 0 1rem 0;
 }
 
 .content h1 {
   color: white;
+  font-size: 1.8rem;
+  margin: 1.3rem 0 .3rem;
+  font-weight: 300;
+}
+
+.content h1:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.content p {
+  font-size: 1.2rem;
 }
 
 .image {
-  width: 20rem;
-  height: 20rem;
+  --size: 20rem;
+  width: var(--size);
+  height: var(--size);
   background-size: 100% 100%;
+  border-radius: .2rem;
 }
 </style>

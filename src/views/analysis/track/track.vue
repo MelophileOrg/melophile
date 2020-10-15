@@ -1,13 +1,19 @@
 <template>
-  <two-column-layout>
+  <two-column-layout :aside-width="20">
     <template v-slot:header>
-      <track-header :track="track" />
+      <track-header
+        v-model="tab"
+        :track="track" />
     </template>
 
     <template v-slot:aside>
-      <track-artist :artist="artist" />
+      <track-album
+        :class="$style.album"
+        :album="album" />
 
-      <track-album :album="album" />
+      <track-artist
+        :class="$style.artist"
+        :artist="artist" />
     </template>
 
     <template v-slot:content>
@@ -17,7 +23,10 @@
 </template>
 
 <script>
-import api from '@/api';
+import {
+  mapGetters,
+  mapActions,
+} from 'vuex';
 import TrackAlbum from '@/views/analysis/track/components/album.vue';
 import TrackArtist from '@/views/analysis/track/components/artist.vue';
 import TrackHeader from '@/views/analysis/track/components/header.vue';
@@ -32,23 +41,49 @@ export default {
     TwoColumnLayout,
   },
   data: () => ({
-    track: null,
-    artist: null,
-    album: null,
+    tab: 0,
   }),
   computed: {
+    ...mapGetters('cache', [
+      'track',
+      'audioFeatures',
+      'audioAnalysis',
+      'artist',
+      'album',
+    ]),
     id() {
       return this.$route.params.id;
     },
   },
+  watch: {
+    track() {
+      this.getArtist({ id: this.track.artists[0].id })
+      this.getAlbum({ id: this.track.album.id })
+    }
+  },
   async created() {
-    let response = await api.spotify.tracks.getTrack(this.id);
-    this.track = response.data;
-    response = await api.spotify.artists.getArtist(this.track.artists[0].id);
-    this.artist = response.data;
-    response = await api.spotify.albums.getAlbum(this.track.album.id);
-    this.album = response.data;
-    console.log(this.album);
+    this.getTrack({ id: this.id });
+    this.getAudioFeatures({ id: this.id });
+    this.getAudioAnalysis({ id: this.id });
+  },
+  methods: {
+    ...mapActions('cache', [
+      'getTrack',
+      'getAudioFeatures',
+      'getAudioAnalysis',
+      'getArtist',
+      'getAlbum',
+    ]),
   },
 }
 </script>
+
+<style module>
+.album {
+  margin-bottom: 1rem;
+}
+
+.artist {
+  margin-bottom: 1rem;
+}
+</style>

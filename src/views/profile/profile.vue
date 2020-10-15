@@ -24,7 +24,6 @@ import { mapState } from 'vuex';
 import ProfileHeader from '@/views/profile/components/header.vue';
 import TwoColumnLayout from '@/components/layout/two-column-layout.vue';
 
-
 export default {
   name: 'Profile',
   components: {

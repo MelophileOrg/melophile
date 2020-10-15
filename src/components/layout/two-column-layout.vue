@@ -6,7 +6,9 @@
     <slot name="header" />
 
     <div :class="$style.container">
-      <div :class="$style.aside">
+      <div
+        :class="$style.aside"
+        :style="{'--width': asideWidth}">
         <slot name="aside" />
       </div>
 
@@ -20,6 +22,12 @@
 <script>
 export default {
   name: 'TwoColumnLayout',
+  props: {
+    asideWidth: {
+      type: Number,
+      default: 30,
+    },
+  },
 };
 </script>
 
@@ -37,8 +45,9 @@ export default {
 }
 
 .container .aside {
+  --width: 30;
   flex-grow: 1;
   margin-right: 2.5rem;
-  max-width: 30rem;
+  max-width: calc(var(--width) * 1rem);
 }
 </style>

@@ -15,11 +15,10 @@
       <div :class="$style.content">
         <div :class="$style.wrapper">
           <div :class="$style.details">
-            <p :class="$style.type">
-              {{ type }}
-            </p>
-
-            <h1>
+            <h1 :class="{
+              loader: name === '',
+              [$style['primary-loader']]: name === '',
+            }">
               {{ name }}
             </h1>
 
@@ -36,10 +35,11 @@
             </v-btn>
           </div>
         </div>
+
+        <div>
+          <slot name="tabs" />
+        </div>
       </div>
-    </div>
-    <div>
-      <slot name="tabs" />
     </div>
   </v-card>
 </template>
@@ -54,10 +54,6 @@ export default {
     name: {
       type: String,
       default: '',
-    },
-    type: {
-      type: String,
-      default: 'TRACK',
     },
   },
 }
@@ -77,13 +73,6 @@ export default {
   flex-grow: 1;
 }
 
-p.type {
-  text-transform: uppercase;
-  color: var(--grey-6);
-  font-size: 1.2rem;
-  margin: 0;
-}
-
 .container {
   display: flex;
 }
@@ -95,8 +84,9 @@ p.type {
 }
 
 .image {
-  width: 14rem;
-  height: 14rem;
+  --size: 16rem;
+  width: var(--size);
+  height: var(--size);
   background-size: 100% 100%;
 }
 
@@ -116,5 +106,13 @@ p.type {
   color: white;
   font-weight: 300;
   font-size: 2.6rem;
+}
+
+.primary-loader {
+  display: block;
+  width: 16rem;
+  height: 2.4rem;
+  border-radius: .5rem;
+  margin-bottom: 1rem;
 }
 </style>
