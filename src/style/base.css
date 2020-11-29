@@ -1,0 +1,41 @@
+html {
+	font-size: 10px;
+}
+
+.limit-width {
+	width: calc(100vw - 4rem);
+	margin: 0 auto;
+	max-width: 120rem;
+}
+
+.loader {
+	position: relative;
+	background-color: var(--grey-4);
+	overflow: hidden;
+}
+
+.loader::before {
+	content: '';
+	display: block;
+	position: absolute;
+	left: -150px;
+	top: 0;
+	height: 100%;
+	width: 200px;
+	background: linear-gradient(120deg, transparent 30%, #ffffff0a 50%, transparent 70%);
+	animation: load 1s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+}
+
+.loaderspace {
+	clip-path: polygon(0% -100%, 100% -100%, 100% 200%, 0% 200%);
+	overflow: visible;
+}
+
+@keyframes load {
+	from {
+		left: -150px;
+	}
+	to   {
+		left: 100%;
+	}
+}

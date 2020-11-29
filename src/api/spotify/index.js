@@ -1,24 +1,13 @@
-  
-import request from "./request";
-import albums from "./albums";
-import artists from "./artists";
-import follow from "./follow";
-import library from "./library";
-import player from "./player";
-import playlists from "./playlists";
-import profiles from "./profiles";
-import search from "./search";
-import tracks from "./tracks";
+import auth from './auth';
+import player from './player';
+import search from './search';
+import track from './track';
+import me from './me';
 
 export default {
-  request,
-  albums,
-  artists,
-  follow,
-  library,
+  auth,
   player,
-  playlists,
-  profiles,
   search,
-  tracks,
+  track,
+  me,
 };
