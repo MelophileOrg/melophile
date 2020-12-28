@@ -19,7 +19,7 @@ export default {
     items: [],
   }),
   async created() {
-    const response = await api.spotify.me.topPlayed('tracks', 'long_term', 9);
+    const response = await api.spotify.charts.topPlayed('tracks', 'long_term', 0, 9);
 
     this.items = response.data;
   },

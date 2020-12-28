@@ -69,24 +69,26 @@ const moduleMutations = {
   setUser(state, user) {
     state.user = user;
 
-    let cookie;
-    const name = 'melophile-token=';
-    const decodedCookie = decodeURIComponent(document.cookie);
-    const ca = decodedCookie.split(';');
-    for (let i = 0; i < ca.length; i += 1) {
-      let c = ca[i];
-      while (c.charAt(0) === ' ') {
-        c = c.substring(1);
+    if (user) {
+      let cookie;
+      const name = 'melophile-token=';
+      const decodedCookie = decodeURIComponent(document.cookie);
+      const ca = decodedCookie.split(';');
+      for (let i = 0; i < ca.length; i += 1) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) === 0) {
+          cookie = c.substring(name.length, c.length);
+        }
       }
-      if (c.indexOf(name) === 0) {
-        cookie = c.substring(name.length, c.length);
-      }
-    }
 
-    const socket = getSocket();
-    socket.emit('setAccessToken', {
-      token: cookie,
-    });
+      const socket = getSocket();
+      socket.emit('setAccessToken', {
+        token: cookie,
+      });
+    }
   },
 
   SOCKET_SETACCESSTOKEN(state, token) {
@@ -135,7 +137,6 @@ const moduleActions = {
   async callback({ commit }, payload) {
     try {
       const response = await api.spotify.auth.callback(payload);
-
       await commit('setUser', response.data);
       router.push('/feed');
     } catch (error) {

@@ -1,35 +1,41 @@
-<template functional>
+<template>
   <div :class="$style.component">
     <p
-      v-if="props.index !== 0"
+      v-if="index !== 0"
       :class="$style.index">
       {{
-        (10 >= props.index) ? `0${props.index}` : props.index
+        (10 >= index) ? `0${index}` : index
       }}
     </p>
 
     <img
       :class="$style.image"
-      :src="$options.parseImage(props.item, props.type)" />
+      :src="parseImage(item, type)" />
 
     <div :class="$style.content">
       <p :class="$style.name">
         {{
-          props.item.name
+          item.name
         }}
       </p>
 
       <div :class="$style.secondaries">
         <span
           :class="$style.secondary"
-          v-for="secondary in $options.parseSecondary(props.item, props.type)"
-          :key="`list-${id}-${props.item.id}-secondary-${secondary.id || secondary.text}`">
+          v-for="secondary in parseSecondary(item, type)"
+          :key="`list-${id}-${item.id}-secondary-${secondary.id || secondary.text}`">
           {{
             secondary.text
           }}
         </span>
       </div>
     </div>
+
+    <v-spacer />
+
+    <v-btn icon>
+      <v-icon>mdi-dots-horizontal</v-icon>
+    </v-btn>
   </div>
 </template>
 
@@ -37,7 +43,6 @@
 import helpers from '../../helpers/index';
 
 export default {
-  functional: true,
   name: 'StubListItem',
   props: {
     id: {
@@ -56,8 +61,10 @@ export default {
       default: 0,
     },
   },
-  parseImage: helpers.parseImage,
-  parseSecondary: helpers.parseSecondary,
+  methods: {
+    parseImage: helpers.parseImage,
+    parseSecondary: helpers.parseSecondary,
+  },
 };
 </script>
 
@@ -65,20 +72,22 @@ export default {
 .component {
   display: flex;
   align-items: center;
-  background: white;
-  margin: 1rem 0;
-  width: calc(33% - 1.5rem);
+  margin: .5rem 0;
+  padding-right: .5rem;
+  width: 100%;
 }
 
 p.index {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   margin: 0 0 0 1rem;
+  color: rgba(100, 100, 100, .4);
+  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.034);
 }
 
 .image {
-  width: 5.5rem;
-  border-radius: .5rem;
+  width: 4.5rem;
   margin: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.068);
 }
 
 .content {

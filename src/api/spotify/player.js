@@ -12,7 +12,7 @@ const pause = (device_id) => request.put('/player/pause', {
   device_id,
 });
 
-const play = (context_uri, offset, uris) => request({
+const play = (context_uri, offset = 0, uris) => request({
   method: 'put',
   url: '/player/play',
   data: {

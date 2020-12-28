@@ -1,6 +1,14 @@
 <template>
   <div :class="$style.component">
-    <subtitle :text="title" />
+    <div :class="$style.header">
+      <subtitle :text="title" />
+
+      <v-btn dense outlined text>
+        See More
+      </v-btn>
+    </div>
+
+    <v-divider :class="$style.divider" />
 
     <stub-list
       :items="items"
@@ -43,5 +51,19 @@ export default {
 <style module>
 .component {
   margin: 1rem 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header h1:first-child {
+  margin-right: 1rem;
+}
+
+.divider {
+  margin-bottom: 1rem;
 }
 </style>

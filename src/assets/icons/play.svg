@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="96pt" height="96pt" viewBox="0 0 96 96" version="1.1">
-<g id="surface2278824">
-<path style=" stroke:none;fill-rule:nonzero;fill:#FFFFFF;fill-opacity:1;" d="M 28 20 L 28 76 L 76 48 Z M 28 20 "/>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="60pt" height="60pt" viewBox="0 0 60 60" version="1.1">
+<g id="surface18292386">
+<path style=" stroke:none;fill-rule:nonzero;fill:#FFFFFF;fill-opacity:1;" d="M 12 6 C 10.894531 6 10 6.894531 10 8 C 10 8.003906 10 8.003906 10 8.007812 L 10 51.992188 C 10 51.996094 10 51.996094 10 52 C 10 53.105469 10.894531 54 12 54 C 12.417969 54 12.820312 53.867188 13.160156 53.625 L 13.164062 53.628906 L 52.832031 31.816406 C 53.542969 31.492188 54 30.78125 54 30 C 54 29.195312 53.519531 28.46875 52.777344 28.15625 L 13.164062 6.371094 L 13.160156 6.371094 C 12.820312 6.128906 12.414062 6 12 6 Z M 12 6 "/>
 </g>
 </svg>

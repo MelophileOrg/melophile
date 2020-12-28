@@ -15,20 +15,14 @@
           :length="pages"
           :total-visible="7" />
       </div>
-
-      <list :items="items" />
     </div>
 </template>
 
 <script>
 import api from '@/api';
-import List from '@/components/ui/list/List';
 
 export default {
   name: 'Search',
-  components: {
-    List,
-  },
   data: () => ({
     type: 'track',
     types: [
