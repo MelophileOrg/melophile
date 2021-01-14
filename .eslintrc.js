@@ -8,11 +8,13 @@ module.exports = {
     parser: 'babel-eslint'
   },
   extends: [
+    'airbnb',
     '@nuxtjs',
-    'plugin:nuxt/recommended'
   ],
   plugins: [
   ],
-  // add your custom rules here
-  rules: {}
+  rules: {
+    'comma-dangle': 'off',
+    'semi': 'off',
+  },
 }
