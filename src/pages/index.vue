@@ -10,20 +10,11 @@
       </p>
 
       <div :class="$style.actions">
-        <v-btn
-          color="accent-1"
-          width="135px"
-          dark
-          outlined>
-          Learn More
-        </v-btn>
+        <m-btn 
+          text="Learn More"
+          type="secondary" />
 
-        <v-btn
-          color="accent-1"
-          width="135px"
-          dark>
-          Login with Spotify
-        </v-btn>
+        <m-btn text="Login with Spotify" />
       </div>
     </div>
   </div>
@@ -32,6 +23,9 @@
 <script>
 export default {
   name: 'Landing',
+  // components: {
+  //   MIcon,
+  // },
   layout: 'public',
   colorMode: 'dark',
 }

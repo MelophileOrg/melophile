@@ -22,6 +22,7 @@
     }
   },
   "dependencies": {
+    "@melophile/melophile-ui": "^0.0.5",
     "@nuxtjs/axios": "^5.12.2",
     "@nuxtjs/proxy": "^2.1.0",
     "@nuxtjs/pwa": "^3.0.2",
@@ -35,7 +36,8 @@
     "nuxt-socket-io": "^1.1.13",
     "querystring": "^0.2.0",
     "spotify-web-api-node": "^5.0.0",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "yorkie": "^2.0.0"
   },
   "devDependencies": {
     "@nuxtjs/color-mode": "^2.0.2",

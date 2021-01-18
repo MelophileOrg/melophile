@@ -30,10 +30,9 @@ export default {
     ]
   },
   css: [
-    '~/assets/styles/app.global.scss',
+    '~/../node_modules/@melophile/melophile-ui/src/styles/app.global.scss',
   ],
-  plugins: [
-  ],
+  plugins: [ '~/plugins/melophile-ui.js' ],
   components: true,
   buildModules: [
     '@nuxtjs/eslint-module',
