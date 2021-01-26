@@ -1,46 +1,62 @@
 <template>
-  <v-app :class="$style.component">
-    <nav-drawer />
-
-    <app-bar />
-
-    <v-main>
-      <nuxt />
-    </v-main>
-  </v-app>
+  <div>
+    <Nuxt />
+  </div>
 </template>
 
-<script>
-import {
-  mapState,
-  mapGetters,
-} from 'vuex';
-import NavDrawer from '~/components/ui/nav-drawer/nav-drawer';
-import AppBar from '~/components/ui/app-bar/app-bar';
-
-export default {
-  components: {
-    NavDrawer,
-    AppBar,
-  },
-  computed: {
-    ...mapState('user', [
-      'attemptedLogin',
-    ]),
-    ...mapGetters('user', [
-      'loggedIn',
-    ]),
-  },
-  created() {
-    if (!this.loggedIn && !this.attemptedLogin) {
-      this.$store.dispatch('user/getUser');
-    }
-  },
+<style>
+html {
+  font-family:
+    'Source Sans Pro',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
+  font-size: 16px;
+  word-spacing: 1px;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
 }
-</script>
 
-<style module>
-.component {
-  background-color: var(--bg-1) !important;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.button--green {
+  display: inline-block;
+  border-radius: 4px;
+  border: 1px solid #3b8070;
+  color: #3b8070;
+  text-decoration: none;
+  padding: 10px 30px;
+}
+
+.button--green:hover {
+  color: #fff;
+  background-color: #3b8070;
+}
+
+.button--grey {
+  display: inline-block;
+  border-radius: 4px;
+  border: 1px solid #35495e;
+  color: #35495e;
+  text-decoration: none;
+  padding: 10px 30px;
+  margin-left: 15px;
+}
+
+.button--grey:hover {
+  color: #fff;
+  background-color: #35495e;
 }
 </style>

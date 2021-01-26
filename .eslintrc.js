@@ -4,17 +4,11 @@ module.exports = {
     browser: true,
     node: true
   },
-  parserOptions: {
-    parser: 'babel-eslint'
-  },
   extends: [
-    'airbnb',
-    '@nuxtjs',
+    '@nuxtjs/eslint-config-typescript',
+    'plugin:nuxt/recommended'
   ],
   plugins: [
   ],
-  rules: {
-    'comma-dangle': 'off',
-    'semi': 'off',
-  },
+  rules: {}
 }
