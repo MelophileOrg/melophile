@@ -1,22 +1,14 @@
 <template>
-    <div>
-    </div>
+
 </template>
 
-<script>
-import { mapGetters } from 'vuex';
+<script lang="ts">
+import Vue from 'vue';
 
-export default {
-  name: 'Feed',
-  computed: {
-    ...mapGetters('user', [
-      'loggedIn',
-    ]),
-  },
-  created() {
-    if (!this.loggedIn) {
-      this.$router.push('/');
-    }
-  },
-};
+export default Vue.extend({
+
+});
 </script>
+
+<style lang="scss" module>
+</style>

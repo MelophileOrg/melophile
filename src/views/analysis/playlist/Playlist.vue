@@ -1,10 +1,14 @@
 <template>
-    <div>
-    </div>
+
 </template>
 
-<script>
-export default {
-  name: 'Playlist',
-};
+<script lang="ts">
+import Vue from 'vue';
+
+export default Vue.extend({
+
+});
 </script>
+
+<style lang="scss" module>
+</style>

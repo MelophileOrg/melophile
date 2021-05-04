@@ -1,28 +1,22 @@
 <template>
   <div>
-    <Entry />
-
-    <Charts />
-
-    <Distributions />
-
-    <Share />
+    <landing-app-bar />
   </div>
 </template>
 
-<script>
-import Entry from './components/Entry.vue';
-import Charts from './components/Charts.vue';
-import Distributions from './components/Distributions.vue';
-import Share from './components/Share.vue';
+<script lang="ts">
+import Vue from 'vue';
 
-export default {
-  name: 'Landing',
+import LandingAppBar from '@/components/ui/app-bar/landing/landing-app-bar.vue';
+
+export default Vue.extend({
+  name: 'landing',
+
   components: {
-    Entry,
-    Charts,
-    Distributions,
-    Share,
+    LandingAppBar,
   },
-};
+});
 </script>
+
+<style lang="scss" module>
+</style>
