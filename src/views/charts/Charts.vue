@@ -2,9 +2,17 @@
   <div :class="$style.component">
     <chart-header />
 
-    <top-played-tracks-preview />
+    <div :class="$style.content">
+      <top-played-tracks-preview />
 
-    <top-played-artists-preview />
+      <top-played-artists-preview />
+
+      <div :class="$style.features">
+        <happiness-preview />
+
+        <energetic-preview />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -12,6 +20,8 @@
 import ChartHeader from './components/ui/Header';
 import TopPlayedTracksPreview from './components/features/TopPlayedTracksPreview';
 import TopPlayedArtistsPreview from './components/features/TopPlayedArtistsPreview';
+import HappinessPreview from './components/features/HappiestPreview';
+import EnergeticPreview from './components/features/EnergeticPreview.vue';
 
 export default {
   name: 'Charts',
@@ -19,20 +29,11 @@ export default {
     ChartHeader,
     TopPlayedTracksPreview,
     TopPlayedArtistsPreview,
+    HappinessPreview,
+    EnergeticPreview,
   },
   data: () => ({
   }),
-  async created() {
-    /*
-      Get
-        Top 5 Played
-          Track
-          Artists
-        Top 5 Genres
-        Top Happiest
-        Top Saddest
-    */
-  },
   methods: {
 
   },
@@ -42,8 +43,20 @@ export default {
 <style module>
 .component {
   display: block;
-  margin: 0 auto;
+}
+
+.content {
   width: calc(100% - 8rem);
   max-width: 130rem;
+  margin: 0 auto;
+}
+
+.features {
+  display: flex;
+  justify-content:  space-between;
+}
+
+.content > div {
+  margin-top: 4rem;
 }
 </style>

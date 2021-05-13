@@ -6,7 +6,9 @@
       :item="item"
       :type="type"
       :id="id"
-      :index="indexed ? (i + 1) : 0" />
+      :index="indexed ? (i + 1) : 0"
+      @primaryclick="routePrimary"
+      @secondaryclick="routeSecondary" />
   </div>
 </template>
 
@@ -35,6 +37,21 @@ export default {
   },
   components: {
     StubListItem,
+  },
+  methods: {
+    routePrimary(id) {
+      this.$router.push(`/${this.type}/${id}`);
+    },
+    routeSecondary(id) {
+      if ([
+        'track',
+        'album',
+      ].includes(this.type)) {
+        this.$router.push(`/artist/${id}`);
+      } else if (this.type === 'playlist') {
+        this.$router.push(`/user/${id}`);
+      }
+    },
   },
 };
 </script>

@@ -1,7 +1,7 @@
 <template functional>
-  <h2 :class="$style.component">
+  <h1 :class="$style.component">
     {{ props.text }}
-  </h2>
+  </h1>
 </template>
 
 <script>
@@ -18,6 +18,7 @@ export default {
 
 <style module>
 .component {
-  font-size: 1.8rem;
+  font-size: 2.2rem;
+  margin: 1.2rem 0;
 }
 </style>

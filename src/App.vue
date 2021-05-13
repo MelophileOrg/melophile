@@ -6,7 +6,7 @@
 
     <!-- <player v-if="loggedIn"/> -->
 
-    <v-main>
+    <v-main :style="mainPadding">
       <router-view />
     </v-main>
   </v-app>
@@ -34,6 +34,14 @@ export default {
       'accessToken',
       'loggedIn',
     ]),
+    mainPadding() {
+      if ([
+        'Charts',
+      ].includes(this.$route.name)) {
+        return 'padding-top: 0px;';
+      }
+      return 'padding-top: 64px;';
+    },
   },
   watch: {
     accessToken() {

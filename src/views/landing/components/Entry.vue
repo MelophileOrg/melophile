@@ -21,7 +21,7 @@
     </div>
 
     <div :class="$style['graphic-wrapper']">
-      <img src="../../../assets/graphics/delivery.svg" />
+      <img src="../../../assets/graphics/landing.svg" />
     </div>
   </div>
 </template>
@@ -66,13 +66,5 @@ export default {
 
 .graphic-wrapper {
   width: 50%;
-}
-
-.graphic {
-  display: block;
-  width: 100%;
-  height: 100%;
-  background-image: url('../../../assets/graphics/delivery.svg');
-  background-size: 100% auto;
 }
 </style>

@@ -10,7 +10,7 @@ import api from '@/api';
 import PreviewCarousel from '../ui/PreviewCarousel';
 
 export default {
-  name: 'TopPlayedTracksPreview',
+  name: 'TopPlayedArtistsPreview',
   components: {
     PreviewCarousel,
   },
@@ -18,7 +18,7 @@ export default {
     items: [],
   }),
   async created() {
-    const response = await api.spotify.me.topPlayed('artists', 'long_term', 6);
+    const response = await api.spotify.charts.topPlayed('artists', 'long_term', 0, 6);
 
     this.items = response.data;
   },

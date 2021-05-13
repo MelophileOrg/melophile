@@ -38,7 +38,27 @@ export default {
 .component {
   display: flex;
   flex-wrap: nowrap;
-  overflow-x: scroll;
+  overflow-x: auto;
   justify-content: space-between;
+}
+
+/* width */
+.component::-webkit-scrollbar {
+  height: 2px;
+}
+
+/* Track */
+.component::-webkit-scrollbar-track {
+  background: #1a1a1a13;
+}
+
+/* Handle */
+.component::-webkit-scrollbar-thumb {
+  background: rgba(136, 136, 136, 0.219);
+}
+
+/* Handle on hover */
+.component::-webkit-scrollbar-thumb:hover {
+  background: rgba(85, 85, 85, 0.404);
 }
 </style>

@@ -1,26 +1,22 @@
-<template functional>
+<template>
   <div :class="$style.component">
     <img
       :class="$style.image"
-      :src="$options.parseImage(props.item, props.type)" />
+      :src="parseImage(item, type)" />
 
     <div :class="$style.content">
       <p :class="$style.name">
-        {{
-          props.item.name
-        }}
+        {{ item.name }}
       </p>
 
       <div :class="$style.secondaries">
         <span
           :class="[$style.secondary, {
-              [$style.hover]: props.type !== 'artist',
+              [$style.hover]: type !== 'artist',
             }]"
-          v-for="secondary in $options.parseSecondary(props.item, props.type)"
-          :key="`list-${id}-${props.item.id}-secondary-${secondary.id || secondary.text}`">
-          {{
-            secondary.text
-          }}
+          v-for="secondary in parseSecondary(item, type)"
+          :key="`list-${id}-${item.id}-secondary-${secondary.id || secondary.text}`">
+          {{ secondary.text }}
         </span>
       </div>
     </div>
@@ -31,7 +27,6 @@
 import helpers from '../../helpers/index';
 
 export default {
-  functional: true,
   name: 'CarouselItem',
   props: {
     id: {
@@ -46,8 +41,10 @@ export default {
       default: 'track',
     },
   },
-  parseImage: helpers.parseImage,
-  parseSecondary: helpers.parseSecondary,
+  methods: {
+    parseImage: helpers.parseImage,
+    parseSecondary: helpers.parseSecondary,
+  },
 };
 </script>
 
@@ -56,14 +53,13 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 1rem 0;
-  border-radius: .5rem;
+  margin: 1rem 2rem 1rem 0;
 }
 
 .image {
   width: 18rem;
-  border-radius: .5rem;
   margin: 0 0 1rem 0;
+  border: 1px solid rgba(0, 0, 0, 0.068);
 }
 
 .content {
@@ -75,12 +71,15 @@ export default {
 
 p.name {
   width: 100%;
+  max-width: 18rem;
   margin: 0;
   font-size: 1.4rem;
   font-weight: 600;
   color: black;
   cursor: pointer;
-  text-overflow: clip;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
   text-align: center;
 }
 

@@ -2,7 +2,9 @@
   <preview-list
     title="Most Energetic Tracks"
     type="track"
-    :items="items" />
+    :class="$style.component"
+    :items="items"
+    :indexed="true" />
 </template>
 
 <script>
@@ -18,9 +20,15 @@ export default {
     items: [],
   }),
   async created() {
-    const response = await api.spotify.me.topPlayed('artists', 'long_term', 6);
+    const response = await api.spotify.charts.extremes('energy', 'max', 0, 6);
 
     this.items = response.data;
   },
 };
 </script>
+
+<style module>
+.component {
+  width: calc(50% - 2rem);
+}
+</style>
