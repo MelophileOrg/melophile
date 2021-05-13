@@ -1,6 +1,9 @@
 <template>
-    <div>
-    </div>
+  <div>
+    <v-btn @click="$store.dispatch('process/process')">
+      Process
+    </v-btn>
+  </div>
 </template>
 
 <script>
@@ -8,15 +11,20 @@ import { mapGetters } from 'vuex';
 
 export default {
   name: 'Feed',
+  components: {
+
+  },
   computed: {
     ...mapGetters('user', [
-      'loggedIn',
+      'user',
     ]),
   },
-  created() {
-    if (!this.loggedIn) {
-      this.$router.push('/');
+  watch: {
+    user(val) {
+      if (val === null) {
+        this.$router.push('/');
+      }
     }
-  },
-};
+  }
+}
 </script>

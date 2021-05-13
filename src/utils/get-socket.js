@@ -21,7 +21,7 @@ export const connectWS = () => {
 
 /**
  * Returns a reference to the socket.
- *
+ * 
  * @type {Socket}
  */
 export const getSocket = () => socket;

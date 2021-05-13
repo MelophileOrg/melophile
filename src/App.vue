@@ -1,46 +1,30 @@
 <template>
   <v-app>
-    <nav-drawer v-if="loggedIn"/>
-
     <app-bar />
-
-    <!-- <player v-if="loggedIn"/> -->
 
     <v-main>
       <router-view />
     </v-main>
+
+    <snackbars />
   </v-app>
 </template>
 
 <script>
-import {
-  mapActions,
-  mapGetters,
-} from 'vuex';
-
-import AppBar from '@/components/ui/app-bar/AppBar';
-import NavDrawer from '@/components/ui/nav-drawer/NavDrawer';
-// import Player from '@/components/ui/player/Player';
+import { mapGetters, mapActions } from 'vuex';
+import AppBar from '@/components/ui/app-bar/app-bar.vue';
+import Snackbars from '@/components/ui/snackbars/snackbars.vue';
 
 export default {
   name: 'App',
   components: {
     AppBar,
-    NavDrawer,
-    // Player,
+    Snackbars,
   },
   computed: {
-    ...mapGetters('user', [
-      'accessToken',
-      'loggedIn',
+    ...mapGetters('connection', [
+      'connected',
     ]),
-  },
-  watch: {
-    accessToken() {
-      if (this.accessToken !== null) {
-        this.init();
-      }
-    },
   },
   created() {
     if (this.$route.name !== 'Callback') {
@@ -51,16 +35,13 @@ export default {
     ...mapActions('user', [
       'checkLogin',
     ]),
-    ...mapActions('player', [
-      'init',
-    ]),
   },
 };
 </script>
 
 <style>
-@import url('./style/colors.css');
-@import url('./style/base.css');
-@import url('./style/typography.css');
-@import url('./style/vuetify.css');
+@import url('./style/global/colors.css');
+@import url('./style/global/base.css');
+@import url('./style/global/typography.css');
+@import url('./style/global/vuetify.css');
 </style>

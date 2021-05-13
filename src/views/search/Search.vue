@@ -1,108 +1,83 @@
 <template>
-    <div>
-      <div :class="$style.controls">
-        <div :class="$style.type">
-          <v-select
-            v-model="type"
-            :items="types"
-            max-width="100"
-            outlined
-            dense />
-        </div>
-
-        <v-pagination
-          v-model="page"
-          :length="pages"
-          :total-visible="7" />
-      </div>
-
-      <list :items="items" />
+  <div
+    class="limit-width"
+    :class="$style.component">
+    <div :class="$style['list-wrapper']">
+      <list
+        :items="tracks"
+        type="track"
+        title="Tracks"
+        action="Show More" />
     </div>
+
+    <div :class="$style['list-wrapper']">
+      <list
+        :items="artists"
+        type="artist"
+        title="Artists"
+        action="Show More" />
+    </div>
+
+    <div :class="$style['list-wrapper']">
+      <list
+        :items="albums"
+        type="album"
+        title="Albums"
+        action="Show More" />
+    </div>
+
+    <div :class="$style['list-wrapper']">
+      <list
+        :items="playlists"
+        type="playlist"
+        title="Playlists"
+        action="Show More" />
+    </div>
+  </div>
 </template>
 
 <script>
-import api from '@/api';
-import List from '@/components/ui/list/List';
+import { mapActions, mapGetters } from 'vuex';
+import List from '@/components/ui/lists/list.vue';
 
 export default {
   name: 'Search',
   components: {
     List,
   },
-  data: () => ({
-    type: 'track',
-    types: [
-      {
-        text: 'Tracks',
-        value: 'track',
-      },
-      {
-        text: 'Artists',
-        value: 'artist',
-      },
-      {
-        text: 'Albums',
-        value: 'album',
-      },
-      {
-        text: 'Playlists',
-        value: 'playlist',
-      },
-    ],
-
-    limit: 30,
-
-    page: 1,
-    pages: 1,
-
-    items: null,
-  }),
   computed: {
-    query() {
-      return this.$route.params.query;
-    },
-    offset() {
-      return (this.page - 1) * this.limit;
-    },
+    ...mapGetters('search', [
+      'query',
+      'displayed',
+      'tracks',
+      'albums',
+      'artists',
+      'playlists',
+    ]),
   },
-  watch: {
-    query() {
+  async created() {
+    if (this.$route.params.query !== this.query) {
+      await this.$store.commit('search/setQuery', this.$route.params.query);
       this.search();
-    },
-    type() {
-      this.search();
-    },
-    page() {
-      this.search();
-    },
-  },
-  created() {
-    this.search();
+    }
   },
   methods: {
-    async search() {
-      const response = await api.spotify.search.search(
-        this.$route.params.query,
-        this.type,
-        this.offset,
-        this.limit,
-      );
-      this.items = response.data.items;
-      this.pages = Math.ceil(response.data.total / this.limit);
-    },
+    ...mapActions('search', [
+      'search',
+    ]),
   },
 };
 </script>
 
 <style module>
-.controls {
+.component {
   display: flex;
-  width: 100%;
-  margin: 2rem 3rem;
+  flex-wrap: wrap;
+  justify-content: space-around;
 }
 
-.controls .type {
-  width: 30%;
-  max-width: 15rem;
+.list-wrapper {
+  flex: 1 1 50rem;
+  margin: 2rem 0;
 }
 </style>

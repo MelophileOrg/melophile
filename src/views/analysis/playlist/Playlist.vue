@@ -1,10 +1,14 @@
 <template>
-    <div>
-    </div>
+  <div>
+
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'Playlist',
-};
+  name: 'AnalysisPlaylist',
+  components: {
+
+  }
+}
 </script>

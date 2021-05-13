@@ -1,10 +1,14 @@
 <template>
   <div>
+
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Album',
-};
+  name: 'AnalysisAlbum',
+  components: {
+
+  }
+}
 </script>

@@ -1,10 +1,10 @@
 import { getMessageName } from './get-message-name';
-import { socketFunctions } from './get-socket-function';
+import { socketFunctions } from './get-socket-functions';
 
 /**
  * Establishes and maintains connection with
  * web socket, connecting it to Vuex
- *
+ * 
  * @param {string} url Web socket url
  * @param {Vuex} store Vuex store
  * @param {function} connectWS Function for reconnecting if lost
@@ -20,7 +20,7 @@ function Socket(url, store, connectWS) {
 Socket.prototype = {
   /**
    * Emits message and data to web socket
-   *
+   * 
    * @param {string} action Action name (directs to correct endpoint)
    * @param {*} data Payload to be sent
    */
@@ -64,7 +64,7 @@ Socket.prototype = {
 
   /**
    * Recieves message from server and routes to Vuex.
-   *
+   * 
    * @param {*} event Web socket event
    */
   async onMessage(event) {
@@ -80,7 +80,7 @@ Socket.prototype = {
 
   /**
    * Logs error
-   *
+   * 
    * @param {Error} error
    */
   onError(error) {
@@ -89,8 +89,8 @@ Socket.prototype = {
 
   /**
    * Converts message into readable data.
-   *
-   * @param {JSON} message
+   * 
+   * @param {JSON} message 
    */
   getMessageData(message) {
     let parsedMessage;
@@ -108,7 +108,7 @@ Socket.prototype = {
 
   /**
    * Re-routes event to correct Vuex functions.
-   *
+   * 
    * @param {string} message Event name
    * @param {*} payload Data accompanying message
    */
@@ -124,7 +124,7 @@ Socket.prototype = {
 
   /**
    * Re-routes event to correct Vuex Action.
-   *
+   * 
    * @param {*} configObj Mapped function
    * @param {string} message Event name
    * @param {*} payload Data accompanying message
@@ -133,13 +133,14 @@ Socket.prototype = {
     if (!configObj.actions.length) {
       return;
     }
-    const actionsPromises = configObj.actions.map((action) => this.store.dispatch(getMessageName(action, messageName), payload));
-    Promise.all(actionsPromises).catch((err) => console.log(`Could not send action message '${messageName}'`, err));
+    const actionsPromises = configObj.actions.map((action) =>
+      this.store.dispatch(getMessageName(action, messageName), payload));
+    Promise.all(actionsPromises).catch(err => console.log(`Could not send action message '${messageName}'`, err));
   },
 
   /**
    * Re-routes event to correct Vuex Mutation.
-   *
+   * 
    * @param {*} configObj Mapped function
    * @param {string} message Event name
    * @param {*} payload Data accompanying message
