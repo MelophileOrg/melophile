@@ -1,0 +1,7 @@
+{
+  "name": "melophile",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}

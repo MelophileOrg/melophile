@@ -1,35 +1,18 @@
 <template>
-  <v-app>
-    <app-bar />
-
-    <v-main>
-      <router-view />
-    </v-main>
-  </v-app>
+  <ion-app>
+    <ion-router-outlet />
+  </ion-app>
 </template>
 
-<script>
-import { mapActions } from 'vuex';
-import AppBar from '@/components/ui/app-bar/app-bar.vue';
+<script lang="ts">
+import { IonApp, IonRouterOutlet } from '@ionic/vue';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'App',
   components: {
-    AppBar,
-  },
-  methods: {
-    ...mapActions('user', [
-      'checkLogin',
-    ]),
-  },
-  created() {
-    this.checkLogin();
-  },
-};
+    IonApp,
+    IonRouterOutlet
+  }
+});
 </script>
-
-<style>
-@import url('./style/global/colors.css');
-@import url('./style/global/base.css');
-@import url('./style/global/typography.css');
-</style>
